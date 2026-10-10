@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useState, type ReactElement } from 'react'
 import { HandFan } from './cards/HandFan'
 import { startBotDriver, stopBotDriver } from './bot/botDriver'
+import { resetDeciders } from './bot/deciders'
+import { startTalk } from './bot/talk'
 import { DiceTray } from './dice/DiceTray'
 import type { LaunchRequest } from './launch'
 import { skipAll, skipBeat } from './presentation/director'
@@ -84,11 +86,13 @@ export default function GameScreen({ request, fps, onExit, onRestart }: {
 
   useEffect(() => {
     let alive = true
+    let stopTalk: (() => void) | null = null
     installTestHooks()
     const unsub = installAutosave()
+    resetDeciders()
     const run = request.resume ? continueGame() : startGame(request)
-    void run.then((err) => { if (!alive) return; if (err) { if (!request.resume) onExit(err); else setError(err) } else { setReady(true); startBotDriver() } })
-    return () => { alive = false; unsub(); stopBotDriver() }
+    void run.then((err) => { if (!alive) return; if (err) { if (!request.resume) onExit(err); else setError(err) } else { setReady(true); startBotDriver(); stopTalk = startTalk() } })
+    return () => { alive = false; unsub(); stopBotDriver(); stopTalk?.() }
   }, [request])
 
   useEffect(() => {

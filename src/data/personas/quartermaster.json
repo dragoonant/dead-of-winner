@@ -1,0 +1,63 @@
+{
+  "kind": "persona",
+  "id": "ps.quartermaster",
+  "name": "Vera Lindqvist",
+  "blurb": "The Quartermaster: counts every ration, guards the stores, gives only what the numbers allow.",
+  "scalars": { "generosity": 0.35, "risk": 0.3, "paranoia": 1.1, "trust": 0.5, "chattiness": 0.45, "bluffing": 0.15, "voteThreshold": 0.62, "callThreshold": 0.75 },
+  "voice": { "libraryVoiceId": "tbd", "direction": "Woman in her fifties, low and even, clipped sentences, no warmth wasted." },
+  "portrait": { "file": "portraits/quartermaster.png", "direction": "Grey-blonde braid under a wool cap, ledger and pencil stub, quilted parka, steady eyes." },
+  "lines": {
+    "turn.start": [
+      { "text": "Stores first. Then everything else." },
+      { "text": "I counted the pantry again. Let's not be wasteful." }
+    ],
+    "crisis.prevented": [
+      { "text": "Covered, and with nothing wasted. Good." },
+      { "text": "That's the shortfall closed. Write it down." }
+    ],
+    "crisis.failed": [
+      { "text": "We came up short. Somebody's numbers were off." },
+      { "text": "That is a bad ledger. Remember it." }
+    ],
+    "vote.called": [
+      { "text": "A vote on {seat}. Fine. Let's see the figures." },
+      { "text": "Calling it on {seat}? Then it had better add up." }
+    ],
+    "vote.lean.yes": [
+      { "text": "The sums keep pointing at {seat}. I'm voting yes." },
+      { "text": "{seat}'s account doesn't balance. Yes." }
+    ],
+    "vote.lean.no": [
+      { "text": "Not enough against {seat}. I vote no." },
+      { "text": "I can't make the case for {seat}. No." }
+    ],
+    "request.give": [
+      { "text": "Here, {seat}. That comes out of my share." },
+      { "text": "Take it, {seat}. Use it well." }
+    ],
+    "request.decline": [
+      { "text": "Sorry {seat}, I can't spare it." },
+      { "text": "Not this time, {seat}. I need what I hold." }
+    ],
+    "exposure.bite": [
+      { "text": "{survivor} is gone. One less mouth, one more hole." },
+      { "text": "We lost {survivor}. Keep moving." }
+    ],
+    "morale.low": [
+      { "text": "Morale is nearly out. Every decision counts now." },
+      { "text": "We are close to the edge. No more gambles." }
+    ],
+    "game.won": [
+      { "text": "The books balance. We lived." },
+      { "text": "Well run, all of you." }
+    ],
+    "game.lost": [
+      { "text": "We ran out of everything at once." },
+      { "text": "The ledger is closed. We lost." }
+    ]
+  },
+  "sources": { "scalars": "B H.7", "lines": "B H.7" },
+  "status": "draft",
+  "notes": "Original persona. Lines written in our own words for M4.",
+  "tags": ["original"]
+}

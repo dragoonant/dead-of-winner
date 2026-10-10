@@ -7,6 +7,7 @@ import { usePresentedView } from '../store/hooks'
 import { useSettingsStore } from '../store/settingsStore'
 import { ui, useUiStore } from '../store/uiStore'
 import { seatColour } from '../table/seats'
+import { useTalkStore } from '../bot/talk'
 
 function Head({ title, side, badge }: { title: string; side: 'left' | 'right'; badge?: number }): ReactElement {
   const collapsed = useSettingsStore((s) => (side === 'left' ? s.leftCollapsed : s.rightCollapsed))
@@ -20,6 +21,11 @@ function Head({ title, side, badge }: { title: string; side: 'left' | 'right'; b
       </button>
     </div>
   )
+}
+
+function Bubble({ seat }: { seat: string }): ReactElement | null {
+  const b = useTalkStore((s) => s.bubbles[seat])
+  return b ? <div className="bubble" role="status" data-testid={`bubble-${seat}`}>{b.text}</div> : null
 }
 
 export function SeatRail(): ReactElement | null {
@@ -50,6 +56,7 @@ export function SeatRail(): ReactElement | null {
                 {s.seat.eliminated && <span className="tag bad">out</span>}
                 {s.outcome && <span className={`tag ${s.outcome === 'won' ? 'gold' : 'bad'}`}>{s.outcome}</span>}
               </div>
+              <Bubble seat={id} />
               {leader && <SurvRow id={leader} lead hover={hover === leader} />}
               {followers.map((f) => <SurvRow key={f} id={f} hover={hover === f} />)}
               {s.survivors.length === 0 && <span className="muted">no survivors</span>}

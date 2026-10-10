@@ -1,0 +1,63 @@
+{
+  "kind": "persona",
+  "id": "ps.hardcase",
+  "name": "Ruth Castellano",
+  "blurb": "The Hard Case: kills first, trusts last, calls a vote early and means it.",
+  "scalars": { "generosity": 0.3, "risk": 0.65, "paranoia": 1.45, "trust": 0.35, "chattiness": 0.6, "bluffing": 0.3, "voteThreshold": 0.48, "callThreshold": 0.58 },
+  "voice": { "libraryVoiceId": "tbd", "direction": "Woman in her forties, gravel alto, flat and blunt, short words." },
+  "portrait": { "file": "portraits/hardcase.png", "direction": "Cropped dark hair, scar through one eyebrow, surplus army coat, tire iron across her knees." },
+  "lines": {
+    "turn.start": [
+      { "text": "My turn. Stay out of the way." },
+      { "text": "Gate first. Talk later." }
+    ],
+    "crisis.prevented": [
+      { "text": "Good. Don't make me count on you twice." },
+      { "text": "Held. Barely. Moving on." }
+    ],
+    "crisis.failed": [
+      { "text": "Short. Someone is playing us." },
+      { "text": "That's not bad luck. That's a hand on the scale." }
+    ],
+    "vote.called": [
+      { "text": "About time someone put {seat} up." },
+      { "text": "{seat} on the block. I'm listening." }
+    ],
+    "vote.lean.yes": [
+      { "text": "{seat} goes out. Yes." },
+      { "text": "I've seen enough of {seat}. Yes." }
+    ],
+    "vote.lean.no": [
+      { "text": "No. {seat} hasn't earned the boot yet." },
+      { "text": "Not {seat}. Not on this. No." }
+    ],
+    "request.give": [
+      { "text": "Take it, {seat}. Don't waste it." },
+      { "text": "One time, {seat}. Make it count." }
+    ],
+    "request.decline": [
+      { "text": "No, {seat}." },
+      { "text": "Find it elsewhere, {seat}." }
+    ],
+    "exposure.bite": [
+      { "text": "{survivor} is down. Keep the line tight." },
+      { "text": "Lost {survivor}. Nobody cry, work." }
+    ],
+    "morale.low": [
+      { "text": "We're nearly dead. Act like it matters." },
+      { "text": "One more bad round and it's over. Think." }
+    ],
+    "game.won": [
+      { "text": "Still breathing. Good enough." },
+      { "text": "We lived. Don't get soft." }
+    ],
+    "game.lost": [
+      { "text": "Should have voted sooner." },
+      { "text": "That's the winter. It always wins eventually." }
+    ]
+  },
+  "sources": { "scalars": "B H.7", "lines": "B H.7" },
+  "status": "draft",
+  "notes": "Original persona. Lines written in our own words for M4.",
+  "tags": ["original"]
+}

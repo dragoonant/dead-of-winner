@@ -1,4 +1,4 @@
-// M3 e2e: a whole game through the UI as the human against three Random bots, on the production build (vite preview under
+// M3/M4 e2e: a whole game through the UI as the human against three Normal AI bots (the default tier), on the production build (vite preview under
 // /dead-of-winner/). The human only clicks buttons the prompt dock offers (tests/e2e/policy.ts). Screenshots go to e2e-out/.
 import { expect, test, type Page } from '@playwright/test'
 import { buttonByText, playUntilRecap } from './policy'
@@ -18,7 +18,7 @@ async function boot(page: Page, errors: string[]): Promise<void> {
   await expect(page.locator('canvas')).toBeVisible()
 }
 
-test('a full game vs three Random bots, through UI clicks only', async ({ page }) => {
+test('a full game vs three Normal bots, through UI clicks only', async ({ page }) => {
   test.setTimeout(15 * 60_000)
   const errors: string[] = []
   await boot(page, errors)
@@ -83,4 +83,14 @@ test('the Objectives panel and How to play open from the top bar', async ({ page
   await buttonByText(how, 'Close').click()
   await expect(how).toBeHidden()
   expect(errors, errors.join('\n')).toEqual([])
+})
+
+test('the start screen offers a persona and a difficulty per bot, Normal by default with distinct personas', async ({ page }) => {
+  await page.goto('')
+  await expect(page.getByTestId('setup-persona-1')).toBeVisible({ timeout: 30_000 })
+  const personas = await Promise.all([1, 2, 3].map((i) => page.getByTestId(`setup-persona-${i}`).inputValue()))
+  expect(new Set(personas).size).toBe(3)
+  for (const i of [1, 2, 3]) await expect(page.getByTestId(`setup-tier-${i}`)).toHaveValue('normal')
+  await page.getByTestId('setup-tier-2').selectOption('random')
+  await expect(page.getByTestId('setup-tier-2')).toHaveValue('random')
 })

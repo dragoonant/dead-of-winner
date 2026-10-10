@@ -2,6 +2,7 @@
 // Bots-only games on the default bundle (src/data) through the public engine API; see tools/sim-core.ts.
 // Exit code 1 when any game failed to end or any invariant, leak, cap or stall fired.
 import { loadDefaultBundle } from './default-bundle'
+import type { AiTier } from '../src/engine/index'
 import { DEFAULT_OPTIONS, runSim, type SimOptions } from './sim-core'
 
 const OBJECTIVES: Record<string, string> = { samples: 'obj.main.we-need-more-samples', random: 'random' }
@@ -18,6 +19,7 @@ function parseArgs(argv: string[]): SimOptions & { json: boolean; seatsGiven: bo
       case '--objective': { const v = next(); o.objective = OBJECTIVES[v] ?? v; break }
       case '--cap': o.cap = Number(next()) || o.cap; break
       case '--stall': o.stall = Number(next()) || o.stall; break
+      case '--tier': o.tier = (next() as AiTier) || 'random'; break
       case '--validate': o.validateSample = Number(next()) || 0; break
       case '--json': o.json = true; break
       case '--verbose': o.verbose = true; break

@@ -1,0 +1,63 @@
+{
+  "kind": "persona",
+  "id": "ps.optimist",
+  "name": "Teddy Marchbanks",
+  "blurb": "The Optimist: gives freely, forgives fast, accuses only when the evidence shouts.",
+  "scalars": { "generosity": 0.85, "risk": 0.55, "paranoia": 0.6, "trust": 0.9, "chattiness": 0.9, "bluffing": 0.05, "voteThreshold": 0.78, "callThreshold": 0.9 },
+  "voice": { "libraryVoiceId": "tbd", "direction": "Man in his thirties, warm quick tenor, laughs on the exhale." },
+  "portrait": { "file": "portraits/optimist.png", "direction": "Round face, red beard, oversized thrift-store ski jacket, a thermos, a half-smile." },
+  "lines": {
+    "turn.start": [
+      { "text": "Okay team, deep breath. We've got this." },
+      { "text": "New turn, fresh luck. Let's go." }
+    ],
+    "crisis.prevented": [
+      { "text": "Ha! We did it! Look at us!" },
+      { "text": "Told you. Teamwork wins the winter." }
+    ],
+    "crisis.failed": [
+      { "text": "Ouch. Okay. We'll get the next one." },
+      { "text": "Short by {n}, but nobody panic." }
+    ],
+    "vote.called": [
+      { "text": "A vote on {seat}? Let's be gentle about it." },
+      { "text": "Oh. A vote on {seat}. Let's hear it out first." }
+    ],
+    "vote.lean.yes": [
+      { "text": "I hate this, but it's yes on {seat}." },
+      { "text": "Sorry, {seat}. The signs are too loud. Yes." }
+    ],
+    "vote.lean.no": [
+      { "text": "No way, not {seat}. Give them a break." },
+      { "text": "I trust {seat}. That's a no from me." }
+    ],
+    "request.give": [
+      { "text": "Sure thing, {seat}! Take it." },
+      { "text": "Happy to help, {seat}. Pay it forward." }
+    ],
+    "request.decline": [
+      { "text": "Oh {seat}, I really wish I could." },
+      { "text": "Ugh, sorry {seat}. I'm holding this one back." }
+    ],
+    "exposure.bite": [
+      { "text": "No... not {survivor}. They deserved better." },
+      { "text": "Rest easy, {survivor}. We'll keep going." }
+    ],
+    "morale.low": [
+      { "text": "Still hanging on! We just need one good round." },
+      { "text": "Hearts up, everyone. It's not over." }
+    ],
+    "game.won": [
+      { "text": "We survived! Group hug, everybody!" },
+      { "text": "I knew it! What a crew." }
+    ],
+    "game.lost": [
+      { "text": "Well. That didn't go how I hoped." },
+      { "text": "I'm sorry, everyone. We gave it all." }
+    ]
+  },
+  "sources": { "scalars": "B H.7", "lines": "B H.7" },
+  "status": "draft",
+  "notes": "Original persona. Lines written in our own words for M4.",
+  "tags": ["original"]
+}

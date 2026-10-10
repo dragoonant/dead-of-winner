@@ -55,7 +55,7 @@ Playable in the browser against Random bots: https://dragoonant.github.io/dead-o
   for cards, requests, votes and Add to crisis), read the odds line, pick the die, Confirm; End turn when done. Top bar: Objectives
   (O), How to play, Settings; keys: 1-4 camera, Space skips an animation, E ends the turn, S saves, ? lists the keys.
 - URL params: `seats=human,bot,bot,bot` (2-5 seats, skips the start screen), `seed=<word>`, `objective=<id or word>` (e.g.
-  `samples`) or `random`, `speed=0..8` (0 = instant), `test=1` (exposes `window.__game` and the DOM proxies for tests), `fps`.
+  `samples`) or `random`, `speed=0..8` (0 = instant), `tier=random|normal` (every bot's difficulty, default normal), `test=1` (exposes `window.__game` and the DOM proxies for tests), `fps`.
 - Data: the client loads `src/data` (validated by `loadBundle`, same hash as the node loader, `tests/client/bundle.test.ts`); the
   fixture fallback is gone. Chunks: `title` (start screen), `react`, `engine` (engine + data + ajv), `three` (three/R3F/drei),
   `client` (game screen); the start screen loads only `title` + `react`, then the `engine` chunk for the objective list.
@@ -66,10 +66,50 @@ Playable in the browser against Random bots: https://dragoonant.github.io/dead-o
 - Fixed in M3: the browser bundle loaded names-only objective stubs (now mirrors the node loader); an overrun kill inside a card
   effect (crisis fail) dropped the exiled owner's replacement-placement decision, losing a survivor card (`effects.ts` addZombies);
   the sim counted that waiting survivor as missing; the colony-phase feed line printed twice; discard lines read "Rook card".
-- Known gaps: Random bots wreck morale, so most games end in 2-3 rounds (M4 slim AI); the generic option list serves
+- Known gaps: (Random bots wrecked morale in M3; fixed by the M4 Normal tier above.) The generic option list serves
   itemTarget / effectChoice / objectiveChoice (works, terse); decision kinds the e2e run has not hit yet: crossroadsOption,
   exilePlacement, searchKeepWhich, newLeader, objectiveChoice (forms exist); placeholder 3D art; objective part labels are mapped
   to plain words only for the common tests; the "two words" table talk on Talia Jones is not modelled.
+
+## AI (M4)
+Slim AI colonists, one tier: `src/ai/normal.ts` (+ `src/ai/normal/{info,plan,options,suspicion}.ts`), entry `src/ai/index.ts`
+`createDecider(tier, persona, seed)`; `random` stays selectable. Bots default to Normal with distinct personas (Vera Lindqvist,
+Teddy Marchbanks, Ruth Castellano: `src/data/personas/*.json`, scalars plus 24 own-words lines each); the start screen has a persona and
+a difficulty select per bot; `?tier=random` forces Random. Table talk (`src/ai/talk.ts` `pickLine`, `src/client/bot/talk.ts`) lands in the
+event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
+- What it does: a decider only sees `view(state, seat)`, the pending decision and the legal list (plus the events its seat may see, fed
+  through `redactEvent`, for its suspicion ledger); it never rolls dice or reads GameState; seeded by `deriveSeed(seed, seat, decision id)`;
+  budget `AI_TIME_BUDGET_MS` (default 100, worst decision so far 2.6 ms). Turn: greedy re-plan after every action, each legal action scored in
+  morale points: colony defence from a board model (arrivals fill spaces, break barricades, then overrun; kills and barricades valued by the
+  overruns they prevent, kills charged the exposure roll with frostbite counted as nearly lethal), food played only when the pay is short,
+  waste cleaned near a multiple of 10, searches ranked by `query.searchOdds` weighted by the crisis' prevent symbols, the seat's secret
+  objective and food shortage, moves only when search gain beats the exposure cost (colony not stripped while threatened), survivor and item
+  abilities that kill without exposure, barricade, heal, feed or clean, never an attack on a survivor. Crisis: loyal seats contribute matching
+  cards up to the estimated shortfall and never cards their objective needs; the betrayer contributes a wrong card about half the time unless the
+  table's suspicion of it is high. Requests answered by generosity and suspicion of the asker. Suspicion: a Bayesian ledger over "seat j is the
+  betrayer" from crisis shortfalls split over the seats that put cards in, declined requests and attacks on others; vote yes only on the top
+  suspect above the persona threshold from round 2 (higher after a first exile), never self, the betrayer protects itself.
+- Bench (`npm run bench:ai -- --games 40 --seed 1 --tier normal|random`, default objective We Need More Samples, 4 bots):
+
+| 40 games, seed 1 | random | normal |
+|---|---|---|
+| colony objective completed | 0% (0/40) | 15% (6/40) |
+| mean rounds | 2.83 | 4.43 |
+| ended by | moraleZero 40 | moraleZero 31, objective 6, roundsOut 3 |
+| betrayer present / betrayer won | 13 / 0 | 13 / 0 |
+| exiles correct / innocent | 0 / 1 | 3 / 0 |
+| decision ms mean / p95 / max | 0.01 / 0.02 / 0.25 | 0.12 / 0.29 / 2.03 |
+| rejected actions / stalls | 0 / 0 | 0 / 0 |
+
+  With `--objective random` (all ten main objectives): random 0/40 completed, 2.33 rounds; normal 0/40 (1 in 200 games), 4.97 rounds, 16 of
+  40 games reach the last round alive. `npm run sim -- --games 20 --seed 5 [--tier normal]`: 0 violations, 0 leaks (random 2.3 rounds, normal 4.85).
+- Known weaknesses: Normal still loses most games to morale (about one survivor a round to exposure, overruns and frostbite, a failed crisis every
+  other round); only survival objectives and We Need More Samples (a kill-for-samples drive, 0.85 morale points per kill) can complete, and the
+  card-contribution objectives (Find a Cure, Leave It All Behind, Stockpile) have no contribution action in the engine at all; the betrayer almost
+  never wins (it sabotages crises but does not play its own win condition); suspicion needs wrong cards to read from, so a quiet betrayer is only
+  found by its contribution pattern; requests only ask for food or medicine (a given card is played at once); no Easy/Hard tier, no spend-food on
+  dice, no fuel-before-move trick, abilities valued only for kill, barricade, heal, food and waste. `AI_TUNE='{"death":2}'` overrides the tuning
+  constants in `src/ai/normal/plan.ts` for bench experiments.
 
 ## Spec status
 | Spec | Status |
@@ -82,14 +122,14 @@ Playable in the browser against Random bots: https://dragoonant.github.io/dead-o
 | 20 data schema, schemas/*.json | written, validator implemented |
 | 21 effects DSL | written, interpreter implemented (`effects.ts`) |
 | 30 art | written (tile layout follows the Long Night location photos, ruling L1) |
-| 40 AI, 41 personas | written; random tier implemented |
+| 40 AI, 41 personas | written; random tier and slim Normal tier implemented (M4), 3 of 6 personas |
 | 50 client | written; M3 vertical slice implemented (`src/client/`) |
 | 60 testing | written; sim, invariants and leak test implemented |
 | Card data (survivors, items, crisis, Crossroads, objectives) | M2 slice in `src/data/` (see Card data (M2)); verify pass against the physical cards still open |
 
 ## Next
-- M4: slim AI tier above Random (40/41) so bots keep the colony alive and games run their length.
-- Owner playtest gate: play a few games on Pages and log what reads wrong or plays wrong.
+- Owner playtest gate (M4): play 3 games on Pages against the three personas: does the table feel alive, is the betrayer findable but not obvious.
+- M4 follow-ups if the playtest asks for them: Easy/Hard tiers, a betrayer that plays its own win condition, objective contribution actions in the engine.
 - Remaining source gaps: 9 standard secret objective texts, 7 betrayal texts, official English crisis names (17).
 - Owner request: if you have a physical copy, check the conflict tables in `docs/spec/sources/*-sources.md` against it
   (the rows marked Fan-source and the flagged numbers: Fuel Shortage, Zombie Wave, We Need More Samples hardcore,

@@ -2,10 +2,10 @@
 // the hidden-information leak test, a decision cap, a stall detector, a mid-game save/load round trip and replay determinism.
 // Pure functions over the engine; tools/sim.ts is the CLI. Nothing here reads a GameState the way a client would: the
 // deciders get views, the checks read the state the reducer returned.
-import { createRandomDecider } from '../src/ai/random'
+import { createDecider, PERSONA_IDS, type AiDecider } from '../src/ai/index'
 import {
   createGame, hiddenIdsFor, legalActions, load, redactEvent, replay, save, serializeView, step, validate, view,
-  type Action, type DataBundle, type GameEvent, type GameSetup, type GameState, type PendingDecision, type SeatId, type StepResult,
+  type Action, type AiTier, type DataBundle, type GameEvent, type GameSetup, type GameState, type PendingDecision, type SeatId, type StepResult,
 } from '../src/engine/index'
 
 export interface SimOptions {
@@ -17,6 +17,7 @@ export interface SimOptions {
   stall: number // consecutive decisions without visible progress before the game is failed
   validateSample: number // legal actions re-validated per decision (0 = none)
   saveAt: number // the decision index at which the save/load round trip runs
+  tier?: AiTier // the decider every seat uses (default random)
 }
 export const DEFAULT_OPTIONS: SimOptions = { games: 30, seed: '1', seats: 4, objective: 'random', cap: 3000, stall: 200, validateSample: 12, saveAt: 40 }
 
@@ -36,6 +37,9 @@ export interface GameSummary {
   violations: Violation[]
   leaks: Violation[]
   moraleLost: Record<string, number> // morale points lost, by MoraleChanged reason
+  decisionMs: number[] // wall time of every decider call
+  exiles: { seat: SeatId; betrayer: boolean }[]
+  finalMorale: number
   ms: number
 }
 export interface SimReport {
@@ -215,12 +219,16 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
   let decision = 0
   const viol = (kind: string, message: string) => violations.push({ seed, index, decision, kind, message })
   const setup = setupFor(o.seats, o.objective)
-  const decider = createRandomDecider(seed)
+  const tier = o.tier ?? 'random'
+  const deciders: Record<SeatId, AiDecider> = {}
+  setup.seats.forEach((seat, i) => { deciders[seat.id] = createDecider(tier, PERSONA_IDS[i % PERSONA_IDS.length], seed) })
+  const decisionMs: number[] = []
+  const exiles: { seat: SeatId; betrayer: boolean }[] = []
   let r: StepResult = createGame(setup, seed, bundle)
   const moraleLost: Record<string, number> = {}
   if (r.rejection) {
     viol('createGame', `${r.rejection.code}: ${r.rejection.message}`)
-    return { seed, index, decisions: 0, steps: 0, rounds: 0, ended: false, endReason: null, objectiveComplete: false, winners: [], betrayerPresent: false, betrayerWon: false, violations, leaks, moraleLost, ms: Date.now() - t0 }
+    return { seed, index, decisions: 0, steps: 0, rounds: 0, ended: false, endReason: null, objectiveComplete: false, winners: [], betrayerPresent: false, betrayerWon: false, violations, leaks, moraleLost, decisionMs: [], exiles: [], finalMorale: 0, ms: Date.now() - t0 }
   }
   const totals = totalsOf(r.state)
   const betrayerPresent = r.state.seatOrder.some((id) => holdsBetrayal(r.state, id))
@@ -242,15 +250,35 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
       const sample = legal.length <= o.validateSample ? legal : legal.filter((_, i) => i % Math.ceil(legal.length / o.validateSample) === 0)
       for (const a of sample) { const bad = validate(state, a); if (bad) viol('validate', `legal ${a.type} rejected: ${bad.code} ${bad.message}`) }
     }
-    const seatForView = pending.seat === 'all' ? state.seatOrder[0]! : pending.seat
     let action: Action
-    try { action = await decider.decide(view(state, seatForView), pending, legal) } catch (e) { viol('decider', String((e as Error).message)); break }
+    const tD = performance.now()
+    try {
+      if (pending.seat === 'all' && pending.kind === 'votes') {
+        // simultaneous votes: each eligible seat answers privately from its own view, then one ballot goes in (C.4)
+        const eligible = ((pending.context.data as { eligible?: SeatId[] } | undefined)?.eligible ?? state.seatOrder) as SeatId[]
+        const votes: Record<SeatId, boolean> = {}
+        for (const s of eligible) { const pick = await deciders[s]!.decide(view(state, s), pending, legal); votes[s] = pick.type === 'castVotes' && pick.votes[s] === true }
+        action = { type: 'castVotes', decisionId: pending.id, seat: 'all', votes }
+      } else {
+        const seatForView = pending.seat === 'all' ? state.seatOrder[0]! : pending.seat
+        action = await deciders[seatForView]!.decide(view(state, seatForView), pending, legal)
+      }
+    } catch (e) { viol('decider', String((e as Error).message)); break }
+    decisionMs.push(performance.now() - tD)
     let next: StepResult
     try { next = step(state, action) } catch (e) { viol('throw', `${action.type}: ${String((e as Error).stack ?? e)}`); break }
     steps++
     if (next.rejection) { viol('rejected', `legal ${action.type} rejected: ${next.rejection.code} ${next.rejection.message} ${JSON.stringify(next.rejection.detail ?? {})}`); break }
     decision++
-    for (const ev of next.events) if (ev.type === 'MoraleChanged' && ev.delta < 0) moraleLost[ev.reason] = (moraleLost[ev.reason] ?? 0) - ev.delta
+    for (const ev of next.events) {
+      if (ev.type === 'MoraleChanged' && ev.delta < 0) moraleLost[ev.reason] = (moraleLost[ev.reason] ?? 0) - ev.delta
+      if (ev.type === 'SeatExiled') exiles.push({ seat: ev.seat, betrayer: holdsBetrayal(next.state, ev.seat) })
+    }
+    // every bot sees the events its seat is allowed to see, then keeps whatever memory it likes (suspicion ledger)
+    for (const s of next.state.seatOrder) {
+      const evs = next.events.map((e) => redactEvent(e, s)).filter((e): e is GameEvent => e !== null)
+      if (evs.length) deciders[s]!.observe(evs, view(next.state, s))
+    }
     recent.push(action); if (recent.length > 20) recent.shift()
     for (const m of checkInvariants(next.state, next.pending, totals)) {
       viol('invariant', m)
@@ -282,7 +310,7 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
   return {
     seed, index, decisions: decision, steps, rounds: r.state.roundNumber, ended, endReason: r.state.result?.reason ?? null,
     objectiveComplete: r.state.objective.complete, winners, betrayerPresent,
-    betrayerWon: winners.some((id) => holdsBetrayal(r.state, id)), violations, leaks, moraleLost, ms: Date.now() - t0,
+    betrayerWon: winners.some((id) => holdsBetrayal(r.state, id)), violations, leaks, moraleLost, decisionMs, exiles, finalMorale: r.state.morale, ms: Date.now() - t0,
   }
 }
 

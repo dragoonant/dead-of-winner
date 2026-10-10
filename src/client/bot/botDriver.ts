@@ -9,6 +9,7 @@ import {
 } from '../store/gameStore'
 import { scaled, useSettingsStore } from '../store/settingsStore'
 import { getDecider } from './deciders'
+import { sayLean } from './talk'
 
 export const WATCHDOG_MS = 5000
 /** Pause before a bot answers at speed 1 so the human can follow along (scaled by speed; 0 when instant). */
@@ -63,12 +64,14 @@ export function createBotDriver(opts: BotDriverOptions = {}): BotDriver {
       if (!force) {
         try {
           const legal = legalFor(st)
-          const pick = await getDecider(seat, st.seed).decide(view(st, seat), pd, legal)
+          const pick = await getDecider(seat, st).decide(view(st, seat), pd, legal)
           if (pick.type === 'castVotes') yes = pick.votes[seat] === true
         } catch { yes = false }
       }
       if (!stillOpen(pd.id)) return
       setBotVote(pd.id, seat, yes)
+      const target = (pd.context.data as { target?: SeatId } | undefined)?.target
+      if (!force && target) sayLean(seat, target, yes)
     }
     const cur = useGameStore.getState()
     if (!stillOpen(pd.id)) return
@@ -85,7 +88,7 @@ export function createBotDriver(opts: BotDriverOptions = {}): BotDriver {
     if (!legal.length) return
     let pick: Action = legal[0]!
     if (!force) {
-      try { pick = await getDecider(seat, st.seed).decide(view(st, seat), pd, legal) } catch { pick = legal[0]! }
+      try { pick = await getDecider(seat, st).decide(view(st, seat), pd, legal) } catch { pick = legal[0]! }
     }
     if (!stillOpen(pd.id)) return
     const rej = dispatch(pick, force ? 'watchdog' : 'bot')
