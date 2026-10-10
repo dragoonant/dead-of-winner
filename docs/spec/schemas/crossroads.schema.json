@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/crossroads.schema.json",
+  "title": "Crossroads card (spec 20 §7)",
+  "type": "object",
+  "required": ["id", "name", "mature", "trigger", "options", "mech", "text", "status", "src"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^xr\\.[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "mature": { "type": "boolean" },
+    "trigger": {
+      "type": "object", "required": ["at", "when"], "additionalProperties": false,
+      "properties": {
+        "at": { "enum": ["afterAction", "turnStart"] },
+        "when": { "$ref": "effect.schema.json#/$defs/Condition" }
+      }
+    },
+    "options": { "type": "array", "items": { "$ref": "#/$defs/XrOption" }, "minItems": 1, "maxItems": 3 },
+    "mech": { "type": "string", "minLength": 3, "maxLength": 300 },
+    "text": {
+      "type": "object", "required": ["vignette", "options"], "additionalProperties": false,
+      "properties": {
+        "vignette": { "type": "string", "minLength": 10, "maxLength": 600 },
+        "options": { "type": "object", "additionalProperties": { "type": "string", "minLength": 3, "maxLength": 200 } }
+      }
+    },
+    "status": { "$ref": "effect.schema.json#/$defs/Status" },
+    "src": { "$ref": "effect.schema.json#/$defs/SrcMap" },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "XrOption": {
+      "type": "object", "required": ["id", "mech", "effect"], "additionalProperties": false,
+      "properties": {
+        "id": { "enum": ["a", "b", "c"] },
+        "mech": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "requires": { "$ref": "effect.schema.json#/$defs/Condition" },
+        "effect": { "$ref": "effect.schema.json#/$defs/Effect" }
+      }
+    }
+  }
+}

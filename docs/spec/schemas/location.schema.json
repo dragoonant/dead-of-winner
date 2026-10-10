@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/location.schema.json",
+  "title": "Location record: colony or non-colony (spec 20 §3; spec 10 §10.2)",
+  "oneOf": [{ "$ref": "#/$defs/Colony" }, { "$ref": "#/$defs/Location" }],
+  "$defs": {
+    "Colony": {
+      "type": "object",
+      "required": ["id", "kind", "name", "survivorSpaces", "entrances", "moraleMax", "roundMax", "status", "src"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "const": "colony" },
+        "kind": { "const": "colony" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 30 },
+        "survivorSpaces": { "type": "integer", "minimum": 1 },
+        "entrances": {
+          "type": "array", "minItems": 6, "maxItems": 6,
+          "items": {
+            "type": "object", "required": ["n", "spaces"], "additionalProperties": false,
+            "properties": { "n": { "type": "integer", "minimum": 1, "maximum": 6 }, "spaces": { "type": "integer", "minimum": 1 } }
+          }
+        },
+        "moraleMax": { "type": "integer", "minimum": 1 },
+        "roundMax": { "type": "integer", "minimum": 1 },
+        "wasteMoraleStep": { "type": "integer", "minimum": 1, "default": 10 },
+        "status": { "$ref": "effect.schema.json#/$defs/Status" },
+        "src": { "$ref": "effect.schema.json#/$defs/SrcMap" },
+        "notes": { "type": "string" }
+      }
+    },
+    "Location": {
+      "type": "object",
+      "required": ["id", "kind", "name", "order", "survivorSpaces", "entranceSpaces", "noiseSpaces", "symbolRow", "deckSize", "status", "src"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "enum": ["police", "grocery", "school", "gas", "library", "hospital"] },
+        "kind": { "const": "location" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 30 },
+        "order": { "type": "integer", "minimum": 1, "maximum": 6, "description": "Add Zombies / noise resolution order (spec 10 10.2.1)" },
+        "survivorSpaces": { "type": "integer", "minimum": 1 },
+        "entranceSpaces": { "type": "integer", "minimum": 1 },
+        "noiseSpaces": { "const": 4 },
+        "symbolRow": { "type": "array", "items": { "$ref": "effect.schema.json#/$defs/Symbol" }, "minItems": 1, "maxItems": 7 },
+        "deckSize": { "const": 20 },
+        "status": { "$ref": "effect.schema.json#/$defs/Status" },
+        "src": { "$ref": "effect.schema.json#/$defs/SrcMap" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

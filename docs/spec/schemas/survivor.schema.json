@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/survivor.schema.json",
+  "title": "Survivor card (spec 20 §4)",
+  "type": "object",
+  "required": ["id", "name", "profession", "influence", "attack", "search", "abilities", "mech", "text", "status", "src"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^survivor\\.[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "profession": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "influence": { "type": "integer", "minimum": 1, "maximum": 99 },
+    "attack": { "type": "integer", "minimum": 1, "maximum": 6, "description": "N in 'N+'" },
+    "search": { "type": "integer", "minimum": 1, "maximum": 6, "description": "N in 'N+'" },
+    "abilities": { "type": "array", "items": { "$ref": "effect.schema.json#/$defs/Ability" }, "maxItems": 3 },
+    "tags": { "type": "array", "items": { "enum": ["animal", "child", "outsiderOnly"] }, "uniqueItems": true },
+    "mech": { "type": "string", "minLength": 3, "maxLength": 200 },
+    "text": { "type": "string", "minLength": 3, "maxLength": 240 },
+    "status": { "$ref": "effect.schema.json#/$defs/Status" },
+    "src": { "$ref": "effect.schema.json#/$defs/SrcMap" },
+    "notes": { "type": "string" }
+  }
+}

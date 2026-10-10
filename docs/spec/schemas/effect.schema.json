@@ -1,0 +1,551 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/effect.schema.json",
+  "title": "Card-effects DSL (spec 21, DRAFT)",
+  "description": "Shared $defs for the card-effects DSL. Every op object has exactly one key. Spec: docs/spec/21-card-effects-dsl.md.",
+  "$ref": "#/$defs/Effect",
+  "$defs": {
+    "Name": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$" },
+    "HookName": { "type": "string", "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)+$" },
+    "SrcRef": { "type": "string", "pattern": "^[a-z0-9-]+#[a-z0-9-]+$" },
+    "SrcMap": {
+      "type": "object",
+      "required": ["*"],
+      "propertyNames": { "pattern": "^(\\*|[a-zA-Z0-9_]+(/[a-zA-Z0-9_]+)*)$" },
+      "additionalProperties": { "$ref": "#/$defs/SrcRef" }
+    },
+    "Status": { "enum": ["verified", "partial", "placeholder"] },
+    "Symbol": { "enum": ["weapon", "fuel", "education", "food", "medicine", "tool", "survivor", "none"] },
+    "LocationId": { "enum": ["colony", "police", "grocery", "school", "gas", "library", "hospital"] },
+    "ContentId": { "type": "string", "pattern": "^(survivor|item|crisis|xr|main|secret|betrayal|exiled)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$" },
+    "Face": { "enum": ["blank", "wound", "frostbite", "bitten"] },
+    "ActionKind": {
+      "enum": ["attackZombie", "attackSurvivor", "search", "barricade", "cleanWaste", "attract", "ability",
+               "playCard", "contribute", "move", "spendFood", "request", "handOff", "callVote", "endTurn"]
+    },
+    "EventName": {
+      "enum": ["turnStarted", "turnEnded", "roundStarted", "actionResolved", "survivorMoved", "zombieKilled",
+               "survivorWounded", "exposureRolled", "survivorKilled", "survivorAdded", "cardPlayed",
+               "searchResolved", "crisisRevealed", "crisisResolved", "colonyPhaseStarted", "voteResolved",
+               "seatExiled"]
+    },
+    "Limit": { "enum": ["oncePerTurn", "oncePerRound", "oncePerGame"] },
+    "Pick": { "enum": ["chooser", "all", "lowestInfluence", "highestInfluence", "random"] },
+    "ExposureMode": { "enum": ["each", "once", "none"] },
+    "Ref": {
+      "type": "object", "required": ["ref"], "additionalProperties": false,
+      "properties": { "ref": { "$ref": "#/$defs/Name" } }
+    },
+
+    "SeatRef": {
+      "oneOf": [
+        { "enum": ["active", "controller", "holder", "firstPlayer", "leftOfActive", "rightOfActive", "eventSeat",
+                   "each", "eachOther", "nonExiled", "exiled", "any"] },
+        { "$ref": "#/$defs/Ref" }
+      ]
+    },
+    "LocFilter": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "nonColony": { "type": "boolean" },
+        "deckNotEmpty": { "type": "boolean" },
+        "hasZombies": { "type": "boolean" },
+        "hasFreeSurvivorSpace": { "type": "boolean" },
+        "hasFreeEntranceSpace": { "type": "boolean" },
+        "in": { "type": "array", "items": { "$ref": "#/$defs/LocationId" }, "minItems": 1 },
+        "not": { "type": "array", "items": { "$ref": "#/$defs/LocationId" }, "minItems": 1 }
+      }
+    },
+    "LocRef": {
+      "oneOf": [
+        { "enum": ["here", "eventLocation", "actorLocation"] },
+        { "$ref": "#/$defs/LocationId" },
+        { "$ref": "#/$defs/Ref" },
+        {
+          "type": "object", "required": ["choose"], "additionalProperties": false,
+          "properties": { "choose": { "$ref": "#/$defs/LocFilter" }, "chooser": { "$ref": "#/$defs/SeatRef" } }
+        }
+      ]
+    },
+    "LocRefOrMany": {
+      "oneOf": [
+        { "$ref": "#/$defs/LocRef" },
+        { "enum": ["eachNonColony", "everyLocation"] },
+        { "type": "array", "items": { "$ref": "#/$defs/LocationId" }, "minItems": 1 }
+      ]
+    },
+
+    "SurvivorFilter": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "seat": { "$ref": "#/$defs/SeatRef" },
+        "at": { "$ref": "#/$defs/LocRefOrMany" },
+        "helpless": { "type": "boolean" },
+        "named": { "$ref": "#/$defs/ContentId" },
+        "notSelf": { "type": "boolean" },
+        "wounded": { "type": "boolean" },
+        "isLeader": { "type": "boolean" },
+        "exiledSeat": { "type": "boolean" }
+      }
+    },
+    "SurvivorsSel": {
+      "type": "object", "required": ["survivors"], "additionalProperties": false,
+      "properties": {
+        "survivors": { "$ref": "#/$defs/SurvivorFilter" },
+        "pick": { "$ref": "#/$defs/Pick" },
+        "n": { "$ref": "#/$defs/Num" },
+        "upTo": { "type": "boolean" },
+        "chooser": { "$ref": "#/$defs/SeatRef" }
+      }
+    },
+    "SurvivorSel": {
+      "oneOf": [
+        { "enum": ["self", "actor", "eventSurvivor", "leader"] },
+        { "$ref": "#/$defs/Ref" },
+        { "$ref": "#/$defs/SurvivorsSel" }
+      ]
+    },
+    "CardFilter": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "from": { "enum": ["hand", "equipped", "handOrEquipped", "waste", "revealed", "drawn"] },
+        "seat": { "$ref": "#/$defs/SeatRef" },
+        "symbol": { "oneOf": [{ "$ref": "#/$defs/Symbol" }, { "type": "array", "items": { "$ref": "#/$defs/Symbol" } }] },
+        "outsider": { "type": "boolean" },
+        "equip": { "type": "boolean" },
+        "named": { "$ref": "#/$defs/ContentId" },
+        "of": { "$ref": "#/$defs/Ref" }
+      }
+    },
+    "CardsSel": {
+      "type": "object", "required": ["cards"], "additionalProperties": false,
+      "properties": {
+        "cards": { "$ref": "#/$defs/CardFilter" },
+        "pick": { "$ref": "#/$defs/Pick" },
+        "n": { "$ref": "#/$defs/Num" },
+        "upTo": { "type": "boolean" },
+        "chooser": { "$ref": "#/$defs/SeatRef" }
+      }
+    },
+    "CardSel": { "oneOf": [{ "$ref": "#/$defs/Ref" }, { "$ref": "#/$defs/CardsSel" }] },
+    "DiceSel": {
+      "type": "object", "required": ["dice"], "additionalProperties": false,
+      "properties": {
+        "dice": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "seat": { "$ref": "#/$defs/SeatRef" },
+            "unused": { "type": "boolean" },
+            "below": { "type": "integer", "minimum": 1, "maximum": 7 }
+          }
+        },
+        "pick": { "$ref": "#/$defs/Pick" },
+        "n": { "$ref": "#/$defs/Num" },
+        "chooser": { "$ref": "#/$defs/SeatRef" }
+      }
+    },
+    "LocationsSel": {
+      "type": "object", "required": ["locations"], "additionalProperties": false,
+      "properties": {
+        "locations": { "$ref": "#/$defs/LocFilter" },
+        "pick": { "$ref": "#/$defs/Pick" },
+        "n": { "$ref": "#/$defs/Num" },
+        "chooser": { "$ref": "#/$defs/SeatRef" }
+      }
+    },
+    "SeatsSel": {
+      "type": "object", "required": ["seats"], "additionalProperties": false,
+      "properties": {
+        "seats": { "$ref": "#/$defs/SeatRef" },
+        "pick": { "$ref": "#/$defs/Pick" },
+        "n": { "$ref": "#/$defs/Num" },
+        "chooser": { "$ref": "#/$defs/SeatRef" }
+      }
+    },
+    "Selector": {
+      "oneOf": [
+        { "$ref": "#/$defs/SurvivorsSel" },
+        { "$ref": "#/$defs/CardsSel" },
+        { "$ref": "#/$defs/DiceSel" },
+        { "$ref": "#/$defs/LocationsSel" },
+        { "$ref": "#/$defs/SeatsSel" },
+        { "$ref": "#/$defs/Ref" }
+      ]
+    },
+
+    "Num": {
+      "oneOf": [
+        { "type": "integer" },
+        {
+          "type": "object", "minProperties": 1, "maxProperties": 1, "additionalProperties": false,
+          "properties": {
+            "var": { "enum": ["players", "startingPlayers", "round", "roundsLeft", "morale", "food", "waste",
+                              "starvation", "colonySurvivors", "foodNeeded", "exiledSeats"] },
+            "count": { "$ref": "#/$defs/Selector" },
+            "progress": { "$ref": "#/$defs/Name" },
+            "zombiesAt": { "$ref": "#/$defs/LocRef" },
+            "handCount": {
+              "type": "object", "additionalProperties": false,
+              "properties": { "seat": { "$ref": "#/$defs/SeatRef" }, "symbol": { "$ref": "#/$defs/Symbol" },
+                              "outsiderCountsAsItem": { "type": "boolean" } }
+            },
+            "add": { "type": "array", "items": { "$ref": "#/$defs/Num" }, "minItems": 2 },
+            "sub": { "type": "array", "items": { "$ref": "#/$defs/Num" }, "minItems": 2, "maxItems": 2 },
+            "mul": { "type": "array", "items": { "$ref": "#/$defs/Num" }, "minItems": 2 },
+            "ceilDiv": { "type": "array", "items": { "$ref": "#/$defs/Num" }, "minItems": 2, "maxItems": 2 },
+            "neg": { "$ref": "#/$defs/Num" },
+            "ref": { "$ref": "#/$defs/Name" },
+            "code": { "$ref": "#/$defs/HookName" }
+          }
+        }
+      ]
+    },
+
+    "Condition": {
+      "oneOf": [
+        { "type": "boolean" },
+        {
+          "type": "object", "minProperties": 1, "maxProperties": 1, "additionalProperties": false,
+          "properties": {
+            "all": { "type": "array", "items": { "$ref": "#/$defs/Condition" }, "minItems": 1 },
+            "any": { "type": "array", "items": { "$ref": "#/$defs/Condition" }, "minItems": 1 },
+            "not": { "$ref": "#/$defs/Condition" },
+            "eq": { "$ref": "#/$defs/NumPair" },
+            "gte": { "$ref": "#/$defs/NumPair" },
+            "gt": { "$ref": "#/$defs/NumPair" },
+            "lte": { "$ref": "#/$defs/NumPair" },
+            "lt": { "$ref": "#/$defs/NumPair" },
+            "at": {
+              "type": "object", "required": ["survivor", "location"], "additionalProperties": false,
+              "properties": { "survivor": { "$ref": "#/$defs/SurvivorSel" }, "location": { "$ref": "#/$defs/LocRefOrMany" } }
+            },
+            "exists": { "$ref": "#/$defs/Selector" },
+            "action": { "oneOf": [{ "$ref": "#/$defs/ActionKind" }, { "type": "array", "items": { "$ref": "#/$defs/ActionKind" }, "minItems": 1 }] },
+            "actor": { "$ref": "#/$defs/SurvivorFilter" },
+            "exposureFace": { "oneOf": [{ "$ref": "#/$defs/Face" }, { "type": "array", "items": { "$ref": "#/$defs/Face" }, "minItems": 1 }] },
+            "searchFound": { "$ref": "#/$defs/CardFilter" },
+            "eventIs": {
+              "type": "object", "additionalProperties": false,
+              "properties": {
+                "survivor": { "$ref": "#/$defs/SurvivorFilter" },
+                "seat": { "$ref": "#/$defs/SeatRef" },
+                "location": { "$ref": "#/$defs/LocRefOrMany" },
+                "cause": { "type": "string" },
+                "face": { "$ref": "#/$defs/Face" },
+                "reason": { "enum": ["move", "kill", "card"] }
+              }
+            },
+            "controls": {
+              "type": "object", "additionalProperties": false,
+              "properties": { "seat": { "$ref": "#/$defs/SeatRef" }, "survivor": { "$ref": "#/$defs/SurvivorFilter" } }
+            },
+            "isActiveSeat": { "$ref": "#/$defs/SeatRef" },
+            "isExiled": { "$ref": "#/$defs/SeatRef" },
+            "mainObjectiveComplete": { "type": "boolean" },
+            "gameEndedBy": { "enum": ["morale", "rounds", "main", "card"] },
+            "original": { "const": true },
+            "originalPrivate": { "const": true },
+            "code": { "$ref": "#/$defs/HookName" }
+          }
+        }
+      ]
+    },
+    "NumPair": { "type": "array", "items": { "$ref": "#/$defs/Num" }, "minItems": 2, "maxItems": 2 },
+
+    "Duration": {
+      "oneOf": [
+        { "enum": ["instant", "whileEquipped", "whileAlive", "restOfGame"] },
+        {
+          "type": "object", "required": ["until"], "additionalProperties": false,
+          "properties": {
+            "until": { "enum": ["endOfTurn", "endOfRound", "startOfNextTurnOf"] },
+            "offset": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "seat": { "$ref": "#/$defs/SeatRef" }
+          }
+        }
+      ]
+    },
+    "Scope": {
+      "type": "object", "minProperties": 1, "maxProperties": 1, "additionalProperties": false,
+      "properties": {
+        "survivors": { "$ref": "#/$defs/SurvivorFilter" },
+        "seat": { "$ref": "#/$defs/SeatRef" },
+        "location": { "$ref": "#/$defs/LocRefOrMany" },
+        "self": { "const": true },
+        "global": { "const": true }
+      }
+    },
+    "Modifier": {
+      "type": "object", "minProperties": 1, "maxProperties": 1, "additionalProperties": false,
+      "properties": {
+        "exposureSkip": {
+          "type": "object", "required": ["reasons"], "additionalProperties": false,
+          "properties": { "reasons": { "type": "array", "items": { "enum": ["move", "kill", "card"] }, "minItems": 1 } }
+        },
+        "exposureFaceReplace": {
+          "type": "object", "required": ["from", "to"], "additionalProperties": false,
+          "properties": { "from": { "$ref": "#/$defs/Face" }, "to": { "$ref": "#/$defs/Face" } }
+        },
+        "searchExtra": {
+          "type": "object", "additionalProperties": false,
+          "properties": { "look": { "type": "integer", "minimum": 0 }, "keep": { "type": "integer", "minimum": 0 } }
+        },
+        "woundsToDie": { "type": "integer", "minimum": 1 },
+        "forbidAction": { "type": "array", "items": { "$ref": "#/$defs/ActionKind" }, "minItems": 1 },
+        "attackValue": { "$ref": "#/$defs/StatMod" },
+        "searchValue": { "$ref": "#/$defs/StatMod" },
+        "afterAction": {
+          "type": "object", "required": ["action", "effect"], "additionalProperties": false,
+          "properties": {
+            "action": { "oneOf": [{ "$ref": "#/$defs/ActionKind" }, { "type": "array", "items": { "$ref": "#/$defs/ActionKind" } }] },
+            "effect": { "$ref": "#/$defs/Effect" }
+          }
+        },
+        "foodNeeded": { "$ref": "#/$defs/Num" },
+        "code": { "$ref": "#/$defs/HookName" }
+      }
+    },
+    "StatMod": {
+      "type": "object", "minProperties": 1, "maxProperties": 1, "additionalProperties": false,
+      "properties": { "delta": { "type": "integer" }, "set": { "type": "integer", "minimum": 1, "maximum": 6 } }
+    },
+    "Cost": {
+      "type": "object", "minProperties": 1, "maxProperties": 1, "additionalProperties": false,
+      "properties": {
+        "die": {
+          "oneOf": [
+            { "const": "any" },
+            { "type": "object", "required": ["min"], "additionalProperties": false,
+              "properties": { "min": { "type": "integer", "minimum": 1, "maximum": 6 } } }
+          ]
+        },
+        "discard": { "$ref": "#/$defs/CardsSel" },
+        "food": { "type": "integer", "minimum": 1 },
+        "removeSelf": { "const": true },
+        "all": { "type": "array", "items": { "$ref": "#/$defs/Cost" }, "minItems": 2 }
+      }
+    },
+
+    "Ability": {
+      "type": "object",
+      "required": ["id", "timing", "mech"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "timing": { "enum": ["action", "play", "passive", "trigger"] },
+        "mech": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "cost": { "$ref": "#/$defs/Cost" },
+        "limit": { "$ref": "#/$defs/Limit" },
+        "where": { "$ref": "#/$defs/LocRefOrMany" },
+        "on": { "$ref": "#/$defs/EventName" },
+        "when": { "$ref": "#/$defs/Condition" },
+        "requires": { "$ref": "#/$defs/Condition" },
+        "optional": { "type": "boolean" },
+        "effect": { "$ref": "#/$defs/Effect" },
+        "modifier": { "$ref": "#/$defs/Modifier" },
+        "scope": { "$ref": "#/$defs/Scope" },
+        "aiHint": { "type": "string", "maxLength": 120 }
+      },
+      "allOf": [
+        { "if": { "properties": { "timing": { "const": "passive" } } },
+          "then": { "required": ["modifier"], "properties": { "effect": false } } },
+        { "if": { "properties": { "timing": { "const": "trigger" } } },
+          "then": { "required": ["on", "effect"] } },
+        { "if": { "properties": { "timing": { "enum": ["action", "play"] } } },
+          "then": { "required": ["effect"], "properties": { "on": false, "modifier": false } } }
+      ]
+    },
+
+    "Option": {
+      "type": "object", "required": ["id", "effect"], "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "label": { "type": "string", "maxLength": 60 },
+        "requires": { "$ref": "#/$defs/Condition" },
+        "effect": { "$ref": "#/$defs/Effect" }
+      }
+    },
+
+    "Effect": {
+      "type": "object", "minProperties": 1, "maxProperties": 1, "additionalProperties": false,
+      "properties": {
+        "seq": { "type": "array", "items": { "$ref": "#/$defs/Effect" }, "minItems": 1 },
+        "if": {
+          "type": "object", "required": ["cond", "then"], "additionalProperties": false,
+          "properties": { "cond": { "$ref": "#/$defs/Condition" }, "then": { "$ref": "#/$defs/Effect" }, "else": { "$ref": "#/$defs/Effect" } }
+        },
+        "choice": {
+          "type": "object", "required": ["options"], "additionalProperties": false,
+          "properties": {
+            "who": { "$ref": "#/$defs/SeatRef" },
+            "decision": { "enum": ["crossroadsOption", "objectiveChoice", "itemTarget"] },
+            "options": { "type": "array", "items": { "$ref": "#/$defs/Option" }, "minItems": 2 }
+          }
+        },
+        "choose": {
+          "type": "object", "required": ["as", "from"], "additionalProperties": false,
+          "properties": {
+            "as": { "$ref": "#/$defs/Name" },
+            "who": { "$ref": "#/$defs/SeatRef" },
+            "from": { "anyOf": [{ "$ref": "#/$defs/Selector" }, { "$ref": "#/$defs/LocRef" }] },
+            "decision": { "enum": ["itemTarget", "objectiveChoice"] }
+          }
+        },
+        "optional": {
+          "type": "object", "required": ["effect"], "additionalProperties": false,
+          "properties": { "who": { "$ref": "#/$defs/SeatRef" }, "effect": { "$ref": "#/$defs/Effect" } }
+        },
+        "forEach": {
+          "type": "object", "required": ["in", "effect"], "additionalProperties": false,
+          "properties": { "in": { "$ref": "#/$defs/Selector" }, "as": { "$ref": "#/$defs/Name" }, "effect": { "$ref": "#/$defs/Effect" } }
+        },
+        "repeat": {
+          "type": "object", "required": ["times", "effect"], "additionalProperties": false,
+          "properties": { "times": { "$ref": "#/$defs/Num" }, "effect": { "$ref": "#/$defs/Effect" } }
+        },
+        "rollD6": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "as": { "$ref": "#/$defs/Name" },
+            "purpose": { "type": "string", "pattern": "^[a-z][a-zA-Z]*$" },
+            "atLeast": { "type": "integer", "minimum": 1, "maximum": 6 },
+            "atMost": { "type": "integer", "minimum": 1, "maximum": 6 },
+            "then": { "$ref": "#/$defs/Effect" },
+            "else": { "$ref": "#/$defs/Effect" }
+          }
+        },
+        "vote": {
+          "type": "object", "required": ["options"], "additionalProperties": false,
+          "properties": { "options": { "type": "array", "items": { "$ref": "#/$defs/Option" }, "minItems": 2 } }
+        },
+        "nothing": { "const": true },
+        "code": { "$ref": "#/$defs/HookName" },
+
+        "morale": { "$ref": "#/$defs/Num" },
+        "food": { "$ref": "#/$defs/Num" },
+        "starvation": { "$ref": "#/$defs/Num" },
+        "cleanWaste": { "$ref": "#/$defs/Num" },
+        "helpless": {
+          "type": "object", "minProperties": 1, "additionalProperties": false,
+          "properties": { "add": { "$ref": "#/$defs/Num" }, "kill": { "$ref": "#/$defs/Num" } }
+        },
+        "endGame": { "const": true },
+
+        "addZombies": {
+          "type": "object", "required": ["at", "n"], "additionalProperties": false,
+          "properties": { "at": { "$ref": "#/$defs/LocRefOrMany" }, "n": { "$ref": "#/$defs/Num" } }
+        },
+        "killZombies": {
+          "type": "object", "required": ["at", "n", "exposure"], "additionalProperties": false,
+          "properties": {
+            "at": { "$ref": "#/$defs/LocRef" }, "n": { "$ref": "#/$defs/Num" }, "upTo": { "type": "boolean" },
+            "exposure": { "$ref": "#/$defs/ExposureMode" }, "by": { "$ref": "#/$defs/SurvivorSel" }
+          }
+        },
+        "removeZombies": {
+          "type": "object", "required": ["at", "n"], "additionalProperties": false,
+          "properties": { "at": { "$ref": "#/$defs/LocRefOrMany" }, "n": { "$ref": "#/$defs/Num" }, "upTo": { "type": "boolean" } }
+        },
+        "moveZombies": {
+          "type": "object", "required": ["to", "n"], "additionalProperties": false,
+          "properties": { "from": { "$ref": "#/$defs/LocRefOrMany" }, "to": { "$ref": "#/$defs/LocRef" },
+                          "n": { "$ref": "#/$defs/Num" }, "upTo": { "type": "boolean" } }
+        },
+        "barricade": {
+          "type": "object", "required": ["at", "n"], "additionalProperties": false,
+          "properties": { "at": { "$ref": "#/$defs/LocRef" }, "n": { "$ref": "#/$defs/Num" } }
+        },
+        "removeBarricade": {
+          "type": "object", "required": ["at", "n"], "additionalProperties": false,
+          "properties": { "at": { "$ref": "#/$defs/LocRefOrMany" }, "n": { "$ref": "#/$defs/Num" } }
+        },
+        "noise": {
+          "type": "object", "required": ["at", "delta"], "additionalProperties": false,
+          "properties": { "at": { "$ref": "#/$defs/LocRefOrMany" }, "delta": { "$ref": "#/$defs/Num" } }
+        },
+
+        "wound": {
+          "type": "object", "required": ["target"], "additionalProperties": false,
+          "properties": { "target": { "$ref": "#/$defs/SurvivorSel" }, "n": { "$ref": "#/$defs/Num" },
+                          "kind": { "enum": ["wound", "frostbite"] } }
+        },
+        "heal": {
+          "type": "object", "required": ["target"], "additionalProperties": false,
+          "properties": { "target": { "$ref": "#/$defs/SurvivorSel" }, "n": { "$ref": "#/$defs/Num" },
+                          "kinds": { "type": "array", "items": { "enum": ["wound", "frostbite"] }, "minItems": 1 } }
+        },
+        "kill": {
+          "type": "object", "required": ["target"], "additionalProperties": false,
+          "properties": { "target": { "$ref": "#/$defs/SurvivorSel" }, "cause": { "enum": ["card", "removed"] } }
+        },
+        "rollExposure": {
+          "type": "object", "required": ["target"], "additionalProperties": false,
+          "properties": { "target": { "$ref": "#/$defs/SurvivorSel" }, "times": { "$ref": "#/$defs/Num" } }
+        },
+        "moveSurvivor": {
+          "type": "object", "required": ["target", "to"], "additionalProperties": false,
+          "properties": { "target": { "$ref": "#/$defs/SurvivorSel" }, "to": { "$ref": "#/$defs/LocRef" },
+                          "exposure": { "type": "boolean" }, "usesMove": { "type": "boolean" } }
+        },
+        "addSurvivor": {
+          "type": "object", "additionalProperties": false,
+          "properties": { "seat": { "$ref": "#/$defs/SeatRef" }, "named": { "$ref": "#/$defs/ContentId" },
+                          "n": { "$ref": "#/$defs/Num" }, "drawChoose": { "type": "integer", "minimum": 1 } }
+        },
+
+        "draw": {
+          "type": "object", "required": ["from", "n"], "additionalProperties": false,
+          "properties": { "from": { "oneOf": [{ "$ref": "#/$defs/LocRef" }, { "const": "starting" }] },
+                          "n": { "$ref": "#/$defs/Num" }, "seat": { "$ref": "#/$defs/SeatRef" } }
+        },
+        "reveal": {
+          "type": "object", "required": ["deck", "n", "as"], "additionalProperties": false,
+          "properties": { "deck": { "$ref": "#/$defs/LocRef" }, "n": { "$ref": "#/$defs/Num" }, "as": { "$ref": "#/$defs/Name" },
+                          "public": { "type": "boolean" } }
+        },
+        "peek": {
+          "type": "object", "required": ["deck", "n"], "additionalProperties": false,
+          "properties": { "deck": { "$ref": "#/$defs/LocRef" }, "n": { "$ref": "#/$defs/Num" }, "who": { "$ref": "#/$defs/SeatRef" },
+                          "then": { "enum": ["returnSameOrder", "chooseOrder", "chooseTopOrBottom"] } }
+        },
+        "take": {
+          "type": "object", "required": ["cards", "to"], "additionalProperties": false,
+          "properties": { "cards": { "$ref": "#/$defs/CardSel" }, "to": { "enum": ["hand", "waste", "outOfGame", "deckBottom", "deckTop"] },
+                          "seat": { "$ref": "#/$defs/SeatRef" } }
+        },
+        "discard": {
+          "type": "object", "required": ["cards"], "additionalProperties": false,
+          "properties": { "cards": { "$ref": "#/$defs/CardSel" }, "to": { "enum": ["waste", "outOfGame"] } }
+        },
+        "giveCards": {
+          "type": "object", "required": ["cards", "to"], "additionalProperties": false,
+          "properties": { "cards": { "$ref": "#/$defs/CardSel" }, "to": { "$ref": "#/$defs/SeatRef" } }
+        },
+        "shuffleDeck": { "$ref": "#/$defs/LocRef" },
+
+        "dieBonus": {
+          "type": "object", "required": ["dice", "n"], "additionalProperties": false,
+          "properties": { "dice": { "$ref": "#/$defs/DiceSel" }, "n": { "$ref": "#/$defs/Num" } }
+        },
+        "gainDice": {
+          "type": "object", "required": ["n"], "additionalProperties": false,
+          "properties": { "seat": { "$ref": "#/$defs/SeatRef" }, "n": { "$ref": "#/$defs/Num" } }
+        },
+        "loseDice": {
+          "type": "object", "required": ["n"], "additionalProperties": false,
+          "properties": { "seat": { "$ref": "#/$defs/SeatRef" }, "n": { "$ref": "#/$defs/Num" }, "pick": { "$ref": "#/$defs/Pick" } }
+        },
+
+        "lasting": {
+          "type": "object", "required": ["duration", "modifier"], "additionalProperties": false,
+          "properties": { "id": { "type": "string", "pattern": "^[a-z0-9-]+$" }, "duration": { "$ref": "#/$defs/Duration" },
+                          "scope": { "$ref": "#/$defs/Scope" }, "modifier": { "$ref": "#/$defs/Modifier" } }
+        },
+        "progress": {
+          "type": "object", "required": ["counter", "delta"], "additionalProperties": false,
+          "properties": { "counter": { "$ref": "#/$defs/Name" }, "delta": { "$ref": "#/$defs/Num" } }
+        }
+      }
+    }
+  }
+}

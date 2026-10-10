@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/crisis.schema.json",
+  "title": "Crisis card (spec 20 §6)",
+  "type": "object",
+  "required": ["id", "name", "prevent", "fail", "mech", "text", "status", "src"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^crisis\\.[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "prevent": { "enum": ["weapon", "fuel", "education", "food", "medicine", "tool"] },
+    "onReveal": { "$ref": "effect.schema.json#/$defs/Effect" },
+    "fail": { "$ref": "effect.schema.json#/$defs/Effect" },
+    "overPrevent": { "$ref": "effect.schema.json#/$defs/Effect", "description": "replaces the default {morale: 1} at total >= players + 2" },
+    "mech": { "type": "string", "minLength": 3, "maxLength": 200 },
+    "text": { "type": "string", "minLength": 3, "maxLength": 240 },
+    "status": { "$ref": "effect.schema.json#/$defs/Status" },
+    "src": { "$ref": "effect.schema.json#/$defs/SrcMap" },
+    "notes": { "type": "string" }
+  }
+}

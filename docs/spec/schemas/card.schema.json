@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/card.schema.json",
+  "title": "Item card: starting or location deck (spec 20 §5)",
+  "type": "object",
+  "required": ["id", "name", "deck", "copies", "symbol", "equip", "outsider", "abilities", "mech", "text", "status", "src"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^item\\.(starting|police|grocery|school|gas|library|hospital)\\.[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "deck": { "enum": ["starting", "police", "grocery", "school", "gas", "library", "hospital"] },
+    "copies": { "type": "integer", "minimum": 1, "maximum": 25 },
+    "symbol": { "$ref": "effect.schema.json#/$defs/Symbol" },
+    "equip": { "type": "boolean" },
+    "outsider": { "type": "boolean" },
+    "design": { "type": "string", "pattern": "^[a-z0-9-]+$", "description": "art key shared by identical designs in several decks" },
+    "abilities": { "type": "array", "items": { "$ref": "effect.schema.json#/$defs/Ability" }, "minItems": 1, "maxItems": 3 },
+    "mech": { "type": "string", "minLength": 3, "maxLength": 200 },
+    "text": { "type": "string", "minLength": 3, "maxLength": 240 },
+    "status": { "$ref": "effect.schema.json#/$defs/Status" },
+    "src": { "$ref": "effect.schema.json#/$defs/SrcMap" },
+    "notes": { "type": "string" }
+  },
+  "allOf": [
+    { "if": { "properties": { "outsider": { "const": true } } }, "then": { "properties": { "symbol": { "const": "survivor" } } } },
+    { "if": { "properties": { "deck": { "const": "starting" } } }, "then": { "properties": { "outsider": { "const": false } } } }
+  ]
+}

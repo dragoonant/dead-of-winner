@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/objective.schema.json",
+  "title": "Objective card side: main, secret, betrayal or exiled (spec 20 §8, spec 11)",
+  "oneOf": [
+    { "$ref": "#/$defs/Main" },
+    { "$ref": "#/$defs/Secret" },
+    { "$ref": "#/$defs/Betrayal" },
+    { "$ref": "#/$defs/Exiled" }
+  ],
+  "$defs": {
+    "Common": {
+      "type": "object",
+      "required": ["id", "kind", "name", "mech", "text", "status", "src"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["main", "secret", "betrayal", "exiled"] },
+        "name": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "mech": { "type": "string", "minLength": 3, "maxLength": 300 },
+        "text": { "type": "string", "minLength": 3, "maxLength": 600 },
+        "status": { "$ref": "effect.schema.json#/$defs/Status" },
+        "src": { "$ref": "effect.schema.json#/$defs/SrcMap" },
+        "notes": { "type": "string" },
+        "coop": { "type": "boolean", "description": "false = remove in the co-op variant" }
+      }
+    },
+    "Main": {
+      "type": "object",
+      "allOf": [{ "$ref": "#/$defs/Common" }],
+      "required": ["side", "pairId", "time", "setup", "complete"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^main\\.[a-z0-9-]+(\\.hardcore)?$" },
+        "kind": { "const": "main" },
+        "side": { "enum": ["normal", "hardcore"] },
+        "pairId": { "type": "string", "pattern": "^main\\.[a-z0-9-]+$" },
+        "time": { "enum": ["short", "medium", "long"] },
+        "setup": {
+          "type": "object", "required": ["morale", "rounds"], "additionalProperties": false,
+          "properties": {
+            "morale": { "type": "integer", "minimum": 1, "maximum": 20 },
+            "rounds": { "type": "integer", "minimum": 1, "maximum": 12 },
+            "food": { "type": "integer", "minimum": 0 },
+            "helpless": { "type": "integer", "minimum": 0 },
+            "zombies": {
+              "type": "object", "additionalProperties": false,
+              "properties": {
+                "colony": { "type": "integer", "minimum": 0 },
+                "eachNonColony": { "type": "integer", "minimum": 0 },
+                "perLocation": {
+                  "type": "object", "additionalProperties": false,
+                  "patternProperties": { "^(police|grocery|school|gas|library|hospital)$": { "type": "integer", "minimum": 0 } }
+                }
+              }
+            },
+            "effect": { "$ref": "effect.schema.json#/$defs/Effect" }
+          }
+        },
+        "progress": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$" },
+          "additionalProperties": {
+            "type": "object", "required": ["initial"], "additionalProperties": false,
+            "properties": { "initial": { "type": "integer" }, "label": { "type": "string", "maxLength": 30 } }
+          }
+        },
+        "hooks": { "type": "array", "items": { "$ref": "effect.schema.json#/$defs/Ability" } },
+        "complete": { "$ref": "effect.schema.json#/$defs/Condition" },
+        "target": { "$ref": "effect.schema.json#/$defs/Num", "description": "UI: the number 'complete' compares against" }
+      }
+    },
+    "Secret": {
+      "type": "object",
+      "allOf": [{ "$ref": "#/$defs/Common" }],
+      "required": ["requiresMain", "condition", "isBetrayal"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^secret\\.[a-z0-9-]+$" },
+        "kind": { "const": "secret" },
+        "isBetrayal": { "const": false },
+        "requiresMain": { "type": "boolean" },
+        "condition": { "$ref": "effect.schema.json#/$defs/Condition", "description": "private clause; engine ANDs mainObjectiveComplete when requiresMain" }
+      }
+    },
+    "Betrayal": {
+      "type": "object",
+      "allOf": [{ "$ref": "#/$defs/Common" }],
+      "required": ["condition", "isBetrayal"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^betrayal\\.[a-z0-9-]+$" },
+        "kind": { "const": "betrayal" },
+        "isBetrayal": { "const": true },
+        "hooks": { "type": "array", "items": { "$ref": "effect.schema.json#/$defs/Ability" } },
+        "progress": { "type": "object", "additionalProperties": { "type": "object", "required": ["initial"], "additionalProperties": false, "properties": { "initial": { "type": "integer" }, "label": { "type": "string", "maxLength": 30 } } } },
+        "condition": { "$ref": "effect.schema.json#/$defs/Condition" }
+      }
+    },
+    "Exiled": {
+      "type": "object",
+      "allOf": [{ "$ref": "#/$defs/Common" }],
+      "required": ["condition", "appliesToBetrayal"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^exiled\\.[a-z0-9-]+$" },
+        "kind": { "const": "exiled" },
+        "appliesToBetrayal": { "const": false },
+        "condition": { "$ref": "effect.schema.json#/$defs/Condition" }
+      }
+    }
+  }
+}
