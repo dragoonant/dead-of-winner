@@ -78,6 +78,7 @@
         "id": { "type": "string", "pattern": "^secret\\.[a-z0-9-]+$" },
         "kind": { "const": "secret" },
         "isBetrayal": { "const": false },
+        "hooks": false,
         "requiresMain": { "type": "boolean" },
         "condition": { "$ref": "effect.schema.json#/$defs/Condition", "description": "private clause; engine ANDs mainObjectiveComplete when requiresMain" }
       }
@@ -91,7 +92,7 @@
         "id": { "type": "string", "pattern": "^betrayal\\.[a-z0-9-]+$" },
         "kind": { "const": "betrayal" },
         "isBetrayal": { "const": true },
-        "hooks": { "type": "array", "items": { "$ref": "effect.schema.json#/$defs/Ability" } },
+        "hooks": { "type": "array", "items": { "allOf": [{ "$ref": "effect.schema.json#/$defs/Ability" }, { "not": { "type": "object", "required": ["optional"] } }] } },
         "progress": { "type": "object", "additionalProperties": { "type": "object", "required": ["initial"], "additionalProperties": false, "properties": { "initial": { "type": "integer" }, "label": { "type": "string", "maxLength": 30 } } } },
         "condition": { "$ref": "effect.schema.json#/$defs/Condition" }
       }

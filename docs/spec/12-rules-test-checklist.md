@@ -7,7 +7,7 @@ line here first. IDs are never renumbered or reused; a retired line keeps its ID
 **Line format (parsed by `tools/checklist-coverage.ts`).** One table row per assertion:
 `| <PREFIX>-<NNN> | <Mn> <must|should> | <assertion> | <ref> |`. Regex:
 `^\| ([A-Z]+(?:-[A-Z]+)*-\d{3}) \| (M\d+) (must|should) \|` (multi-part prefixes such as
-`AI-FAIR-002` match). Non-rules prefixes (ARCH, SIM, DSL, DATA, AI, AI-FAIR) are registered in
+`AI-FAIR-002` match). Non-rules prefixes (ARCH, SIM, DSL, DATA, AI, AI-FAIR, UI, E2E, GOLD) are registered in
 "Non-rules prefixes" below and use the same row format. `Mn` is the milestone the test is due in; `must`
 lines fail coverage when uncovered in or after that milestone, `should` lines only warn.
 
@@ -180,6 +180,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | XRD-009 | M1 must | An untriggered card goes to the bottom of the Crossroads deck at end of turn | 10.4.6; 10.10.5 |
 | XRD-010 | M1 must | Triggers are declarative DSL predicates over events (move, search, wound type, location, survivor, start of turn) | 10.10.2 |
 | XRD-011 | M1 must | A Crossroads option that calls a vote opens one `PendingDecision{seat:'all', kind:'vote'}` and resolves the card's data outcome for the result | 10.12.7; 10.10.4; R-CARDVOTE |
+| XRD-012 | M1 must | A triggered Crossroads card whose options are all unavailable does not trigger: it stays held and goes to the bottom of its deck at end of turn | 10.4.6; 10.10.4; A-XRDNONE |
 
 ## CRIS- Crisis
 
@@ -362,6 +363,8 @@ Every VIEW line also runs as the sim leak test on every game (B.4; 60.4).
 | VIEW-016 | M1 must | `GameEnded` reveals every seat's objective(s) to all views | 11 §6.7; 10.13.3 |
 | VIEW-017 | M1 must | Each seat's view is deterministic: same state → same serialization | 10.0.6 |
 | VIEW-018 | M1 must | Events delivered to a seat are filtered the same way as its view (no hidden id in a `CardDrawn` for another seat) | 10.0.6 |
+| VIEW-019 | M1 must | Effects from hidden objectives never reveal their owner to other seats (`lastingForSeat` and `LastingAdded` redact `sourceKey` except for the owner; `ObjectiveProgress` goes only to its seat) | 10.0.6; 11 §6 |
+| VIEW-020 | M1 must | The game seed is not part of any public event (`GameStarted` carries no seed) | 10.0.6; 00.9.5 |
 
 ## Non-rules prefixes
 
@@ -372,11 +375,14 @@ fixes the ID, milestone and strength. Coverage tooling parses these rows with th
 | prefix | owning spec | IDs | default |
 |---|---|---|---|
 | ARCH | `00-architecture.md` §00.11 | ARCH-001..005 | M0 must |
-| SIM | `60-testing.md` §60.4 | SIM-001..010 | M1 must |
+| SIM | `60-testing.md` §60.4 | SIM-001..011 | M1 must |
 | DSL | `21-card-effects-dsl.md` §21.13 | DSL-001..014 | M2 must |
 | DATA | `20-data-schema.md` §20.13 | DATA-001..043 (gaps kept) | M2 must; asset manifest M5 should |
 | AI | `40-ai.md` §40.14 | AI-001..017 | M4 must |
 | AI-FAIR | `40-ai.md` §40.11 | AI-FAIR-002 | M4 must |
+| UI | non-rules (client tests, `tests/ui`) | none registered; exempt from rules coverage | n/a |
+| E2E | non-rules (browser tests, `tests/e2e`) | none registered; exempt from rules coverage | n/a |
+| GOLD | `13-golden-examples.md` | GOLD-nn names a worked example, not an assertion; cited in the ref column | n/a |
 
 A new ID in one of these specs needs a row here first, like any rules line.
 
@@ -404,6 +410,7 @@ A new ID in one of these specs needs a row here first, like any rules line.
 | SIM-008 | M1 must | Assertion as stated for SIM-008 in 60 §60.4 | 60 §60.4 |
 | SIM-009 | M1 must | Assertion as stated for SIM-009 in 60 §60.4 | 60 §60.4 |
 | SIM-010 | M1 must | Assertion as stated for SIM-010 in 60 §60.4 | 60 §60.4 |
+| SIM-011 | M1 must | Exile placement with every non-colony location full of exiled survivors only: the `exilePlacement` context has `overCapacity: true`, `legalActions` is non-empty, and `place` puts the survivor over capacity | 00.4.2; 10.9.7; A-EXILEFULL |
 
 ### DSL- Card-effects DSL
 
@@ -488,7 +495,7 @@ A new ID in one of these specs needs a row here first, like any rules line.
 | MOVE | 7 |
 | EXPO | 12 |
 | CARD | 13 |
-| XRD | 11 |
+| XRD | 12 |
 | CRIS | 14 |
 | COL | 14 |
 | ZOM | 9 |
@@ -497,15 +504,15 @@ A new ID in one of these specs needs a row here first, like any rules line.
 | EXIL | 13 |
 | VOTE | 11 |
 | END | 11 |
-| VIEW | 18 |
-| **rules total** | **252** |
+| VIEW | 20 |
+| **rules total** | **255** |
 | ARCH | 5 |
-| SIM | 10 |
+| SIM | 11 |
 | DSL | 14 |
 | DATA | 22 |
 | AI | 17 |
 | AI-FAIR | 1 |
-| **all total** | **321** |
+| **all total** | **325** |
 
 Clause coverage: every numbered clause of `10` (10.0.1–10.15) and every section of `11` (§1–§8) is
 cited by at least one line above. 10.15 (decision kinds) is covered by the lines that name each

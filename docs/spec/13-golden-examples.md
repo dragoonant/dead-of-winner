@@ -128,8 +128,8 @@ Case a (fails): contributions [fuel ×4, weapon ×1], pick order arbitrary.
 - Step 3 reveals 5 cards one at a time (presentation only): +1 ×4, −1 ×1 → total 3 < 4 → crisis
   fails; morale 6.
 - Events: `CrisisCardRevealed{index, symbol, delta}` ×5 (public; four `delta: 1`, one `delta: -1`),
-  `CrisisResolved{total: 3, players: 4, symbols: {fuel: 4, weapon: 1}, outcome: 'failed'}`,
-  `MoraleChanged{delta: -2, total: 6}`, `CardMoved{from: 'crisis', to: 'removed'}` ×5.
+  `CrisisResolved{crisis: 'test.crisis.fuel', total: 3, players: 4, symbols: {fuel: 4, weapon: 1}, outcome: 'failed'}`,
+  `MoraleChanged{delta: -2, total: 6}`, `CardMoved{from: 'crisis', to: 'removed'}` ×5 (the contributed cards leave the game).
 - Waste pile unchanged (contributed cards leave the game).
 Case b (prevented): [fuel ×5, weapon ×1] → total 4 ≥ 4 → `outcome: 'prevented'`; morale 8.
 Case c (bonus): [fuel ×6] → total 6 ≥ 4 + 2 → `outcome: 'bonus'`, morale 9.

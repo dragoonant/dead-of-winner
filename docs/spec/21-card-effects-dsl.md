@@ -78,7 +78,7 @@ scope?, aiHint?}`
 - 21.3.5 Legality of `action`/`play`: cost payable ∧ limit unused ∧ `where` holds ∧ `requires`
   holds ∧ the effect is **feasible**. Each op defines feasibility (21.7 "Feasible" column) and an
   effect is feasible iff its first op is. `requires` is only for conditions beyond feasibility.
-- 21.3.6 `optional: true` on a trigger asks the controller first with a **confirm** decision; a
+- 21.3.6 `optional: true` is forbidden on secret and betrayal objective hooks (a hidden-role trigger must not reveal itself by prompting; objective.schema.json rejects it). On other triggers it asks the controller first with a **confirm** decision; a
   mandatory trigger just resolves. Confirm (also used by the `optional` op, 21.7) is an ordinary
   `itemTarget` with no new decision kind (Ruling DSL-CONFIRM):
   `{kind:'itemTarget', sourceKey, purpose:'confirm', candidates:['yes'], min:1, max:1, canSkip:true}`.
@@ -134,9 +134,10 @@ list the same names (validator DATA-007).
 | `searchResolved` | `SearchKept` | - | after a search keeps its card(s) | `eventSurvivor` = `survivor`, `eventSeat` = `seat`, `eventLocation` = `location` |
 | `crisisRevealed` | `CrisisRevealed` | - | 10.4.1 | |
 | `crisisResolved` | `CrisisResolved` | - | 10.4.15 | `outcome` |
-| `voteResolved` | `VotesCast` | - | after the ballots and any tiebreak are counted (10.12.4), exile or not | `eventSeat` = `target`, `exiled` |
+| `voteResolved` | `VotesCast` | - | after the ballots and any tiebreak are counted (10.12.4), exile or not | `eventSeat` = `target`, `cause` = `result` |
 | `seatExiled` | `SeatExiled` | - | 10.11 | `eventSeat` = `seat` |
 
+- 21.5.0 The **Binds** column is a reading aid; the authoritative binding map is `DSL_EVENT_BINDINGS` in `src/engine/events.ts` (`eventSurvivor`, `eventLocation`, `eventSeat`, plus `face`/`reason`/`cause` for `eventIs`). Where the table and that map differ, the map wins.
 - 21.5.1 A filter is part of the mapping, not data: data cannot add filters (use `when` with
   `eventIs`, 21.6.4). The dispatcher owns the filters; this table is their spec.
 - 21.5.2 DATA-007 (spec 20.13) checks: the three name lists are equal; every name has a
@@ -177,7 +178,7 @@ Num args accept any Num (21.9). "Generic" = the 10.0.5 routine the op must call.
 | `forEach` | `{in: Selector, as?, effect}` | runs effect per selected item (`as` default `each`) in seat order, then influence | always |
 | `repeat` | `{times, effect}` | | always |
 | `rollD6` | `{as?, purpose?, atLeast?, atMost?, then?, else?}` | seeded d6; `then` if in range | always |
-| `vote` | `{options:[Option]}` | `PendingDecision{seat:'all', kind:'vote'}` among non-exiled seats; majority option resolves; tie → first player (10.12.5) | always |
+| `vote` | `{options:[Option]}` | `PendingDecision{seat:'all', kind:'vote', purpose:'card', options}` among non-exiled seats; each `Option` is `{id, label?, requires?, effect}` (types.ts); ballots are option ids in one `castVotes{votes: Record<SeatId, BallotChoice>}`; the majority option's `effect` resolves; tie → first player's `voteTiebreak` (10.12.5) | always |
 | `nothing` | `true` | no-op (explicit "nothing happens" option) | always |
 | `code` | hook name | 21.10 | hook's `feasible` |
 | `morale` | Num | add (negative = lose); clamp 0..moraleMax; `checkGameEnd` | always |
@@ -265,10 +266,10 @@ colonySurvivors, foodNeeded, exiledSeats), `{count: Selector}`, `{progress: coun
 
 - 21.10.1 Registry: `src/engine/code-hooks.ts` exports `codeHooks: Record<HookName, CodeHook>`;
   names `<area>.<record-slug>.<what>` (e.g. `survivor.john-price.copy-abilities`).
-- 21.10.2 `CodeHook = {kind: 'effect'|'condition'|'num'|'modifier', feasible?(ctx), run(ctx, api)}`.
+- 21.10.2 `CodeHook` (hooks.ts) is a union on `kind`. Every `run` takes `HookInput = {state, bundle, ctx}`; only `EffectHook.run(input: EffectHookInput, api: EffectApi)` takes `EffectHookInput = HookInput & {rng}` and a `void` api. `ConditionHook.run(input): boolean`, `NumHook.run(input): number`; modifier hooks answer a `ModifierQuery`. `feasible?` is optional on effect hooks.
   `api` exposes only the effect ops of 21.7 plus read-only state queries; a hook may not mutate state
   directly and must call `killSurvivor` / `addZombies` / `rollExposure` for those concepts.
-- 21.10.3 Hooks are pure functions of `(ctx, state, rng)`, deterministic and replayable.
+- 21.10.3 Hooks are deterministic and replayable: pure in `HookInput`, and only effect hooks may draw from `rng`.
 - 21.10.4 DATA-003 checks names both ways. The freeze review (21.12) lists every hook; a hook used by
   3+ cards becomes an op.
 
@@ -368,7 +369,7 @@ there without exposure.
 **E12. Crisis: Blizzard** (R p4, p12): fail → non-exiled survivors cannot move until the end of next
 round; −1 morale. Prevent symbol is a placeholder (Ruling D-BLIZZARD-SYMBOL in spec 20).
 ```json
-{"id": "crisis.blizzard", "name": "Blizzard", "prevent": "fuel",
+{"id": "crisis.blizzard", "name": "Blizzard", "prevent": ["fuel"],
  "fail": {"seq": [
    {"lasting": {"id": "snowed-in", "duration": {"until": "endOfRound", "offset": 1},
                 "scope": {"survivors": {"seat": "any", "exiledSeat": false}}, "modifier": {"forbidAction": ["move"]}}},
@@ -377,7 +378,7 @@ round; −1 morale. Prevent symbol is a placeholder (Ruling D-BLIZZARD-SYMBOL in
 
 **E13. Crisis: Fuel Shortage** (R p4, p12): fail → −2 morale; default over-prevent bonus.
 ```json
-{"id": "crisis.fuel-shortage", "name": "Fuel Shortage", "prevent": "fuel", "fail": {"morale": -2}}
+{"id": "crisis.fuel-shortage", "name": "Fuel Shortage", "prevent": ["fuel"], "fail": {"morale": -2}}
 ```
 
 **E14. Crossroads: Hunted** (R p4): trigger: a move whose exposure roll gave a (non-frostbite) wound.

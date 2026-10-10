@@ -46,15 +46,14 @@ records** of one schema.
 | `src/data/objectives/secret.json` | `objective.schema.json` (Secret) | 24 | all 24 (placeholders allowed) |
 | `src/data/objectives/betrayal.json` | `objective.schema.json` (Betrayal) | 10 | 3 |
 | `src/data/objectives/exiled.json` | `objective.schema.json` (Exiled) | 10 | 1 generic or 10 (11 §7.4) |
-| `src/data/personas/*.json` | `persona.json` (owned by spec 41) | 4–6 | per spec 41 |
+| `src/data/personas/*.json` | `persona.schema.json` (owned by spec 41) | 4–6 | per spec 41 |
 | `src/data/index.ts` | n/a | builds `DataBundle` | |
 | `public/assets/asset-manifest.json` | `asset-manifest.schema.json` (20.15) | 1 per runtime asset | placeholders for every first-slice survivor and symbol |
 
 - 20.2.1 The folder decides the schema; `tools/validate-data.ts` maps folder → schema with the
   table above. The asset manifest is the one file outside `src/data/`; the validator maps it by its
   exact path. It is not part of the `DataBundle` (the engine never sees asset ids).
-- 20.2.2 Path aliases in earlier specs: spec 10.2.5 `data/board.json` = `src/data/core/locations.json`;
-  spec 11 §1.1 and spec 41 `content/...` = `src/data/...`. (Ruling D-PATHS)
+- 20.2.2 All content lives under `src/data/` (specs 10 and 11 use these paths directly; no aliases).
 - 20.2.3 Content batches (M8) add records to these files or add `crossroads/batch-NN.json` files;
   parallel batches in worktrees merge by keeping both sides (CLAUDE.md).
 - 20.2.4 Sources live next to the specs: `docs/spec/sources/<x>-sources.md` with
@@ -149,7 +148,7 @@ Ability records (inside survivors, items, objectives) carry `id`, `timing`, `mec
 ## 20.8 Crises (`crisis.schema.json`; E.4.3; G.5)
 
 - 20.8.1 `{id, name, prevent, onReveal?, fail, overPrevent?, mech, text, status, src}`.
-- 20.8.2 `prevent`: one symbol (not `survivor`, not `none`) (10.1.8).
+- 20.8.2 `prevent`: array of 1-2 distinct `PreventSymbol` values (types.ts; not `survivor`, not `none`) (10.1.8, R-PREVENT2).
 - 20.8.3 `fail`: Effect resolved when `total < players` (10.4.15).
 - 20.8.4 `overPrevent`: replaces the default `{morale: 1}` when `total ≥ players + 2`. Omit for the
   default (Blizzard and Fuel Shortage use the default; G.5 "optional +2 cards for +1 morale").
@@ -178,7 +177,7 @@ Ability records (inside survivors, items, objectives) carry `id`, `timing`, `mec
   (11 §1.3).
 - 20.10.2 Secret: `{id, kind:"secret", isBetrayal:false, requiresMain, condition, …}`. The engine
   evaluates `requiresMain ? mainObjectiveComplete ∧ condition : condition` at game end (11 §4.1, §6).
-- 20.10.3 Betrayal: `{id, kind:"betrayal", isBetrayal:true, condition, hooks?, progress?, …}`.
+- 20.10.3 Betrayal: `{id, kind:"betrayal", isBetrayal:true, condition, hooks?, progress?, …}`. Secret and betrayal objectives never use `optional` on a hook (secret has no `hooks`; betrayal hooks reject `optional`).
   `condition` usually includes `{gameEndedBy: "morale"}` (11 §5.1).
 - 20.10.4 Exiled: `{id, kind:"exiled", appliesToBetrayal:false, condition, …}`; `condition` may use
   `{original: true}` / `{originalPrivate: true}` (11 §7.2).
@@ -274,7 +273,6 @@ allowUnionTypes: true, allErrors: true}`. Each check below is a test ID for `tes
 
 ## Rulings
 
-RULING: D-PATHS content root | All content under `src/data/` (brief C.2); spec 10 `data/board.json` and spec 11/41 `content/` are aliases to be aligned | Brief C.2 layout is the source of truth; Unsourced (project decision)
 RULING: D-TRACKS morale and round track maxima | Placeholder moraleMax 10, roundMax 10 in the colony record | Unsourced; verify from a board photo into locations-sources.md
 RULING: D-NONE cards without a crisis symbol | Symbol `none`; they always score −1 if contributed | Unsourced (fan memory of junk-type cards); verify against location deck lists
 RULING: D-TAGS survivor tags | Tags are inert labels; any rules effect (e.g. an animal that cannot equip) is DSL or a hook on that survivor | Unsourced; keeps one mechanism per concept

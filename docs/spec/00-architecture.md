@@ -134,6 +134,8 @@ non-empty fallbacks, annotations, colony-phase event, event bindings, save talk,
 | `objectiveChoice` | `chooseOption{option}` | DSL `choice`, exiled food-card mode (Ruling A-OBJCHOICE) |
 | `itemTarget` | `chooseTargets{targets}`, `skip` | DSL `choose`/selectors with `chooser`, `optional` (21.4.3; 21.3.6) |
 
+  Encodings mirrored from 21: a confirm ("may") is `itemTarget{purpose:'confirm', candidates:['yes'], min:1, max:1, canSkip:true}`, answered `chooseTargets['yes']` or `skip`. Peek ordering uses `itemTarget{purpose:'peekOrder'}` picks from the top down (n-1 picks), and a top/bottom peek choice is an `objectiveChoice` with options top/bottom (bottom keeps current order). The trigger dispatcher applies the 21.5 filters: `ColonyStepStarted` only for step `payFood`, and `SurvivorKilled` only where the survivor is non-null.
+
 - 00.4.4 Simultaneous decisions: the client/sim asks each answerer's decider with its own view; each
   returns a `Ballot{seat, vote}`; `collectBallots(answerers, ballots)` builds the one `castVotes`
   passed to `step`. A `Ballot` is never a `step` input. No view shows another seat's ballot before
@@ -315,7 +317,7 @@ seed in `GameStarted` (type-level now; the sim leak scan joins in M1).
 
 ## Rulings
 
-RULING: A-DICE dice visibility | Every seat's dice values are public in views | Unsourced: dice are rolled openly at the table and C.4's hidden list omits them; 50.6.1 "count (others)" is overridden here, spec 50 to align
+RULING: A-DICE dice visibility | Every seat's dice values are public in views | Unsourced: dice are rolled openly at the table and C.4's hidden list omits them; 50.6.1 is aligned with this ruling (closed)
 RULING: A-DIEREF die references | Actions name a Die.id; legalActions lists one action per distinct die value (lowest id) | Unsourced (project decision): identical values are interchangeable; keeps legal lists small for bots
 RULING: A-CONTRIB contributing several cards | One card per `contribute` action, repeatable within the turn | Unsourced: 10.6.2 "any number" is preserved by repetition; avoids exponential subset enumeration
 RULING: A-CRISISKIND crisisContribution decision | Kept in the frozen kind list but reserved for card effects that ask for an out-of-turn contribution; in-turn contribution is the `contribute` turn action | Unsourced: C.4 lists the kind; 10.15 places it inside turnAction

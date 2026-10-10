@@ -354,17 +354,21 @@ for the round. Every die action names one survivor.
   non-exiled seat. A seat can never target itself. (R p11 "cannot initiate a vote to exile
   themselves"; [RP]; [OG]; Ruling R-SELFVOTE)
 - 10.12.2 Before votes, table talk may happen (persona lines, spec 41); this adds no decision.
-- 10.12.3 Every non-exiled seat, the caller and the target included, votes yes/no simultaneously:
-  one `PendingDecision{seat:'all', kind:'vote'}`; answers are collected privately and submitted as
-  one `castVotes` action. No seat's view shows another's vote before all are cast. (C.4; [UBG])
-- 10.12.4 More yes than no → the target is exiled (10.11). More no → nothing.
+- 10.12.3 Every non-exiled seat, the caller and the target included, votes simultaneously:
+  `VoteCalled{purpose:'exile', caller, target, sourceKey:null, options}` opens one
+  `PendingDecision{seat:'all', kind:'vote', purpose:'exile', options:[{id:'yes'},{id:'no'}], voters}`;
+  a ballot is an option id, and answers are collected privately and submitted as one
+  `castVotes{votes: Record<SeatId, optionId>}` action. No seat's view shows another's vote before all are cast. (C.4; [UBG])
+- 10.12.4 The result is a `VoteRecord` (`ballots`, `tiebreak`, `result`, `exiled`). More yes than no → the target is exiled (10.11). More no → nothing.
 - 10.12.5 Tie → the first player decides: the outcome equals the first player's vote; if the first
   player is exiled (did not vote), it answers a `voteTiebreak` decision. ([UBG]; Ruling R-VOTETIE)
 - 10.12.6 Votes are revealed publicly after resolution.
 - 10.12.7 **Card votes.** A Crossroads (or other) card that calls a vote uses the same ballot: one
-  `PendingDecision{seat:'all', kind:'vote'}` collected as one `castVotes` (`VotesCast{purpose:
-  'card'}`); every non-exiled seat votes; ties follow 10.12.5 (first player); votes are revealed
-  after resolution (10.12.6). The card's data names the two outcomes (yes/no map to them) and what each does; nobody is exiled
+  `PendingDecision{seat:'all', kind:'vote', purpose:'card'}` whose `options` are the card's own
+  option ids (each `{id, label?}`), with `sourceKey`/`sourceCard` naming the card op, collected as
+  one `castVotes` (`VotesCast{purpose:'card', result: <winning option id>}`); every non-exiled seat
+  votes; ties follow 10.12.5 (first player); votes are revealed
+  after resolution (10.12.6). The card's data defines each option id and what it does (the winning option id is `result`); nobody is exiled
   unless the card says so. A card vote is not the active seat's once-per-turn exile vote
   (10.12.1). (R p15; [RP] "a crossroads-called vote"; [OG] Voting; Ruling R-CARDVOTE)
 

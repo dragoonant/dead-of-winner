@@ -8,7 +8,7 @@
   "properties": {
     "id": { "type": "string", "pattern": "^crisis\\.[a-z0-9-]+$" },
     "name": { "type": "string", "minLength": 1, "maxLength": 40 },
-    "prevent": { "enum": ["weapon", "fuel", "education", "food", "medicine", "tool"] },
+    "prevent": { "type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": { "enum": ["weapon", "fuel", "education", "food", "medicine", "tool"] }, "description": "PreventSymbol[] (types.ts): 1-2 symbols; a card matching either scores +1" },
     "onReveal": { "$ref": "effect.schema.json#/$defs/Effect" },
     "fail": { "$ref": "effect.schema.json#/$defs/Effect" },
     "overPrevent": { "$ref": "effect.schema.json#/$defs/Effect", "description": "replaces the default {morale: 1} at total >= players + 2" },

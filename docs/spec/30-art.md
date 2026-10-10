@@ -161,8 +161,8 @@ write prompts, manifests and wiring code, and must stop and hand off at every `[
   ```
   `path` is relative to `public/assets/`. `fallback` is required for kinds `figure`, `zombie`,
   `prop`, `board`, `location`.
-- 30.8.3 `validate:data` checks: every id referenced by data (survivor `art`, icon ids) exists in
-  the manifest; every `path` exists on disk unless `status` is `placeholder`; `tris` ≤ 7000 for
+- 30.8.3 `validate:data` checks: every asset id derived from data exists in the manifest (Ruling D-ARTID in 20:
+  the id derives from the record id, also `icon.<symbol>` and `location.<id>`; survivors carry no `art` field); every `path` exists on disk unless `status` is `placeholder`; `tris` ≤ 7000 for
   `figure`, `zombie`, `prop`; no `path` under `docs/sources/`. The JSON Schema lives at
   `docs/spec/schemas/asset-manifest.schema.json` (owned by spec `20`).
 - 30.8.4 Audio uses its own manifest (30.9.2); the two never overlap ids.
