@@ -1,0 +1,349 @@
+[
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.remorse",
+    "name": "Remorse",
+    "type": "exiled",
+    "requiresMain": true,
+    "complete": {
+      "test": "handHasSymbol",
+      "subject": "holder",
+      "symbol": "medicine",
+      "value": 4
+    },
+    "betrayer": {
+      "firstCondition": {
+        "test": "handAtLeast",
+        "subject": "holder",
+        "value": 10
+      }
+    },
+    "text": {
+      "goal": "The colony pulls through and you hold at least four medicine cards.",
+      "betrayer": "Your first demand becomes a hand of at least ten cards."
+    },
+    "sources": {
+      "complete": "BGG ludopedia-51112",
+      "requiresMain": "BGG ludopedia-51112",
+      "betrayer.firstCondition": "BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 1"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.atonement",
+    "name": "Atonement",
+    "type": "exiled",
+    "requiresMain": true,
+    "complete": {
+      "code": "rule.objective.mainComplete"
+    },
+    "betrayer": {
+      "firstCondition": {
+        "all": [
+          {
+            "test": "handHasSymbol",
+            "subject": "holder",
+            "symbol": "fuel",
+            "value": 1
+          },
+          {
+            "test": "handHasSymbol",
+            "subject": "holder",
+            "symbol": "food",
+            "value": 1
+          },
+          {
+            "test": "handHasSymbol",
+            "subject": "holder",
+            "symbol": "medicine",
+            "value": 1
+          },
+          {
+            "test": "handHasSymbol",
+            "subject": "holder",
+            "symbol": "tool",
+            "value": 1
+          }
+        ]
+      }
+    },
+    "text": {
+      "goal": "The colony pulls through.",
+      "betrayer": "Your first demand becomes one each of fuel, food, medicine and tool cards in your hand."
+    },
+    "sources": {
+      "complete": "BGG ludopedia-51112",
+      "requiresMain": "BGG ludopedia-51112",
+      "betrayer.firstCondition": "BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 2"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.new-friends",
+    "name": "New Friends",
+    "type": "exiled",
+    "requiresMain": true,
+    "complete": {
+      "code": "rule.group-size.mostSurvivors",
+      "params": {
+        "margin": 1
+      }
+    },
+    "betrayer": {
+      "firstCondition": {
+        "code": "rule.location-deck.emptyAtLeast",
+        "params": {
+          "n": 1
+        }
+      }
+    },
+    "text": {
+      "goal": "The colony pulls through and your group has more survivors than any other player's.",
+      "betrayer": "Your first demand becomes at least one location with an emptied item deck."
+    },
+    "sources": {
+      "complete": "PHOTO es-nuevos-amigos; BGG ludopedia-51112",
+      "requiresMain": "PHOTO es-nuevos-amigos; BGG ludopedia-51112",
+      "betrayer.firstCondition": "PHOTO es-nuevos-amigos; BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 3 (D1)"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.shelter",
+    "name": "Shelter",
+    "type": "exiled",
+    "requiresMain": false,
+    "complete": {
+      "code": "rule.locations.barricadedAtLeast",
+      "params": {
+        "locations": 3,
+        "barricades": 2
+      }
+    },
+    "betrayer": {
+      "firstCondition": {
+        "code": "rule.seat.mostEquippedWeapons"
+      }
+    },
+    "text": {
+      "goal": "At least three locations each carry two or more barricades.",
+      "betrayer": "Your first demand becomes carrying more equipped weapons than any other player."
+    },
+    "sources": {
+      "complete": "BGG ludopedia-51112",
+      "requiresMain": "BGG ludopedia-51112",
+      "betrayer.firstCondition": "BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 4"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.south",
+    "name": "South",
+    "type": "exiled",
+    "requiresMain": true,
+    "complete": {
+      "test": "handHasSymbol",
+      "subject": "holder",
+      "symbol": "fuel",
+      "value": 4
+    },
+    "betrayer": {
+      "firstCondition": {
+        "code": "rule.foreign-survivors.woundedAtLeast",
+        "params": {
+          "n": 4
+        }
+      }
+    },
+    "text": {
+      "goal": "The colony pulls through and you hold at least four fuel cards.",
+      "betrayer": "Your first demand becomes at least four survivors you do not control carrying a wound each."
+    },
+    "sources": {
+      "complete": "BGG ludopedia-51112",
+      "requiresMain": "BGG ludopedia-51112",
+      "betrayer.firstCondition": "BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 5"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.the-chosen",
+    "name": "The Chosen",
+    "type": "exiled",
+    "requiresMain": false,
+    "complete": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "holder",
+          "value": 3
+        },
+        {
+          "code": "rule.seat-survivors.allWoundless"
+        }
+      ]
+    },
+    "betrayer": {
+      "firstCondition": {
+        "all": [
+          {
+            "code": "rule.seat-survivors.allWoundless"
+          },
+          {
+            "code": "rule.barricades.totalAtLeast",
+            "params": {
+              "n": 5
+            }
+          }
+        ]
+      }
+    },
+    "text": {
+      "goal": "You control at least three survivors and none of them carries a wound.",
+      "betrayer": "Your first demand becomes: none of your survivors wounded and at least five barricades on the board."
+    },
+    "sources": {
+      "complete": "BGG ludopedia-51112",
+      "requiresMain": "BGG ludopedia-51112",
+      "betrayer.firstCondition": "BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 6"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.barter",
+    "name": "Barter",
+    "type": "exiled",
+    "requiresMain": false,
+    "complete": {
+      "test": "handHasSymbol",
+      "subject": "holder",
+      "symbol": "medicine",
+      "value": 4
+    },
+    "betrayer": {
+      "firstCondition": {
+        "code": "rule.seat.equippedSymbolAtLeast",
+        "params": {
+          "symbol": "education",
+          "n": 3
+        }
+      }
+    },
+    "text": {
+      "goal": "You hold at least four medicine cards.",
+      "betrayer": "Your first demand becomes at least three education cards equipped to your survivors."
+    },
+    "sources": {
+      "complete": "PHOTO barter; BGG ludopedia-51112",
+      "requiresMain": "PHOTO barter; BGG ludopedia-51112",
+      "betrayer.firstCondition": "PHOTO barter; BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 7 (D2)"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.forgiveness",
+    "name": "Forgiveness",
+    "type": "exiled",
+    "requiresMain": true,
+    "complete": {
+      "test": "handHasSymbol",
+      "subject": "holder",
+      "symbol": "food",
+      "value": 5
+    },
+    "betrayer": {
+      "firstCondition": {
+        "code": "rule.objective.mainComplete"
+      }
+    },
+    "text": {
+      "goal": "The colony pulls through and you are carrying five cans of food when it does.",
+      "betrayer": "Your first demand becomes simply that the colony pulls through."
+    },
+    "sources": {
+      "complete": "PHOTO es-perdon; BGG ludopedia-51112",
+      "requiresMain": "PHOTO es-perdon; BGG ludopedia-51112",
+      "betrayer.firstCondition": "PHOTO es-perdon; BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 8"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.vengeance",
+    "name": "Vengeance",
+    "type": "exiled",
+    "requiresMain": false,
+    "complete": {
+      "code": "rule.survivors-removed.atLeast",
+      "params": {
+        "n": 5
+      }
+    },
+    "betrayer": {
+      "firstCondition": {
+        "code": "rule.survivors-removed.atLeast",
+        "params": {
+          "n": 4
+        }
+      }
+    },
+    "text": {
+      "goal": "At least five survivors have left the game (helpless tokens do not count).",
+      "betrayer": "Your first demand becomes at least four survivors gone from the game."
+    },
+    "sources": {
+      "complete": "PHOTO es-venganza; BGG ludopedia-51112",
+      "requiresMain": "PHOTO es-venganza; BGG ludopedia-51112",
+      "betrayer.firstCondition": "PHOTO es-venganza; BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 9 (D4)"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.exiled.resourceful",
+    "name": "Resourceful",
+    "type": "exiled",
+    "requiresMain": true,
+    "complete": {
+      "test": "handHasSymbol",
+      "subject": "holder",
+      "symbol": "tool",
+      "value": 4
+    },
+    "betrayer": {
+      "firstCondition": {
+        "test": "handHasSymbol",
+        "subject": "holder",
+        "symbol": "tool",
+        "value": 3
+      }
+    },
+    "text": {
+      "goal": "The colony pulls through and you hold at least four tool cards.",
+      "betrayer": "Your first demand becomes at least three tool cards in your hand."
+    },
+    "sources": {
+      "complete": "PHOTO es-habil; BGG ludopedia-51112",
+      "requiresMain": "PHOTO es-habil; BGG ludopedia-51112",
+      "betrayer.firstCondition": "PHOTO es-habil; BGG ludopedia-51112"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md D row 10 (D3)"
+  }
+]

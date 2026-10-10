@@ -1,0 +1,42 @@
+{
+  "kind": "survivor",
+  "id": "sv.andrew-evans",
+  "name": "Andrew Evans",
+  "occupation": "Farmer",
+  "stats": {
+    "influence": 12,
+    "attack": 3,
+    "search": 3
+  },
+  "ability": {
+    "id": "keenEye",
+    "kind": "triggered",
+    "trigger": "search.drawn",
+    "location": "loc.grocery-store",
+    "limit": "oncePerRound",
+    "optional": true,
+    "effect": [
+      {
+        "op": "extraSearchLook",
+        "count": 1
+      },
+      {
+        "op": "extraSearchKeep",
+        "count": 1
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round, a search at the Grocery Store lets Andrew look at one more card and keep one more card.",
+    "bio": "Knows soil, seasons and how long a pantry really lasts."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 2"
+}

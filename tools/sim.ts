@@ -1,7 +1,7 @@
 // npm run sim -- --games N --seed S [--seats 4] [--objective samples|random|<id>] [--cap 3000] [--stall 200] [--json]
-// Bots-only games on the fixture bundle (tests/fixtures/bundle) through the public engine API; see tools/sim-core.ts.
+// Bots-only games on the default bundle (src/data) through the public engine API; see tools/sim-core.ts.
 // Exit code 1 when any game failed to end or any invariant, leak, cap or stall fired.
-import { loadFixtureBundle } from '../tests/fixtures/loadFixtureBundle'
+import { loadDefaultBundle } from './default-bundle'
 import { DEFAULT_OPTIONS, runSim, type SimOptions } from './sim-core'
 
 const OBJECTIVES: Record<string, string> = { samples: 'obj.main.we-need-more-samples', random: 'random' }
@@ -29,7 +29,7 @@ function parseArgs(argv: string[]): SimOptions & { json: boolean; seatsGiven: bo
 
 async function main(): Promise<void> {
   const o = parseArgs(process.argv.slice(2))
-  const bundle = loadFixtureBundle()
+  const bundle = loadDefaultBundle()
   // a table needs 4 offered survivors per seat (R3.7): without --seats, the largest table the bundle can deal, up to 4
   if (!o.seatsGiven) o.seats = Math.max(2, Math.min(4, Math.floor(bundle.records.survivors.length / 4)))
   const report = await runSim(bundle, o, (g) => {

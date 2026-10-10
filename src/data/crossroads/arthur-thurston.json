@@ -1,0 +1,64 @@
+{
+  "kind": "crossroads",
+  "id": "xr.arthur-thurston",
+  "name": "Arthur Thurston",
+  "survivor": "sv.arthur-thurston",
+  "mature": true,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "survivorIs",
+          "subject": "survivor",
+          "value": "sv.arthur-thurston"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "drive-them-off",
+      "effect": [
+        {
+          "op": "wound",
+          "count": 2,
+          "kind": "wound",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    },
+    {
+      "id": "open-fire",
+      "effect": [
+        {
+          "op": "morale",
+          "value": -1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Arthur searches while his player is still in the colony.",
+    "vignette": "The feral kids have trailed Arthur for blocks, a ragged line of faces with nothing behind the eyes. They close in around the cart he is guarding, and he knows how this ends whichever way he leans.",
+    "options": {
+      "drive-them-off": "He fights them off barehanded and bleeds for it: Arthur takes 2 wounds.",
+      "open-fire": "He fires into the crowd and lives with it: morale falls by 1."
+    }
+  },
+  "sources": {
+    "trigger": "W; BGG crossroads-v1.1 card 17",
+    "options": "BGG crossroads-v1.1 card 17",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #17; survivor card; trigger point action.search is a stand-in for \"controls Arthur\". Mature flag is our reading (violence against children)"
+}

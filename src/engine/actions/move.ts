@@ -1,7 +1,8 @@
 // move (R7.4): once per survivor per turn, to a different location with a free survivor space; exposure follows,
 // and a bite spreads among the survivors at the DESTINATION.
 import type { Action, MoveAction } from '../actions'
-import { deathCheckAllAt, exposureInto, exposureOddsFor, fireInto, halted, patchSurvivor, startOut, svc } from '../exposure'
+import { woundOnMoveInto } from '../code-hooks'
+import { addWoundInto, deathCheckAllAt, exposureInto, exposureOddsFor, fireInto, halted, patchSurvivor, startOut, svc } from '../exposure'
 import type { ExposureOdds, GameState, LocationId, Rejection, SurvivorId } from '../types'
 import { freeSurvivorSpaces, zombiesAt } from '../zombies'
 import { checkActor, checkDecision, finish, rej, rejected, turnContext } from './die-common'
@@ -28,6 +29,7 @@ export function applyMove(state: GameState, a: MoveAction) {
   acc.events.push({ type: 'SurvivorMoved', survivorId: a.survivorId, from, to: a.to, kind: 'action' })
   deathCheckAllAt(acc, [from, a.to]) // leaving Buddy Davis can end a 3-wound survivor's protection (F 1.1.5)
   exposureInto(acc, a.survivorId, 'move', { grantAt: from })
+  if (!halted(acc) && acc.state.survivors[a.survivorId]?.status === 'alive' && woundOnMoveInto(acc.state, a.to)) addWoundInto(acc, a.survivorId, 'wound', 'crossroads') // Bev Russel's School
   // the action.move window opens only if the mover is still alive and nothing is waiting on a decision (F 2.1.1)
   if (!halted(acc) && acc.state.survivors[a.survivorId]?.status === 'alive') fireInto(acc, 'action.move', { seat: a.seat, survivorId: a.survivorId, location: a.to })
   return finish(acc, 'action.move')

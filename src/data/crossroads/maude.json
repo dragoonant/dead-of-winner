@@ -1,0 +1,72 @@
+{
+  "kind": "crossroads",
+  "id": "xr.maude",
+  "name": "Maude",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "locationIs",
+          "subject": "location",
+          "location": "loc.grocery-store"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "haul-it-home",
+      "effect": [
+        {
+          "op": "moveSurvivor",
+          "value": "noExposure",
+          "location": "colony",
+          "scope": {
+            "who": "survivor"
+          }
+        },
+        {
+          "op": "food",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "fill-your-pack",
+      "effect": [
+        {
+          "op": "draw",
+          "value": "loc.grocery-store",
+          "symbol": "food",
+          "count": 2,
+          "scope": {
+            "who": "seat"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A non-exiled player's survivor finishes a search at the Grocery Store.",
+    "vignette": "The freezer aisle still hums with cold, and one stocked shelf looks untouched since the last delivery. A faded hand-painted sign above it says take only what you need, and for some reason it makes the survivor think of Maude.",
+    "options": {
+      "haul-it-home": "Run it all back at once: the survivor moves to the colony without a move action and 3 food is added.",
+      "fill-your-pack": "Stuff your own pack for later: take 2 food cards from the Grocery Store deck into your hand."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 6",
+    "options": "BGG crossroads-v1.1 card 6",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #6; SIMPLIFIED: the printed card also forbids playing food cards for the rest of the turn on the second option (forbid playCard would block every card, not only food); the second option draws the first 2 food cards of the deck"
+}

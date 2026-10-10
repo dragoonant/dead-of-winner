@@ -1,0 +1,39 @@
+{
+  "kind": "survivor",
+  "id": "sv.loretta-clay",
+  "name": "Loretta Clay",
+  "occupation": "Cook",
+  "stats": {
+    "influence": 20,
+    "attack": 2,
+    "search": 4
+  },
+  "ability": {
+    "id": "stretchIt",
+    "kind": "action",
+    "location": "colony",
+    "cost": {
+      "die": 4
+    },
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "op": "food",
+        "value": 2
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "(4+) Once per round, while at the colony, Loretta adds 2 food to the supply.",
+    "bio": "Makes a pot of something out of almost nothing, and nobody asks what it was."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W; T",
+    "stats.search": "W",
+    "ability": "F 1.2.1; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 22 (C3, C11): the wiki misprints the die cost as (4); the FAQ corrects it to 4+"
+}

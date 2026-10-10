@@ -1,0 +1,43 @@
+{
+  "id": "core.colony-board",
+  "name": "Colony board layout",
+  "entrances": {
+    "count": 6,
+    "numbered": [1, 2, 3, 4, 5, 6],
+    "spacesPerEntrance": 3,
+    "totalSpaces": 18,
+    "spaceHolds": "one zombie standee or one barricade token",
+    "zombiePlacementOrder": "entrance number ascending, wrapping after 6; the first zombie goes on entrance 1, the second on entrance 2",
+    "overrun": "when the entrance chosen for a new zombie has no empty space and no barricade, the zombie is not placed and the lowest-influence survivor there dies (or a helpless token)"
+  },
+  "occupants": {
+    "spaces": 24,
+    "columns": 3,
+    "rows": 8,
+    "holds": "one survivor standee or one helpless survivor token",
+    "fullRule": "when no occupant space is empty, no Crossroads card, item card or ability can add a survivor or a helpless token"
+  },
+  "areas": ["morale track", "round track", "food supply", "waste pile", "crisis deck", "crisis contribution area", "main objective slot", "colony occupants"],
+  "locationCards": {
+    "count": 6,
+    "order": ["loc.police-station", "loc.grocery-store", "loc.school", "loc.library", "loc.hospital", "loc.gas-station"],
+    "numbers": { "loc.police-station": 1, "loc.grocery-store": 2, "loc.school": 3, "loc.library": 4, "loc.hospital": 5, "loc.gas-station": 6 },
+    "noiseSpacesEach": 4,
+    "randomLocation": "roll a d6 and take the location with that number; the colony is never random"
+  },
+  "locationOrder": ["colony", "loc.police-station", "loc.grocery-store", "loc.school", "loc.library", "loc.hospital", "loc.gas-station"],
+  "totals": { "locationSurvivorSpaces": 19, "locationEntranceSpaces": 22, "locationNoiseSpaces": 24 },
+  "sources": {
+    "entrances.count": "R p5; R p13",
+    "entrances.spacesPerEntrance": "R p5 diagram; PHOTO colony entrances 4-5 (locations-sources.md L4)",
+    "entrances.zombiePlacementOrder": "R p13",
+    "entrances.overrun": "R p13",
+    "occupants.spaces": "R p5 diagram (locations-sources.md L5)",
+    "occupants.fullRule": "R p14",
+    "locationCards.numbers": "PHOTO tln; W (locations-sources.md Location cards)",
+    "locationCards.noiseSpacesEach": "R p5",
+    "locationCards.randomLocation": "W (Interpreting Card Text)",
+    "totals": "S (locations-sources.md totals)"
+  },
+  "status": "draft"
+}

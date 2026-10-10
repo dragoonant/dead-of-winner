@@ -1,0 +1,37 @@
+{
+  "kind": "crisis",
+  "id": "cr.despair",
+  "name": "Despair",
+  "prevent": [
+    "medicine"
+  ],
+  "fail": [
+    {
+      "op": "morale",
+      "value": -2
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Hope drains out of the colony and morale drops by 2.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 12 (name ours); single source",
+  "tags": [
+    "name-ours"
+  ]
+}

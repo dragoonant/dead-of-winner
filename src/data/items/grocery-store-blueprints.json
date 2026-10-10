@@ -1,0 +1,37 @@
+{
+  "kind": "item",
+  "id": "it.grocery-store-blueprints",
+  "name": "Grocery Store Blueprints",
+  "symbol": "education",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "plans",
+      "kind": "triggered",
+      "trigger": "search.drawn",
+      "location": "loc.grocery-store",
+      "limit": "oncePerRound",
+      "optional": true,
+      "effect": [
+        {
+          "op": "extraSearchLook",
+          "count": 1
+        },
+        {
+          "op": "extraSearchKeep",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round, when the bearer searches the Grocery Store, they may look at one more card and keep one more card."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Library / Grocery Store Blueprints"
+}

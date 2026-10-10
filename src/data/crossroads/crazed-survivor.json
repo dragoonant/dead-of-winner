@@ -1,0 +1,56 @@
+{
+  "kind": "crossroads",
+  "id": "xr.crazed-survivor",
+  "name": "Crazed Survivor",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "test": "isNonColony",
+      "subject": "location"
+    }
+  },
+  "options": [
+    {
+      "id": "fight-her",
+      "effect": [
+        {
+          "op": "food",
+          "value": 3
+        },
+        {
+          "op": "exposure",
+          "value": "card",
+          "count": 2,
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    },
+    {
+      "id": "run",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor finishes a search at a location outside the colony.",
+    "vignette": "A collapsed lean-to rattles and a gaunt woman bursts from it with a length of rebar and nothing in her eyes that you can reason with. She is guarding a stash under the planks.",
+    "options": {
+      "fight-her": "Put her down and take her stash: add 3 food, and roll for exposure twice on the searching survivor.",
+      "run": "Back away and give her the ground. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 67",
+    "options": "BGG crossroads-v1.1 card 67",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #67; the exposure rolls fall on the acting survivor (the printed card lets the player choose any survivor at a non-colony location)"
+}

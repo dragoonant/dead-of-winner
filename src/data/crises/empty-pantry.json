@@ -1,0 +1,41 @@
+{
+  "kind": "crisis",
+  "id": "cr.empty-pantry",
+  "name": "Empty Pantry",
+  "prevent": [
+    "food"
+  ],
+  "fail": [
+    {
+      "op": "starvation",
+      "value": 1
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "The shelves are bare: a starvation token joins the food supply and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "PHOTO es-despensa-vacia; BGG ludopedia-51114",
+    "fail": "PHOTO es-despensa-vacia; BGG ludopedia-51114",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 18 (name ours); conflict C4: the official component is the starvation token",
+  "tags": [
+    "name-ours"
+  ]
+}

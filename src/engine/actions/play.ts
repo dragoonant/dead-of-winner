@@ -65,6 +65,11 @@ export function startPlay(state: GameState, seat: SeatId, cardId: CardId, o: { e
   else if (to === 'removed') patchState(acc, { removed: [...acc.state.removed, cardId] })
   const attachNow = to === 'equipped' && !!o.equipTo && !o.given
   if (attachNow) setSurvivor(acc, o.equipTo!, { equipped: [...acc.state.survivors[o.equipTo!]!.equipped, cardId] })
+  else if (to === 'equipped' && o.given) {
+    // a given equip card is revealed by CardPlayed, so it must sit on a survivor (not in a hand, not in limbo) while the bearer choice is open; the equip job moves it
+    const temp = acc.state.seats[seat]!.survivors[0]
+    if (temp) setSurvivor(acc, temp, { equipped: [...acc.state.survivors[temp]!.equipped, cardId] })
+  }
   emitEvent(acc, { type: 'CardPlayed', seat, cardId, defId: def.id, ...(o.equipTo ? { survivorId: o.equipTo } : {}), to })
   if (attachNow) emitEvent(acc, { type: 'CardEquipped', seat, cardId, survivorId: o.equipTo! })
   const countsAs: string | undefined = def.play?.countsAs

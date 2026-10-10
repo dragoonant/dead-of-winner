@@ -1,0 +1,45 @@
+{
+  "kind": "survivor",
+  "id": "sv.olivia-brown",
+  "name": "Olivia Brown",
+  "occupation": "Doctor",
+  "stats": {
+    "influence": 56,
+    "attack": 4,
+    "search": 3
+  },
+  "ability": {
+    "id": "triage",
+    "kind": "action",
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "op": "heal",
+        "count": 1,
+        "scope": {
+          "who": "atLocation",
+          "count": 1,
+          "chooser": "owner",
+          "filter": {
+            "test": "woundsAtLeast",
+            "subject": "survivor",
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round, Olivia removes one wound token of any kind from a survivor at her location, herself included.",
+    "bio": "Treats the wounded first and asks questions after the bleeding stops."
+  },
+  "sources": {
+    "stats.influence": "R p7; W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "R p7; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 25"
+}

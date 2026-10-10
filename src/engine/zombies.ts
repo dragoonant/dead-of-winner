@@ -1,4 +1,5 @@
 // Adding and killing zombies (R9): ONE add-zombies routine with barricade breaking and overrun, ONE zombie-kill routine.
+import { overrunImmuneSurvivor } from './code-hooks'
 import type { EntranceIndex, GameState, Id, LocationId, SurvivorId, ZombieSource } from './types'
 import { aliveAt, fireInto, halted, killInto, loseMoraleInto, patchEntrance, patchLocation, startOut, statsOf, type Out } from './exposure'
 
@@ -55,7 +56,7 @@ function addOneInto(acc: Out, loc: LocationId, index: EntranceIndex, source: Zom
     return
   }
   // overrun: the zombie is not placed; the lowest-influence survivor there dies, else a helpless token, else nothing
-  const here = aliveAt(acc.state, loc)
+  const here = aliveAt(acc.state, loc).filter((v) => !overrunImmuneSurvivor(acc.state, v.id, loc))
   const victim = here.length === 0 ? null : here.reduce((best, v) => (statsOf(acc.state, v.id).influence < statsOf(acc.state, best.id).influence ? v : best))
   const helpless = acc.state.locations[loc]!.helpless
   acc.events.push({ type: 'EntranceOverrun', location: loc, entrance: index, killed: victim ? victim.id : helpless > 0 ? 'helpless' : null })

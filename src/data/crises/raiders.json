@@ -1,0 +1,45 @@
+{
+  "kind": "crisis",
+  "id": "cr.raiders",
+  "name": "Raiders",
+  "prevent": [
+    "food"
+  ],
+  "fail": [
+    {
+      "op": "removeCard",
+      "value": "hand",
+      "count": 1,
+      "scope": {
+        "who": "nonExiledSeats"
+      }
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Looters hit the colony: each player still in it loses one random card from hand for good, if they have any, and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 17 (name ours); single source; removeCard hand takes a random card per seat and skips an empty hand",
+  "tags": [
+    "name-ours"
+  ]
+}

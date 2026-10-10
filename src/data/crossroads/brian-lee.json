@@ -1,0 +1,71 @@
+{
+  "kind": "crossroads",
+  "id": "xr.brian-lee",
+  "name": "Brian Lee",
+  "survivor": "sv.brian-lee",
+  "mature": false,
+  "trigger": {
+    "point": "action.ability",
+    "when": {
+      "all": [
+        {
+          "test": "survivorIs",
+          "subject": "survivor",
+          "value": "sv.brian-lee"
+        },
+        {
+          "test": "atLocation",
+          "subject": "survivor",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "hospital",
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": "all",
+          "location": "loc.hospital"
+        },
+        {
+          "op": "addBarricade",
+          "count": 4,
+          "location": "loc.hospital"
+        }
+      ]
+    },
+    {
+      "id": "grocery",
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": "all",
+          "location": "loc.grocery-store"
+        },
+        {
+          "op": "addBarricade",
+          "count": 4,
+          "location": "loc.grocery-store"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Brian uses an ability while he stands in the colony.",
+    "vignette": "Brian pins a sketched floor plan to the wall and calls the whole colony to look. He says the colony has been scraping by on bad luck, and that tonight it can start taking what it needs.",
+    "options": {
+      "hospital": "Take the Hospital: every zombie there is cleared and 4 barricades go up.",
+      "grocery": "Take the Grocery Store: every zombie there is cleared and 4 barricades go up."
+    }
+  },
+  "sources": {
+    "trigger": "W; BGG crossroads-v1.1 card 9",
+    "options": "BGG crossroads-v1.1 card 9",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #9; survivor card; trigger point action.ability is a stand-in for \"controls Brian and Brian is at the colony\". killZombies has no killer (no survivor scope), so nothing rolls exposure"
+}

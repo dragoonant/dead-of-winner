@@ -1,0 +1,28 @@
+{
+  "kind": "item",
+  "id": "it.rotten-flesh",
+  "name": "Rotten Flesh",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "stench",
+      "kind": "passive",
+      "effect": [
+        {
+          "code": "item.rotten-flesh.skipBiteSpread"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "The stench hides the bearer: a spreading bite passes over them."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Grocery Store / Rotten Flesh (I10)"
+}

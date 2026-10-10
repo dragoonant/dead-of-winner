@@ -1,0 +1,45 @@
+{
+  "kind": "crisis",
+  "id": "cr.spoiled-food",
+  "name": "Spoiled Food",
+  "prevent": [
+    "food"
+  ],
+  "fail": [
+    {
+      "op": "forbid",
+      "what": "spendFood",
+      "scope": {
+        "who": "nonExiledSeats"
+      },
+      "duration": "nextRound"
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "The stores have turned: until the end of next round nobody still in the colony may spend food to boost a die, and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 15 (name ours); single source",
+  "tags": [
+    "name-ours"
+  ]
+}

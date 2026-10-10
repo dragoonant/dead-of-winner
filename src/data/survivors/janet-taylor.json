@@ -1,0 +1,42 @@
+{
+  "kind": "survivor",
+  "id": "sv.janet-taylor",
+  "name": "Janet Taylor",
+  "occupation": "Nurse",
+  "stats": {
+    "influence": 42,
+    "attack": 3,
+    "search": 4
+  },
+  "ability": {
+    "id": "keenEye",
+    "kind": "triggered",
+    "trigger": "search.drawn",
+    "location": "loc.hospital",
+    "limit": "oncePerRound",
+    "optional": true,
+    "effect": [
+      {
+        "op": "extraSearchLook",
+        "count": 1
+      },
+      {
+        "op": "extraSearchKeep",
+        "count": 1
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round, a search at the Hospital lets Janet look at one extra card and keep one extra card.",
+    "bio": "Steady hands, long shifts and no illusions about what a hospital shelf is worth."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "F 1.1.2; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 19"
+}

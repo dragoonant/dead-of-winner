@@ -1,0 +1,45 @@
+{
+  "kind": "crisis",
+  "id": "cr.zombie-wave",
+  "name": "Zombie Wave",
+  "prevent": [
+    "tool"
+  ],
+  "fail": [
+    {
+      "op": "addZombies",
+      "value": 6,
+      "location": "colony"
+    },
+    {
+      "op": "addZombies",
+      "value": 1,
+      "scope": {
+        "who": "nonColonyLocations"
+      }
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "A wave of the dead hits: six at the colony and one at every other location. No morale is lost.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "PHOTO es-oleada-de-zombis; BGG ludopedia-51114",
+    "fail": "PHOTO es-oleada-de-zombis",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 7 (name ours); conflict C2: ES prints 6 at the colony, P prints 8; ES taken",
+  "tags": [
+    "name-ours"
+  ]
+}

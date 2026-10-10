@@ -1,0 +1,21 @@
+{
+  "id": "core.item-symbols",
+  "name": "Item symbols",
+  "symbols": [
+    { "id": "weapon", "name": "Weapon" },
+    { "id": "fuel", "name": "Fuel" },
+    { "id": "education", "name": "Education" },
+    { "id": "food", "name": "Food" },
+    { "id": "medicine", "name": "Medicine" },
+    { "id": "tool", "name": "Tool" },
+    { "id": "survivor", "name": "Survivor", "note": "the Outsider cards; removed from the game when played" }
+  ],
+  "locationCardsBySymbol": { "weapon": 11, "fuel": 18, "education": 11, "food": 26, "medicine": 18, "tool": 18, "survivor": 18, "total": 120 },
+  "starterDeck": { "size": 25, "dealtPerSeat": 5, "dealtPerSeatTwoPlayer": 7, "restLeavesTheGame": true },
+  "sources": {
+    "symbols": "R p2; R p5",
+    "locationCardsBySymbol": "S (items-sources.md symbol totals)",
+    "starterDeck": "R p6; R p15"
+  },
+  "status": "draft"
+}

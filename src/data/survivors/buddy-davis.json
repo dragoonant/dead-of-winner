@@ -1,0 +1,38 @@
+{
+  "kind": "survivor",
+  "id": "sv.buddy-davis",
+  "name": "Buddy Davis",
+  "occupation": "Fitness Trainer",
+  "stats": {
+    "influence": 36,
+    "attack": 2,
+    "search": 4
+  },
+  "ability": {
+    "id": "ironBody",
+    "kind": "passive",
+    "effect": [
+      {
+        "op": "grant",
+        "what": "fourWoundsToDie",
+        "scope": {
+          "who": "self"
+        },
+        "duration": "game"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "It takes four wounds, not three, to put Buddy down.",
+    "bio": "Counts reps in his sleep and does not stay down once he hits the floor."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W; T",
+    "ability": "F 1.1.5; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 9"
+}

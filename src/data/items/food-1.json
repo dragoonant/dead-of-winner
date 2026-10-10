@@ -1,0 +1,27 @@
+{
+  "kind": "item",
+  "id": "it.food-1",
+  "name": "Food 1",
+  "symbol": "food",
+  "class": "wastePile",
+  "food": 1,
+  "play": {
+    "effect": [
+      {
+        "op": "food",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "ability": "Add 1 food token to the supply."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "food": "W; BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Starting items / Food 1"
+}

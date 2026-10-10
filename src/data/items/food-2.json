@@ -1,0 +1,27 @@
+{
+  "kind": "item",
+  "id": "it.food-2",
+  "name": "Food 2",
+  "symbol": "food",
+  "class": "wastePile",
+  "food": 2,
+  "play": {
+    "effect": [
+      {
+        "op": "food",
+        "value": 2
+      }
+    ]
+  },
+  "text": {
+    "ability": "Add 2 food tokens to the supply."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "food": "W; BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Grocery Store / Food 2"
+}

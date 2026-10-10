@@ -1,0 +1,36 @@
+{
+  "kind": "survivor",
+  "id": "sv.sophie-robinson",
+  "name": "Sophie Robinson",
+  "occupation": "Pilot",
+  "stats": {
+    "influence": 58,
+    "attack": 4,
+    "search": 1
+  },
+  "ability": {
+    "id": "aerialView",
+    "kind": "action",
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "op": "peekDeck",
+        "count": 1,
+        "location": "chosen"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round, Sophie peeks at the top card of any one location's item deck, then leaves it where it was.",
+    "bio": "Used to seeing the whole map from above and plans routes accordingly."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W; T",
+    "ability": "R p7; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 27"
+}

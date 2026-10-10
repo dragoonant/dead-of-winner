@@ -1,0 +1,30 @@
+{
+  "kind": "location",
+  "id": "loc.grocery-store",
+  "name": "Grocery Store",
+  "number": 2,
+  "spaces": {
+    "survivors": 3,
+    "entrances": 1,
+    "entranceSpaces": 4,
+    "noise": 4
+  },
+  "symbolOrder": [
+    "food",
+    "medicine",
+    "tool",
+    "survivor"
+  ],
+  "deck": "deck.grocery-store",
+  "sources": {
+    "number": "PHOTO tln grocery-store; W",
+    "spaces.noise": "R p5",
+    "spaces.entrances": "R p5",
+    "spaces.survivors": "PHOTO tln grocery-store",
+    "spaces.entranceSpaces": "PHOTO tln grocery-store",
+    "symbolOrder": "PHOTO tln grocery-store; BGG card-spread; S",
+    "deck": "S"
+  },
+  "status": "draft",
+  "notes": "src: locations-sources.md Location cards row 02 (ruling L1); symbol order checked against the deck composition (V-05)"
+}

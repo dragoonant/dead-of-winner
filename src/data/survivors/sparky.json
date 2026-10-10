@@ -1,0 +1,42 @@
+{
+  "kind": "survivor",
+  "id": "sv.sparky",
+  "name": "Sparky",
+  "occupation": "Stunt Dog",
+  "stats": {
+    "influence": 10,
+    "attack": 2,
+    "search": 2
+  },
+  "ability": {
+    "id": "goodBoy",
+    "kind": "passive",
+    "effect": [
+      {
+        "op": "grant",
+        "what": "biteIsWound",
+        "scope": {
+          "who": "self"
+        },
+        "duration": "game"
+      },
+      {
+        "code": "survivor.sparky.skipBiteSpread"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "A bite on Sparky's exposure roll is only a wound, and a spreading bite passes him by.",
+    "bio": "Small, fearless, tough as old boots, and answers to treats."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "F 1.1.1; W; T; BGG ludopedia-51115",
+    "ability.effect[1]": "W (verify)"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 28. F 1.1.1 fixes only the bite-to-wound half; the bite-spread skip is fan-sourced (W)."
+}

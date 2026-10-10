@@ -1,0 +1,64 @@
+{
+  "kind": "crossroads",
+  "id": "xr.little-survivors",
+  "name": "Little Survivors",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtMost",
+          "subject": "location",
+          "value": 1
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "bring-them-home",
+      "effect": [
+        {
+          "op": "addHelpless",
+          "count": 3,
+          "location": "colony"
+        },
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "leave-supplies",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A non-exiled survivor ends a move at a location with no other survivors.",
+    "vignette": "Tiny boot prints cross the stairwell dust and end at a boiler room door. When the survivor calls out, a handful of faces appear behind a stack of crates, quiet and watchful, as if they have practised hiding for a long time.",
+    "options": {
+      "bring-them-home": "Take them with you: add 3 helpless survivors to the colony and raise morale by 1.",
+      "leave-supplies": "Leave some cans and go. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 28",
+    "options": "BGG crossroads-v1.1 card 28",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #28; the engine will not trigger it while the colony is full (R11.3)"
+}

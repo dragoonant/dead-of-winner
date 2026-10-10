@@ -1,0 +1,40 @@
+{
+  "kind": "item",
+  "id": "it.wrench",
+  "name": "Wrench",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "anyDieAttack",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "countsAs": "attack",
+      "cost": {
+        "die": 1
+      },
+      "when": {
+        "test": "zombiesAtLeast",
+        "subject": "location",
+        "value": 1
+      },
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "here"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the bearer can attack using any unused die, whatever it shows."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Grocery Store / Wrench"
+}

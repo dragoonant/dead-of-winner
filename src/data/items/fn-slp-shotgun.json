@@ -1,0 +1,43 @@
+{
+  "kind": "item",
+  "id": "it.fn-slp-shotgun",
+  "name": "FN SLP Shotgun",
+  "symbol": "weapon",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "scattergun",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "countsAs": "attack",
+      "when": {
+        "test": "zombiesAtLeast",
+        "subject": "location",
+        "value": 1
+      },
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 2,
+          "location": "here",
+          "value": "noExposure"
+        },
+        {
+          "op": "addNoise",
+          "count": 1,
+          "location": "here"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the bearer attacks and drops two zombies with no exposure roll, but the blast adds one noise token."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Police Station / FN SLP Shotgun"
+}

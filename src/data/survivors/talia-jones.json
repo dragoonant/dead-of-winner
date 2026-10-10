@@ -1,0 +1,34 @@
+{
+  "kind": "survivor",
+  "id": "sv.talia-jones",
+  "name": "Talia Jones",
+  "occupation": "Fortune Teller",
+  "stats": {
+    "influence": 28,
+    "attack": 3,
+    "search": 1
+  },
+  "ability": {
+    "id": "foresight",
+    "kind": "action",
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "code": "survivor.talia-jones.reorderTop"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round, Talia looks at the top two crisis cards and may rearrange them; she may say exactly two words about them to the table.",
+    "bio": "Reads cards for a living and claims to hear the next one coming."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 29. The code hook peeks at the top two crisis cards; the reorder and the two words are table talk (spec 21 section 13)."
+}

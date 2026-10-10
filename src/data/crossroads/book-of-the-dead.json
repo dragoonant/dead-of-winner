@@ -1,0 +1,64 @@
+{
+  "kind": "crossroads",
+  "id": "xr.book-of-the-dead",
+  "name": "Book of the Dead",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "locationIs",
+          "subject": "location",
+          "location": "loc.library"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "keep-it",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "swing-it",
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "loc.library"
+        },
+        {
+          "op": "food",
+          "value": 4
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A non-exiled player's survivor finishes a search at the Library.",
+    "vignette": "Inside a locked case at the back of the library sits a huge hand-lettered volume with a cracked spine. It is heavy enough to be a weapon and odd enough to be a treasure, and you only have room in your pack for one idea of what it is for.",
+    "options": {
+      "keep-it": "Carry it home as a curiosity and let it cheer people up: morale rises by 1.",
+      "swing-it": "Use it as a club on the nearest zombie and loot the body: remove 1 zombie from the Library and add 4 food."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 69",
+    "options": "BGG crossroads-v1.1 card 69",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #69; killZombies has no killer, so nothing rolls exposure"
+}

@@ -1,0 +1,45 @@
+{
+  "kind": "crisis",
+  "id": "cr.blizzard",
+  "name": "Blizzard",
+  "prevent": [
+    "fuel"
+  ],
+  "fail": [
+    {
+      "op": "forbid",
+      "what": "move",
+      "scope": {
+        "who": "nonExiledSeats"
+      },
+      "duration": "nextRound"
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "A whiteout pins everyone in place: no one still in the colony may move until the end of next round, and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "R p4",
+    "fail": "R p4",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 9 (official name); official name (R p4); mapped by effect (C6)",
+  "tags": [
+    "name-official"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "kind": "item",
+  "id": "it.tikka-t3-tactical-rifle",
+  "name": "Tikka T3 Tactical Rifle",
+  "symbol": "weapon",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "longShot",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "chosen",
+          "value": "noExposure"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the bearer picks off one zombie at any location with no exposure roll. It is not an attack and costs no die."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG official-rulings; BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Police Station / Tikka T3 Tactical Rifle (BO)"
+}

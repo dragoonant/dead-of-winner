@@ -35,6 +35,18 @@
   Crossroads sheet, official rulings digest, objectives thread) and fan sources.
 - `docs/needs-rules-check.md`: 164 M0/M0b rulings plus the M1 section (engine, bot and sim rulings), for the owner to reconcile.
 
+## Card data (M2)
+- `src/data/` is the default bundle for the engine, `npm run sim` and the data tests (`tools/default-bundle.ts`: `loadDefaultBundle()`);
+  `tests/fixtures/bundle/` stays for unit tests. Counts: 30 survivors, 39 items, 7 decks, 7 locations, 20 crises, 20 Crossroads,
+  10 main objectives (normal + hardcore), 26 playable secret-type objectives (13 standard, 3 betrayal, 10 exiled).
+- Objectives live as arrays in `src/data/objectives/{main,secret,betrayal,exiled}.json`; names-only stubs (`status: "unknown"`,
+  text null) are skipped by the loader.
+- 14 new code hooks in `src/engine/code-hooks.ts` (crises, Crossroads, objectives), with golden checks in `tests/engine/m2-hooks.test.ts`.
+- Gates: typecheck clean, `npm test` green, `validate-data` 0 errors (2 count warnings), `npm run sim -- --games 30 --seed 2 --seats 4`:
+  30/30 end, 0 violations, 0 leaks.
+- Known gaps: 18 names-only objectives excluded (11 standard secret, 7 betrayal); 17 of the 20 crisis names are ours (`name-ours` tag);
+  hooks choose for the player where the card says "of its choice" (rulings in `docs/needs-rules-check.md` section M2).
+
 ## Spec status
 | Spec | Status |
 |---|---|
@@ -49,7 +61,7 @@
 | 40 AI, 41 personas | written; random tier implemented |
 | 50 client | written |
 | 60 testing | written; sim, invariants and leak test implemented |
-| Card data (survivors, items, crisis, Crossroads, objectives) | first slice entered as the fixture bundle; the full set and the verify pass are M2 |
+| Card data (survivors, items, crisis, Crossroads, objectives) | M2 slice in `src/data/` (see Card data (M2)); verify pass against the physical cards still open |
 
 ## Next
 - M2: card data verification (the fixture slice against the source tables, then the rest of the base game into `src/data/`),

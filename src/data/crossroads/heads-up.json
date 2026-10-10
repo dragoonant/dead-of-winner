@@ -1,0 +1,55 @@
+{
+  "kind": "crossroads",
+  "id": "xr.heads-up",
+  "name": "Heads Up",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "locationIs",
+          "subject": "location",
+          "location": "loc.police-station"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "cooler",
+      "effect": [
+        {
+          "op": "addNoise",
+          "count": 4,
+          "location": "loc.police-station"
+        }
+      ]
+    },
+    {
+      "id": "drum",
+      "effect": [
+        {
+          "op": "addNoise",
+          "count": 4,
+          "location": "loc.police-station"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor finishes a search at the Police Station.",
+    "vignette": "The evidence room has two containers still sealed: a battered cooler and a steel drum. Whichever one you pry open, something inside is going to scream back at you.",
+    "options": {
+      "cooler": "Pop the cooler lid: the noise fills the Police Station.",
+      "drum": "Unscrew the drum: the same racket fills the Police Station."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 59",
+    "options": "BGG crossroads-v1.1 card 59",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #59; both options have the same effect on the printed card (fill every noise space; addNoise caps at the location's spaces)"
+}

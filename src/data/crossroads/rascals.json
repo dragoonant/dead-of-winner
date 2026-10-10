@@ -1,0 +1,54 @@
+{
+  "kind": "crossroads",
+  "id": "xr.rascals",
+  "name": "Rascals",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "test": "locationIs",
+      "subject": "location",
+      "location": "loc.hospital"
+    }
+  },
+  "options": [
+    {
+      "id": "throw-party",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 1
+        },
+        {
+          "op": "addZombies",
+          "value": 5,
+          "location": "colony"
+        }
+      ]
+    },
+    {
+      "id": "skip-it",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor finishes a search at the Hospital.",
+    "vignette": "In a corner of the hospital activity room waits a karaoke machine, a crate of board games and three working car batteries. It is enough to put on a real party for the colony, if you do not mind the noise.",
+    "options": {
+      "throw-party": "Haul it home and hold the party: morale rises by 1, but the racket draws 5 zombies to the colony.",
+      "skip-it": "Decide it is a bad idea and keep searching. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 70",
+    "options": "BGG crossroads-v1.1 card 70",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #70"
+}

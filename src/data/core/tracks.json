@@ -1,0 +1,13 @@
+{
+  "id": "core.tracks",
+  "name": "Tracks",
+  "morale": { "min": 0, "max": 10, "endsGameAt": 0, "startSetBy": "the main objective side", "largestStartOnAnyObjective": 8 },
+  "round": { "min": 0, "max": 10, "countsDown": true, "endsGameAt": 0, "startSetBy": "the main objective side", "largestStartOnAnyObjective": 10 },
+  "starvation": { "tokens": 6, "note": "one token is added each round the colony cannot pay its food; morale falls by the number of tokens on the track" },
+  "sources": {
+    "morale": "R p5 diagram (locations-sources.md L6); S (largest start 8, Winter Has Come normal)",
+    "round": "R p5 diagram (locations-sources.md L6); S (largest start 10, Ten Weeks of Darkness)",
+    "starvation": "R p2; R p12"
+  },
+  "status": "draft"
+}

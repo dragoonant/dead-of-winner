@@ -1,0 +1,45 @@
+{
+  "kind": "survivor",
+  "id": "sv.gray-beard",
+  "name": "Gray Beard",
+  "occupation": "Pirate",
+  "stats": {
+    "influence": 16,
+    "attack": 1,
+    "search": 4
+  },
+  "ability": {
+    "id": "plunder",
+    "kind": "action",
+    "location": "colony",
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "op": "stealCard",
+        "count": 1,
+        "scope": {
+          "who": "chosen",
+          "chooser": "owner",
+          "filter": {
+            "test": "handAtLeast",
+            "subject": "seat",
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  "coop": false,
+  "text": {
+    "ability": "Once a round at the colony, Gray Beard takes one random card from another player's hand. Not used in the co-op variant.",
+    "bio": "Treats other people's belongings as an opening offer."
+  },
+  "sources": {
+    "stats.influence": "W; C; T",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 16. Removed in the co-op variant (W, T)."
+}

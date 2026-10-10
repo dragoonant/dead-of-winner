@@ -1,0 +1,40 @@
+{
+  "kind": "crisis",
+  "id": "cr.reorganization",
+  "name": "Reorganization",
+  "prevent": [
+    "tool"
+  ],
+  "fail": [
+    {
+      "code": "crisis.reorganization.passSurvivors"
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Every player still in the colony must pass one of their survivors to the player on their left, and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "PHOTO es-reorganizacion; BGG ludopedia-51114",
+    "fail": "PHOTO es-reorganizacion; BGG ludopedia-51114",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 5 (name ours); NEEDS HOOK crisis.reorganization.passSurvivors: no DSL op transfers control of a survivor to the next seat (each non-exiled seat hands one survivor of its choice to the seat on its left, simultaneously)",
+  "tags": [
+    "name-ours"
+  ]
+}

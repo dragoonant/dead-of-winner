@@ -1,0 +1,39 @@
+{
+  "kind": "survivor",
+  "id": "sv.james-meyers",
+  "name": "James Meyers",
+  "occupation": "Psychiatrist",
+  "stats": {
+    "influence": 54,
+    "attack": 6,
+    "search": 3
+  },
+  "ability": {
+    "id": "secondThoughts",
+    "kind": "action",
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "op": "modDie",
+        "value": "reroll",
+        "count": "all",
+        "scope": {
+          "who": "seat"
+        }
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round, James may reroll any number of your unused action dice and keep the new results.",
+    "bio": "Listens to everyone and is always one thought ahead of whatever they say next."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W; T",
+    "stats.search": "W",
+    "ability": "W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 18 (C6): the wiki says one or more dice, TV Tropes says one die; the wiki reading is used"
+}

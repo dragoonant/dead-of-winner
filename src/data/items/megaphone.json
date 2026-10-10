@@ -1,0 +1,185 @@
+{
+  "kind": "item",
+  "id": "it.megaphone",
+  "name": "Megaphone",
+  "symbol": "tool",
+  "class": "wastePile",
+  "play": {
+    "when": {
+      "any": [
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "loc.police-station",
+          "value": 1
+        },
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "loc.grocery-store",
+          "value": 1
+        },
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "loc.school",
+          "value": 1
+        },
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "loc.library",
+          "value": 1
+        },
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "loc.hospital",
+          "value": 1
+        },
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "loc.gas-station",
+          "value": 1
+        }
+      ]
+    },
+    "effect": [
+      {
+        "op": "moveZombies",
+        "count": 4,
+        "scope": {
+          "who": "allLocations",
+          "count": 1,
+          "chooser": "owner",
+          "filter": {
+            "any": [
+              {
+                "all": [
+                  {
+                    "test": "locationIs",
+                    "subject": "location",
+                    "value": "colony"
+                  },
+                  {
+                    "test": "survivorsAtLeast",
+                    "subject": "seat",
+                    "location": "colony",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "test": "locationIs",
+                    "subject": "location",
+                    "value": "loc.police-station"
+                  },
+                  {
+                    "test": "survivorsAtLeast",
+                    "subject": "seat",
+                    "location": "loc.police-station",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "test": "locationIs",
+                    "subject": "location",
+                    "value": "loc.grocery-store"
+                  },
+                  {
+                    "test": "survivorsAtLeast",
+                    "subject": "seat",
+                    "location": "loc.grocery-store",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "test": "locationIs",
+                    "subject": "location",
+                    "value": "loc.school"
+                  },
+                  {
+                    "test": "survivorsAtLeast",
+                    "subject": "seat",
+                    "location": "loc.school",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "test": "locationIs",
+                    "subject": "location",
+                    "value": "loc.library"
+                  },
+                  {
+                    "test": "survivorsAtLeast",
+                    "subject": "seat",
+                    "location": "loc.library",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "test": "locationIs",
+                    "subject": "location",
+                    "value": "loc.hospital"
+                  },
+                  {
+                    "test": "survivorsAtLeast",
+                    "subject": "seat",
+                    "location": "loc.hospital",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "test": "locationIs",
+                    "subject": "location",
+                    "value": "loc.gas-station"
+                  },
+                  {
+                    "test": "survivorsAtLeast",
+                    "subject": "seat",
+                    "location": "loc.gas-station",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "text": {
+    "ability": "Shout down a street: four zombies from one location shuffle into empty spaces at a location where you have a survivor."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "F 5.1.1; BGG official-rulings; BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School / Megaphone (I6, I9: the optional shout is flavour, not coded). The destination is a location with one of your survivors; the engine picks each zombie's source entrance one at a time, so 'from one location' is not enforced (engine limit, flagged)."
+}

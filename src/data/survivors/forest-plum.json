@@ -1,0 +1,47 @@
+{
+  "kind": "survivor",
+  "id": "sv.forest-plum",
+  "name": "Forest Plum",
+  "occupation": "Mall Santa",
+  "stats": {
+    "influence": 14,
+    "attack": 2,
+    "search": 5
+  },
+  "ability": {
+    "id": "lastGift",
+    "kind": "triggered",
+    "trigger": "turn.start",
+    "location": "anywhere",
+    "when": {
+      "test": "isActiveSeat",
+      "subject": "seat"
+    },
+    "optional": true,
+    "effect": [
+      {
+        "op": "removeSurvivor",
+        "scope": {
+          "who": "self"
+        }
+      },
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Forest can walk out into the snow for good as your turn opens, and the colony takes heart from it: morale +1.",
+    "bio": "Still carries the red suit and a stubborn belief that people deserve one good morning."
+  },
+  "sources": {
+    "stats.influence": "R p7; W; C; T",
+    "stats.attack": "W",
+    "stats.search": "R p10; W; T",
+    "ability": "R p7; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 14 (C7): the attack value 2+ rests on the wiki alone"
+}

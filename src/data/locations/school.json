@@ -1,0 +1,31 @@
+{
+  "kind": "location",
+  "id": "loc.school",
+  "name": "School",
+  "number": 3,
+  "spaces": {
+    "survivors": 4,
+    "entrances": 1,
+    "entranceSpaces": 4,
+    "noise": 4
+  },
+  "symbolOrder": [
+    "food",
+    "education",
+    "tool",
+    "medicine",
+    "survivor"
+  ],
+  "deck": "deck.school",
+  "sources": {
+    "number": "PHOTO tln school; W",
+    "spaces.noise": "R p5",
+    "spaces.entrances": "R p5",
+    "spaces.survivors": "PHOTO tln school",
+    "spaces.entranceSpaces": "PHOTO tln school",
+    "symbolOrder": "PHOTO tln school; BGG card-spread; S",
+    "deck": "S"
+  },
+  "status": "draft",
+  "notes": "src: locations-sources.md Location cards row 03 (ruling L1); symbol order checked against the deck composition (V-05)"
+}

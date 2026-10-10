@@ -1,0 +1,40 @@
+{
+  "kind": "survivor",
+  "id": "sv.john-price",
+  "name": "John Price",
+  "occupation": "Student",
+  "stats": {
+    "influence": 18,
+    "attack": 3,
+    "search": 3
+  },
+  "ability": {
+    "id": "quickStudy",
+    "kind": "passive",
+    "location": "nonColony",
+    "effect": [
+      {
+        "op": "grant",
+        "what": "copyAbilitiesAtLocation",
+        "scope": {
+          "who": "self"
+        },
+        "duration": "game"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Away from the colony, John can do whatever the survivors around him can do.",
+    "bio": "A quick learner who borrows every skill he watches someone use."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "F 1.1.1; W; T; BGG ludopedia-51115",
+    "ability.location": "W; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 21 (C5)"
+}

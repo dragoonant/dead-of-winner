@@ -1,0 +1,65 @@
+{
+  "kind": "crossroads",
+  "id": "xr.annaleigh-chan",
+  "name": "Annaleigh Chan",
+  "survivor": "sv.annaleigh-chan",
+  "mature": true,
+  "trigger": {
+    "point": "action.ability",
+    "when": {
+      "all": [
+        {
+          "test": "survivorIs",
+          "subject": "survivor",
+          "value": "sv.annaleigh-chan"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "openTheGates",
+      "effect": [
+        {
+          "op": "addZombies",
+          "value": 1,
+          "scope": {
+            "who": "nonColonyLocations"
+          }
+        }
+      ]
+    },
+    {
+      "id": "giveUp",
+      "effect": [
+        {
+          "op": "killSurvivor",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Annaleigh uses her ability while her player is still in the colony.",
+    "vignette": "Annaleigh is in the old holding block with the cell keys in her hand and one name she cannot stop repeating. What she does with the next few minutes will tell the colony what kind of person she turned out to be.",
+    "options": {
+      "openTheGates": "She opens every cell and walks out: one zombie is added at every location outside the colony.",
+      "giveUp": "She decides that the rebuilding is pointless: Annaleigh dies."
+    }
+  },
+  "sources": {
+    "trigger": "W; BGG crossroads-v1.1 card 65",
+    "options": "BGG crossroads-v1.1 card 65",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #65; survivor card; trigger point action.ability is a stand-in for \"controls Annaleigh\" (the DSL tests the acting survivor only). Mature flag is our reading (self-harm theme)"
+}

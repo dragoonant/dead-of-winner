@@ -1,0 +1,93 @@
+{
+  "kind": "crossroads",
+  "id": "xr.lovers-quarrel",
+  "name": "Lover's Quarrel",
+  "mature": true,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "test": "isNonColony",
+          "subject": "location"
+        },
+        {
+          "test": "survivorsAtLeast",
+          "subject": "location",
+          "value": 2
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "shout-it-out",
+      "effect": [
+        {
+          "op": "addNoise",
+          "count": 4,
+          "location": "here"
+        }
+      ]
+    },
+    {
+      "id": "cool-down",
+      "effect": [
+        {
+          "op": "forbid",
+          "what": "attack",
+          "scope": {
+            "who": "atLocation",
+            "filter": {
+              "test": "survivorOwnedBy",
+              "subject": "survivor",
+              "value": "activeSeat"
+            }
+          },
+          "duration": "turn"
+        },
+        {
+          "op": "forbid",
+          "what": "search",
+          "scope": {
+            "who": "atLocation",
+            "filter": {
+              "test": "survivorOwnedBy",
+              "subject": "survivor",
+              "value": "activeSeat"
+            }
+          },
+          "duration": "turn"
+        },
+        {
+          "op": "forbid",
+          "what": "move",
+          "scope": {
+            "who": "atLocation",
+            "filter": {
+              "test": "survivorOwnedBy",
+              "subject": "survivor",
+              "value": "activeSeat"
+            }
+          },
+          "duration": "turn"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor ends a move at a location outside the colony where another survivor already stands.",
+    "vignette": "Two people who shared a tent for weeks start trading the kind of accusations that cannot be unsaid, in the open, with the whole block listening. One of them will have to give ground before the dead decide for them.",
+    "options": {
+      "shout-it-out": "Let them have it out: 4 noise tokens are added at their location.",
+      "cool-down": "Step in between them: your survivors at that location cannot attack, search or move for the rest of this turn."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 10",
+    "options": "BGG crossroads-v1.1 card 10",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #10; SIMPLIFIED trigger: the printed card needs 2 human survivors controlled by the same player at the location; the DSL has no such count, so any 2 survivors there trigger it, and the forbids cover all the active player's survivors there. Mature flag is our reading (sexual insults)"
+}

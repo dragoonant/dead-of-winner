@@ -1,5 +1,5 @@
 {
-  "_comment": "Code-hook names the data may reference ({\"code\": ...}). Used by loadBundle/validate-data when src/engine/code-hooks.ts does not exist yet; keep in step with CODE_HOOKS (spec 21 §11, V-20).",
+  "_comment": "Code-hook names the data may reference ({\"code\": ...}). Used by loadBundle/validate-data when src/engine/code-hooks.ts does not exist yet; keep in step with CODE_HOOKS (spec 21 \u00a711, V-20).",
   "conditions": [
     "crossroads.riot.helplessOutnumber"
   ],
@@ -8,7 +8,17 @@
     "survivor.sparky.skipBiteSpread",
     "survivor.talia-jones.reorderTop",
     "crossroads.bev-russel.immune",
-    "item.rotten-flesh.skipBiteSpread"
+    "item.rotten-flesh.skipBiteSpread",
+    "crossroads.bev-russel.schoolWound",
+    "crossroads.bev-russel.clearSchool",
+    "crossroads.old-divisions.skipCrisis",
+    "crisis.exhaustion.frostbiteTopFive",
+    "crisis.hailstorm.frostbiteRolls",
+    "crisis.no-waste.foodToWaste",
+    "crisis.overpopulation.killLowestTwo",
+    "crisis.reorganization.passSurvivors",
+    "objective.kill-them.removeExiledSeat",
+    "objective.winter-has-come.fuelOrEnd"
   ],
   "objectives": [
     "rule.objective.mainComplete",
@@ -22,6 +32,10 @@
     "rule.seat.mostEquippedWeapons",
     "rule.foreign-survivors.woundedAtLeast",
     "rule.barricades.totalAtLeast",
-    "rule.seat.equippedSymbolAtLeast"
+    "rule.seat.equippedSymbolAtLeast",
+    "rule.zombies-outside-colony.atMost",
+    "rule.non-exiled-seats.weaponPerSurvivor",
+    "rule.food.perNonExiledSeatAtLeast",
+    "rule.colony.everyEntranceBarricaded"
   ]
 }

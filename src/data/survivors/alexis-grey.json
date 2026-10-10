@@ -1,0 +1,42 @@
+{
+  "kind": "survivor",
+  "id": "sv.alexis-grey",
+  "name": "Alexis Grey",
+  "occupation": "Librarian",
+  "stats": {
+    "influence": 46,
+    "attack": 5,
+    "search": 4
+  },
+  "ability": {
+    "id": "keenEye",
+    "kind": "triggered",
+    "trigger": "search.drawn",
+    "location": "loc.library",
+    "limit": "oncePerRound",
+    "optional": true,
+    "effect": [
+      {
+        "op": "extraSearchLook",
+        "count": 1
+      },
+      {
+        "op": "extraSearchKeep",
+        "count": 1
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round, a search at the Library lets Alexis look at one more card and keep one more card.",
+    "bio": "Spent her career among shelves and still reads a room faster than most people read a page."
+  },
+  "sources": {
+    "stats.influence": "R* p7; W; C",
+    "stats.attack": "R* p7; W",
+    "stats.search": "R* p7; W",
+    "ability": "R p7; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 1 (C1, C9)"
+}

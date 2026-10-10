@@ -1,0 +1,52 @@
+{
+  "kind": "survivor",
+  "id": "sv.gabriel-diaz",
+  "name": "Gabriel Diaz",
+  "occupation": "Fireman",
+  "stats": {
+    "influence": 60,
+    "attack": 2,
+    "search": 3
+  },
+  "ability": {
+    "id": "sweep",
+    "kind": "action",
+    "location": "nonColony",
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "op": "revealDeck",
+        "value": 4,
+        "location": "here"
+      },
+      {
+        "op": "draw",
+        "value": "revealed",
+        "symbol": "survivor",
+        "count": 1,
+        "optional": true,
+        "scope": {
+          "who": "chosen",
+          "chooser": "owner"
+        }
+      },
+      {
+        "op": "shuffleDeck",
+        "location": "here"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Four cards off the top of the local deck, one Outsider kept if Gabriel likes the look of them, the rest shuffled back in. Not at the colony; once a round.",
+    "bio": "Goes through the door everyone else is running from."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "R p7; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 15. His influence is not legible in the rulebook extract; 60 rests on the wiki and the influence pattern (C)."
+}

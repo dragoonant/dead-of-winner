@@ -1,0 +1,57 @@
+{
+  "kind": "survivor",
+  "id": "sv.bev-russell",
+  "name": "Bev Russell",
+  "occupation": "Mother",
+  "stats": {
+    "influence": 34,
+    "attack": 2,
+    "search": 4
+  },
+  "ability": {
+    "id": "protect",
+    "kind": "action",
+    "location": "colony",
+    "cost": {
+      "die": 1
+    },
+    "limit": "oncePerRound",
+    "when": {
+      "all": [
+        {
+          "test": "helplessAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 1
+        }
+      ]
+    },
+    "effect": [
+      {
+        "op": "killZombies",
+        "count": 2,
+        "location": "colony",
+        "value": "noExposure"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Spend any die, once a round, while a helpless survivor shelters at the colony: two zombies at the colony go down with no exposure roll.",
+    "bio": "Keeps everyone fed, warm and behind her, in that order."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W; T",
+    "stats.search": "W",
+    "ability": "W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 6. The FAQ spells her Crossroads card Bev Russel (xr.bev-russel); the survivor keeps the card spelling Russell."
+}

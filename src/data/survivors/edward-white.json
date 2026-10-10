@@ -1,0 +1,51 @@
+{
+  "kind": "survivor",
+  "id": "sv.edward-white",
+  "name": "Edward White",
+  "occupation": "Chemist",
+  "stats": {
+    "influence": 44,
+    "attack": 4,
+    "search": 3
+  },
+  "ability": {
+    "id": "quickDose",
+    "kind": "action",
+    "location": "colony",
+    "cost": {
+      "die": 1,
+      "cards": {
+        "symbol": "medicine",
+        "count": 1
+      }
+    },
+    "limit": "oncePerRound",
+    "countsAs": "attack",
+    "when": {
+      "test": "zombiesAtLeast",
+      "subject": "location",
+      "value": 1
+    },
+    "effect": [
+      {
+        "op": "killZombies",
+        "count": 3,
+        "location": "here",
+        "value": "noExposure"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round at the colony, Edward may attack on any die and feed a medicine card into the swing: three zombies die and nobody rolls for exposure.",
+    "bio": "Can turn the contents of a medicine cabinet into a very bad day for something else."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "F 1.3.1; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 13 (C11). Die cost 1+ and the attack die in one (F 1.3.1); any medicine-symbol card works, a requested card included (F 1.3.2, F 1.3.3); the card own ability is not used."
+}

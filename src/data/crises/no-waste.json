@@ -1,0 +1,40 @@
+{
+  "kind": "crisis",
+  "id": "cr.no-waste",
+  "name": "No Waste",
+  "prevent": [
+    "food"
+  ],
+  "fail": [
+    {
+      "code": "crisis.no-waste.foodToWaste"
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Every food card that has left the game lands on the waste pile, and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 16 (name ours); NEEDS HOOK crisis.no-waste.foodToWaste: moves every removed-from-game Food card to the waste pile; the DSL has no op that returns removed cards. Direction as printed (C3), single source",
+  "tags": [
+    "name-ours"
+  ]
+}

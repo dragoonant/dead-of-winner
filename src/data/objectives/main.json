@@ -1,0 +1,1155 @@
+[
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.x-weeks-of-darkness",
+    "name": "Eight Weeks of Darkness",
+    "code": "M01",
+    "time": "long",
+    "sides": {
+      "normal": {
+        "morale": 7,
+        "rounds": 8,
+        "setup": [
+          {
+            "op": "addHelpless",
+            "value": "seats",
+            "location": "colony"
+          },
+          {
+            "op": "addZombies",
+            "value": 1,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "complete": {
+          "test": "roundsLeftAtMost",
+          "subject": "colony",
+          "value": 1
+        }
+      },
+      "hardcore": {
+        "morale": 6,
+        "rounds": 10,
+        "setup": [
+          {
+            "op": "addHelpless",
+            "value": "seats",
+            "location": "colony"
+          },
+          {
+            "op": "addZombies",
+            "value": 3,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "test": "roundsLeftAtMost",
+              "subject": "colony",
+              "value": 1
+            },
+            {
+              "test": "foodAtLeast",
+              "subject": "colony",
+              "value": 6
+            }
+          ]
+        }
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 7 and eight rounds. Every player brings one helpless survivor to the colony, and a single zombie waits at each other location.",
+        "victory": "Outlast the winter: the colony is still standing when the eighth round is checked."
+      },
+      "hardcore": {
+        "setup": "The hardcore face, Ten Weeks of Darkness: morale 6 and ten rounds. One helpless survivor per player at the colony, three zombies at each other location.",
+        "victory": "Make it through all ten rounds with at least six food tokens still in the supply."
+      }
+    },
+    "sources": {
+      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
+      "sides.hardcore": "PHOTO ten-weeks-of-darkness; BGG 2054328; BGG ludopedia-51113",
+      "code": "R p16",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M01 (O13). One card, two titles: the normal face is Eight Weeks of Darkness, the hardcore face Ten Weeks of Darkness. The id keeps the spec 11 spelling. Survive-N-rounds is complete at the colony.objective check of the last round (roundsLeft 1), the engine ends the game right after on roundsOut otherwise (BO).",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.kill-them",
+    "name": "Kill Them",
+    "code": "M02",
+    "time": "medium",
+    "sides": {
+      "normal": {
+        "morale": 7,
+        "rounds": 7,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 3,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "complete": {
+          "code": "rule.zombies-outside-colony.atMost",
+          "params": {
+            "n": 3
+          }
+        },
+        "triggers": [
+          {
+            "id": "noExile",
+            "trigger": "seat.exiled",
+            "effect": [
+              {
+                "code": "objective.kill-them.removeExiledSeat"
+              }
+            ]
+          }
+        ]
+      },
+      "hardcore": {
+        "morale": 5,
+        "rounds": 5,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 12,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 3,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "code": "rule.zombies-outside-colony.atMost",
+              "params": {
+                "n": 1
+              }
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.police-station",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.grocery-store",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.school",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.library",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.hospital",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.gas-station",
+              "value": 1
+            }
+          ]
+        },
+        "triggers": [
+          {
+            "id": "noExile",
+            "trigger": "seat.exiled",
+            "effect": [
+              {
+                "code": "objective.kill-them.removeExiledSeat"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 7, seven rounds, three zombies at every other location. Nobody is exiled here: a player who would be loses every survivor on the spot and leaves the game.",
+        "victory": "Finish with no more than three zombies standing across all the other locations put together."
+      },
+      "hardcore": {
+        "setup": "Morale 5, five rounds. The same setup, plus twelve zombies at the colony; exile still removes the player outright.",
+        "victory": "Leave at most one zombie across the other locations, with a barricade up at every one of them."
+      }
+    },
+    "sources": {
+      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
+      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "code": "R p16",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M02 (O12). Exile change is a seat.exiled trigger on a code hook (spec 11 O2.10).",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.find-a-cure",
+    "name": "Find a Cure",
+    "code": "M03",
+    "time": "short",
+    "sides": {
+      "normal": {
+        "morale": 5,
+        "rounds": 6,
+        "counters": {
+          "medicine": {
+            "need": "perSeat",
+            "perSeatMultiplier": 2
+          }
+        },
+        "contributions": [
+          {
+            "symbol": "medicine",
+            "counter": "medicine",
+            "exiledMayContribute": true
+          }
+        ],
+        "complete": {
+          "test": "objectiveCounterAtLeast",
+          "value": "medicine"
+        }
+      },
+      "hardcore": {
+        "morale": 5,
+        "rounds": 6,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 12,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 2,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "counters": {
+          "medicine": {
+            "need": "perSeat",
+            "perSeatMultiplier": 2
+          }
+        },
+        "contributions": [
+          {
+            "symbol": "medicine",
+            "counter": "medicine",
+            "exiledMayContribute": true
+          }
+        ],
+        "complete": {
+          "test": "objectiveCounterAtLeast",
+          "value": "medicine"
+        }
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 5 and six rounds, nothing extra on the board.",
+        "victory": "Every player who started the game adds two medicine cards to the objective. Medicine from the starting hand does not count."
+      },
+      "hardcore": {
+        "setup": "Morale 5 and six rounds. Twelve zombies wait at the colony and two at each other location.",
+        "victory": "The same medicine drive: two cards for every player who started."
+      }
+    },
+    "sources": {
+      "sides.normal": "BGG 2054328; BGG ludopedia-51113",
+      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "code": "R p16",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M03 (O1: BGG thread says 3 per player on hardcore, the Portuguese sheet 2; 2 used). Hardcore is rated medium on the card. The starter-card exclusion is table honesty only: the data cannot tell a starting card from a found one.",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.home-sweet-home",
+    "name": "Home Sweet Home",
+    "code": "M04",
+    "time": "medium",
+    "sides": {
+      "normal": {
+        "morale": 6,
+        "rounds": 6,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 12,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 1,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "colony",
+              "value": 10
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.police-station",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.grocery-store",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.school",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.library",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.hospital",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.gas-station",
+              "value": 1
+            }
+          ]
+        }
+      },
+      "hardcore": {
+        "morale": 5,
+        "rounds": 5,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 18,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 2,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "colony",
+              "value": 14
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.police-station",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.grocery-store",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.school",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.library",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.hospital",
+              "value": 1
+            },
+            {
+              "test": "barricadesAtLeast",
+              "subject": "location",
+              "location": "loc.gas-station",
+              "value": 1
+            }
+          ]
+        }
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 6 and six rounds. Twelve zombies at the colony and one at every other location.",
+        "victory": "Ten barricades standing at the colony, and at least one at each other location."
+      },
+      "hardcore": {
+        "setup": "Morale 5 and five rounds. Eighteen zombies at the colony and two at every other location.",
+        "victory": "Fourteen barricades standing at the colony, and at least one at each other location."
+      }
+    },
+    "sources": {
+      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
+      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "code": "R p16",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M04 (O8 normal morale 6 confirmed; O5 hardcore morale and rounds 5 and 5, Portuguese sheet over the BGG thread).",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.raiding-party",
+    "name": "Raiding Party",
+    "code": "M05",
+    "time": "short",
+    "sides": {
+      "normal": {
+        "morale": 5,
+        "rounds": 6,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 2,
+            "scope": {
+              "who": "allLocations"
+            }
+          }
+        ],
+        "complete": {
+          "code": "rule.location-deck.emptyAtLeast",
+          "params": {
+            "n": 2
+          }
+        }
+      },
+      "hardcore": {
+        "morale": 5,
+        "rounds": 6,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 12,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 3,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "complete": {
+          "any": [
+            {
+              "all": [
+                {
+                  "not": {
+                    "test": "seatCountAtLeast",
+                    "value": 4
+                  }
+                },
+                {
+                  "code": "rule.location-deck.emptyAtLeast",
+                  "params": {
+                    "n": 2
+                  }
+                }
+              ]
+            },
+            {
+              "all": [
+                {
+                  "test": "seatCountAtLeast",
+                  "value": 4
+                },
+                {
+                  "code": "rule.location-deck.emptyAtLeast",
+                  "params": {
+                    "n": 3
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 5 and six rounds. Two zombies at every location, the colony included.",
+        "victory": "Empty the item decks of two other locations."
+      },
+      "hardcore": {
+        "setup": "Morale 5 and six rounds. Twelve zombies at the colony and three at each other location.",
+        "victory": "With two or three players, empty the item decks of two other locations; with four or five, three of them."
+      }
+    },
+    "sources": {
+      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
+      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "code": "R p16",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M05 (O9: colony included in the normal setup). The hardcore seat-count split reads seatCountAtLeast, which counts seats still in the game; the card means players who started. Differs only after an elimination.",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.leave-it-all-behind",
+    "name": "Leave It All Behind",
+    "code": "M06",
+    "time": "short",
+    "sides": {
+      "normal": {
+        "morale": 6,
+        "rounds": 5,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 12,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 2,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "counters": {
+          "food": {
+            "need": "perSeat",
+            "perSeatMultiplier": 2
+          }
+        },
+        "contributions": [
+          {
+            "symbol": "food",
+            "counter": "food",
+            "exiledMayContribute": true
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "code": "rule.non-exiled-seats.weaponPerSurvivor"
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "food"
+            }
+          ]
+        }
+      },
+      "hardcore": {
+        "morale": 5,
+        "rounds": 5,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 12,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 2,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "counters": {
+          "food": {
+            "need": "perSeat",
+            "perSeatMultiplier": 3
+          }
+        },
+        "contributions": [
+          {
+            "symbol": "food",
+            "counter": "food",
+            "exiledMayContribute": true
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "code": "rule.non-exiled-seats.weaponPerSurvivor"
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "food"
+            }
+          ]
+        }
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 6 and five rounds. Twelve zombies at the colony and two at each other location.",
+        "victory": "Every player still in the colony carries one equipped weapon for each survivor they control, and each player who started adds two food cards to the objective. Food from the starting hand does not count."
+      },
+      "hardcore": {
+        "setup": "Morale 5 and five rounds. The same zombies as the normal side.",
+        "victory": "The same arming rule, with three food cards per player who started."
+      }
+    },
+    "sources": {
+      "sides.normal": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "code": "R p16",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M06 (O2: normal rounds 5 over the thread 6; O3: hardcore zombies 2 over the thread 3; O4: weapon per survivor). Starter-card exclusion is table honesty only.",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.stockpile",
+    "name": "Stockpile",
+    "code": "M07",
+    "time": "medium",
+    "sides": {
+      "normal": {
+        "morale": 6,
+        "rounds": 6,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 18,
+            "scope": {
+              "who": "colony"
+            }
+          }
+        ],
+        "counters": {
+          "medicine": {
+            "need": 2
+          },
+          "tool": {
+            "need": 2
+          },
+          "fuel": {
+            "need": 2
+          }
+        },
+        "contributions": [
+          {
+            "symbol": "medicine",
+            "counter": "medicine",
+            "exiledMayContribute": true
+          },
+          {
+            "symbol": "tool",
+            "counter": "tool",
+            "exiledMayContribute": true
+          },
+          {
+            "symbol": "fuel",
+            "counter": "fuel",
+            "exiledMayContribute": true
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "code": "rule.food.perNonExiledSeatAtLeast",
+              "params": {
+                "perSeat": 3
+              }
+            },
+            {
+              "code": "rule.colony.everyEntranceBarricaded"
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "medicine"
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "tool"
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "fuel"
+            }
+          ]
+        }
+      },
+      "hardcore": {
+        "morale": 5,
+        "rounds": 8,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 18,
+            "scope": {
+              "who": "colony"
+            }
+          }
+        ],
+        "counters": {
+          "medicine": {
+            "need": 2
+          },
+          "tool": {
+            "need": 2
+          },
+          "fuel": {
+            "need": 2
+          }
+        },
+        "contributions": [
+          {
+            "symbol": "medicine",
+            "counter": "medicine",
+            "exiledMayContribute": true
+          },
+          {
+            "symbol": "tool",
+            "counter": "tool",
+            "exiledMayContribute": true
+          },
+          {
+            "symbol": "fuel",
+            "counter": "fuel",
+            "exiledMayContribute": true
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "code": "rule.food.perNonExiledSeatAtLeast",
+              "params": {
+                "perSeat": 3
+              }
+            },
+            {
+              "code": "rule.colony.everyEntranceBarricaded"
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "medicine"
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "tool"
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "fuel"
+            }
+          ]
+        }
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 6 and six rounds. Eighteen zombies at the colony.",
+        "victory": "The food supply holds at least three tokens for every player still in the colony, every colony entrance has a barricade, and the objective holds two medicine, two tool and two fuel cards. Starting cards do not count."
+      },
+      "hardcore": {
+        "setup": "Morale 5 and eight rounds. Eighteen zombies at the colony.",
+        "victory": "The same targets as the normal side."
+      }
+    },
+    "sources": {
+      "sides.normal": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "code": "R p16",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M07 (O6: 3 food per non-exiled player on both sides; O10: any Tool-symbol card). Food is counted over the live non-exiled players, not the starting count, so it is a code condition (spec 11 O2.10). Starter-card exclusion is table honesty only.",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.winter-has-come",
+    "name": "Winter Has Come",
+    "code": "M08",
+    "time": "long",
+    "sides": {
+      "normal": {
+        "morale": 8,
+        "rounds": 8,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 10,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 1,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "counters": {
+          "fuel": {
+            "need": 8
+          }
+        },
+        "contributions": [
+          {
+            "symbol": "fuel",
+            "counter": "fuel",
+            "exiledMayContribute": true
+          }
+        ],
+        "triggers": [
+          {
+            "id": "fuelDuty",
+            "trigger": "colony.payFood",
+            "effect": [
+              {
+                "code": "objective.winter-has-come.fuelOrEnd"
+              }
+            ]
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "test": "roundsLeftAtMost",
+              "subject": "colony",
+              "value": 1
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "fuel"
+            }
+          ]
+        }
+      },
+      "hardcore": {
+        "morale": 7,
+        "rounds": 10,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 12,
+            "scope": {
+              "who": "colony"
+            }
+          },
+          {
+            "op": "addZombies",
+            "value": 2,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "counters": {
+          "fuel": {
+            "need": 10
+          }
+        },
+        "contributions": [
+          {
+            "symbol": "fuel",
+            "counter": "fuel",
+            "exiledMayContribute": true
+          }
+        ],
+        "triggers": [
+          {
+            "id": "fuelDuty",
+            "trigger": "colony.payFood",
+            "effect": [
+              {
+                "code": "objective.winter-has-come.fuelOrEnd"
+              }
+            ]
+          }
+        ],
+        "complete": {
+          "all": [
+            {
+              "test": "roundsLeftAtMost",
+              "subject": "colony",
+              "value": 1
+            },
+            {
+              "test": "objectiveCounterAtLeast",
+              "value": "fuel"
+            }
+          ]
+        }
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 8 and eight rounds. Ten zombies at the colony and one at every other location.",
+        "victory": "As each colony phase opens, some player must add a fuel card to the objective, or the game ends and the objective fails. Hold eight fuel cards there when the eighth round is checked."
+      },
+      "hardcore": {
+        "setup": "Morale 7 and ten rounds. Twelve zombies at the colony and two at every other location.",
+        "victory": "The same fuel duty every round; ten fuel cards must be there when the tenth round is checked."
+      }
+    },
+    "sources": {
+      "sides.normal": "BGG 2054328; BGG ludopedia-51113",
+      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "code": "R p16",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M08 (O14: the fuel card is compulsory). The compulsory card is a code effect on the colony.payFood window (spec 11 O2.10); complete is read at the last round check (roundsLeft 1).",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.too-many-mouths",
+    "name": "Too Many Mouths",
+    "code": "M09",
+    "time": "short",
+    "sides": {
+      "normal": {
+        "morale": 7,
+        "rounds": 5,
+        "setup": [
+          {
+            "op": "addHelpless",
+            "value": "seats+3",
+            "location": "colony"
+          },
+          {
+            "op": "addZombies",
+            "value": 6,
+            "scope": {
+              "who": "colony"
+            }
+          }
+        ],
+        "complete": {
+          "test": "roundsLeftAtMost",
+          "subject": "colony",
+          "value": 1
+        }
+      },
+      "hardcore": {
+        "morale": 7,
+        "rounds": 6,
+        "setup": [
+          {
+            "op": "addHelpless",
+            "value": "seats+5",
+            "location": "colony"
+          },
+          {
+            "op": "addZombies",
+            "value": 12,
+            "scope": {
+              "who": "colony"
+            }
+          }
+        ],
+        "complete": {
+          "test": "roundsLeftAtMost",
+          "subject": "colony",
+          "value": 1
+        }
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 7 and five rounds. Six zombies at the colony, and helpless survivors there equal to the number of players plus three.",
+        "victory": "Survive all five rounds."
+      },
+      "hardcore": {
+        "setup": "Morale 7 and six rounds. Twelve zombies at the colony, and helpless survivors there equal to the number of players plus five.",
+        "victory": "Survive all six rounds."
+      }
+    },
+    "sources": {
+      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
+      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "code": "R p17",
+      "time": "BGG ludopedia-51113"
+    },
+    "notes": "src: objectives-sources.md A row M09. Hardcore is rated medium on the card.",
+    "status": "draft"
+  },
+  {
+    "kind": "mainObjective",
+    "id": "obj.main.we-need-more-samples",
+    "name": "We Need More Samples",
+    "code": "M10",
+    "time": "short",
+    "sides": {
+      "normal": {
+        "morale": 6,
+        "rounds": 6,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 1,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "counters": {
+          "samples": {
+            "need": "perSeat",
+            "perSeatMultiplier": 3
+          }
+        },
+        "complete": {
+          "test": "objectiveCounterAtLeast",
+          "value": "samples"
+        },
+        "triggers": [
+          {
+            "id": "sample",
+            "trigger": "zombie.killed",
+            "effect": [
+              {
+                "op": "objectiveCounter",
+                "value": "samples",
+                "count": 1,
+                "onRoll": {
+                  "atLeast": 4,
+                  "then": []
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "hardcore": {
+        "morale": 6,
+        "rounds": 5,
+        "setup": [
+          {
+            "op": "addZombies",
+            "value": 3,
+            "scope": {
+              "who": "nonColonyLocations"
+            }
+          }
+        ],
+        "counters": {
+          "samples": {
+            "need": "perSeat",
+            "perSeatMultiplier": 3
+          }
+        },
+        "complete": {
+          "test": "objectiveCounterAtLeast",
+          "value": "samples"
+        },
+        "triggers": [
+          {
+            "id": "sample",
+            "trigger": "zombie.killed",
+            "effect": [
+              {
+                "op": "objectiveCounter",
+                "value": "samples",
+                "count": 1,
+                "onRoll": {
+                  "atLeast": 4,
+                  "then": []
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "text": {
+      "normal": {
+        "setup": "Morale 6, six rounds, one zombie at every location outside the colony.",
+        "victory": "Whenever a zombie dies, roll a die; a 4 or better bags a sample. Collect three samples for every player who started the game."
+      },
+      "hardcore": {
+        "setup": "Morale 6, five rounds, three zombies at every location outside the colony.",
+        "victory": "The same sampling roll and the same three samples per starting player."
+      }
+    },
+    "sources": {
+      "sides.normal": "R p6; R p15; PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
+      "sides.hardcore": "R p15; BGG 2054328; BGG ludopedia-51113 (verify)",
+      "code": "R p17",
+      "time": "R p15"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md A row M10 (O7: the rulebook hardcore card prints 3 samples per player, the thread and the Portuguese sheet say 4; 3 used, flagged; O11: one roll per zombie killed)."
+  }
+]

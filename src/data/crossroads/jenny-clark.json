@@ -1,0 +1,71 @@
+{
+  "kind": "crossroads",
+  "id": "xr.jenny-clark",
+  "name": "Jenny Clark",
+  "survivor": "sv.jenny-clark",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "survivorIs",
+          "subject": "survivor",
+          "value": "sv.jenny-clark"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "let-her-in",
+      "effect": [
+        {
+          "op": "moveSurvivor",
+          "location": "colony",
+          "value": "noExposure",
+          "scope": {
+            "who": "survivor"
+          }
+        },
+        {
+          "op": "addZombies",
+          "value": 8,
+          "location": "colony"
+        }
+      ]
+    },
+    {
+      "id": "take-the-shot",
+      "effect": [
+        {
+          "op": "killSurvivor",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Jenny searches while her player is still in the colony.",
+    "vignette": "On the long road a lone shape is limping forward with a loose crowd of the dead behind her. The lookout knows the walk before the face, and the rifle is already up.",
+    "options": {
+      "let-her-in": "Open the gate for her: Jenny moves to the colony and 8 zombies are added there.",
+      "take-the-shot": "End it from a distance: Jenny Clark dies."
+    }
+  },
+  "sources": {
+    "trigger": "W; BGG crossroads-v1.1 card 76",
+    "options": "BGG crossroads-v1.1 card 76",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #76; survivor card; trigger point action.search is a stand-in for \"controls Jenny\". Needs sv.jenny-clark in the bundle"
+}

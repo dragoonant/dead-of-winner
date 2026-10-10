@@ -1,0 +1,44 @@
+{
+  "kind": "crisis",
+  "id": "cr.we-are-being-watched",
+  "name": "We Are Being Watched",
+  "prevent": [
+    "medicine",
+    "tool"
+  ],
+  "fail": [
+    {
+      "op": "addZombies",
+      "value": 3,
+      "location": "loc.library"
+    },
+    {
+      "op": "addZombies",
+      "value": 3,
+      "location": "loc.grocery-store"
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Three zombies shamble into the Library and three into the Grocery Store.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "PHOTO es-nos-estan-observando; BGG ludopedia-51114",
+    "fail": "PHOTO es-nos-estan-observando; BGG ludopedia-51114",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 1 (name ours); two-symbol card (either scores); ES calls the store the Supermarket (C7)",
+  "tags": [
+    "name-ours"
+  ]
+}

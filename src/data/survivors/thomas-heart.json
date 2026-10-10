@@ -1,0 +1,46 @@
+{
+  "kind": "survivor",
+  "id": "sv.thomas-heart",
+  "name": "Thomas Heart",
+  "occupation": "Soldier",
+  "stats": {
+    "influence": 64,
+    "attack": 1,
+    "search": 3
+  },
+  "ability": {
+    "id": "standGround",
+    "kind": "action",
+    "location": "colony",
+    "limit": "oncePerRound",
+    "when": {
+      "test": "zombiesAtLeast",
+      "subject": "location",
+      "value": 1
+    },
+    "effect": [
+      {
+        "op": "killZombies",
+        "count": 2,
+        "location": "here",
+        "value": "noExposure"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Provisional: once a round at the colony, Thomas drops two zombies there without a roll for exposure.",
+    "bio": "Carries himself like a man who has already survived worse and says very little about it."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "BGG ludopedia-51115 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 30 (C4). PROVISIONAL: single fan source (Portuguese card transcription, no card photo, no die cost printed). The wiki text is a copy of Talia Jones and is discarded. Keep out of golden examples until a card photo confirms.",
+  "tags": [
+    "provisional"
+  ]
+}

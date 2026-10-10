@@ -1,0 +1,44 @@
+{
+  "kind": "item",
+  "id": "it.lighter",
+  "name": "Lighter",
+  "symbol": "weapon",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "burn",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "countsAs": "attack",
+      "cost": {
+        "cards": {
+          "symbol": "fuel",
+          "count": 1
+        }
+      },
+      "when": {
+        "test": "zombiesAtLeast",
+        "subject": "location",
+        "value": 1
+      },
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 4,
+          "location": "here",
+          "value": "noExposure"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round, when the bearer attacks, feed a fuel card to the flame: four zombies die instead of one and nobody rolls for exposure."
+  },
+  "sources": {
+    "symbol": "R p12; W",
+    "class": "R p10; BGG card-spread",
+    "equipped": "R p10; BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Gas Station / Lighter"
+}

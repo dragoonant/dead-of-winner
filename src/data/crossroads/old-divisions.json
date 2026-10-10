@@ -1,0 +1,138 @@
+{
+  "kind": "crossroads",
+  "id": "xr.old-divisions",
+  "name": "Old Divisions",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Expel the troublemaker",
+              "effect": [
+                {
+                  "op": "removeHelpless",
+                  "count": 1,
+                  "location": "colony"
+                },
+                {
+                  "op": "removeCard",
+                  "value": "crisis",
+                  "count": "all"
+                },
+                {
+                  "code": "crossroads.old-divisions.skipCrisis"
+                },
+                {
+                  "op": "morale",
+                  "value": -1
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Post a warning only",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Expel the troublemaker",
+              "effect": [
+                {
+                  "op": "removeHelpless",
+                  "count": 1,
+                  "location": "colony"
+                },
+                {
+                  "op": "removeCard",
+                  "value": "crisis",
+                  "count": "all"
+                },
+                {
+                  "code": "crossroads.old-divisions.skipCrisis"
+                },
+                {
+                  "op": "morale",
+                  "value": -1
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Post a warning only",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player with a survivor at the colony takes a move action.",
+    "vignette": "Two shifts collide in the supply corridor and a shoving match turns ugly when one of them starts listing who does not belong here. Voices rally behind him from the back, and for a moment the colony looks ready to split along lines the world already erased. It falls to the table to say what kind of place this will be.",
+    "options": {
+      "up": "Thumbs up: drive the agitator out. One helpless token is removed, the cards placed on this round's crisis are discarded unseen, the crisis goes under its deck and is not resolved, and morale falls by 1.",
+      "down": "Thumbs down: pin a warning to the wall and move on. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "F 2.3.1; BGG crossroads-v1.1 card 72",
+    "options": "F 2.3.1; BGG crossroads-v1.1 card 72",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #72; required card; vote card (both options open the same vote, yes = thumbs up). NEEDS HOOK crossroads.old-divisions.skipCrisis: put the current crisis card on the bottom of the crisis deck and skip the resolve-crisis step this round (removeCard crisis already discards the contributions unrevealed, F 2.3.1). The trigger point is a stand-in: the card fires on any action while the player has a survivor at the colony. removeHelpless already costs 1 morale in the engine (R10.2), see issues"
+}

@@ -1,0 +1,44 @@
+{
+  "kind": "crisis",
+  "id": "cr.killer-instinct",
+  "name": "Killer Instinct",
+  "prevent": [
+    "food",
+    "medicine"
+  ],
+  "fail": [
+    {
+      "op": "addZombies",
+      "value": 3,
+      "location": "loc.hospital"
+    },
+    {
+      "op": "addZombies",
+      "value": 3,
+      "location": "loc.gas-station"
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "The dead sense easy prey and gather, three at the Hospital and three at the Gas Station.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 3 (name ours); two-symbol card; single source",
+  "tags": [
+    "name-ours"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "kind": "crossroads",
+  "id": "xr.carla-thompson",
+  "name": "Carla Thompson",
+  "survivor": "sv.carla-thompson",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "survivorIs",
+          "subject": "survivor",
+          "value": "sv.carla-thompson"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "face-it",
+      "effect": [
+        {
+          "op": "exposure",
+          "value": "card",
+          "count": 2,
+          "scope": {
+            "who": "survivor"
+          },
+          "then": [
+            {
+              "op": "morale",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "back-away",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Carla searches while her player is still in the colony.",
+    "vignette": "The house Carla is combing is not as empty as it looked from the road. Something in a stained coat paces the upper landing, one hand resting on a holster, and its head turns slowly toward the stairs.",
+    "options": {
+      "face-it": "She goes up to meet it: roll for exposure twice on Carla, and if she survives, morale rises by 1.",
+      "back-away": "She retreats one stair at a time and leaves. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "W; BGG crossroads-v1.1 card 75",
+    "options": "BGG crossroads-v1.1 card 75",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #75; survivor card; trigger point action.search is a stand-in for \"controls Carla\". SIMPLIFIED: the morale gain is a node-level then after the exposure and so also runs if Carla dies (the DSL has no \"if the survivor lived\" test)"
+}

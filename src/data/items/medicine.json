@@ -1,0 +1,147 @@
+{
+  "kind": "item",
+  "id": "it.medicine",
+  "name": "Medicine",
+  "symbol": "medicine",
+  "class": "wastePile",
+  "play": {
+    "effect": [
+      {
+        "op": "heal",
+        "count": 1,
+        "scope": {
+          "who": "chosen",
+          "chooser": "owner",
+          "filter": {
+            "all": [
+              {
+                "test": "woundsAtLeast",
+                "subject": "survivor",
+                "value": 1
+              },
+              {
+                "any": [
+                  {
+                    "all": [
+                      {
+                        "test": "atLocation",
+                        "subject": "survivor",
+                        "location": "colony"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "colony",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "atLocation",
+                        "subject": "survivor",
+                        "location": "loc.police-station"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.police-station",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "atLocation",
+                        "subject": "survivor",
+                        "location": "loc.grocery-store"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.grocery-store",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "atLocation",
+                        "subject": "survivor",
+                        "location": "loc.school"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.school",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "atLocation",
+                        "subject": "survivor",
+                        "location": "loc.library"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.library",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "atLocation",
+                        "subject": "survivor",
+                        "location": "loc.hospital"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.hospital",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "atLocation",
+                        "subject": "survivor",
+                        "location": "loc.gas-station"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.gas-station",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "text": {
+    "ability": "Take one wound token off a survivor of yours, or off another player's survivor who stands with one of yours. Play it after the wound lands; it cannot rescue a survivor from a fatal wound."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "R p12; BGG card-spread; BGG ludopedia-51114",
+    "play": "R p12; BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Starting items / Medicine (I4)"
+}

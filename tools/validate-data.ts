@@ -42,6 +42,25 @@ export function assembleBundleFromDir(dir: string): { raw: RawBundle; issues: Da
       records[key].push(rec)
     }
   }
+  // Array files: objectives/{main,secret,betrayal,exiled}.json hold many records each. Names-only stubs (status 'unknown' / text null) are skipped.
+  const odir = path.join(dir, 'objectives')
+  if (fs.existsSync(odir)) {
+    for (const [file, key] of [['main', 'mainObjectives'], ['secret', 'secretObjectives'], ['betrayal', 'secretObjectives'], ['exiled', 'secretObjectives']] as const) {
+      const full = path.join(odir, file + '.json')
+      if (!fs.existsSync(full)) continue
+      let arr: { kind?: string; status?: string; text?: unknown }[]
+      try { arr = JSON.parse(fs.readFileSync(full, 'utf8')) } catch (e) {
+        issues.push({ rule: 'V-01', severity: 'error', where: full, message: `unreadable JSON: ${(e as Error).message}` })
+        continue
+      }
+      if (!Array.isArray(arr)) { issues.push({ rule: 'V-01', severity: 'error', where: full, message: 'objectives file must be an array' }); continue }
+      for (const rec of arr) {
+        if (rec.status === 'unknown' || rec.text == null) continue
+        if (rec.kind !== KIND_BY_FOLDER[key === 'mainObjectives' ? 'main-objectives' : 'secret-objectives']) issues.push({ rule: 'V-01', severity: 'error', where: `objectives/${file}.json`, message: `kind '${rec.kind}' does not match file` })
+        records[key].push(rec)
+      }
+    }
+  }
   const versionFile = path.join(dir, 'version.json')
   const slicesFile = path.join(dir, 'slices.json')
   const version = fs.existsSync(versionFile) ? (JSON.parse(fs.readFileSync(versionFile, 'utf8')) as { version: string }).version : '0.0.0'

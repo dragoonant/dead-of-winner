@@ -1,0 +1,31 @@
+{
+  "kind": "location",
+  "id": "loc.hospital",
+  "name": "Hospital",
+  "number": 5,
+  "spaces": {
+    "survivors": 4,
+    "entrances": 1,
+    "entranceSpaces": 4,
+    "noise": 4
+  },
+  "symbolOrder": [
+    "medicine",
+    "fuel",
+    "food",
+    "tool",
+    "survivor"
+  ],
+  "deck": "deck.hospital",
+  "sources": {
+    "number": "PHOTO tln hospital; W",
+    "spaces.noise": "R p5",
+    "spaces.entrances": "R p5",
+    "spaces.survivors": "PHOTO tln hospital",
+    "spaces.entranceSpaces": "PHOTO tln hospital",
+    "symbolOrder": "PHOTO tln hospital; BGG card-spread; S",
+    "deck": "S"
+  },
+  "status": "draft",
+  "notes": "src: locations-sources.md Location cards row 05 (ruling L1); symbol order checked against the deck composition (V-05)"
+}

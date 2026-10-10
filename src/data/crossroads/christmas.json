@@ -1,0 +1,58 @@
+{
+  "kind": "crossroads",
+  "id": "xr.christmas",
+  "name": "Christmas",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "hold-the-feast",
+      "requires": {
+        "test": "foodAtLeast",
+        "value": 5
+      },
+      "effect": [
+        {
+          "op": "food",
+          "value": -5
+        },
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "keep-rationing",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player with a survivor at the colony takes a search action.",
+    "vignette": "Someone has tied scraps of foil to a coat rack and called it a tree. When an old cook asks if the stores can spare a real meal for one evening, the whole hall holds its breath.",
+    "options": {
+      "hold-the-feast": "Spend 5 food on a proper holiday supper: morale rises by 1. (Only possible with 5 food in the supply.)",
+      "keep-rationing": "Stay on short rations. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 15",
+    "options": "BGG crossroads-v1.1 card 15",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #15; the feast option is impossible below 5 food, which forces the other (R p12). OMITTED: the Forest Plum clause (the player who controls Forest draws up to 4 Grocery Store cards and hands them out) needs a hook; the trigger point is a stand-in for \"a survivor you control is at the colony\""
+}

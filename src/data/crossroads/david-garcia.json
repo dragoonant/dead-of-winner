@@ -1,0 +1,110 @@
+{
+  "kind": "crossroads",
+  "id": "xr.david-garcia",
+  "name": "David Garcia",
+  "survivor": "sv.david-garcia",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "survivorIs",
+          "subject": "survivor",
+          "value": "sv.david-garcia"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "accuse",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats"
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Exile the accused",
+              "effect": [
+                {
+                  "op": "exile",
+                  "scope": {
+                    "who": "chosen",
+                    "chooser": "activeSeat",
+                    "filter": {
+                      "all": [
+                        {
+                          "test": "survivorsAtLeast",
+                          "subject": "seat",
+                          "location": "colony",
+                          "value": 1
+                        },
+                        {
+                          "not": {
+                            "test": "isActiveSeat",
+                            "subject": "seat"
+                          }
+                        },
+                        {
+                          "not": {
+                            "test": "seatIsExiled",
+                            "subject": "seat"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Let it go",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "take-it-back",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "David searches while his player is still in the colony.",
+    "vignette": "David has audited the stores three nights running, and the numbers refuse to close. Either someone is quietly pocketing rations, or he has made a mistake in front of everyone, and he has to commit to one of those stories now.",
+    "options": {
+      "accuse": "He names another player at the colony as the thief and the table votes on exiling them.",
+      "take-it-back": "He admits the sums were wrong and withdraws. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "W; BGG crossroads-v1.1 card 66",
+    "options": "BGG crossroads-v1.1 card 66",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #66; survivor card; trigger point action.search is a stand-in for \"controls David\". Order simplification: the engine runs the vote first and the active seat picks the accused only after a yes (the printed card names the accused first). The accusation is open to seats with a survivor at the colony"
+}

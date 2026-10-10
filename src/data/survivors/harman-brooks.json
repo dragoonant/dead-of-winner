@@ -1,0 +1,38 @@
+{
+  "kind": "survivor",
+  "id": "sv.harman-brooks",
+  "name": "Harman Brooks",
+  "occupation": "Park Ranger",
+  "stats": {
+    "influence": 32,
+    "attack": 3,
+    "search": 3
+  },
+  "ability": {
+    "id": "thickSkin",
+    "kind": "passive",
+    "effect": [
+      {
+        "op": "grant",
+        "what": "frostbiteIsWound",
+        "scope": {
+          "who": "self"
+        },
+        "duration": "game"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Frostbite never takes hold of Harman: he takes an ordinary wound instead.",
+    "bio": "Has weathered worse winters than this one, mostly alone."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "F 1.1.1; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 17"
+}

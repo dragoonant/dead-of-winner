@@ -1,0 +1,58 @@
+{
+  "kind": "deck",
+  "id": "deck.grocery-store",
+  "name": "Grocery Store items",
+  "size": 20,
+  "cards": [
+    {
+      "item": "it.food-1",
+      "count": 2
+    },
+    {
+      "item": "it.food-2",
+      "count": 2
+    },
+    {
+      "item": "it.food-3",
+      "count": 2
+    },
+    {
+      "item": "it.medicine",
+      "count": 6
+    },
+    {
+      "item": "it.junk",
+      "count": 1
+    },
+    {
+      "item": "it.wrench",
+      "count": 1
+    },
+    {
+      "item": "it.snow-shoes",
+      "count": 1
+    },
+    {
+      "item": "it.hammer",
+      "count": 1
+    },
+    {
+      "item": "it.rotten-flesh",
+      "count": 1
+    },
+    {
+      "item": "it.outsiders-1",
+      "count": 1
+    },
+    {
+      "item": "it.outsiders-2",
+      "count": 2
+    }
+  ],
+  "sources": {
+    "cards": "W; BGG card-spread; BGG ludopedia-51114; S",
+    "size": "R p2; R p6"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Grocery Store (symbol counts checked: food 6, medicine 6, tool 5, survivor 3)"
+}

@@ -1,0 +1,91 @@
+{
+  "kind": "crossroads",
+  "id": "xr.bev-russell",
+  "name": "Bev Russell",
+  "survivor": "sv.bev-russell",
+  "mature": true,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "test": "survivorIs",
+      "subject": "survivor",
+      "value": "sv.bev-russell"
+    }
+  },
+  "options": [
+    {
+      "id": "stayWithThem",
+      "effect": [
+        {
+          "op": "moveSurvivor",
+          "location": "loc.school",
+          "value": "noExposure",
+          "scope": {
+            "who": "survivor"
+          }
+        },
+        {
+          "code": "crossroads.bev-russel.immune",
+          "params": {
+            "location": "loc.school"
+          }
+        },
+        {
+          "op": "forbid",
+          "what": "move",
+          "scope": {
+            "who": "survivor"
+          },
+          "duration": "game"
+        },
+        {
+          "op": "forbid",
+          "what": "attackSurvivor",
+          "scope": {
+            "who": "survivor"
+          },
+          "duration": "game"
+        },
+        {
+          "code": "crossroads.bev-russel.schoolWound"
+        }
+      ]
+    },
+    {
+      "id": "walkAway",
+      "effect": [
+        {
+          "op": "moveSurvivor",
+          "location": "loc.school",
+          "value": "noExposure",
+          "scope": {
+            "who": "survivor"
+          }
+        },
+        {
+          "op": "killZombies",
+          "count": "all",
+          "location": "loc.school"
+        },
+        {
+          "code": "crossroads.bev-russel.clearSchool"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Bev searches, and her player holds her.",
+    "vignette": "Bev stops at the school gate without meaning to, and the playground swing is still moving. Someone small is waiting in the shadow of the stairwell, and she has to decide what she can live with before she takes another step.",
+    "options": {
+      "stayWithThem": "Stay and guard the children: Bev goes to the School and her card leaves the game, but her figure stays there and cannot be killed, attacked or moved. From then on, any survivor who moves to the School takes a wound.",
+      "walkAway": "Leave them behind and burn it out: Bev goes to the School, then every zombie and every item card there is removed from the game."
+    }
+  },
+  "sources": {
+    "trigger": "F 2.2.1; BGG crossroads-v1.1 card 36",
+    "options": "F 2.2.1; BGG crossroads-v1.1 card 36",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #36; required card; the printed setup puts Bev at the School in both options. NEEDS HOOKS crossroads.bev-russel.schoolWound (a lasting rule: each survivor that moves to the School takes 1 wound) and crossroads.bev-russel.clearSchool (remove the School deck cards from the game); also her survivor card leaves her player's following in option 1 (the immune hook should do that). crossroads.bev-russel.immune exists. Mature flag is our reading (child death/infection theme)"
+}

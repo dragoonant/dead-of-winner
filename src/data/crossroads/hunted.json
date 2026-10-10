@@ -1,0 +1,66 @@
+{
+  "kind": "crossroads",
+  "id": "xr.hunted",
+  "name": "Hunted",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "test": "exposureReason",
+          "subject": "survivor",
+          "value": "move"
+        },
+        {
+          "test": "exposureFace",
+          "subject": "survivor",
+          "face": "wound"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "hunt",
+      "effect": [
+        {
+          "op": "exposure",
+          "value": "card",
+          "count": 2,
+          "scope": {
+            "who": "seatSurvivors"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lieLow",
+      "effect": [
+        {
+          "op": "grant",
+          "what": "moveRollWound",
+          "scope": {
+            "who": "allSeats"
+          },
+          "duration": "game"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor takes a plain wound (not frostbite, not a bite) on the exposure roll after a move.",
+    "vignette": "The wound is too clean to be a bite. It is a burn across the ribs where a bullet skimmed past, and the tracks in the snow beyond the hedge belong to boots, not shuffling feet. Somebody is out there, patient and warm, and they have chosen the colony as their quarry.",
+    "options": {
+      "hunt": "Strike back at the shooters: every survivor you control rolls for exposure twice.",
+      "lieLow": "Stay low and keep quiet. From now on, whenever any player moves a survivor, a die is rolled too, and a 1 or 2 puts a wound on the mover."
+    }
+  },
+  "sources": {
+    "trigger": "R p4; BGG crossroads-v1.1 card 77",
+    "options": "R p4; BGG crossroads-v1.1 card 77",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #77; required card; trigger reads the exposure face of the move (exposure.reason move, face wound)"
+}

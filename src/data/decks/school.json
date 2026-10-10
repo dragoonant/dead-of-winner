@@ -1,0 +1,66 @@
+{
+  "kind": "deck",
+  "id": "deck.school",
+  "name": "School items",
+  "size": 20,
+  "cards": [
+    {
+      "item": "it.food-1",
+      "count": 3
+    },
+    {
+      "item": "it.food-2",
+      "count": 3
+    },
+    {
+      "item": "it.barricades-123",
+      "count": 1
+    },
+    {
+      "item": "it.guide-to-leadership",
+      "count": 1
+    },
+    {
+      "item": "it.beginners-martial-arts",
+      "count": 1
+    },
+    {
+      "item": "it.school-blueprints",
+      "count": 1
+    },
+    {
+      "item": "it.junk",
+      "count": 1
+    },
+    {
+      "item": "it.scissors",
+      "count": 1
+    },
+    {
+      "item": "it.baseball-bat",
+      "count": 1
+    },
+    {
+      "item": "it.megaphone",
+      "count": 1
+    },
+    {
+      "item": "it.medicine",
+      "count": 3
+    },
+    {
+      "item": "it.outsiders-2",
+      "count": 2
+    },
+    {
+      "item": "it.outsiders-3",
+      "count": 1
+    }
+  ],
+  "sources": {
+    "cards": "W; BGG card-spread; BGG ludopedia-51114; S",
+    "size": "R p2; R p6"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School (symbol counts checked: food 6, education 4, tool 4, medicine 3, survivor 3)"
+}

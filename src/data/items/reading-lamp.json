@@ -1,0 +1,405 @@
+{
+  "kind": "item",
+  "id": "it.reading-lamp",
+  "name": "Reading Lamp",
+  "symbol": "tool",
+  "class": "wastePile",
+  "play": {
+    "when": {
+      "any": [
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "colony",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.police-station",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.police-station",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.grocery-store",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.grocery-store",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.school",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.school",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.library",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.library",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.hospital",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.hospital",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.gas-station",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.gas-station",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    "effect": [
+      {
+        "op": "choose",
+        "scope": {
+          "who": "seat",
+          "chooser": "owner"
+        },
+        "options": [
+          {
+            "id": "colony",
+            "label": "Swing it at the colony",
+            "requires": {
+              "all": [
+                {
+                  "test": "survivorsAtLeast",
+                  "subject": "seat",
+                  "location": "colony",
+                  "value": 1
+                },
+                {
+                  "test": "zombiesAtLeast",
+                  "subject": "location",
+                  "location": "colony",
+                  "value": 1
+                }
+              ]
+            },
+            "effect": [
+              {
+                "op": "killZombies",
+                "count": 1,
+                "location": "colony",
+                "scope": {
+                  "who": "seatSurvivors",
+                  "count": 1,
+                  "chooser": "owner",
+                  "filter": {
+                    "test": "atLocation",
+                    "subject": "survivor",
+                    "location": "colony"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "police-station",
+            "label": "Swing it at the Police Station",
+            "requires": {
+              "all": [
+                {
+                  "test": "survivorsAtLeast",
+                  "subject": "seat",
+                  "location": "loc.police-station",
+                  "value": 1
+                },
+                {
+                  "test": "zombiesAtLeast",
+                  "subject": "location",
+                  "location": "loc.police-station",
+                  "value": 1
+                }
+              ]
+            },
+            "effect": [
+              {
+                "op": "killZombies",
+                "count": 1,
+                "location": "loc.police-station",
+                "scope": {
+                  "who": "seatSurvivors",
+                  "count": 1,
+                  "chooser": "owner",
+                  "filter": {
+                    "test": "atLocation",
+                    "subject": "survivor",
+                    "location": "loc.police-station"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "grocery-store",
+            "label": "Swing it at the Grocery Store",
+            "requires": {
+              "all": [
+                {
+                  "test": "survivorsAtLeast",
+                  "subject": "seat",
+                  "location": "loc.grocery-store",
+                  "value": 1
+                },
+                {
+                  "test": "zombiesAtLeast",
+                  "subject": "location",
+                  "location": "loc.grocery-store",
+                  "value": 1
+                }
+              ]
+            },
+            "effect": [
+              {
+                "op": "killZombies",
+                "count": 1,
+                "location": "loc.grocery-store",
+                "scope": {
+                  "who": "seatSurvivors",
+                  "count": 1,
+                  "chooser": "owner",
+                  "filter": {
+                    "test": "atLocation",
+                    "subject": "survivor",
+                    "location": "loc.grocery-store"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "school",
+            "label": "Swing it at the School",
+            "requires": {
+              "all": [
+                {
+                  "test": "survivorsAtLeast",
+                  "subject": "seat",
+                  "location": "loc.school",
+                  "value": 1
+                },
+                {
+                  "test": "zombiesAtLeast",
+                  "subject": "location",
+                  "location": "loc.school",
+                  "value": 1
+                }
+              ]
+            },
+            "effect": [
+              {
+                "op": "killZombies",
+                "count": 1,
+                "location": "loc.school",
+                "scope": {
+                  "who": "seatSurvivors",
+                  "count": 1,
+                  "chooser": "owner",
+                  "filter": {
+                    "test": "atLocation",
+                    "subject": "survivor",
+                    "location": "loc.school"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "library",
+            "label": "Swing it at the Library",
+            "requires": {
+              "all": [
+                {
+                  "test": "survivorsAtLeast",
+                  "subject": "seat",
+                  "location": "loc.library",
+                  "value": 1
+                },
+                {
+                  "test": "zombiesAtLeast",
+                  "subject": "location",
+                  "location": "loc.library",
+                  "value": 1
+                }
+              ]
+            },
+            "effect": [
+              {
+                "op": "killZombies",
+                "count": 1,
+                "location": "loc.library",
+                "scope": {
+                  "who": "seatSurvivors",
+                  "count": 1,
+                  "chooser": "owner",
+                  "filter": {
+                    "test": "atLocation",
+                    "subject": "survivor",
+                    "location": "loc.library"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "hospital",
+            "label": "Swing it at the Hospital",
+            "requires": {
+              "all": [
+                {
+                  "test": "survivorsAtLeast",
+                  "subject": "seat",
+                  "location": "loc.hospital",
+                  "value": 1
+                },
+                {
+                  "test": "zombiesAtLeast",
+                  "subject": "location",
+                  "location": "loc.hospital",
+                  "value": 1
+                }
+              ]
+            },
+            "effect": [
+              {
+                "op": "killZombies",
+                "count": 1,
+                "location": "loc.hospital",
+                "scope": {
+                  "who": "seatSurvivors",
+                  "count": 1,
+                  "chooser": "owner",
+                  "filter": {
+                    "test": "atLocation",
+                    "subject": "survivor",
+                    "location": "loc.hospital"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "gas-station",
+            "label": "Swing it at the Gas Station",
+            "requires": {
+              "all": [
+                {
+                  "test": "survivorsAtLeast",
+                  "subject": "seat",
+                  "location": "loc.gas-station",
+                  "value": 1
+                },
+                {
+                  "test": "zombiesAtLeast",
+                  "subject": "location",
+                  "location": "loc.gas-station",
+                  "value": 1
+                }
+              ]
+            },
+            "effect": [
+              {
+                "op": "killZombies",
+                "count": 1,
+                "location": "loc.gas-station",
+                "scope": {
+                  "who": "seatSurvivors",
+                  "count": 1,
+                  "chooser": "owner",
+                  "filter": {
+                    "test": "atLocation",
+                    "subject": "survivor",
+                    "location": "loc.gas-station"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "text": {
+    "ability": "Swing it at a zombie: one of your survivors makes an attack, with no die spent, and rolls for exposure as usual."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Library / Reading Lamp. One choose option per location so the attacker stands where the zombie dies; the survivor still takes the normal exposure roll for the kill."
+}

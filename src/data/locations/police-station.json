@@ -1,0 +1,31 @@
+{
+  "kind": "location",
+  "id": "loc.police-station",
+  "name": "Police Station",
+  "number": 1,
+  "spaces": {
+    "survivors": 3,
+    "entrances": 1,
+    "entranceSpaces": 4,
+    "noise": 4
+  },
+  "symbolOrder": [
+    "weapon",
+    "fuel",
+    "tool",
+    "food",
+    "survivor"
+  ],
+  "deck": "deck.police-station",
+  "sources": {
+    "number": "PHOTO tln police-station; W",
+    "spaces.noise": "R p5",
+    "spaces.entrances": "R p5",
+    "spaces.survivors": "PHOTO tln police-station",
+    "spaces.entranceSpaces": "PHOTO tln police-station",
+    "symbolOrder": "PHOTO tln police-station; BGG card-spread; S",
+    "deck": "S"
+  },
+  "status": "draft",
+  "notes": "src: locations-sources.md Location cards row 01 (ruling L1); symbol order checked against the deck composition (V-05)"
+}

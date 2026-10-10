@@ -1,0 +1,69 @@
+{
+  "kind": "crossroads",
+  "id": "xr.bitter-cold-night",
+  "name": "Bitter Cold Night",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "test": "exposureReason",
+          "subject": "survivor",
+          "value": "move"
+        },
+        {
+          "test": "exposureFace",
+          "subject": "survivor",
+          "face": "frostbite"
+        },
+        {
+          "test": "survivorsAtLeast",
+          "subject": "location",
+          "value": 2
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "let-them-in",
+      "effect": [
+        {
+          "op": "wound",
+          "kind": "frostbite",
+          "count": 1,
+          "scope": {
+            "who": "atLocation"
+          }
+        }
+      ]
+    },
+    {
+      "id": "bar-the-door",
+      "effect": [
+        {
+          "op": "killSurvivor",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor takes frostbite on the exposure roll after a move, and arrives where other survivors already are.",
+    "vignette": "Ice has sealed the seams of the doorframe and the wind keeps trying every gap. Behind the door a small group has a stove barely warm enough to matter, and outside a half-frozen traveller is scratching at the wood.",
+    "options": {
+      "let-them-in": "Open up: the draught reaches everyone, and every survivor at the location takes a frostbite wound.",
+      "bar-the-door": "Keep it shut: the traveller does not survive the night, and the moving survivor is killed."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 45",
+    "options": "BGG crossroads-v1.1 card 45",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #45; trigger counts the arriving survivor, so 2 or more at the location means 1 or more were already there"
+}

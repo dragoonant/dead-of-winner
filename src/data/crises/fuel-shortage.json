@@ -1,0 +1,37 @@
+{
+  "kind": "crisis",
+  "id": "cr.fuel-shortage",
+  "name": "Fuel Shortage",
+  "prevent": [
+    "fuel"
+  ],
+  "fail": [
+    {
+      "op": "morale",
+      "value": -2
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "The generators sputter out and morale drops by 2.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "R p12",
+    "fail": "R p12; PHOTO es-escasez-de-gasolina",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 8 (official name); official name (R p12); conflict C1: R and ES print 2, P prints 1; R taken",
+  "tags": [
+    "name-official"
+  ]
+}

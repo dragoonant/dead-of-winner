@@ -1,0 +1,203 @@
+[
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.gluttony",
+    "name": "Gluttony",
+    "type": "betrayal",
+    "code": "S11",
+    "text": null,
+    "status": "unknown",
+    "sources": {
+      "name": "BGG etwest-names"
+    },
+    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.runaway",
+    "name": "Runaway",
+    "type": "betrayal",
+    "code": "S12",
+    "text": null,
+    "status": "unknown",
+    "sources": {
+      "name": "BGG etwest-names"
+    },
+    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.take-over",
+    "name": "Take Over",
+    "type": "betrayal",
+    "code": "S13",
+    "text": null,
+    "status": "unknown",
+    "sources": {
+      "name": "BGG etwest-names"
+    },
+    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.all-for-one",
+    "name": "All for One",
+    "type": "betrayal",
+    "code": "S14",
+    "text": null,
+    "status": "unknown",
+    "sources": {
+      "name": "BGG etwest-names"
+    },
+    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.accept-your-fate",
+    "name": "Accept Your Fate",
+    "type": "betrayal",
+    "code": "S15",
+    "text": null,
+    "status": "unknown",
+    "sources": {
+      "name": "BGG etwest-names"
+    },
+    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.trigger-happy",
+    "name": "Trigger Happy",
+    "type": "betrayal",
+    "code": "S16",
+    "requiresMain": false,
+    "ai": {
+      "lever": "hoard:weapon"
+    },
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "code": "rule.seat-survivors.weaponsEquippedAtLeast",
+          "params": {
+            "n": 4
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while your survivors carry at least four weapon cards between them."
+    },
+    "sources": {
+      "complete": "PHOTO es-secret-objectives; BGG etwest-names; R p18",
+      "requiresMain": "R p3"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md C S16"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.cult-leader",
+    "name": "Cult Leader",
+    "type": "betrayal",
+    "code": "S17",
+    "requiresMain": false,
+    "ai": {
+      "lever": "custom"
+    },
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "code": "rule.group-size.mostSurvivors",
+          "params": {
+            "margin": 2
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while you control at least two more survivors than anyone else."
+    },
+    "sources": {
+      "complete": "PHOTO es-secret-objectives; BGG etwest-names; R p18",
+      "requiresMain": "R p3"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md C S17"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.serial-killers",
+    "name": "Serial Killers",
+    "type": "betrayal",
+    "code": "S18",
+    "requiresMain": false,
+    "ai": {
+      "lever": "killSurvivors"
+    },
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "code": "rule.survivors-removed.atLeast",
+          "params": {
+            "n": 5
+          }
+        },
+        {
+          "test": "survivorsAtLeast",
+          "subject": "holder",
+          "value": 2
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) with at least five survivors gone from the game and at least two of your own still standing."
+    },
+    "sources": {
+      "complete": "PHOTO es-secret-objectives; BGG etwest-names; R p19",
+      "requiresMain": "R p3"
+    },
+    "status": "draft",
+    "notes": "src: objectives-sources.md C S18"
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.mad-scientist",
+    "name": "Mad Scientist",
+    "type": "betrayal",
+    "code": "S19",
+    "text": null,
+    "status": "unknown",
+    "sources": {
+      "name": "BGG etwest-names"
+    },
+    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+  },
+  {
+    "kind": "secretObjective",
+    "id": "obj.betrayal.obsessed",
+    "name": "Obsessed",
+    "type": "betrayal",
+    "code": "S20",
+    "text": null,
+    "status": "unknown",
+    "sources": {
+      "name": "BGG etwest-names"
+    },
+    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+  }
+]

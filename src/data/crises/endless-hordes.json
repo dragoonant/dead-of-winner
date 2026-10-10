@@ -1,0 +1,42 @@
+{
+  "kind": "crisis",
+  "id": "cr.endless-hordes",
+  "name": "Endless Hordes",
+  "prevent": [
+    "tool"
+  ],
+  "fail": [
+    {
+      "op": "addZombies",
+      "value": 8,
+      "location": "colony"
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Eight zombies surge against the colony and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 4 (name ours); single source",
+  "tags": [
+    "name-ours"
+  ]
+}

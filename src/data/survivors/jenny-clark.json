@@ -1,0 +1,38 @@
+{
+  "kind": "survivor",
+  "id": "sv.jenny-clark",
+  "name": "Jenny Clark",
+  "occupation": "Waitress",
+  "stats": {
+    "influence": 24,
+    "attack": 4,
+    "search": 3
+  },
+  "ability": {
+    "id": "sharpEyes",
+    "kind": "triggered",
+    "trigger": "search.drawn",
+    "location": "anywhere",
+    "limit": "oncePerRound",
+    "optional": true,
+    "effect": [
+      {
+        "op": "extraSearchLook",
+        "count": 3
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round, a search with Jenny lets her look at three extra cards. She keeps no more than usual.",
+    "bio": "Memorized fifty orders at a time and can read a crowd's mood from across the room."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "F 1.1.2; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 20"
+}

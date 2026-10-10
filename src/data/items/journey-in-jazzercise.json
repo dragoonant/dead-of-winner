@@ -1,0 +1,34 @@
+{
+  "kind": "item",
+  "id": "it.journey-in-jazzercise",
+  "name": "A Journey in Jazzercise",
+  "symbol": "education",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "reroll",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "effect": [
+        {
+          "op": "modDie",
+          "value": "reroll",
+          "count": 1,
+          "scope": {
+            "who": "seat"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the owner throws one of their unused action dice again."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Library / A Journey in Jazzercise"
+}

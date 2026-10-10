@@ -1,0 +1,33 @@
+{
+  "kind": "item",
+  "id": "it.night-vision-goggles",
+  "name": "Night Vision Goggles",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "nightEyes",
+      "kind": "triggered",
+      "trigger": "dice.rolled",
+      "effect": [
+        {
+          "op": "addDie",
+          "value": "d6",
+          "scope": {
+            "who": "seat"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "At the start of each round the owner rolls one extra action die."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Police Station / Night Vision Goggles"
+}

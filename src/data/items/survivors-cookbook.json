@@ -1,0 +1,31 @@
+{
+  "kind": "item",
+  "id": "it.survivors-cookbook",
+  "name": "Survivor's Cookbook",
+  "symbol": "education",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "stretch",
+      "kind": "action",
+      "location": "colony",
+      "limit": "oncePerRound",
+      "effect": [
+        {
+          "op": "food",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round, while the bearer is at the colony, one extra food token joins the supply."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Library / Survivor's Cookbook"
+}

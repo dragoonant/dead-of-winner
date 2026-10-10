@@ -1,0 +1,44 @@
+{
+  "kind": "crisis",
+  "id": "cr.march-of-the-dead",
+  "name": "March of the Dead",
+  "prevent": [
+    "tool",
+    "fuel"
+  ],
+  "fail": [
+    {
+      "op": "addZombies",
+      "value": 3,
+      "location": "loc.school"
+    },
+    {
+      "op": "addZombies",
+      "value": 3,
+      "location": "loc.police-station"
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "A column of the dead files into the School and the Police Station, three at each.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 2 (name ours); two-symbol card; single source",
+  "tags": [
+    "name-ours"
+  ]
+}

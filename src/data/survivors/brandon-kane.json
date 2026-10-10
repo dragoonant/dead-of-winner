@@ -1,0 +1,40 @@
+{
+  "kind": "survivor",
+  "id": "sv.brandon-kane",
+  "name": "Brandon Kane",
+  "occupation": "Janitor",
+  "stats": {
+    "influence": 26,
+    "attack": 2,
+    "search": 4
+  },
+  "ability": {
+    "id": "sweepUp",
+    "kind": "action",
+    "location": "colony",
+    "cost": {
+      "die": 1
+    },
+    "limit": "oncePerRound",
+    "countsAs": "cleanWaste",
+    "effect": [
+      {
+        "op": "cleanWaste",
+        "count": 5
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Spend any die, once a round, at the colony: the clean waste action clears five cards instead of three.",
+    "bio": "Has cleaned up after every kind of disaster and finds this one almost familiar."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 7"
+}

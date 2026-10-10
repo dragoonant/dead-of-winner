@@ -1,0 +1,31 @@
+{
+  "kind": "item",
+  "id": "it.fuel",
+  "name": "Fuel",
+  "symbol": "fuel",
+  "class": "wastePile",
+  "play": {
+    "effect": [
+      {
+        "op": "grant",
+        "what": "noExposureOnMove",
+        "scope": {
+          "who": "seatSurvivors",
+          "count": 1,
+          "chooser": "owner"
+        },
+        "duration": "turn"
+      }
+    ]
+  },
+  "text": {
+    "ability": "Burn it as the survivor sets out: moves by that survivor this turn skip the exposure roll."
+  },
+  "sources": {
+    "symbol": "R p10; W",
+    "class": "R p10; BGG card-spread",
+    "play": "R p10; BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "verified",
+  "notes": "src: items-sources.md Starting items / Fuel. RULING: Fuel is a grant (noExposureOnMove, one chosen survivor, this turn) played before a normal move that still costs its die; the M1 fixture encoded it as a free move (moveSurvivor, countsAs move), which the BC/P/R wording (\"when moving a survivor you control, skip the exposure roll for that move\") does not support."
+}

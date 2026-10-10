@@ -1,0 +1,66 @@
+{
+  "kind": "crossroads",
+  "id": "xr.outsiders",
+  "name": "Outsiders",
+  "mature": false,
+  "trigger": {
+    "point": "action.barricade",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "emptySurvivorSpace",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "take-them-in",
+      "effect": [
+        {
+          "op": "addSurvivor",
+          "count": 1,
+          "scope": {
+            "who": "allSeats"
+          }
+        },
+        {
+          "op": "addHelpless",
+          "count": 1,
+          "location": "colony"
+        }
+      ]
+    },
+    {
+      "id": "send-them-on",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player with a survivor at the colony builds a barricade while the colony has an empty survivor space.",
+    "vignette": "A rusted truck idles at the gate with its lights off, its bed crowded with silent faces under blankets. The driver steps down slowly, hands open, and asks whether there is room for a winter.",
+    "options": {
+      "take-them-in": "Open the gate: every player gains a new survivor from the deck, and the colony gains a helpless survivor.",
+      "send-them-on": "Wave the truck away. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 48",
+    "options": "BGG crossroads-v1.1 card 48",
+    "mature": "R p6 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #48; SIMPLIFIED: the printed card adds one helpless survivor per player, here a single token (no per-seat count in the DSL). The trigger point is a stand-in for \"a survivor you control is at the colony\""
+}

@@ -1,0 +1,38 @@
+{
+  "kind": "survivor",
+  "id": "sv.mike-cho",
+  "name": "Mike Cho",
+  "occupation": "Ninja",
+  "stats": {
+    "influence": 30,
+    "attack": 2,
+    "search": 4
+  },
+  "ability": {
+    "id": "silentStrike",
+    "kind": "passive",
+    "effect": [
+      {
+        "op": "grant",
+        "what": "noExposureOnKill",
+        "scope": {
+          "who": "self"
+        },
+        "duration": "game"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Mike's attacks never cost him an exposure roll.",
+    "bio": "Claims the training is real and moves as if it is."
+  },
+  "sources": {
+    "stats.influence": "R p7; W; C",
+    "stats.attack": "R p7; W",
+    "stats.search": "W",
+    "ability": "R p7; W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 24"
+}

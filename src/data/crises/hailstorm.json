@@ -1,0 +1,43 @@
+{
+  "kind": "crisis",
+  "id": "cr.hailstorm",
+  "name": "Hailstorm",
+  "prevent": [
+    "tool"
+  ],
+  "fail": [
+    {
+      "op": "removeBarricade",
+      "count": "all",
+      "scope": {
+        "who": "allLocations"
+      }
+    },
+    {
+      "code": "crisis.hailstorm.frostbiteRolls"
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Hail strips every barricade from every location, and each player still in the colony rolls a die: on a 4 or less one of their survivors gets frostbite. No morale is lost.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 6 (name ours); NEEDS HOOK crisis.hailstorm.frostbiteRolls: a per-seat d6 (4 or less) then a frostbite on one survivor of that seat chosen by its player; the DSL has no per-seat iteration with a die. Barricade removal is plain DSL. Single source",
+  "tags": [
+    "name-ours"
+  ]
+}

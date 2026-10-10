@@ -1,0 +1,34 @@
+{
+  "kind": "item",
+  "id": "it.guide-to-leadership",
+  "name": "Guide to Leadership",
+  "symbol": "education",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "rally",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "effect": [
+        {
+          "op": "modDie",
+          "value": 1,
+          "count": 1,
+          "scope": {
+            "who": "seat"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the owner raises one of their unused action dice by 1."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School / Guide to Leadership"
+}

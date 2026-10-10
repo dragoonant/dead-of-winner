@@ -1,0 +1,36 @@
+{
+  "kind": "crisis",
+  "id": "cr.exhaustion",
+  "name": "Exhaustion",
+  "prevent": [
+    "medicine"
+  ],
+  "fail": [
+    {
+      "code": "crisis.exhaustion.frostbiteTopFive"
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "The five most influential survivors still in the colony each take a frostbite wound. No morale is lost.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "PHOTO es-agotamiento; BGG ludopedia-51114",
+    "fail": "PHOTO es-agotamiento; BGG ludopedia-51114",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 13 (name ours); NEEDS HOOK crisis.exhaustion.frostbiteTopFive: frostbite on each of the 5 non-exiled survivors with the highest influence; the DSL has no top-N-by-influence scope",
+  "tags": [
+    "name-ours"
+  ]
+}

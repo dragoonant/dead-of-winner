@@ -1,0 +1,265 @@
+{
+  "kind": "item",
+  "id": "it.scissors",
+  "name": "Scissors",
+  "symbol": "tool",
+  "class": "wastePile",
+  "play": {
+    "when": {
+      "any": [
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "colony",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.police-station",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.police-station",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.grocery-store",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.grocery-store",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.school",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.school",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.library",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.library",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.hospital",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.hospital",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "loc.gas-station",
+              "value": 1
+            },
+            {
+              "test": "zombiesAtLeast",
+              "subject": "location",
+              "location": "loc.gas-station",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    "effect": [
+      {
+        "op": "killZombies",
+        "count": 1,
+        "value": "noExposure",
+        "scope": {
+          "who": "allLocations",
+          "count": 1,
+          "chooser": "owner",
+          "filter": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "all": [
+                      {
+                        "test": "locationIs",
+                        "subject": "location",
+                        "value": "colony"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "colony",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "locationIs",
+                        "subject": "location",
+                        "value": "loc.police-station"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.police-station",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "locationIs",
+                        "subject": "location",
+                        "value": "loc.grocery-store"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.grocery-store",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "locationIs",
+                        "subject": "location",
+                        "value": "loc.school"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.school",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "locationIs",
+                        "subject": "location",
+                        "value": "loc.library"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.library",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "locationIs",
+                        "subject": "location",
+                        "value": "loc.hospital"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.hospital",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "all": [
+                      {
+                        "test": "locationIs",
+                        "subject": "location",
+                        "value": "loc.gas-station"
+                      },
+                      {
+                        "test": "survivorsAtLeast",
+                        "subject": "seat",
+                        "location": "loc.gas-station",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "test": "zombiesAtLeast",
+                "subject": "location",
+                "value": 1
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "text": {
+    "ability": "Stab one zombie at the location of one of your survivors; nobody rolls for exposure."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG ludopedia-51114; BGG card-spread"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School / Scissors (I8: location of one of your survivors, P over BC). The target is a filtered allLocations scope (a location with one of your survivors and a zombie)."
+}

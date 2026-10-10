@@ -1,0 +1,57 @@
+{
+  "id": "core.exposure-faces",
+  "name": "Exposure die faces",
+  "die": "d12",
+  "sides": 12,
+  "faces": [
+    {
+      "face": "blank",
+      "count": 6,
+      "effect": "nothing happens"
+    },
+    {
+      "face": "wound",
+      "count": 3,
+      "effect": "the survivor takes 1 wound token"
+    },
+    {
+      "face": "frostbite",
+      "count": 2,
+      "effect": "the survivor takes 1 frostbite token: it counts as a wound and adds one more wound at the start of each of its owner's turns while any frostbite remains"
+    },
+    {
+      "face": "bite",
+      "count": 1,
+      "effect": "the survivor dies and the bite chain starts: the lowest-influence survivor at that location must be killed or roll exposure in turn, and any face but blank kills"
+    }
+  ],
+  "rawToFace": {
+    "note": "engine mapping of a raw d12 value 1..12 to a face, in this order (src/engine/rng.ts EXPOSURE_FACES)",
+    "order": [
+      "blank",
+      "blank",
+      "blank",
+      "blank",
+      "blank",
+      "blank",
+      "wound",
+      "wound",
+      "wound",
+      "frostbite",
+      "frostbite",
+      "bite"
+    ]
+  },
+  "severity": {
+    "blank": 0,
+    "wound": 1,
+    "frostbite": 2,
+    "bite": 3
+  },
+  "sources": {
+    "die": "R p11; R p2",
+    "faces": "BGG 1303776 (community count, rulebook names the faces only; docs/spec/10 R20.1, ruling logged in 00 section 16)",
+    "severity": "docs/spec/21 section 6 (engine convention)"
+  },
+  "status": "draft"
+}

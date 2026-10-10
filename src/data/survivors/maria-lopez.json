@@ -1,0 +1,46 @@
+{
+  "kind": "survivor",
+  "id": "sv.maria-lopez",
+  "name": "Maria Lopez",
+  "occupation": "Teacher",
+  "stats": {
+    "influence": 48,
+    "attack": 4,
+    "search": 2
+  },
+  "ability": {
+    "id": "lessonLearned",
+    "kind": "action",
+    "location": "loc.school",
+    "cost": {
+      "die": 1
+    },
+    "limit": "oncePerRound",
+    "when": {
+      "test": "zombiesAtLeast",
+      "subject": "location",
+      "value": 1
+    },
+    "effect": [
+      {
+        "op": "killZombies",
+        "count": 1,
+        "location": "here",
+        "value": "noExposure"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "(1+) Once a round at the School, Maria drops one zombie without a roll for exposure.",
+    "bio": "Has defended a classroom before and is not about to lose this one."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 23 (C11)"
+}

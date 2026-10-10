@@ -1,0 +1,35 @@
+{
+  "kind": "item",
+  "id": "it.mop",
+  "name": "Mop",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "deepClean",
+      "kind": "action",
+      "location": "colony",
+      "limit": "oncePerRound",
+      "countsAs": "cleanWaste",
+      "cost": {
+        "die": 1
+      },
+      "effect": [
+        {
+          "op": "cleanWaste",
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the bearer's clean waste action clears five cards instead of three."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread; BGG ludopedia-51114",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Hospital / Mop"
+}

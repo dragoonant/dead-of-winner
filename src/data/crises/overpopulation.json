@@ -1,0 +1,36 @@
+{
+  "kind": "crisis",
+  "id": "cr.overpopulation",
+  "name": "Overpopulation",
+  "prevent": [
+    "food"
+  ],
+  "fail": [
+    {
+      "code": "crisis.overpopulation.killLowestTwo"
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "There are too many mouths: the two non-exiled survivors with the lowest influence die. No morale is lost.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "BGG ludopedia-51114 (verify)",
+    "fail": "BGG ludopedia-51114 (verify)",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 19 (name ours); NEEDS HOOK crisis.overpopulation.killLowestTwo: kill the 2 lowest-influence non-exiled survivors without the morale loss (the DSL has no rank-N scope; killSurvivor would cost morale unless noMoraleOnDeath is granted first). Single source",
+  "tags": [
+    "name-ours"
+  ]
+}

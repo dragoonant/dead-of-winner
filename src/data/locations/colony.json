@@ -1,0 +1,26 @@
+{
+  "kind": "location",
+  "id": "colony",
+  "name": "Colony",
+  "spaces": {
+    "survivors": 24,
+    "entrances": 6,
+    "entranceSpaces": 3,
+    "noise": 0
+  },
+  "symbolOrder": [],
+  "deck": null,
+  "sources": {
+    "spaces.entrances": "R p5",
+    "spaces.noise": "R p5",
+    "spaces.survivors": "R p5 diagram",
+    "spaces.entranceSpaces": "R p5 diagram; PHOTO colony entrances 4-5",
+    "symbolOrder": "R p5",
+    "deck": "R p5"
+  },
+  "status": "draft",
+  "notes": "src: locations-sources.md Colony board (L4, L5)",
+  "text": {
+    "blurb": "The old colony: six doors to hold and room for twenty-four souls inside."
+  }
+}

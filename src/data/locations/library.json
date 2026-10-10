@@ -1,0 +1,31 @@
+{
+  "kind": "location",
+  "id": "loc.library",
+  "name": "Library",
+  "number": 4,
+  "spaces": {
+    "survivors": 3,
+    "entrances": 1,
+    "entranceSpaces": 3,
+    "noise": 4
+  },
+  "symbolOrder": [
+    "education",
+    "fuel",
+    "food",
+    "tool",
+    "survivor"
+  ],
+  "deck": "deck.library",
+  "sources": {
+    "number": "PHOTO tln library; W",
+    "spaces.noise": "R p5",
+    "spaces.entrances": "R p5",
+    "spaces.survivors": "PHOTO tln library",
+    "spaces.entranceSpaces": "PHOTO tln library",
+    "symbolOrder": "PHOTO tln library; BGG card-spread; S",
+    "deck": "S"
+  },
+  "status": "draft",
+  "notes": "src: locations-sources.md Location cards row 04 (ruling L1); symbol order checked against the deck composition (V-05)"
+}
