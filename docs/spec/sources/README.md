@@ -1,7 +1,8 @@
 # Data sources: index and gaps
 
 Where every card value in the specs came from, and what is still missing. The per-card tables live in
-`survivors-sources.md` and `items-sources.md`; this file is the source list and the shopping list.
+`survivors-sources.md`, `items-sources.md`, `crises-sources.md`, `objectives-sources.md` and `locations-sources.md`
+(the Crossroads cards have no table here yet); this file is the source list and the shopping list. Updated 2026-10-10.
 
 This is an unofficial fan project, not affiliated with Plaid Hat Games, Fantasy Flight Games or Asmodee.
 Mechanics and numbers are used 1:1; names may match the real cards; every sentence of prose in the repo is ours.
@@ -17,8 +18,21 @@ read in the session only.
 | W | Dead of Winter Fandom wiki |
 | T | TV Tropes character page |
 | O | Esoteric Order of Gamers rules summary |
-| C / S | our own self-consistency checks (distinct influence values, deck sums) |
+| C / S | our own self-consistency checks (distinct influence values, deck sums). In `items-sources.md` and `locations-sources.md` S is this check; in `survivors-sources.md` B is the handoff brief |
+| P | Portuguese fan translation (Ludopedia attachments 51111-51115 and 118679). A `P*` in a row means P words that card differently from the other sources |
+| ES | Spanish-edition card scans (GitHub MiguelAngelCabanillas/Dead-Of-Winter) |
+| Ph | fan photo of a real English-edition card, including the eBay photos of The Long Night location cards |
+| J | unboxing photos of a non-English edition (Collector, Masochist, Exhaustion) |
+| BT | BGG thread 2054328, main-objective transcription |
+| BC | BGG Card Spread sheet (item decks and effects) |
+| BO | Plaid Hat official rulings digest (BGG file) |
+| N | GitHub etwest/deadofwinter_site, names of the secret objectives |
 | (verify) | single fan source, or not stated anywhere readable; check before the data is final |
+
+Precedence when sources disagree: rulebook and FAQ (R, F), then a photo of a real English card (Ph), then the Spanish
+scans (ES), then the Portuguese translation (P), then the BGG fan transcriptions (BT, BC), then the wiki (W). Every
+disagreement is tabled in the conflict section of the per-card file and carries a status: Confirmed, Corrected,
+Unsourced or Fan-source.
 
 ## Source list
 
@@ -29,48 +43,47 @@ read in the session only.
 | 3 | Dead of Winter Fandom wiki | https://deadofwinter.fandom.com | MediaWiki API dump, 2026-10-10 (files stamped 2026-10-09 local time) | `docs/sources/fan/fandom/*.txt` (211 pages, wikitext) | all 30 base survivors with stats, abilities and Crossroads lists; the seven item decks; symbol, location and rules pages | medium; two known errors (Thomas Heart ability duplicated from Talia Jones, Loretta Clay `(4)` misprint) |
 | 4 | TV Tropes, Characters/DeadOfWinter | http://tvtropes.org/pmwiki/pmwiki.php/Characters/DeadOfWinter | 2026-10-10 | `docs/sources/fan/tvtropes-characters.txt` | prose confirming attack and search values and abilities for most base survivors, and hints about their Crossroads cards | low alone; independent second reader |
 | 5 | Esoteric Order of Gamers, Dead of Winter rules summary v1.2 | http://www.orderofgamers.com (summary PDF) | v1.2, March 2016 | `docs/sources/fan/DeadofWinter_v1.2.pdf` and `orderofgamers-summary-v1.2.txt` | a rules digest of the rulebook; the Outsider card handling | medium (secondary to 1) |
-| 6 | BoardGameGeek thread 1303776 | https://boardgamegeek.com/thread/1303776 | cited by the owner; not fetched here | none | exposure die faces on its 12 sides: 6 blank, 3 wound, 2 frostbite, 1 bite | community count; matches the rulebook's dice list |
-| 7 | BoardGameGeek files page for the base game | https://boardgamegeek.com/boardgame/150376/dead-of-winter-a-crossroads-game/files | the owner pointed to this page | none | lead for card references; filepage 160324 is the "all crossroad cards" sheet | unread |
+| 6 | BoardGameGeek thread 1303776 | https://boardgamegeek.com/thread/1303776 | cited by the owner and in the research notes; not fetched here | none | exposure die faces on its 12 sides: 6 blank, 3 wound, 2 frostbite, 1 bite | community count; matches the rulebook's dice list |
+| 7 | BoardGameGeek files page for the base game | https://boardgamegeek.com/boardgame/150376/dead-of-winter-a-crossroads-game/files | the owner pointed to this page; the files below were downloaded by the owner and are in `docs/sources/bgg/` as of 2026-10-10 | see rows 14 to 16 | the downloads are rows 14 to 16 | see those rows |
 
-BGG is unreachable from this machine (per the task note; the owner must download the files). Items 6 and 7 were
-never read by an agent in this project. Whoever uses them must record what they actually saw.
+| 8 | Ludopedia fan translation (Portuguese), attachments 51111-51115 and 118679, by users Sauron / spartaniv | https://www.ludopedia.com.br (Dead of Winter, anexos) | downloaded by the owner 2026-10-10; read the same day. The transcription header names 51111-51115; the files present are 51112, 51113, 51114, 51115 and 118679 | `docs/sources/bgg/dead_of_winter_um_j_traducao_em_portugues_*_5111[2-5].pdf` and `..._narrativas_..._118679.pdf` (with .txt), transcription in `docs/sources/fan/ludopedia-transcription.md` | all 20 crises (51114, titles in 118679), all 10 exiled objectives (51112), all 10 main objectives both sides (51113), 30 survivor abilities (51115), items and the six decks (51114) | medium: a translation of real cards, with slips found (Fuel Shortage morale, Zombie Wave zombies, New Friends text, several hardcore numbers) |
+| 9 | BoardGameGeek thread 2054328, "Main objective cards" | https://boardgamegeek.com/thread/2054328/main-objective-cards | transcribed by Ragenarok124 2018-09-06, corrected by Git_ 2022-02-18, pasted by the owner 2026-10-10 | `docs/sources/bgg/thread-2054328-main-objectives.md` | all 10 main objectives, both sides, with hardcore changes in braces | medium: one volunteer transcription, two corrections inside it |
+| 10 | Spanish-edition card scans | https://github.com/MiguelAngelCabanillas/Dead-Of-Winter (`images/`) | read 2026-10-10 | `docs/sources/fan/spanish-scans-transcription.md` (the images themselves are not copied) | 8 crises, 6 main objectives, 12 standard and 3 betrayal secret objectives, 4 exiled objectives, blurry location thumbnails | high for numbers (real cards); the English titles in the transcription are guesses |
+| 11 | eBay seller photos of The Long Night location cards | an eBay listing (seller photos) | read 2026-10-10 | `docs/sources/fan/photos/tln-1.png` to `tln-10.png` | survivor spaces, entrance spaces, noise spaces and symbol rows of the six locations (ruling L1: Long Night layout taken as the base layout; the Grocery Store matches the rulebook diagram) | high for what they show; a different product from the base game |
+| 12 | Taiwanese unboxing photos | a fan or seller unboxing set (non-English edition; the research notes label the edition J and show Japanese titles) | read 2026-10-10 | none in the repo; values are in the research notes | secret objective texts for Collector and Masochist, and the Exhaustion crisis symbol | medium: photos of a translated edition; the edition label is inconsistent between the brief and the notes |
+| 13 | GitHub etwest/deadofwinter_site, files `obj_nonbetray.txt` and `obj_betray.txt` | https://github.com/etwest/deadofwinter_site | read 2026-10-10 | none in the repo; the names are in `objectives-sources.md` | the 24 standard and 10 betrayal secret objective names | medium (names only) |
+| 14 | BoardGameGeek Card Spread sheet, `Dead_of_Winter_Card_Spread.xlsx` | BGG files for thing 150376 | downloaded by the owner, in `docs/sources/bgg/` as of 2026-10-10 | `docs/sources/bgg/Dead_of_Winter_Card_Spread.xlsx` and `.txt` | all item decks, counts by symbol in print order, class and effect of every item | medium-high |
+| 15 | BoardGameGeek Crossroads sheet, `Crossroad_cards_v1.1.xlsx` (filepage 160324) | BGG files for thing 150376 | downloaded by the owner, in `docs/sources/bgg/` as of 2026-10-10 | `docs/sources/bgg/Crossroad_cards_v1.1.xlsx` and `.txt` | all 80 Crossroads cards (not tabled here yet) | medium |
+| 16 | Plaid Hat official rulings digest, `Dead_of_Winter_Official_Rulings.pdf` | BGG files for thing 150376 | downloaded by the owner, in `docs/sources/bgg/` as of 2026-10-10 | `docs/sources/bgg/Dead_of_Winter_Official_Rulings.pdf` and `official-rulings.txt` | rulings on objectives, crises, exile, items and survivors | official |
+
+BGG is unreachable from this machine (the owner downloads the files). Row 6 (thread 1303776) was never read by an agent
+in this project; the exposure die faces rest on the research notes. Whoever uses it must record what they actually saw.
 
 ## Counts of what we have
 
 | Content | Needed | Have | Where |
 |---|---|---|---|
-| Base survivors (stats, ability location, ability line) | 30 | 29 complete, 1 with unknown ability (Thomas Heart) | `survivors-sources.md` |
-| Survivor Crossroads cards named after a survivor | 30 | 30 named (text of none) | `survivors-sources.md` |
-| Starting items | 25 | 25 (names and counts; effects unknown) | `items-sources.md` |
-| Location decks | 6 x 20 = 120 | 120 (names, symbols, counts; effects mostly unknown) | `items-sources.md` |
+| Base survivors (stats, ability location, ability line) | 30 | 30 (Thomas Heart's ability is provisional, single fan source) | `survivors-sources.md` |
+| Survivor Crossroads cards named after a survivor | 30 | 30 named (text of none here) | `survivors-sources.md` |
+| Starting items | 25 | 25 with class and effect | `items-sources.md` |
+| Location decks | 6 x 20 = 120 | 120 with class and effect (three wording points flagged) | `items-sources.md` |
+| Crisis cards | 20 | 20 with symbols, fail and bonus; 3 official English names | `crises-sources.md` |
+| Main objectives | 10 (20 faces) | 20 faces with every value; 6 rulings rest on P over BT, 1 on R over two fans | `objectives-sources.md` |
+| Standard secret objectives | 24 | 24 names, 14 texts | `objectives-sources.md` |
+| Betrayal secret objectives | 10 | 10 names, 3 texts | `objectives-sources.md` |
+| Exiled secret objectives | 10 | 10 texts (P, 4 cross-checked by ES, Barter by a photo) | `objectives-sources.md` |
+| Colony board | entrances, spaces, tracks | 6 entrances x 3 spaces, 24 occupant spaces, tracks 0 to 10 | `locations-sources.md` |
+| Location cards | 6 | 6 with survivor spaces, entrance spaces, 4 noise, symbol order | `locations-sources.md` |
+| Crossroads cards | 80 | 80 in the BGG sheet (row 15), not tabled here | `docs/sources/bgg/Crossroad_cards_v1.1.xlsx.txt` |
 
 ## Still missing
 
-Each line says what to get and the best known lead. Nothing here may be guessed into the data.
-
-1. **20 crisis cards.** Needed per card: name, prevent symbols (item type for each, in order), required card
-   count, fail effect, optional bonus. Only Blizzard, Fuel Shortage and the Hunted-related lines in R p4 and p12 are
-   known. Leads: BGG files for thing 150376, the fandom `Crisis` page (not in the dump, so fetch it), card photos.
-2. **80 Crossroads cards.** Needed per card: trigger predicate, two options with effects, mature flag. The 30
-   survivor-named ones exist by name (survivors-sources.md); the other 50 are unnamed. Lead: BGG filepage 160324
-   ("all crossroad cards" spreadsheet, needs a BGG login, owner to download). FAQ gives the effect hints for Bev
-   Russel, Old Divisions and Outbreak only.
-3. **10 main objectives, both sides (20 faces).** Needed: morale, rounds, setup, win condition, hardcore values,
-   time rating. R p15-19 gives the ten story titles and We Need More Samples; Find a Cure is partly known from a
-   BGG thread. The fandom `Main Objectives` page is not in the dump; fetch it. Lead: BGG files and threads.
-4. **Secret objectives: 24 standard, 10 betrayal, 10 exiled** (44 cards). R p18-19 gives the ten betrayal
-   titles only. Lead: BGG files and threads, card photos.
-5. **Location space counts and symbol orders.** Per location (six) and for the colony board: survivor spaces,
-   entrance spaces (and per colony entrance), the item-symbol row. R p5 fixes only the layout (4 noise spaces,
-   symbol row ordered likeliest to least). Leads: BGG filepage 160324 and threads 2054328, 2017807 and 1923268
-   (the owner's named leads; contents not yet seen), plus board and location-card photos from store listings.
-6. **Item card text.** Class (Equip, Event, Waste Pile) and the effect of every item except Fuel and Lighter, for
-   all 145 item cards, plus the Microphone card the FAQ mentions that no wiki deck lists.
-7. **Thomas Heart's ability.** The wiki copied Talia Jones's text onto him. Needs one card photo.
-8. **Survivor stats confirmation.** Most survivors' attack and search values come from the wiki alone (the R
-   examples fix only a handful). The influence set is self-consistent (10 to 68 in steps of 2) so influence is safe; attack and
-   search would be checked against one photo sheet.
-9. **Hardcore, co-op and exile variants, if the main-objective sheet has more.** Beyond what R p15 states.
+1. 9-10 standard secret objective texts (All I need is my books, Experienced, Hoarder, Hope, Justice, Neat freak,
+   Protected, Repopulate, Safety, and one of Junkie/Hypochondriac).
+2. 7 betrayal texts (Accept your fate, All for one, Gluttony, Mad scientist, Obsessed, Runaway, Take over).
+3. Official English names for 17 crisis cards.
+4. Forest Plum attack value (single source).
+5. Thomas Heart ability (single source).
 
 ## Rules that the sources fix (for quick reference, our words)
 
@@ -79,9 +92,21 @@ Each line says what to get and the best known lead. Nothing here may be guessed 
   unless the card says once per round (R p10).
 - Location cards: 4 noise spaces; decks of 20; item symbol row ordered from likeliest to least likely (R p5).
 - Starting items: 25 cards, deal 5 per player (7 in the two-player variant) (R p6, p15).
+- Colony board: 6 entrances of 3 spaces each, 24 occupant spaces, morale and round tracks 0 to 10 (R p5 diagram).
+- Every crisis needs a count equal to the number of non-exiled players and has the standard +2 cards for +1 morale option (R p4, p12).
 
 ## Conflicts logged
 
-See the tables in `survivors-sources.md` (C1 to C8) and `items-sources.md` (I1 to I5). The ones that change a
-number the brief gave: Alexis Grey influence is 46 (not 68); Daniel Smith has no "once per round"; Loretta Clay is a
-4+ die; Thomas Heart's ability is unknown.
+Each per-card file ends in a conflict table with a status per row.
+
+- `survivors-sources.md`: C1 to C11. The ones that change a number the brief gave: Alexis Grey influence is 46 (not 68);
+  Daniel Smith has no "once per round" (R over P and W); Loretta Clay is a 4+ die; Thomas Heart's ability is the
+  provisional P ability; Annaleigh Chan follows P (Colony, one other player's card).
+- `items-sources.md`: I1 to I10. School holds a Megaphone, not Football Pads; Microphone is read as the FAQ's name for
+  Megaphone; Walkie Talkie once per round and Scissors location take P over BC.
+- `crises-sources.md`: C1 to C8. Fuel Shortage loses 2 morale; Zombie Wave puts 6 zombies at the colony; No Waste keeps the
+  printed direction (flagged).
+- `objectives-sources.md`: O1 to O14 (main) and D1 to D4 (exiled). New Friends follows the Spanish scan; We Need More Samples
+  hardcore keeps 3 tokens per player (rulebook over two fan sources); six hardcore or stockpile values take P over BT.
+- `locations-sources.md`: L1 to L6. Long Night photos stand in for the base location cards (ruling L1); the School symbol
+  row follows the photo, not the blurry Spanish thumbnail.

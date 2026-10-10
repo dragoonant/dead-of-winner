@@ -17,7 +17,7 @@ and logged in `00-architecture` §16. Rule ids `R<n>` live in `10`, test ids in 
 | `41-personas-and-talk.md` | Persona sheets, line-bank keys, frequency caps, table talk |
 | `50-client.md` | React/R3F client: views, prompts, formatting, no rules maths in the client |
 | `60-testing.md` | Test layout, invariants, sim and bench gates |
-| `sources/` | Where every card value came from (`README.md`, `survivors-sources.md`, `items-sources.md`) and what is still missing |
+| `sources/` | Where every card value came from and what is still missing: `README.md` (index, tags, gaps), `survivors-sources.md`, `items-sources.md`, `crises-sources.md`, `objectives-sources.md` (main, secret, betrayal, exiled), `locations-sources.md` (location cards and colony board); each ends in a conflict table |
 | `schemas/*.json` | JSON Schemas (draft 2020-12) for each content record |
 
 Rulings made where the sources are silent or disagree: `docs/needs-rules-check.md`.

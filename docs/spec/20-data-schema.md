@@ -78,19 +78,24 @@ location deck (R p2). Setup deals 5 starter cards per seat (7 in the two-player 
 
 | Field | Type | Notes |
 |---|---|---|
-| `number?` | 1–6 | the random-location die value (W); absent at the colony |
-| `spaces` | `{survivors, entrances, entranceSpaces, noise}` | colony: 6 entrances, 0 noise; others: 1 entrance, 4 noise (R p5); the rest from photos |
-| `symbolOrder` | ItemSymbol[] | the printed row, likeliest first (R p5); feeds `query.searchOdds`; `[]` at the colony |
+| `number?` | 1–6 | the number printed in the card's corner (PHOTO; W agrees), also the random-location die value; absent at the colony |
+| `spaces` | `{survivors, entrances, entranceSpaces, noise}` | colony: 24 survivors, 6 entrances × 3 spaces, 0 noise (R p5 diagram); others: 1 entrance, 4 noise (R p5), survivor and entrance spaces per card from photos (`sources/locations-sources.md`) |
+| `symbolOrder` | ItemSymbol[] | the printed row, likeliest first, `survivor` last (R p5, PHOTO, cross-checked against the deck counts); feeds `query.searchOdds`; `[]` at the colony |
 | `deck` | `deck.` id or null | null at the colony |
 
-`locationOrder` in the engine is `colony` then the six by `number` (E.4 zombie step order).
+`locationOrder` in the engine is `colony` then the six by `number` (E.4 zombie step order). The sourced counts, as
+`{survivors, entranceSpaces, noise}`: colony `{24, 3, 0}`; 1 Police Station `{3, 4, 4}`; 2 Grocery Store `{3, 4, 4}`;
+3 School `{4, 4, 4}`; 4 Library `{3, 3, 4}`; 5 Hospital `{4, 4, 4}`; 6 Gas Station `{2, 3, 4}` (`10` R2.2, R2.4).
 
 ### 3.5 Crisis (`crisis.json`)
 
 `{prevent: ItemSymbol[], need?: {perSeat, plus}, fail: Effect[], bonus?: {extraCards, effect[]}, text: {fail,
 bonus?, flavor?}}`. Scoring is the rule in `10` (R p12): +1 per contributed card with a prevent symbol, −1
 otherwise, prevented at ≥ non-exiled seats, bonus at ≥ seats + `extraCards`. `need` exists for a card that
-prints a different formula; default `{perSeat: 1, plus: 0}`.
+prints a different formula; default `{perSeat: 1, plus: 0}` (all 20 base cards use it, `sources/crises-sources.md`).
+Three base cards print an either/or pair of prevent symbols ("X/Y": Medicine or Tool, Tool or Fuel, Food or
+Medicine); they are `prevent: ["medicine", "tool"]` and so on, since a card with either symbol scores +1 and the
+array already means "any of these". No separate pair field exists.
 
 ### 3.6 Crossroads (`crossroads.json`)
 
@@ -105,21 +110,33 @@ scene of ours that lands on the same two choices.
 victory}, hardcore: {setup, victory}}}` with `Side = {morale, rounds, setup?: Effect[], counters?, complete,
 triggers?: TriggerDef[], contributions?: [{symbol, counter, exiledMayContribute?}]}`. `counters.<name>.need` is an
 int or `perSeat` (× `perSeatMultiplier`, resolved against the seats that started). `contributions` are the cards a
-seat may play onto the objective (F 4.1.1); exiled seats may contribute (F 5.4.3).
+seat may play onto the objective (F 4.1.1); exiled seats may contribute (F 5.4.3). A card that changes the exile
+rules (Kill Them) carries a trigger on the `seat.exiled` window; goals the condition tests cannot spell out (a
+seat-count split, empty item decks, a food need counted over the live non-exiled seats, a compulsory Fuel card at
+the start of the colony phase) use `{code:'objective.<slug>.<name>'}` nodes (`11` O2.10, V-20). The ten cards'
+values are in `11` O2.9.
 
 ### 3.8 Secret, betrayal and exiled objectives (`secret-objective.json`)
 
-`{type: secret|betrayal|exiled, code? (betrayal story S11–S20), requiresMain, requiresOriginal? (exiled),
-counters?, complete, triggers?, setup?, ai?: {lever}, text: {goal, story?}}`. `type` uses the same spelling as
-`ObjectiveDescriptor.kind` (`hooks.ts`) and the id prefix, so `21 §9` copies it straight across; the frozen setup
-event `SecretObjectiveDealt.kind` spells `type: secret` as `'standard'` (`21 §9`). `ai.lever` is the betrayer
-hint `40 §7.1` reads: `moraleZero`, `hoard:<ItemSymbol>`, `killSurvivors`, `zombiesAtColony`, `exileOthers`,
-`starve` or `custom`; every betrayal record carries one (V-10 warns when it is missing), other types may.
-`complete` is evaluated at game end with `seat`
-= the holder (E.12). An exiled card "adjusts" the holder's goal (R p14): by default its node is the whole win
-condition (`11` O7.2); `requiresOriginal: true` is sugar for "and the original secret objective is complete", and
-a card that reads the original in a finer way uses the `11` code conditions (`secretObjectiveComplete`,
-`secretObjectiveWithoutMain`).
+`{type: secret|betrayal|exiled, code? (betrayal story S11–S20), requiresMain, betrayer? (exiled: {firstCondition}),
+requiresOriginal? (exiled, unused by the base game), counters?, complete, triggers?, setup?, ai?: {lever}, text:
+{goal, story?, betrayer? (exiled)}}`. `type` uses the same spelling as `ObjectiveDescriptor.kind` (`hooks.ts`) and
+the id prefix, so `21 §9` copies it straight across; the frozen setup event `SecretObjectiveDealt.kind` spells
+`type: secret` as `'standard'` (`21 §9`). `ai.lever` is the betrayer hint `40 §7.1` reads: `moraleZero`,
+`hoard:<ItemSymbol>`, `killSurvivors`, `zombiesAtColony`, `exileOthers`, `starve` or `custom`; every betrayal record
+carries one (V-10 warns when it is missing), other types may. `complete` is evaluated at game end with `seat` = the
+holder (E.12).
+
+A betrayal record's `complete` is an `{all:[...]}` node whose **first child is the printed condition 1** (morale 0
+on every card read so far), because an exiled card swaps that child (V-21).
+
+An exiled record carries the card's two printed branches (`11` O5.2, `sources/objectives-sources.md` §D):
+`requiresMain` + `complete` are the **not-the-betrayer** branch, a self-contained replacement for the revealed and
+removed original (6 of the 10 cards require the main objective, 4 do not); `betrayer.firstCondition` is the
+**betrayer** branch, the node that replaces condition 1 of the holder's betrayal card, the rest of that card staying
+as printed. `text.goal` is the not-the-betrayer prose and `text.betrayer` the betrayer prose. "Main objective
+complete" as a node is `{code:'rule.objective.mainComplete'}` (`11` O7.6). `requiresOriginal` stays in the schema
+for expansions but no base card sets it: every not-the-betrayer branch replaces the original outright.
 
 ### 3.9 Persona (`persona.json`)
 
@@ -176,6 +193,7 @@ checks. `warn` rows print and pass; `error` rows fail the build.
 | V-18 | persona scalars in range (schema: `paranoia` 0.5–1.6, the rest [0,1]); ≥ 40 lines per persona across ≥ 12 keys (warn under) | warn |
 | V-19 | `version` bumped when any non-text field changed since the last tag (`git diff`) | warn |
 | V-20 | every `code` name exists in `CODE_HOOKS` and every hook has a golden test (`60`) | error |
+| V-21 | betrayal records: `complete` is an `all` node with ≥ 2 children (condition 1 first); exiled records: `betrayer.firstCondition` present and `text.betrayer` non-empty; `betrayer` absent on every other type (schema) | error |
 
 ## 6. Per-value source convention (`docs/spec/sources/`)
 
@@ -209,21 +227,33 @@ agent diffs the two.
 ```json
 {
   "kind": "location", "id": "colony", "name": "Colony",
-  "spaces": { "survivors": 12, "entrances": 6, "entranceSpaces": 3, "noise": 0 },
+  "spaces": { "survivors": 24, "entrances": 6, "entranceSpaces": 3, "noise": 0 },
   "symbolOrder": [], "deck": null,
-  "sources": { "spaces.entrances": "R p5", "spaces.noise": "R p5", "spaces.survivors": "PHOTO (verify)", "spaces.entranceSpaces": "PHOTO (verify)" },
-  "status": "placeholder"
+  "sources": { "spaces.entrances": "R p5", "spaces.noise": "R p5", "spaces.survivors": "R p5 diagram", "spaces.entranceSpaces": "R p5 diagram; PHOTO colony entrances 4-5" },
+  "status": "draft"
 }
 ```
 
 ```json
 {
   "kind": "location", "id": "loc.police-station", "name": "Police Station", "number": 1,
-  "spaces": { "survivors": 4, "entrances": 1, "entranceSpaces": 4, "noise": 4 },
+  "spaces": { "survivors": 3, "entrances": 1, "entranceSpaces": 4, "noise": 4 },
   "symbolOrder": ["weapon", "fuel", "tool", "food", "survivor"],
   "deck": "deck.police-station",
-  "sources": { "number": "W; R p6 (verify)", "spaces.noise": "R p5", "spaces.entrances": "R p5", "spaces.survivors": "PHOTO (verify)", "spaces.entranceSpaces": "PHOTO (verify)", "symbolOrder": "S (verify)" },
-  "status": "placeholder"
+  "sources": { "number": "PHOTO tln police-station; W", "spaces.noise": "R p5", "spaces.entrances": "R p5", "spaces.survivors": "PHOTO tln police-station", "spaces.entranceSpaces": "PHOTO tln police-station", "symbolOrder": "PHOTO tln police-station; BGG card-spread; S" },
+  "status": "draft"
+}
+```
+
+```json
+{
+  "kind": "secretObjective", "id": "obj.exiled.forgiveness", "name": "Forgiveness", "type": "exiled",
+  "requiresMain": true,
+  "complete": { "test": "handHasSymbol", "subject": "holder", "symbol": "food", "value": 5 },
+  "betrayer": { "firstCondition": { "code": "rule.objective.mainComplete" } },
+  "text": { "goal": "The colony pulls through and you are carrying five cans when it does.", "betrayer": "Your first demand is now simply that the colony pulls through." },
+  "sources": { "complete": "PHOTO es-perdon; BGG ludopedia-51112", "betrayer": "PHOTO es-perdon; BGG ludopedia-51112", "requiresMain": "PHOTO es-perdon; BGG ludopedia-51112" },
+  "status": "draft"
 }
 ```
 
@@ -253,7 +283,7 @@ agent diffs the two.
 ## 8. Rulings taken here
 
 - RULING: item copies | one item record per card face; deck records carry the copy counts; the engine creates `CardInstance`s from the deck lists at setup | Unsourced (engine convention)
-- RULING: exiled objective and the original | the exiled card replaces the holder's win condition unless the card sets `requiresOriginal` | Unsourced (R p14 says only "adjusts")
+- RULING: exiled objective and the original | an exiled record holds both printed branches: `requiresMain` + `complete` replace a non-betrayer's revealed original outright; `betrayer.firstCondition` replaces condition 1 of a betrayer's card, whose `complete` must therefore be an `all` node with condition 1 first (V-21); `requiresOriginal` is kept but unused | Confirmed mechanics (all 10 cards read, `sources/objectives-sources.md` §D; `11` O7.2, O7.5), Unsourced shape
 - RULING: Outsider cards | `symbol: survivor` records are `class: event` and leave the game when played | Fan-source (O; F 3.1.2 silent on the pile)
 - RULING: placeholder records | records with `status: placeholder` validate and never load, so the schema can be exercised before the card pass | Unsourced (process)
 - RULING: `verified` threshold | official text, a photo, or two independent fan sources with no `(verify)` | Unsourced (process)

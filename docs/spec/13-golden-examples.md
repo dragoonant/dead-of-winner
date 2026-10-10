@@ -9,7 +9,7 @@ is the smallest state that reproduces the printed outcome. Mechanics are 1:1 wit
 
 | Item | Rule |
 |---|---|
-| Fixture | `tests/fixtures/build.ts` (60 §1: never a hand-written `GameState`) builds each script's state: `createGame` on the test bundle `golden-fixture` (`dataVersion`), then the build helpers place survivors, set dice values, deck contents (top first), hands, zombies, barricades, noise, morale and food, and open `pending = turnAction` for the active seat in `phase:'playerTurns'`, `roundNumber 1`, `roundsLeft 6`, `morale 6`, `food 0`, `starvation 0`, `waste []`, `effects []`, no held Crossroads card (`crossroads.held = null`, so no trigger can fire) unless the script says otherwise. Colony-step scripts (GOLD-004..006) are built the same way and then handed to the colony-step driver at the named `colonyStep`. Fixture capacities: colony `{survivors 16, entranceSpaces 3, noiseSpaces 0}`, every other location `{survivors 4, entranceSpaces 3, noiseSpaces 4}` (**ASSUMED** except the 4 noise spaces, R p5). |
+| Fixture | `tests/fixtures/build.ts` (60 §1: never a hand-written `GameState`) builds each script's state: `createGame` on the test bundle `golden-fixture` (`dataVersion`), then the build helpers place survivors, set dice values, deck contents (top first), hands, zombies, barricades, noise, morale and food, and open `pending = turnAction` for the active seat in `phase:'playerTurns'`, `roundNumber 1`, `roundsLeft 6`, `morale 6`, `food 0`, `starvation 0`, `waste []`, `effects []`, no held Crossroads card (`crossroads.held = null`, so no trigger can fire) unless the script says otherwise. Colony-step scripts (GOLD-004..006) are built the same way and then handed to the colony-step driver at the named `colonyStep`. Fixture capacities are the sourced board and card counts (`10` R2.2, R2.4; `sources/locations-sources.md` L1–L5): colony `{survivors 24, entranceSpaces 3, noiseSpaces 0}`; `loc.police-station {3, 4, 4}`, `loc.grocery-store {3, 4, 4}`, `loc.school {4, 4, 4}`, `loc.library {3, 3, 4}`, `loc.hospital {4, 4, 4}`, `loc.gas-station {2, 3, 4}` as `{survivors, entranceSpaces, noiseSpaces}`. The fixture bundle copies them from the location records, so a data correction reaches the goldens without an edit here. |
 | Ids | survivors `sv.<kebab-name>`, locations `loc.police-station loc.grocery-store loc.school loc.library loc.hospital loc.gas-station` in that `locationOrder` after `colony`, card instances `c:<n>` with `defId` `item.<kebab>` (**ASSUMED**: 20-data-schema fixes the final spelling; the golden tests import the ids from the fixture bundle, so a rename touches one file). |
 | Main objective | `obj.golden-none`: a fixture objective with no triggers and no setup, so a zombie kill rolls nothing extra. GOLD-001 also runs once under *We Need More Samples* with the sample roll forced (see its note). |
 | Forced dice | The engine rolls only from `state.rng` (00 §11), so the harness never stubs it. `tests/fixtures/rng.ts: stateForRolls(wanted[])` (60 §1) searches sfc32 states whose next `rollDice` / `rollExposureFace` outputs match the listed `{sides, value}` sequence in order and sets `state.rng` on the built state, applied after the build and before the first rolling action. Each script then ASSERTS the `DiceRolled.dice` / `ExposureRolled.raw` values it listed, so a changed roll order fails loudly instead of silently passing. |
@@ -176,7 +176,7 @@ and wraps to 1.
 | Seats | s1 (first), s2, s3, s4; `phase 'colony'`, `colonyStep 'addZombies'` (crisis already resolved) | R p13; 4 seats ASSUMED |
 | Colony mouths | 6 survivors + 8 helpless = 14 | R p13 ("fourteen survivors"); the split ASSUMED (helpless count, R p12) |
 | Colony survivors | s1: `sv.brian-lee` (68), `sv.olivia-brown` (56); s2: `sv.ashley-ross` (52), `sv.mike-cho` (30); s3: `sv.forest-plum` (14), `sv.sparky` (10); s4: `sv.daniel-smith` (66) at `loc.library` (away) | ASSUMED; Sparky is the lowest influence at the colony |
-| Colony entrances (capacity 3) | e1 0/0, e2 0/0, **e3 3 zombies, 0 barricades**, e4 0/0, e5 0/0, e6 0/0 (`zombies/barricades`) | R p13 (entrance 3 full, no barricade); the capacity ASSUMED |
+| Colony entrances (3 spaces each) | e1 0/0, e2 0/0, **e3 3 zombies, 0 barricades**, e4 0/0, e5 0/0, e6 0/0 (`zombies/barricades`) | R p13 (entrance 3 full, no barricade); 3 spaces per entrance from the R p5 board diagram (`sources/locations-sources.md` L4) |
 | Non-colony locations | no survivors except Daniel at the library; no noise anywhere | ASSUMED, so only the colony block adds zombies (the library adds 1 for Daniel, listed below) |
 | `morale` | 6 | ASSUMED |
 | Forced rolls | none | R p13 |
@@ -250,11 +250,12 @@ entering round 3) → `Starvation {starvationAfter 1, moraleLoss 1}` (tokens lea
 
 | Value | Where | Why it matters |
 |---|---|---|
-| Entrance spaces per colony entrance and per location | GOLD-005 capacity 3 | changes when an entrance is "full" (brief E.2 verify) |
-| Colony survivor spaces | fixtures | only bounds `SurvivorAdded` and moves (MOVE-003) |
 | Lighter's symbol = weapon | GOLD-004 | read from the R p12 example picture; the card sheet should agree |
 | Exposure die face counts 6/3/2/1 | every exposure raw | fan-source ruling (00 §16); only `EXPOSURE_FACES` changes if wrong |
 | Reveal order of a shuffled crisis pile | GOLD-004 | never asserted |
 
 The sample-roll order after a kill is no longer open: 10 R6.1 fixes `ObjectiveProgress` before `ExposureRolled`
-(GOLD-001b).
+(GOLD-001b). The entrance-space and survivor-space counts are no longer open either: 3 spaces per colony entrance, 24
+colony survivor spaces and the per-card counts in §0 come from the R p5 board diagram and card photos
+(`sources/locations-sources.md`; the five cards other than the Grocery Store were photographed in their Long Night
+print, ruling L1).

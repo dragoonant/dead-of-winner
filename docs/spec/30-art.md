@@ -27,9 +27,9 @@ brief Part D.2–D.3 and the memory note `hunyuan3d-model-pipeline`; this file i
 | Tile 1 Police Station | 6 × 4 | (−17, −12) | far row, left |
 | Tile 2 Grocery Store | 6 × 4 | (0, −14) | far row, centre |
 | Tile 3 School | 6 × 4 | (17, −12) | far row, right |
-| Tile 4 (verify) Library | 6 × 4 | (−21, 2) | left side |
-| Tile 5 (verify) Hospital | 6 × 4 | (0, 9) | near side, between the board and the hand fan; nothing else sits in front of it |
-| Tile 6 (verify) Gas Station | 6 × 4 | (21, 2) | right side |
+| Tile 4 Library | 6 × 4 | (−21, 2) | left side |
+| Tile 5 Hospital | 6 × 4 | (0, 9) | near side, between the board and the hand fan; nothing else sits in front of it |
+| Tile 6 Gas Station | 6 × 4 | (21, 2) | right side |
 | Dice tray | 7 × 5 | (22, 11) | near right; the exposure d12 has its own pocket |
 | Food supply | 3 × 3 | on the board at (8, 3) | stacked food discs |
 | Waste pile, crisis deck, contributions, main objective, survivor deck | card size | on the board, far edge | R p5 parts 7–11; crossroads deck off-board at (−26, −4) |
@@ -41,7 +41,23 @@ brief Part D.2–D.3 and the memory note `hunyuan3d-model-pipeline`; this file i
   (M9 expansions) only adds rows to `TILE_LAYOUT` in `src/client/table/layout.ts`.
 - Slots on every tile and on the board are generated from `capacity` at mount: `capacity.survivors` dashed discs
   (1.3 in pitch), `capacity.entranceSpaces` squares per entrance (1.2 in), `capacity.noiseSpaces` small circles,
-  one deck footprint. A data correction to a count never needs a remodel.
+  one deck footprint. A data correction to a count never needs a remodel. The sourced counts the layout must fit
+  (`sources/locations-sources.md`, read from the R p5 board diagram and card photos; the tile number is the number
+  printed in the card's corner):
+
+| Tile | Survivor discs | Entrance squares | Noise circles | Symbol row decals, left to right |
+|---|---|---|---|---|
+| Colony board | 24, in 3 columns of 8 (the "Colony Occupants" area) | 6 gates × 3 | none | none |
+| 1 Police Station | 3 | 4 | 4 | weapon, fuel, tool, food, survivor |
+| 2 Grocery Store | 3 | 4 | 4 | food, medicine, tool, survivor |
+| 3 School | 4 | 4 | 4 | food, education, tool, medicine, survivor |
+| 4 Library | 3 | 3 | 4 | education, fuel, food, tool, survivor |
+| 5 Hospital | 4 | 4 | 4 | medicine, fuel, food, tool, survivor |
+| 6 Gas Station | 2 | 3 | 4 | fuel, weapon, food, medicine, survivor |
+
+- So a 6 × 4 in tile holds at most 4 discs (5.2 in of pitch), 4 squares (4.8 in), 4 circles, a deck footprint and a
+  row of up to 5 decals; the board's occupants area is 10.4 × 3.9 in at the disc pitch. The symbol row is a decal of
+  our icons (§6) in the order the data record gives (`symbolOrder`), likeliest find first, the survivor icon last.
 - Camera presets (50 §12) frame this box: the default "seat" view sees the whole board and all six tiles at 1280×760.
 
 ## 3. Survivor figures
@@ -94,7 +110,7 @@ background, even soft lighting, no shadows, no text, no logos. Check head-to-hei
 | Piece | Content | Budget |
 |---|---|---|
 | Colony board | low walls with six numbered gate openings (gate numerals 1–6 stencilled on the wall counter-clockwise, our own font), a watchtower, barrels, a fire pit with the warm light, the colony occupants area as dashed discs, morale and round tracks as physical sliders with a brass marker, the food supply, waste pile, crisis deck, contribution area and main objective footprints (R p5) | ≤30k triangles, 2048 texture |
-| Location tiles | a 6 × 4 in base with a small diorama per place: police station (cruiser, cells), grocery store (shelves, carts), school (bus, swings), library (shelves, steps), hospital (ambulance, red cross on a sign, no publisher iconography), gas station (pumps, canopy with the warm lamps); each tile shows the survivor discs, its single entrance squares, four noise circles, the deck footprint and the item symbol row from data (`20-data-schema`) | ≤8k triangles each, 1024 texture |
+| Location tiles | a 6 × 4 in base with a small diorama per place: police station (cruiser, cells), grocery store (shelves, carts), school (bus, swings), library (shelves, steps), hospital (ambulance, red cross on a sign, no publisher iconography), gas station (pumps, canopy with the warm lamps); each tile shows its survivor discs (2 to 4), its single entrance's squares (3 or 4), four noise circles, the deck footprint and the item symbol row, all from data (`20-data-schema`; counts in §2) | ≤8k triangles each, 1024 texture |
 | Props | snow drifts, wrecked cars, fencing, lamp posts, instanced | ≤10k in total |
 | Tokens | barricade (planks), noise (a bell), food (a can), starvation (a cracked bowl), helpless survivor (a bundled figure), first-player token (a brass compass), wound and frostbite (pips, §3) | shared low-poly meshes, instanced |
 
@@ -186,6 +202,7 @@ Cards are first-class objects (C.6): every card def has a face rendered **from i
 ## Rulings
 
 - RULING: arrangement of the six location tiles around the colony board | three along the far edge, one at each side, the hospital near the human edge (§2); R p6 says "as shown" but its diagram is an image and the fan sources give no layout | Unsourced
-- RULING: location numbers 1–6 for random-location rolls (R2.5) and the zombie-step order (R20.2) | police 1, grocery 2, school 3, library 4, hospital 5, gas station 6 `(verify)` until a card photo settles it; the same as `locationOrder` (13 §0), the research index (`sources/items-sources.md`) and the R p7 setup picture; used as tile numbers and display order | Fan-source (fandom Locations page; R p7 picture agrees, R p2 components list differs)
+- RULING: location numbers 1–6 for random-location rolls (R2.5) and the zombie-step order (R20.2) | police 1, grocery 2, school 3, library 4, hospital 5, gas station 6, the numbers printed in the card corners (card photos, `sources/locations-sources.md`; the Spanish thumbnails show 02, 05 and 06 on the same cards); the same as `locationOrder` (13 §0) and the R p7 setup picture; used as tile numbers and display order | Fan-source (card photos and the fandom Locations page; R p7 picture agrees, R p2 components list is a parts list in another order)
+- RULING: slot counts on the board and tiles | 6 gates × 3 squares and 24 occupant discs on the board; the per-tile counts in §2 | Confirmed for the board and the Grocery Store (R p5 diagram); Fan-source for the other five tiles (photos of the Long Night print of the same cards, ruling L1 in `sources/locations-sources.md`)
 - RULING: gate numeral direction | the colony's six gates are laid out counter-clockwise seen from above; only the board model changes, R9 placement order is unaffected | Confirmed (R p13 example)
 - RULING: board and tile dimensions | 22 × 12 in board, 6 × 4 in tiles, 2.5 × 3.5 in cards, 30 mm bases; our own sizes, not measured from the product | Unsourced

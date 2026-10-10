@@ -8,14 +8,14 @@
     "kind": { "const": "location" },
     "id": { "$ref": "common.json#/$defs/locationId" },
     "name": { "type": "string", "minLength": 1 },
-    "number": { "type": "integer", "minimum": 1, "maximum": 6, "description": "the d6 value that picks this location at random (W); absent for the colony" },
+    "number": { "type": "integer", "minimum": 1, "maximum": 6, "description": "the number printed in the card's corner (PHOTO; 01 Police Station .. 06 Gas Station), also the d6 value that picks this location at random (W); absent for the colony" },
     "spaces": {
       "type": "object",
       "required": ["survivors", "entrances", "entranceSpaces", "noise"],
       "properties": {
-        "survivors": { "type": "integer", "minimum": 1, "description": "survivor spaces (verify from photos)" },
+        "survivors": { "type": "integer", "minimum": 1, "description": "survivor spaces: 24 at the colony (R p5 diagram); 2 to 4 per location card (PHOTO; sources/locations-sources.md)" },
         "entrances": { "type": "integer", "minimum": 1, "maximum": 6, "description": "6 at the colony, 1 elsewhere (R p5)" },
-        "entranceSpaces": { "type": "integer", "minimum": 1, "description": "zombie/barricade spaces per entrance (verify from photos)" },
+        "entranceSpaces": { "type": "integer", "minimum": 1, "description": "zombie/barricade spaces per entrance: 3 at the colony (R p5 diagram); 3 or 4 per location card (PHOTO; sources/locations-sources.md)" },
         "noise": { "type": "integer", "minimum": 0, "maximum": 4, "description": "4 at every non-colony location, 0 at the colony (R p5)" }
       },
       "additionalProperties": false

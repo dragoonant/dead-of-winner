@@ -33,10 +33,10 @@ Conventions: "seat" = a player; "survivor" = a survivor card in play; "alive" = 
 
 | Id | Rule | Ref |
 |---|---|---|
-| R2.1 | Seven locations: the colony and six location cards (police station, grocery store, school, gas station, library, hospital). `locationOrder` = `'colony'` then the six by their location number 1..6 (the number printed on the card, from data; **verify** from card photos). | R p5, R p2 |
-| R2.2 | The colony has six numbered entrances; each entrance has `capacity.entranceSpaces` spaces that zombies and barricades share. Survivor spaces = `capacity.survivors` ("Colony Occupants"). Counts come from the data bundle (**verify** by counting the board). | R p5 |
-| R2.3 | The colony also carries the morale track, round track, food supply, main-objective slot, waste pile, crisis deck and crisis contribution area: `morale`, `roundsLeft`, `food` (+`starvation`), `objective`, `waste`, `crisisDeck`, `crisis.contributions`. The colony has no item deck and no noise spaces. | R p5 |
-| R2.4 | Each location card has survivor spaces, exactly one entrance with its zombie/barricade spaces, an item deck, 4 noise spaces, and a symbol row ordered from likeliest to least likely find. Space counts per location are data (**verify**). | R p5 |
+| R2.1 | Seven locations: the colony and six location cards. `locationOrder` = `'colony'` then the six by the number printed in the card's corner: 01 Police Station, 02 Grocery Store, 03 School, 04 Library, 05 Hospital, 06 Gas Station (card photos; the Spanish thumbnails show 02, 05 and 06 on the same cards; the R p2 component list is in a different order but is a parts list, not a numbering). The data bundle carries the number per record (`20` §3.4). | R p5, R p2; `sources/locations-sources.md` (Ph, ES, W) |
+| R2.2 | The colony has six entrances numbered 1 to 6; each entrance has 3 spaces that zombies and barricades share (`capacity.entranceSpaces = 3`, 18 in all). The "Colony Occupants" area has 24 survivor spaces, 3 columns of 8 (`capacity.survivors = 24`). Both counts are read from the R p5 board diagram and a fan photo of entrances 4 and 5; the engine still takes them from the data bundle. | R p5 diagram; `sources/locations-sources.md` L4, L5 |
+| R2.3 | The colony also carries the morale track, round track, food supply, main-objective slot, waste pile, crisis deck and crisis contribution area: `morale`, `roundsLeft`, `food` (+`starvation`), `objective`, `waste`, `crisisDeck`, `crisis.contributions`. The colony has no item deck and no noise spaces. Both tracks run 0 to 10. | R p5 diagram; `sources/locations-sources.md` L6 |
+| R2.4 | Each location card has survivor spaces, exactly one entrance with its zombie/barricade spaces, an item deck of 20, 4 noise spaces, and a symbol row ordered from likeliest to least likely find, the Survivor (Outsider) symbol always last. Counts per card (card photos cross-checked against the deck counts; the Grocery Store also matches the R p5 sample card): Police Station 3 survivor / 4 entrance spaces, symbols Weapon, Fuel, Tool, Food, Survivor; Grocery Store 3 / 4, Food, Medicine, Tool, Survivor; School 4 / 4, Food, Education, Tool, Medicine, Survivor; Library 3 / 3, Education, Fuel, Food, Tool, Survivor; Hospital 4 / 4, Medicine, Fuel, Food, Tool, Survivor; Gas Station 2 / 3, Fuel, Weapon, Food, Medicine, Survivor. Totals: 19 survivor spaces, 22 entrance spaces, 24 noise spaces. The photos are of The Long Night print of the same six cards (ruling L1). | R p5; `sources/locations-sources.md` L1–L3 |
 | R2.5 | "Random location" (card text) = roll a d6 and take the location with that number; the colony is never random. | Fan-source (fandom *Interpreting Card Text*) |
 
 ## R3 Setup (R p6–7)
@@ -203,10 +203,10 @@ items, objectives, abilities. `removeSurvivor` (card text "remove from the game"
 
 | Id | Rule | Ref |
 |---|---|---|
-| R14.1 | Morale changes only through `MoraleChanged {delta, after, reason}`; it never rises above the track maximum printed on the board (data, **verify**) and the game ends the instant it is 0 (R17.1), even mid-chain. | R p5, R p14 |
+| R14.1 | Morale changes only through `MoraleChanged {delta, after, reason}`; it never rises above 10, the top of the printed track (R2.3), and the game ends the instant it is 0 (R17.1), even mid-chain. | R p5 diagram, R p14; `sources/locations-sources.md` L6 |
 | R14.2 | Food changes only through `FoodChanged`; it never goes below 0; food cards add their printed tokens (`reason:'card'`). | R p5, R p11 |
 | R14.3 | `waste` is public and ordered (top first); `cleanWaste` (R6.6) and card effects remove from the top; crisis contributions, cleaned cards and exiled plays go to `removed`, never to `waste`. | R p10, R p12, R p14 |
-| R14.4 | The round track counts down from the objective's starting value (`roundsLeft`); `roundNumber` counts up for logs and effect expiries. | R p5, R p13 |
+| R14.4 | The round track counts down from the objective's starting value (`roundsLeft`, at most 10, the top of the printed track; the largest printed start is 10); `roundNumber` counts up for logs and effect expiries. | R p5 diagram, R p13; `sources/locations-sources.md` L6 |
 
 ## R15 Exile (R p14; F 5.4)
 
@@ -271,7 +271,7 @@ Format: rule | what we did | why. Also appended to `docs/needs-rules-check.md` b
 | Id | RULING |
 |---|---|
 | R20.1 | Exposure die faces \| 6 blank / 3 wound / 2 frostbite / 1 bite (`EXPOSURE_FACE_COUNT`) \| Fan-source (BGG 1303776; R p11 names faces only) — logged in 00 §16 |
-| R20.2 | Location order for the zombie step \| `locationOrder` follows the location numbers 1..6 from data; the rulebook's component list and the wiki differ, so the number on the card decides \| Unsourced (F 6.2.1 says "in location order" without listing it) |
+| R20.2 | Location order for the zombie step \| `locationOrder` follows the numbers printed in the card corners, 01 Police Station to 06 Gas Station (R2.1); the rulebook's component list is in another order but is a parts list, not a numbering \| Fan-source for the numbers (card photos and the Spanish thumbnails, `sources/locations-sources.md`); Unsourced that the zombie step uses them (F 6.2.1 says "in location order" without listing it) |
 | R20.3 | Turn-start order and "beginning of your turn" abilities \| Crossroads draw, then frostbite ticks (seat's survivor order), then the `turn.start` window; such abilities are `triggered, optional` descriptors in that window (`effectChoice {code:'survivor.forest-plum.lastGift'}`), never turn actions and never `useAbility` \| Unsourced order (R p11–12 give both as "at the beginning of the turn"); model Confirmed by F 1.1.4 (John Price's copy fires the same way) |
 | R20.4 | Crisis optional bonus vs the +2 rule \| one bonus, never stacked; a card's `bonus` may change the extra-card count or effect \| Unsourced (R p4 and R p12 describe the same +1 morale) |
 | R20.5 | Clean waste with fewer than 3 waste cards \| removes what is there; illegal with an empty waste pile \| Unsourced |

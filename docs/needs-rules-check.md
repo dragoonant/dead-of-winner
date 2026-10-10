@@ -10,13 +10,13 @@ RULING: Requested cards and the crisis (R p11 vs FAQ 3.1.2) | Cards given on a r
 RULING: Alexis Grey influence | used 46 / 5+ / 4+ (brief G.1 said 68, which is Brian Lee's value) | Corrected (rulebook p7 sample card and wiki agree)
 RULING: Daniel Smith ability limit | followed the printed rulebook card: 4+ die, no 'once per round' (wiki and brief add it); the p10 rule lets die-cost abilities repeat unless the card limits them | Corrected (R over W); revisit if the owner's physical card differs
 RULING: Loretta Clay activation | 4+ die once per round (wiki prints '(4)') | Corrected (FAQ 1.2.1)
-RULING: Thomas Heart ability | left unknown; wiki page duplicates Talia Jones's text and the brief's guess is unsourced; stats 64/1+/3+ kept; keep him out of the first slice | Unsourced
+RULING: Thomas Heart ability | left unknown; wiki page duplicates Talia Jones's text and the brief's guess is unsourced; stats 64/1+/3+ kept; keep him out of the first slice | Unsourced [updated in M0b: provisional ability from the Portuguese translation]
 RULING: John Price ability location | kept the wiki's NON-COLONY label; FAQ 1.1.x never mentions the colony | Fan-source
 RULING: James Meyers reroll | wiki 'one or more unused dice' over TV Tropes 'one die' | Fan-source
 RULING: Forest Plum attack 2+ | single wiki source; no rulebook example shows his attack | Fan-source
 RULING: David Garcia ability | look at 1 extra card, look only, no round limit; wiki is the only source | Fan-source
 RULING: Gas Station 'Food or Trade 1' x3 | treated as Food 1 (Trade is a Long Night word that leaked into the wiki's Dead of Winter column) | Fan-source
-RULING: FAQ 5.1.1 'Microphone' item card | no wiki deck lists it and every deck sums to exactly 20, so it is unplaced; do not add a 21st card, find it in the BGG item sheet | Unsourced
+RULING: FAQ 5.1.1 'Microphone' item card | no wiki deck lists it and every deck sums to exactly 20, so it is unplaced; do not add a 21st card, find it in the BGG item sheet | Unsourced [resolved in M0b: read as the FAQ name slip for Megaphone]
 RULING: exposure die face counts | EXPOSURE_FACES = 6 blank, 3 wound, 2 frostbite, 1 bite; exposureFaceOf(raw) isolates a later correction to one table | Fan-source (R p11 names the four faces but not their counts)
 RULING: crisis contribution timing | contributeCrisis is accepted as a turn action at any time AND the engine raises crisisContribution once when the seat takes endTurn ([] = nothing) | Confirmed (R p11: any time during your turn)
 RULING: contributor of a revealed crisis card | hidden in every view (crisis.result.revealed[].seat = null) until the recap, because the pile is shuffled face down before the reveal | Confirmed (R p12)
@@ -76,7 +76,7 @@ RULING: persona priors in suspicion | no persona-based prior (Drifter/Hard Case 
 RULING: requests never target crisis cards directly | bots ask for an effect (food, medicine, ability cost) because a given card is played immediately and cannot enter the crisis | Confirmed (R p11; existing M0 RULING in docs/needs-rules-check.md)
 RULING: exposure odds used by the AI | 6/3/2/1 faces via EXPOSURE_FACE_COUNT; death on a roll = bite + [wounds >= 2]*(wound+frostbite) | Fan-source (rng.ts RULING; R p11 names faces only)
 RULING: arrangement of the six location tiles around the colony board | three along the far edge, one at each side, the hospital near the human edge (30 §2); R p6 says 'as shown' but its diagram is an image (pdftoppm missing, text extract empty) and fan sources give no layout | Unsourced
-RULING: location numbers 1–6 for random-location rolls | police 1, grocery 2, school 3, gas 4, library 5, hospital 6, used as tile numbers and display order; engine locationOrder stays the rules order | Fan-source (fandom Locations page)
+RULING: location numbers 1–6 for random-location rolls | police 1, grocery 2, school 3, gas 4, library 5, hospital 6, used as tile numbers and display order; engine locationOrder stays the rules order | Fan-source (fandom Locations page) [superseded by the M0b location numbers line: 01 Police, 02 Grocery, 03 School, 04 Library, 05 Hospital, 06 Gas Station]
 RULING: board, tile and card dimensions | 22x12 in board, 6x4 in tiles, 2.5x3.5 in cards, 30 mm bases; our own sizes, not measured from the product | Unsourced
 RULING: unrevealed removals (Old Divisions contributions, a last survivor's discarded hand) | new GameState.removedHidden zone, count-only in views, ids revealed only in recap.removedHidden; CardDiscarded {to:'removed', revealed:false} routes there | Confirmed (F 2.3.1, R p14)
 RULING: gameOver decision addressee | pending.seat = 'all'; any seat may send ack | Unsourced (engine contract, no rule)
@@ -95,6 +95,85 @@ RULING: exiled survivor placement decision | CARD-015, EXIL-010, ZOM-010 all use
 RULING: GameEnded.objectiveComplete | defined as objective.complete (the colony-step-5 flag, or set by a card's endGame op per 11 O2.5): OBJ-003 asserts false at moraleZero, RULE-003 asserts true for the immediate-end card | Confirmed (R p12/p14, 11 O3.3)
 RULING: objective roll order after a kill | GOLD-001b places DiceRolled {purpose:'objective'} + ObjectiveProgress between ZombieKilled and ExposureRolled, ASSUMED alternative dropped | Confirmed (10 R6.1, 21 section 1)
 RULING: leak invariant and ballot leaks | VIEW-018 blanks DecisionAutoResolved.optionId for searchKeepWhich to other seats; VIEW-019 nulls a rejected castVotes for EVERY seat (the submitter already has the rejection from step), which is stricter than the finding's 'non-voters'; VIEW-020 excludes EquippedReturned.cardIds (to:'hand') and CardStolen.cardId for from/to from the needles | Unsourced (00 section 4)
-RULING: location numbers 1-6 for random-location rolls (R2.5) and zombie-step order (R20.2) | police 1, grocery 2, school 3, library 4, hospital 5, gas station 6, marked (verify) in 30-art until a card photo settles it; matches locationOrder (13 §0), sources/items-sources.md and the R p7 setup picture | Fan-source (fandom Locations page; R p7 picture agrees, R p2 components list differs)
+RULING: location numbers 1-6 for random-location rolls (R2.5) and zombie-step order (R20.2) | police 1, grocery 2, school 3, library 4, hospital 5, gas station 6, marked (verify) in 30-art until a card photo settles it; matches locationOrder (13 §0), sources/items-sources.md and the R p7 setup picture | Fan-source (fandom Locations page; R p7 picture agrees, R p2 components list differs) [settled as Fan-source by the M0b location numbers line]
 RULING: gate numeral direction on the colony board model | gates 1-6 laid out counter-clockwise seen from above; only the 3D model changes, R9 placement order unaffected | Confirmed (R p13 example says 'Continuing counter-clockwise')
 RULING: dice per player = 1 + 1 per controlled survivor (brief Part E setup step 2; two-player variant keeps 3 survivors per player, step 6) | §4.1 now says 3 dice at the standard start and 4 in the two-player variant; the earlier draft wrongly gave 3 dice for the two-player start | Confirmed
+
+## M0b card research (2026-10-10)
+
+Added by the card-research fold-in. Lines that end in a table id (L1, O1, D1 and so on) restate a line above for
+cross-reference to `docs/spec/sources/*-sources.md`. Where a line here changes one under "## M0", the older line carries a
+note. Forest Plum attack 2+ is not repeated (same Fan-source ruling as above).
+
+RULING: Fuel Shortage fail morale loss, P 1 vs R p12 and ES 2 | 2 | rulebook sample card and Spanish scan agree, P is a translation slip | Corrected
+RULING: Zombie Wave colony zombies, ES 6 vs P 8 | 6 at the Colony plus 1 at every other location | Spanish scan is a real card and outranks P; P's 8 equals Endless Hordes (a likely copy slip); no English face seen, flagged | Corrected
+RULING: No Waste direction, P prints removed-from-game Food cards go onto the waste pile (transcriber suspected the reverse) | keep the printed direction | single source; the printed reading is a coherent penalty (waste pile grows); no English face | Fan-source
+RULING: Empty Pantry token name, ES Hunger token and P hunger marker vs R and FAQ starvation token | starvation token | official component name | Corrected
+RULING: Sickness wound type, ES ordinary wound vs P unspecified wound token | ordinary wound | Spanish scan, P compatible | Confirmed
+RULING: Crisis prevent count, R p4 p12, ES and P | non-exiled players on all 20 cards, +2 extra cards for +1 morale | all sources agree | Confirmed
+RULING: Find a Cure hardcore Medicine cards per starting player, BT 3 vs P 2 | 2 | Portuguese translation outranks the BGG transcription; flagged because hardcore usually asks for more | Fan-source
+RULING: Leave It All Behind normal rounds, BT 6 vs P 5 | 5 | P outranks BT; both fan sources, revisit on a card photo | Fan-source
+RULING: Leave It All Behind hardcore zombies at each other location, BT 3 vs P 2 | 2 | P outranks BT; normal and hardcore then identical, a warning sign | Fan-source
+RULING: Leave It All Behind weapon condition, BT one weapon equipped to a survivor each non-exiled player controls vs P one Weapon per survivor controlled | one Weapon per survivor controlled | P outranks BT; readings differ for players with 2 or more survivors | Fan-source
+RULING: Home Sweet Home hardcore morale and rounds, BT 6 and 6 (no change) vs P 5 and 5 | 5 and 5 | P outranks BT; BT lists no hardcore change there | Fan-source
+RULING: Stockpile normal food tokens per non-exiled player, BT 2 vs P 3 | 3 | P outranks BT; normal and hardcore then identical | Fan-source
+RULING: We Need More Samples hardcore tokens per starting player, R p15 hardcore sample 3 vs BT 4 and P 4 | 3 | rulebook outranks the two fan sources; flagged because two independent fans say 4, revisit on a card photo | Corrected
+RULING: Home Sweet Home normal starting morale, BT first 5 corrected to 6 by Git_, ES 6, P 6 | 6 | three sources agree after the correction | Confirmed
+RULING: Raiding Party normal zombies, does every location include the colony, BT ES and P all print every or each location | colony included as printed | all three printed wordings agree, interpretation flagged | Confirmed
+RULING: Stockpile cards under the objective, BT Junk corrected by Git_ to Tool symbol, P Tool | any Tool-symbol card | correction plus P | Confirmed
+RULING: We Need More Samples die roll trigger, R each zombie killed vs P each time you kill zombies | one roll per zombie killed, kills from effects count when worded kill | R and official rulings outrank P | Corrected
+RULING: Winter Has Come Fuel placement, BT may vs P must | must (game ends if none placed) | both sources' ending clause makes it compulsory | Confirmed
+RULING: Ten Weeks of Darkness hardcore values, photo vs BT vs P | morale 6, rounds 10, 1 helpless per player, 3 zombies at each other location, survive 10 rounds with 6 or more food tokens | photo verbatim, BT and P agree | Confirmed
+RULING: Exiled New Friends text, ES (main objective completed, more survivors; betrayer no item cards remain at a location) vs P (main objective NOT completed; betrayer 10 cards in hand, a duplicate of Remorse) | the ES values | Spanish scan outranks P; P's betrayer line duplicates card 1 | Corrected
+RULING: Exiled Resourceful (P heading) vs Habil (ES) | one card, 4 Tool in hand (not betrayer), 3 Tool in hand (betrayer) | ES and P match on both halves | Confirmed
+RULING: Exiled Barter, photo vs P | 4 Medicine in hand (not betrayer), 3 Education equipped (betrayer) | photo agrees with P | Confirmed
+RULING: Exiled Vengeance exclusion, ES helpless vs P unproductive | helpless survivors do not count | Spanish scan outranks P, same meaning | Confirmed
+RULING: Spanish Farmaceutico card maps to Junkie or Hypochondriac | candidate only, 1 of the 2 names stays text unknown | the Spanish reader could not verify the English title | Unsourced
+RULING: Daniel Smith once per round, R p7 card no round limit vs W, brief and P once per round | no round limit, 4+ die per use | rulebook sample card outranks P and W | Corrected
+RULING: Alexis Grey once per round, R p7 prints it vs P omits | once per round | rulebook card outranks P; omission is a translation slip | Corrected
+RULING: Annaleigh Chan ability, W Anywhere and each other player vs P Colony and one other player's random card | Colony, 1 randomly chosen card from another player, co-op exclusion kept | P outranks W; readings differ in two fields, photo wanted | Fan-source
+RULING: Thomas Heart ability, W duplicate of Talia Jones vs P real ability | Colony, once per round, kill 2 zombies at the colony with no exposure roll, no die cost printed, marked provisional | single fan source, no card photo | Fan-source
+RULING: John Price non-colony qualifier, W Non-colony and P away from the colony | copies abilities only while away from the colony | W and P agree | Confirmed
+RULING: Loretta Clay, Maria Lopez, Edward White die costs, P prints none vs F and W | keep F and W costs (4+, 1+, 1+) | FAQ outranks P, translation dropped the marks | Confirmed
+RULING: David Garcia ability, W vs P | look at 1 extra card, look only, no round limit printed | W and P agree | Confirmed
+RULING: School deck fourth Tool card, W Football Pads vs BC and P Megaphone | Megaphone | Card Spread and P outrank the wiki | Corrected
+RULING: Gas Station Food card name, W Food or Trade 1 vs BC and P Food 1 | Food 1, count 3 | BC and P agree | Corrected
+RULING: Microphone item (FAQ 5.1.1), no deck or sheet lists it | read as the FAQ's name slip for Megaphone, no 21st card added | FAQ ruling is about moving zombies into empty spaces and the official rulings digest applies it to Megaphone | Corrected
+RULING: Walkie Talkie once per round, BC none vs P once per round | once per round | P outranks BC; flagged, photo wanted | Fan-source
+RULING: Scissors location, BC none vs P at the location of one of your survivors | at the location of one of your survivors | P outranks BC; flagged, photo wanted | Fan-source
+RULING: Megaphone shout, BC none vs P optional shout | no rules effect, not coded | flavour only | Confirmed
+RULING: Medicine item effect, R p12 timing only vs BC and P heal one wound | Waste Pile heal of one wound on a survivor you control or one sharing a location with one of yours | R, FAQ, BC and P agree | Confirmed
+RULING: Location layout source, The Long Night photos used for Police Station, School, Library, Hospital and Gas Station | Long Night layout taken as the base layout; Grocery Store matches the rulebook diagram exactly (3 survivor, 4 entrance, 4 noise) | I viewed tln-1 to tln-7 and counts match the research notes; symbol rows also match base deck counts | Fan-source
+RULING: School symbol row first two symbols, ES thumbnail Fuel then Education vs photo Food then Education | Food, Education, Tool, Medicine, Survivor | the School deck has no Fuel cards (BC) | Corrected
+RULING: Survivor symbol position on location cards | always last, even on the Library where Survivor 3 exceeds Tool 2 | photo and BC header order | Confirmed
+RULING: Colony board counts | 6 entrances x 3 entrance spaces, 24 occupant spaces, morale and round tracks 0 to 10 | rulebook diagram and fan photo; largest objective values 10 rounds and 8 morale fit | Confirmed
+RULING: colony entrance spaces | 3 per entrance, 18 in all | Confirmed (R p5 diagram, fan photo of entrances 4-5; locations-sources L4)
+RULING: colony occupant spaces | 24 (3 columns of 8) | Confirmed (R p5 diagram; L5)
+RULING: morale and round track length | 0 to 10 | Confirmed (R p5 diagram, largest printed starts 8 and 10 fit; L6)
+RULING: location card counts (Police 3/4, Grocery 3/4, School 4/4, Library 3/3, Hospital 4/4, Gas 2/3 survivor/entrance spaces, 4 noise each) | taken from photos of the Long Night print of the same cards; Grocery Store matches the R p5 sample card exactly | Fan-source (L1; a base-game photo of the other five would confirm)
+RULING: School symbol row | Food, Education, Tool, Medicine, Survivor | Corrected (photo and deck counts over the blurry Spanish thumbnail, which read Fuel first; the School deck holds no Fuel; L2)
+RULING: Survivor symbol position | always last in the row, the rest by likelihood | Confirmed (Library photo prints Survivor 3 after Tool 2; L3)
+RULING: location numbers for locationOrder and random-location rolls | 01 Police Station, 02 Grocery Store, 03 School, 04 Library, 05 Hospital, 06 Gas Station, printed in the card corners | Fan-source (card photos, Spanish thumbnails 02/05/06, wiki; R p2 component list is a parts list in another order; 10 R20.2 updated)
+RULING: Find a Cure hardcore Medicine per starting seat | 2 | Fan-source (P over BT, which prints 3; O1)
+RULING: Leave It All Behind normal starting rounds | 5 | Fan-source (P over BT 6; O2)
+RULING: Leave It All Behind hardcore zombies per other location | 2 | Fan-source (P over BT 3; O3)
+RULING: Leave It All Behind weapon condition | 1 Weapon equipped per survivor the seat controls | Fan-source (P over BT's one-per-seat reading; O4)
+RULING: Home Sweet Home hardcore morale and rounds | 5 and 5 | Fan-source (P over BT, which lists no hardcore change; O5)
+RULING: Stockpile normal food tokens per non-exiled seat | 3 | Fan-source (P over BT 2; O6)
+RULING: We Need More Samples hardcore sample tokens per starting seat | 3 | Corrected (R p15 sample card over BT and P, which both print 4; revisit on a card photo; O7)
+RULING: Home Sweet Home normal morale | 6 | Confirmed (ES, P, BT after Git_'s correction; O8)
+RULING: Raiding Party normal setup 'every location' | colony included | Confirmed printed wording (ES, BT, P all omit a non-colony qualifier; O9)
+RULING: Stockpile objective cards | any Tool-symbol card, not Junk only | Confirmed (BT correction, P; O10)
+RULING: We Need More Samples trigger | one d6 per zombie killed, kills by attack, ability or card; attract and overrun are not kills; sample roll before the exposure roll | Corrected (R, BO over P's per-action wording; O11)
+RULING: Winter Has Come Fuel card at the start of the colony phase | compulsory; none placed ends the game with the objective failed | Confirmed (P wording and BT's own ending clause; O14)
+RULING: Stockpile food need basis | live non-exiled seats, not the seats that started, so a {code} node rather than 'perSeat' | Confirmed (card prints non-exiled players, both fan sources; 11 O2.10)
+RULING: Kill Them exile change | a trigger on the seat.exiled window removes the seat's survivors and eliminates the seat instead of R15 | Confirmed (ES, BT, P agree; O12), Unsourced shape
+RULING: New Friends exiled text | ES values: not-betrayer = main complete and most survivors; betrayer = any location's item deck empty | Corrected (ES over P, whose betrayer line duplicates Remorse; D1)
+RULING: Vengeance exiled exclusion | helpless tokens do not count | Confirmed (ES over P's 'unproductive', same meaning; D4)
+RULING: Resourceful / Habil | one card, two titles, same four values | Confirmed (ES and P; D3)
+RULING: Barter exiled card | as printed on the English photo | Confirmed (Ph, P; D2)
+RULING: Farmaceutico secret objective (only Medicine cards in hand, at least 1) | held under obj.secret.junkie as 'probably', excluded from the first slice because the English name is unverified | Fan-source (Spanish scan reader's guess between Junkie and Hypochondriac)
+RULING: exiled objective shape | two branches per record: requiresMain + complete replace a non-betrayer's revealed original outright; betrayer.firstCondition replaces condition 1 of a betrayer's card, so betrayal complete nodes are {all:[...]} with condition 1 first (V-21); requiresOriginal kept but unused; secretObjectiveComplete / secretObjectiveWithoutMain code conditions withdrawn | Confirmed mechanics (all 10 cards read: P, 4 by ES, Barter by photo; reveal duty BO), Unsourced shape
+RULING: reveal of a non-betrayer's original objective on exile | public from that moment; an additive SecretObjectiveRevealed event recommended for M1 (00 section 16); SeatExiled stays private for the drawn id | Unsourced shape, Confirmed mechanics (BO: printed on the exiled cards)
+RULING: Shelter exiled card 'at least 3 locations' | the colony counts as one of them | Unsourced (P single source, card silent)
+RULING: 'main objective complete' as a condition node | {code:'rule.objective.mainComplete'} (Forgiveness betrayer branch) | Unsourced (shape only)
