@@ -1,13 +1,14 @@
 /**
  * FROZEN CONTRACT (M0). The per-seat view: the ONLY thing deciders (human UI and bots) receive.
- * Spec: docs/spec/00-architecture.md §00.6. Leak tests: VIEW-001..018, SIM-007.
+ * Spec: docs/spec/00-architecture.md §00.6. Leak tests: VIEW-001..020, SIM-007.
  */
 import type { Visibility, EngineEvent, SeatEvent } from './events'
 import type { Answer } from './actions'
+import { HIDDEN_SOURCE_KEY } from './types'
 import type {
-  BallotChoice, CardInstanceId, ContentId, CrisisOutcome, DecisionContext, DecisionKind, Die,
+  CardInstanceId, ContentId, CrisisOutcome, DecisionContext, DecisionKind, Die,
   GameResult, GameState, ItemDeckId, ItemSymbol, LastingEffect, LocationId, Phase, ColonyStep,
-  PreventSymbol, SeatId, SeatKind, SurvivorInstanceId,
+  PreventSymbol, SeatId, SeatKind, SurvivorInstanceId, VoteRecord,
 } from './types'
 import type { FaceOdds } from './odds'
 
@@ -21,7 +22,7 @@ export interface SeatPublic {
   handCount: number
   /** Dice are public at the table (Ruling A-DICE). */
   dice: Die[]
-  /** Face-down crisis cards this seat added this round (count only, VIEW-004). */
+  /** Face-down crisis cards this seat added this round. Public count, never which cards (VIEW-004; 00.6.3). */
   contributed: number
 }
 
@@ -78,6 +79,19 @@ export interface ViewDecision {
   context?: DecisionContext
   /** Present iff yours; never empty then (00.4.2). For seat 'all' these are Ballots. */
   legal?: Answer[]
+  /** Present iff yours: one engine-computed preview per `legal` entry, same order (50.6.4; 00.8.3). */
+  annotations?: ActionPreview[]
+}
+
+/** One clause of the viewing seat's own secret/exiled objective, computed by the engine (50.6). */
+export interface ObjectiveStatus {
+  /** Clause key from the objective record, e.g. 'hand.medicine'. */
+  clause: string
+  /** Label key for the UI (i18n-style), not prose. */
+  label: string
+  current: number
+  target: number
+  met: boolean
 }
 
 export interface PlayerView {
@@ -99,9 +113,10 @@ export interface PlayerView {
   deckCounts: { crisis: number; survivors: number; crossroads: number; exiledObjectives: number; items: Record<ItemDeckId, number> }
   /** Waste pile: count plus the top card, face up. */
   waste: { count: number; top: CardView | null }
-  crisis: { id: ContentId; prevent: PreventSymbol; contributed: number } | null
+  crisis: { id: ContentId; prevent: PreventSymbol[]; contributed: number } | null
   lastCrisis: { id: ContentId; total: number; symbols: Partial<Record<ItemSymbol, number>>; outcome: CrisisOutcome } | null
   main: { id: ContentId; progress: Record<string, number>; target: number | null }
+  /** Effects from hidden objectives show sourceKey HIDDEN_SOURCE_KEY to non-owners (lastingForSeat). */
   lasting: LastingEffect[]
   numbers: ViewNumbers
   /** The viewing seat's private zone. */
@@ -109,6 +124,8 @@ export interface PlayerView {
     hand: CardView[]
     secretObjective: ContentId | null
     exiledObjective: ContentId | null
+    /** Progress on this seat's own secret (or exiled) objective, clause by clause. */
+    objectiveStatus: ObjectiveStatus[]
     /** The Crossroads card this seat holds, if any (VIEW-006). */
     heldCrossroads: ContentId | null
     /** Cards drawn by this seat's in-progress search (VIEW-008). */
@@ -126,7 +143,7 @@ export interface Recap {
   objectives: Record<SeatId, { secret: ContentId | null; exiled: ContentId | null; isBetrayal: boolean }>
   crises: { round: number; crisis: ContentId; contributions: { seat: SeatId; card: ContentId }[]; total: number; outcome: CrisisOutcome }[]
   crossroads: { round: number; activeSeat: SeatId; holder: SeatId; card: ContentId; triggered: boolean; option: string | null }[]
-  votes: { round: number; caller: SeatId; target: SeatId; ballots: Record<SeatId, BallotChoice>; exiled: boolean }[]
+  votes: VoteRecord[]
 }
 
 /** Annotation for one legal answer (50.6.4): what the prompt says, with engine numbers. */
@@ -138,6 +155,12 @@ export interface ActionPreview {
   hitOdds: number | null
   location: LocationId | null
   target: string | null
+}
+
+/** A lasting effect as `seat` sees it: a hidden objective's source is masked for non-owners (00.6.8). */
+export function lastingForSeat(effect: LastingEffect, seat: SeatId, revealAll = false): LastingEffect {
+  if (revealAll || effect.hiddenOwner === null || effect.hiddenOwner === seat) return effect
+  return { ...effect, sourceKey: HIDDEN_SOURCE_KEY }
 }
 
 /** Build `seat`'s view. Pure; the output is JSON-serializable and deterministic (VIEW-017). */

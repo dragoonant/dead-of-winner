@@ -78,8 +78,13 @@ scope?, aiHint?}`
 - 21.3.5 Legality of `action`/`play`: cost payable ∧ limit unused ∧ `where` holds ∧ `requires`
   holds ∧ the effect is **feasible**. Each op defines feasibility (21.7 "Feasible" column) and an
   effect is feasible iff its first op is. `requires` is only for conditions beyond feasibility.
-- 21.3.6 `optional: true` on a trigger asks the controller first (decision `itemTarget` with a
-  `skip` candidate; Ruling DSL-CONFIRM). Mandatory triggers just resolve.
+- 21.3.6 `optional: true` on a trigger asks the controller first with a **confirm** decision; a
+  mandatory trigger just resolves. Confirm (also used by the `optional` op, 21.7) is an ordinary
+  `itemTarget` with no new decision kind (Ruling DSL-CONFIRM):
+  `{kind:'itemTarget', sourceKey, purpose:'confirm', candidates:['yes'], min:1, max:1, canSkip:true}`.
+  Legal answers: `chooseTargets{targets:['yes']}` (do it) or `skip` (do not). A "may" that has a
+  target is not a confirm: it is a `chooser` pick with `upTo: true` (min 0) or `canSkip`, so the
+  same decision both picks and declines.
 - 21.3.7 `scope` on a passive says who the modifier applies to (21.8.3); default `{self: true}`.
 - 21.3.8 `aiHint` is a short machine tag for the bot evaluator (spec 40), never shown.
 
@@ -106,26 +111,37 @@ scope?, aiHint?}`
 
 ## 21.5 Events usable by `trigger.on`
 
-Names are the DSL's; each maps to one event type in `src/engine/events.ts`, which is authoritative
-(Ruling DSL-EVENTS).
+Names are the DSL's; each maps to exactly one `EngineEvent` type in `src/engine/events.ts`
+(`DSL_EVENT_MAP`), which is authoritative (Ruling DSL-EVENTS). The **Filter** column is the extra
+match the trigger dispatcher applies to that event before the trigger runs; `-` = every event of
+that type. `DSL_EVENT_NAMES` (types.ts), `$defs.EventName` (effect.schema.json) and the rows below
+list the same names (validator DATA-007).
 
-| `on` | Fires | Binds |
-|---|---|---|
-| `turnStarted` | after the start-of-turn steps (10.4.4) | `eventSeat` |
-| `turnEnded` | at end of turn (10.4.6) | `eventSeat` |
-| `roundStarted` | before the crisis reveal (10.4.1) | |
-| `colonyPhaseStarted` | before Pay food (10.4.7) | |
-| `actionResolved` | after an action fully resolves (10.10.3) | `actor`, `eventSeat`, `eventLocation` |
-| `survivorMoved` | after a move and its exposure | `eventSurvivor`, `eventLocation` (destination) |
-| `zombieKilled` | once per zombie killed (not removed) (11 §3.4–3.6) | `eventSurvivor` (killer, if any), `eventLocation` |
-| `survivorWounded` | after a wound/frostbite token is placed | `eventSurvivor`, `face` |
-| `exposureRolled` | after each exposure roll (post-replacement) | `eventSurvivor`, `face`, `reason` |
-| `survivorKilled` | in `killSurvivor` step 6 (10.9.6) | `eventSurvivor`, `eventSeat`, `cause` |
-| `survivorAdded` | after a survivor joins | `eventSurvivor`, `eventSeat` |
-| `cardPlayed` | after a card's play effect | `eventSeat` |
-| `searchResolved` | after a search keeps its card | `eventSurvivor`, `eventLocation` |
-| `crisisRevealed`, `crisisResolved` | 10.4.1, 10.4.15 | |
-| `voteResolved`, `seatExiled` | 10.12.4, 10.11 | `eventSeat` (target) |
+| `on` | events.ts type | Filter | Fires | Binds |
+|---|---|---|---|---|
+| `turnStarted` | `TurnStarted` | - | after the start-of-turn steps (10.4.4) | `eventSeat` = `seat` |
+| `turnEnded` | `TurnEnded` | - | at end of turn (10.4.6) | `eventSeat` = `seat` |
+| `roundStarted` | `RoundStarted` | - | before the crisis reveal (10.4.1) | |
+| `colonyPhaseStarted` | `ColonyStepStarted` | `step == 'payFood'` (the first colony step) | once per round, before Pay food (10.4.7) | |
+| `actionResolved` | `ActionResolved` | - | after an action fully resolves (10.10.3) | `actor`, `eventSeat` = `seat`, `eventLocation` = `location` |
+| `survivorMoved` | `SurvivorMoved` | - | after a move and its exposure | `eventSurvivor` = `survivor`, `eventLocation` = `to` |
+| `zombieKilled` | `ZombieKilled` | - | once per zombie killed, not removed (11 §3.4–3.6) | `eventSurvivor` = `by` (killer, may be null), `eventLocation` = `location` |
+| `survivorWounded` | `SurvivorWounded` | - | after a wound/frostbite token is placed | `eventSurvivor` = `survivor`, `kind` |
+| `exposureRolled` | `ExposureRolled` | - | after each exposure roll (post-replacement) | `eventSurvivor` = `survivor`, `eventLocation` = `location`, `face`, `reason` |
+| `survivorKilled` | `SurvivorKilled` | `survivor != null` (helpless-token deaths do not fire it) | in `killSurvivor` step 6 (10.9.6) | `eventSurvivor` = `survivor`, `eventSeat` = `seat`, `eventLocation` = `location`, `cause` |
+| `survivorAdded` | `SurvivorAdded` | - | after a survivor joins | `eventSurvivor` = `survivor`, `eventSeat` = `seat`, `eventLocation` = `location` |
+| `cardPlayed` | `CardPlayed` | - | after a card's play effect | `eventSeat` = `seat` |
+| `searchResolved` | `SearchKept` | - | after a search keeps its card(s) | `eventSurvivor` = `survivor`, `eventSeat` = `seat`, `eventLocation` = `location` |
+| `crisisRevealed` | `CrisisRevealed` | - | 10.4.1 | |
+| `crisisResolved` | `CrisisResolved` | - | 10.4.15 | `outcome` |
+| `voteResolved` | `VotesCast` | - | after the ballots and any tiebreak are counted (10.12.4), exile or not | `eventSeat` = `target`, `exiled` |
+| `seatExiled` | `SeatExiled` | - | 10.11 | `eventSeat` = `seat` |
+
+- 21.5.1 A filter is part of the mapping, not data: data cannot add filters (use `when` with
+  `eventIs`, 21.6.4). The dispatcher owns the filters; this table is their spec.
+- 21.5.2 DATA-007 (spec 20.13) checks: the three name lists are equal; every name has a
+  `DSL_EVENT_MAP` entry whose value is a member of `EngineEvent['type']`; and the map value equals
+  this table's "events.ts type" column (the validator parses the table).
 
 ## 21.6 Conditions and the resolved-action context
 
@@ -157,7 +173,7 @@ Num args accept any Num (21.9). "Generic" = the 10.0.5 routine the op must call.
 | `if` | `{cond, then, else?}` | branch | always |
 | `choice` | `{who?, decision?, options:[{id, label?, requires?, effect}]}` | decider picks one available option; `decision` default `objectiveChoice` (Crossroads use `crossroadsOption`) | ≥1 option available |
 | `choose` | `{as, who?, from: Selector \| LocRef, decision?}` | binds a pick to `as` | ≥1 candidate |
-| `optional` | `{who?, effect}` | "may": yes/skip decision | always |
+| `optional` | `{who?, effect}` | "may": a confirm decision for `who` (default `controller`), 21.3.6; `yes` runs `effect`, `skip` does nothing | always (an infeasible `effect` is not offered: the op does nothing) |
 | `forEach` | `{in: Selector, as?, effect}` | runs effect per selected item (`as` default `each`) in seat order, then influence | always |
 | `repeat` | `{times, effect}` | | always |
 | `rollD6` | `{as?, purpose?, atLeast?, atMost?, then?, else?}` | seeded d6; `then` if in range | always |
@@ -185,7 +201,7 @@ Num args accept any Num (21.9). "Generic" = the 10.0.5 routine the op must call.
 | `addSurvivor` | `{seat?, named?, n?, drawChoose?}` | draw `drawChoose` (default 1) from the survivor deck, keep 1 (or the `named` survivor); joins per 10.9.2 | free space (10.9.2) |
 | `draw` | `{from: LocRef \| "starting", n, seat?}` | top n cards to the seat's hand; no noise | deck non-empty |
 | `reveal` | `{deck, n, as, public?}` | turn up top n; binds them; they stay on top until moved | deck non-empty |
-| `peek` | `{deck, n, who?, then}` | private look; `then`: returnSameOrder, chooseOrder, chooseTopOrBottom | deck non-empty |
+| `peek` | `{deck, n, who?, then}` | private look by `who` (default `controller`) at the top n; `then` (21.7.1) | deck non-empty |
 | `take` | `{cards, to, seat?}` | move cards to hand / waste / outOfGame / deckBottom / deckTop | always (may move 0 with `upTo`) |
 | `discard` | `{cards, to?}` | from hand/equipped to waste (exiled: out of game) | cards exist |
 | `giveCards` | `{cards, to: SeatRef}` | | cards exist |
@@ -195,6 +211,18 @@ Num args accept any Num (21.9). "Generic" = the 10.0.5 routine the op must call.
 | `loseDice` | `{seat?, n, pick?}` | discard n unused dice (`chooser` or `random`) | always |
 | `lasting` | `{id?, duration, scope?, modifier}` | register a lasting modifier (21.8) | always |
 | `progress` | `{counter, delta}` | change an objective counter; emits `ObjectiveProgress` (11 §3.11) | always |
+
+- 21.7.1 `peek.then` (Ruling DSL-PEEK); each step is an existing decision kind, so 00.4.3 is
+  unchanged:
+  - `returnSameOrder` (default): no decision; the cards go back as they were.
+  - `chooseOrder`: repeated `itemTarget{purpose:'peekOrder', candidates:<the remaining peeked card
+    instance ids>, min:1, max:1, canSkip:false}`, one pick per position from the **top** down; the
+    first pick becomes the top card. The last card is placed without a decision (n−1 decisions).
+  - `chooseTopOrBottom`: one `objectiveChoice{options:[{id:'top'},{id:'bottom'}]}`; `bottom` puts
+    the peeked cards on the bottom in their current order. With `n > 1` and `top`, a `chooseOrder`
+    sequence follows.
+  - The candidates are visible only to `who`'s view; other views see the decision as opaque
+    (21.4.4, 10.0.6).
 
 ## 21.8 Modifiers, durations, scope
 
@@ -426,18 +454,19 @@ at round start and survives hand-off. DSL-005 `killZombies` fires one `zombieKil
 `removeZombies` fires none. DSL-006 `exposure: once` rolls once for 2 kills. DSL-007
 `exposureSkip` prevents the roll; `exposureFaceReplace` turns bitten into wound with no bite chain.
 DSL-008 `lasting` `{until: endOfRound, offset: 1}` expires at the right step. DSL-009 Crossroads
-`afterAction` is false when the actor died (F 2.1.1). DSL-010 `optional` trigger offers skip.
+`afterAction` is false when the actor died (F 2.1.1). DSL-010 `optional` trigger and `optional` op open a confirm `itemTarget` (`candidates:['yes']`, `canSkip`) and `skip` resolves nothing.
 DSL-011 `choose` with hidden candidates never leaks ids in other views. DSL-012 every `code` hook
-registered and used (DATA-003).
+registered and used (DATA-003). DSL-013 `peek` `chooseOrder` asks n−1 picks and leaves the first pick on top; `chooseTopOrBottom` uses `objectiveChoice`. DSL-014 `colonyPhaseStarted` fires once per round (only on `ColonyStepStarted{step:'payFood'}`).
 
 ---
 
 ## Rulings
 
-RULING: DSL-EVENTS trigger event names | The DSL uses its own event names (21.5) mapped 1:1 to events.ts types | Unsourced; events.ts is being frozen concurrently and is authoritative; rename here at the M2 dry run if they differ
-RULING: DSL-CONFIRM optional effects | A "may" is an `itemTarget` decision with a `skip` candidate rather than a new decision kind | Unsourced; keeps the C.4 decision-kind list unchanged
+RULING: DSL-EVENTS trigger event names | The DSL keeps its own event names; 21.5 names the exact events.ts type and filter for each (`colonyPhaseStarted` = `ColonyStepStarted` with step `payFood`, `searchResolved` = `SearchKept`, `voteResolved` = `VotesCast`), checked by DATA-007 | Unsourced (engineering); events.ts `DSL_EVENT_MAP` is authoritative, the filters live in the trigger dispatcher
+RULING: DSL-CONFIRM optional effects | A "may" with no target is `itemTarget{purpose:'confirm', candidates:['yes'], min:1, max:1, canSkip:true}`, answered `chooseTargets['yes']` or `skip`; a "may" with a target is the target pick itself with `upTo`/`canSkip`. Reviewers proposed `['self']` or `['yes']` as the candidate; `'yes'` won because confirms also come from crises, Crossroads and objectives where `self` is undefined (21.2) | Unsourced (engineering); keeps the C.4 decision-kind list and the frozen contracts unchanged
 RULING: DSL-FACE exposure face for triggers | Crossroads `exposureFace` reads the face after replacement modifiers (Sparky's bite reads as a wound) | Unsourced; the card's effect is what happened at the table
 RULING: DSL-AFTER afterAction modifiers | Resolve inside the action, before Crossroads evaluation and `checkGameEnd` | Unsourced; mirrors 10.10.3 "action fully resolved"
 RULING: DSL-SEARCHEXTRA once-per-round search bonus | Applies automatically to the first qualifying search of the round (it is never harmful) | Unsourced; avoids a needless decision
 RULING: DSL-HUNTED-SCOPE Hunted options | A applies to all survivors the active seat controls; B to that seat's future moves | Unsourced (brief G.6 wording "each of your survivors", "every move"); verify against the card
 RULING: DSL-DIEFREE Abilities without (N+) | An ability with no die cost is a free action limited only by its `limit` | Confirmed (R p7, p9 examples: Gabriel Diaz, Ashley Ross)
+RULING: DSL-PEEK peek ordering | `chooseOrder` = n−1 `itemTarget` picks (purpose `peekOrder`) from the top down; `chooseTopOrBottom` = `objectiveChoice` top/bottom, bottom keeps current order | Unsourced (engineering); no new decision kind; card-specific wording is checked at the M2 dry run

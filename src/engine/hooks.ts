@@ -30,11 +30,19 @@ export interface EvalContext {
   refs: Record<string, JsonValue>
 }
 
-/** Read-only inputs every hook receives. Hooks are pure functions of these (21.10.3). */
+/**
+ * Read-only inputs every hook receives. Hooks are pure functions of these (21.10.3). No rng:
+ * condition, num and modifier hooks and `feasible` run inside legalActions, view and annotations,
+ * which must neither advance nor depend on the rng.
+ */
 export interface HookInput {
   readonly state: Readonly<GameState>
   readonly bundle: DataBundle
   readonly ctx: Readonly<EvalContext>
+}
+
+/** Input to EffectHook.run only: adds the game rng, drawn from inside step (00.8.1). */
+export interface EffectHookInput extends HookInput {
   readonly rng: Rng
 }
 
@@ -57,7 +65,7 @@ export interface EffectHook {
   kind: 'effect'
   /** Legality of an action/play whose first op is this hook (21.3.5). Default: true. */
   feasible?(input: HookInput): boolean
-  run(input: HookInput, api: EffectApi): void
+  run(input: EffectHookInput, api: EffectApi): void
 }
 export interface ConditionHook { kind: 'condition'; run(input: HookInput): boolean }
 export interface NumHook { kind: 'num'; run(input: HookInput): number }

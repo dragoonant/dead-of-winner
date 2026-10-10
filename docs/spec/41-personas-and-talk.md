@@ -16,9 +16,11 @@ the line banks is our own writing; none is taken from any published card, rulebo
   people at the table.
 - 41.1.2 Personas are original characters. Their names never reuse a survivor name from the real
   game (checked against brief G.1; `validate:data` rejects a persona name equal to any survivor name
-  in `content/survivors/`).
-- 41.1.3 Data: `content/personas/<id>.json`, schema `docs/spec/schemas/persona.json` (owned by spec
-  20), validated by `tools/validate-data.ts`:
+  in `src/data/survivors/survivors.json`, spec 20 §20.2).
+- 41.1.3 Data: `src/data/personas/<id>.json` (file name = `id`), schema
+  `docs/spec/schemas/persona.schema.json` (written by this spec; listed in spec 20 §20.2), validated
+  by `tools/validate-data.ts`. Portraits and voice clips are assets under `public/assets/`, referenced
+  by id through the asset manifest (20.15), never stored in the persona file:
   `{id, name, epithet, voiceId, portrait, knobs: {generosity, riskAppetite, paranoia, trust,
   chattiness, bluffing}, derived?: {...overrides of 41.3}, lines: {[trigger]: Line[]}}` with
   `Line = {id, text, slots?: string[], voiced: boolean, weight?: number, when?: Cond}`.
@@ -93,8 +95,20 @@ All knobs are in [0, 1]. They feed `40-ai.md` through the formulas in 41.3.
 
 ## 41.5 Talk events and claims (H.6)
 
-- 41.5.1 `TalkEvent = {seq, round, turnSeat, speaker, trigger, lineId, text, slots, claim?,
-  voiced}`. The talk log lives outside engine state (40.1.5), is public to every seat, appears in
+- 41.5.1 A talk event is the frozen `TalkEntry` (`src/engine/decider.ts`), filled as:
+
+  | `TalkEntry` field | Talk meaning |
+  |---|---|
+  | `seq` | log sequence number (monotonic per game) |
+  | `round` | game round when spoken |
+  | `seat` | the speaker's seat, or `'narrator'` |
+  | `kind` | the trigger key (41.6.1), e.g. `'crisis.claim.matched'` |
+  | `text` | the rendered line, slots filled |
+  | `data` | `{turnSeat, lineId, slots: {name: value}, claim?: Claim, voiced: boolean}` |
+
+  `Claim` is one of the 41.5.2 shapes. "TalkEvent" elsewhere in specs 40 and 41 means this
+  `TalkEntry`. The talk log lives outside engine state (40.1.5), reaches bots only through
+  `DecideContext.talk` on `decide()` and `Decider.observe()`, is public to every seat, appears in
   the feed and as a speech bubble on the speaker's portrait, and is saved with the game.
 - 41.5.2 **Claims** are structured statements bots can reason about (40.5.3, 40.5.5):
   - `{kind:'contributed', crisis, count, matching}` (from `crisis.claim.*`)
@@ -250,3 +264,5 @@ and role hints (41.5.4). Examples below fix tone and slot use.
 RULING: Persona names | Six original names (Marta Voss, Benny Alder, Rook Mahoney, Pip Okafor, Ines Halloran, Cole Wren); none matches a survivor in brief G.1; "Rook" kept from the brief's H.5 example | Unsourced: the full 30-survivor list is not yet sourced, so validate:data re-checks at data entry
 RULING: Talk is outside engine state | Talk log is a client/sim side channel fed to bots; no rules effect | Confirmed by brief H.5 (accusation has no rules effect) and H.6; keeps the frozen engine contracts unchanged
 RULING: Voiced subset | Slot-free lines are voiced; slotted lines are text-only unless a slot-free variant exists | Unsourced (brief D.4 says ~60 lines per persona pre-generated; H.6 says a subset is voiced)
+RULING: Talk record shape | Talk events use the frozen TalkEntry: seat = speaker, kind = trigger, data = {turnSeat, lineId, slots, claim?, voiced}; delivered via DecideContext.talk and Decider.observe | Contract: src/engine/decider.ts (frozen M0); no rules effect
+RULING: Persona data location | src/data/personas/<id>.json with schemas/persona.schema.json written by spec 41; assets stay under public/assets/ | Follows spec 20 §20.2 folder table

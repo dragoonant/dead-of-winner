@@ -3,6 +3,7 @@
  * here only (60.3.1; 40.1.2). Spec: docs/spec/00-architecture.md §00.2.
  */
 import { canonicalJson, type Action, type Answer, type Rejection } from './actions'
+import type { TalkEntry } from './decider'
 import type { EngineEvent, SeatEvent } from './events'
 import { hashString } from './rng'
 import type { DataBundle, GameConfig, GameState, PendingDecision, SeatId } from './types'
@@ -36,6 +37,8 @@ export interface SaveFile {
   /** Action log (answers in order) — replay reproduces the state exactly (SIM-008). */
   actions: Action[]
   stateHash: string
+  /** Public talk log (41.5.1), so a resumed game can rebuild bot belief (40.1.4). Not engine state. */
+  talk?: TalkEntry[]
 }
 
 export interface EngineOptions {
@@ -54,9 +57,15 @@ export interface Engine {
   legalActions(state: GameState, seat: SeatId): Answer[]
   view(state: GameState, seat: SeatId): PlayerView
   eventsFor(events: readonly EngineEvent[], seat: SeatId): SeatEvent[]
-  /** Prompt annotation for a legal answer, computed from the view only (50.6.4). */
+  /**
+   * Helper: annotation for an answer from the view alone. Authoritative numbers are
+   * ViewDecision.annotations, computed from state (code-hook modifiers need GameState; 00.8.3).
+   */
   preview(view: PlayerView, answer: Answer): ActionPreview
+  /** Final state after replaying the log; `events` holds only the last step's events. */
   replay(save: Pick<SaveFile, 'config' | 'actions'>): StepOk
+  /** Every event of a replay (newGame plus each step), in order, unredacted (40.1.4 resume). */
+  replayEvents(save: Pick<SaveFile, 'config' | 'actions'>): EngineEvent[]
   save(state: GameState): SaveFile
   load(save: SaveFile): GameState
 }
@@ -89,6 +98,7 @@ export function createEngine(bundle: DataBundle, options: EngineOptions = {}): E
     eventsFor: (events, seat) => eventsForSeat(events, seat),
     preview: () => todo('preview'),
     replay: () => todo('replay'),
+    replayEvents: () => todo('replayEvents'),
     save: (state) => ({
       engine: ENGINE_VERSION,
       bundleHash: state.bundleHash,

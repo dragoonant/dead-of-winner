@@ -4,12 +4,13 @@
  * Turn action `type` values equal ActionKind (types.ts; effect.schema.json).
  */
 import type {
-  BallotChoice, CardInstanceId, DecisionKind, LocationId, RequestNeed, SeatId,
+  BallotChoice, CardInstanceId, ContentId, DecisionKind, LocationId, RequestNeed, SeatId,
   SurvivorInstanceId,
 } from './types'
 
 // ---- Setup answers (10.3.7) -----------------------------------------------------------------
-export interface ChooseSurvivorsAction { type: 'chooseSurvivors'; keep: SurvivorInstanceId[] }
+/** Keeps record ids from the offer; survivor instances are created only for kept cards. */
+export interface ChooseSurvivorsAction { type: 'chooseSurvivors'; keep: ContentId[] }
 export interface ChooseLeaderAction { type: 'chooseLeader'; survivor: SurvivorInstanceId }
 
 // ---- Turn actions (decision 'turnAction'; 10.5, 10.6). `die` is a Die.id of the active seat. ----
@@ -18,8 +19,13 @@ export interface AttackSurvivorAction { type: 'attackSurvivor'; survivor: Surviv
 export interface SearchAction { type: 'search'; survivor: SurvivorInstanceId; die: number }
 export interface BarricadeAction { type: 'barricade'; survivor: SurvivorInstanceId; die: number; entrance?: number }
 export interface CleanWasteAction { type: 'cleanWaste'; survivor: SurvivorInstanceId; die: number }
-/** Attract: 1–2 source locations in pick order; colony targets list the entrance per zombie. */
-export interface AttractAction { type: 'attract'; survivor: SurvivorInstanceId; die: number; sources: LocationId[]; entrances?: number[] }
+/**
+ * Attract: 1–2 source locations in pick order. `entrances`: the colony entrance each zombie
+ * lands on when the target is the colony. `sourceEntrances`: the colony entrance each zombie
+ * leaves, one per 'colony' entry in `sources`, required when a source is the colony; legalActions
+ * lists each distinct choice.
+ */
+export interface AttractAction { type: 'attract'; survivor: SurvivorInstanceId; die: number; sources: LocationId[]; entrances?: number[]; sourceEntrances?: number[] }
 /** Survivor ability or equipped-item ability. `source` is a survivor or card instance id. */
 export interface AbilityAction { type: 'ability'; source: SurvivorInstanceId | CardInstanceId; abilityId: string; die?: number }
 /** Play a card from hand; equip cards name the survivor they attach to. */
@@ -44,8 +50,9 @@ export interface BiteSpreadAction { type: 'biteSpread'; choice: 'kill' | 'roll' 
 export interface NewLeaderAction { type: 'newLeader'; survivor: SurvivorInstanceId }
 /** Exile placement; `displace` names the non-exiled survivor moved to the colony (10.11.6). */
 export interface PlaceAction { type: 'place'; location: LocationId; displace?: SurvivorInstanceId }
-/** The only answer to a seat:'all' vote. Must hold exactly one ballot per answerer. */
+/** The only answer to a seat:'all' vote. One ballot (an option id) per answerer. */
 export interface CastVotesAction { type: 'castVotes'; votes: Record<SeatId, BallotChoice> }
+/** Tiebreak: one of the tied option ids. */
 export interface TiebreakAction { type: 'tiebreak'; vote: BallotChoice }
 export interface OrderEffectsAction { type: 'orderEffects'; first: string }
 export interface ChooseOptionAction { type: 'chooseOption'; option: string }
@@ -65,7 +72,7 @@ export type Action =
 
 export type ActionType = Action['type']
 
-/** A single seat's private answer to a seat:'all' decision. Never passed to step (00.4.4). */
+/** A single seat's private answer to a seat:'all' decision: an option id ('yes'/'no' for exile). Never passed to step (00.4.4). */
 export interface Ballot { type: 'ballot'; seat: SeatId; vote: BallotChoice }
 
 /** What a Decider returns: an Action, or a Ballot for a simultaneous decision. */

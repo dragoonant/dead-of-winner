@@ -250,7 +250,8 @@ export interface Ability {
 
 interface RecordCommon { id: ContentId; name: string; mech: string; status: Status; src: SrcMap; notes?: string }
 
-export interface ColonyRecord extends Omit<RecordCommon, 'id'> {
+/** Colony and location records carry no `mech` line (location.schema.json has none). */
+export interface ColonyRecord extends Omit<RecordCommon, 'id' | 'mech'> {
   id: 'colony'
   kind: 'colony'
   survivorSpaces: number
@@ -259,7 +260,7 @@ export interface ColonyRecord extends Omit<RecordCommon, 'id'> {
   roundMax: number
   wasteMoraleStep?: number
 }
-export interface LocationRecord extends Omit<RecordCommon, 'id'> {
+export interface LocationRecord extends Omit<RecordCommon, 'id' | 'mech'> {
   id: NonColonyId
   kind: 'location'
   order: number
@@ -289,7 +290,8 @@ export interface ItemRecord extends RecordCommon {
   text: string
 }
 export interface CrisisRecord extends RecordCommon {
-  prevent: PreventSymbol
+  /** The prevent section: 1 or 2 symbols; a card matching either scores +1 (10.4.14; R-PREVENT2). */
+  prevent: PreventSymbol[]
   onReveal?: Effect
   fail: Effect
   overPrevent?: Effect
@@ -469,7 +471,7 @@ export interface CardZones {
 }
 
 export interface CrisisContribution { seat: SeatId; card: CardInstanceId }
-export interface CrisisState { cardId: ContentId; prevent: PreventSymbol; contributions: CrisisContribution[] }
+export interface CrisisState { cardId: ContentId; prevent: PreventSymbol[]; contributions: CrisisContribution[] }
 
 export interface CrossroadsDraw {
   round: number
@@ -493,9 +495,12 @@ export interface ObjectivesState {
   exiledDeck: ContentId[]
   /** Undealt secret objectives; never in any view (VIEW-014). */
   boxed: ContentId[]
-  /** Per-seat counters for betrayal/secret hooks. */
+  /** Per-seat counters for betrayal/secret hooks; progress events go only to the owner (00.6.8). */
   seatProgress: Record<SeatId, Record<string, number>>
 }
+
+/** sourceKey shown to other seats for effects sourced from a hidden objective (00.6.8). */
+export const HIDDEN_SOURCE_KEY = 'hidden'
 
 export interface LastingEffect {
   id: string
@@ -505,6 +510,11 @@ export interface LastingEffect {
   /** SeatRefs inside scope resolved to concrete seats at creation (21.2.1). */
   scopeSeats: SeatId[]
   modifier: Modifier
+  /**
+   * Owner seat when the source is a secret, betrayal or exiled objective; null otherwise. Views
+   * show other seats `sourceKey: HIDDEN_SOURCE_KEY` for such effects (00.6.8; VIEW-019).
+   */
+  hiddenOwner: SeatId | null
   expires: { kind: 'endOfTurn'; seat: SeatId } | { kind: 'endOfRound'; round: number } | { kind: 'startOfNextTurnOf'; seat: SeatId } | { kind: 'never' }
 }
 
@@ -531,6 +541,11 @@ export interface TurnState {
   crossroadsResolved: boolean
   actionsTaken: number
   lastAction: ResolvedAction | null
+  /**
+   * A card received through a request that must be used at once (10.6.5): while set, the only legal
+   * turn actions are playCard of it and abilities whose cost discards it (else discard to waste).
+   */
+  mustPlay: CardInstanceId | null
 }
 
 /** Engine-internal continuation frame: lets an effect suspend for a decision and resume after it. */
@@ -580,6 +595,12 @@ export interface GameState {
   zones: CardZones
   /** Survivor deck (record ids, top first). Setup returns go back here. */
   survivorDeck: ContentId[]
+  /**
+   * Survivor cards dealt but not yet kept (setup deal, addSurvivor drawChoose), as record ids.
+   * No SurvivorState exists for them, so they never count for capacity or food. Hidden from every
+   * seat but the owner, and only through its decision context (VIEW-010, VIEW-014).
+   */
+  survivorOffers: Record<SeatId, ContentId[]>
   crisisDeck: ContentId[]
   crisis: CrisisState | null
   /** Resolved crises for the end recap: contributions by seat (10.13.3). */
@@ -593,8 +614,8 @@ export interface GameState {
   stack: WorkFrame[]
   pending: PendingDecision | null
   log: ActionLogEntry[]
-  /** Every vote for the recap. */
-  votes: { round: number; caller: SeatId; target: SeatId; ballots: Record<SeatId, BallotChoice>; exiled: boolean }[]
+  /** Every vote (exile and card votes) for the recap. */
+  votes: VoteRecord[]
   ended: GameResult | null
 }
 
@@ -612,13 +633,32 @@ export const DECISION_KINDS = [
 ] as const
 export type DecisionKind = (typeof DECISION_KINDS)[number]
 
-export type BallotChoice = 'yes' | 'no'
+/** A ballot value: an option id. Exile votes use the options 'yes' and 'no' (10.12.3). */
+export type BallotChoice = string
+export type VotePurpose = 'exile' | 'card'
+export interface VoteOption { id: string; label?: string }
+/** Exile votes: caller set, target set, sourceKey null. Card votes: caller/target as the card says. */
+export interface VoteRecord {
+  round: number
+  purpose: VotePurpose
+  caller: SeatId | null
+  target: SeatId | null
+  /** '<recordId>#<abilityId>' of the card op that called the vote; null for an exile vote. */
+  sourceKey: string | null
+  sourceCard: ContentId | null
+  ballots: Record<SeatId, BallotChoice>
+  /** First player's tiebreak answer when it was exiled and the vote tied (10.12.5); else null. */
+  tiebreak: BallotChoice | null
+  /** The winning option id. */
+  result: string
+  exiled: boolean
+}
 
 export interface RequestNeed { symbol?: ItemSymbol; named?: ContentId; purpose?: string }
 
 /** Kind-specific context. Shown only to the answering seat(s) in views (00.6). */
 export type DecisionContext =
-  | { kind: 'chooseSurvivors'; offered: SurvivorInstanceId[]; keep: number }
+  | { kind: 'chooseSurvivors'; offered: ContentId[]; keep: number }
   | { kind: 'chooseLeader'; survivors: SurvivorInstanceId[] }
   | { kind: 'turnAction' }
   | { kind: 'searchKeepOrNoise'; survivor: SurvivorInstanceId; location: NonColonyId; drawn: CardInstanceId[]; noiseFree: boolean; deckLeft: number }
@@ -628,9 +668,9 @@ export type DecisionContext =
   | { kind: 'crossroadsOption'; card: ContentId; holder: SeatId; available: string[] }
   | { kind: 'biteSpread'; target: SurvivorInstanceId; location: LocationId }
   | { kind: 'newLeader'; candidates: SurvivorInstanceId[] }
-  | { kind: 'exilePlacement'; survivor: SurvivorInstanceId | null; locations: LocationId[]; reason: 'exiled' | 'added' | 'lastSurvivor' | 'displace' }
-  | { kind: 'vote'; caller: SeatId; target: SeatId; voters: SeatId[] }
-  | { kind: 'voteTiebreak'; caller: SeatId; target: SeatId }
+  | { kind: 'exilePlacement'; survivor: SurvivorInstanceId | null; locations: LocationId[]; reason: 'exiled' | 'added' | 'lastSurvivor' | 'displace'; overCapacity: boolean }
+  | { kind: 'vote'; purpose: VotePurpose; caller: SeatId | null; target: SeatId | null; sourceKey: string | null; options: VoteOption[]; voters: SeatId[] }
+  | { kind: 'voteTiebreak'; purpose: VotePurpose; caller: SeatId | null; target: SeatId | null; sourceKey: string | null; options: VoteOption[]; tied: string[] }
   | { kind: 'orderEffects'; effects: { key: string; sourceKey: string }[] }
   | { kind: 'objectiveChoice'; sourceKey: string; options: { id: string; label?: string }[] }
   | { kind: 'itemTarget'; sourceKey: string; purpose: string; candidates: string[]; min: number; max: number; canSkip: boolean }

@@ -3,7 +3,7 @@
 Main, secret, betrayal and exiled objectives: structure, data shape, when each is checked, and how
 the game ends and is scored. Rules core (round order, exile procedure, crisis) lives in
 `10-rules-core.md`; card data shapes in `20-data-schema.md`; hook/DSL in `21-card-effects-dsl.md`.
-Where those specs name a type or event, theirs wins; names here are the intended meaning.
+Where those specs name a type or event, theirs wins and names here must match them.
 
 Sources: brief Part E.11, E.12, E.13, Part G.3, G.4, G.7 (citing rulebook R pN, FAQ F x.y).
 Web cross-checks (read once, not committed):
@@ -21,7 +21,8 @@ All card text in our data is our own words written from the one-line mechanics b
 | Betrayal (secret) | 10 | owner only | game end only |
 | Exiled (secret) | 10 | owner only | game end only; modifies the owner's secret objective |
 
-1.1 Objectives are data (`content/objectives/*.json`), one record per card side, ids `main.<slug>`,
+1.1 Objectives are data (`src/data/objectives/{main,secret,betrayal,exiled}.json`; spec 20 §20.2
+owns every data path), one record per card side, ids `main.<slug>`,
 `main.<slug>.hardcore`, `secret.<slug>`, `betrayal.<slug>`, `exiled.<slug>`.
 1.2 Every objective condition is a declarative predicate in the `21` DSL, evaluated by the engine
 against full state. A `{"code": "<hook>"}` escape hatch is allowed for conditions the DSL cannot say.
@@ -79,7 +80,8 @@ the main-objective clause; the data says which (the clause is explicit, never im
 4.2 Typical private predicates (DSL building blocks; full list in `21`):
 `handCount(symbol, n)`, `handCountAny(n)`, `controlsSurvivors(n)`, `controlsSurvivorWith(trait)`,
 `leaderAlive`, `noWounds(n)`, `equippedCount(n)`, `moraleAtLeast(n)`.
-4.3 Outsider cards count as item cards for secret-objective hand counts ([W2], "Cards").
+4.3 Outsider cards count as item cards for secret-objective hand counts ([W2], "Cards"). When
+played they leave the game rather than entering the waste (10.6.1).
 4.4 Deal (E.3 step 2): `2 * players` standard cards + 1 betrayal card shuffled; 1 dealt per seat;
 the rest boxed unseen. Betrayer variant: `1 * players` standard + 1 betrayal.
 4.5 Hidden: a secret objective appears only in `view(state, owner)`. No action reveals it; a player
@@ -129,7 +131,9 @@ reference `original` (the seat's prior secret predicate) or `originalPrivate` (i
 without the main-objective clause). Typical shape: drop the main-objective requirement and add a
 new private clause. Exact cards (verify) in M8.
 7.3 After exile the seat's winning condition is the exiled card's `condition`. A betrayal holder's
-condition does not change (`appliesToBetrayal: false` on all first-release cards) (Rulings).
+condition does not change (`appliesToBetrayal: false` on all first-release cards; verify from card
+photos) (Rulings). Nothing about the exile objective or betrayer status is revealed (10.11.2);
+the engine applies the two-exile rule (7.6) itself.
 7.4 First release (M3) ships the 10 real exiled cards only if they are sourced by then. Otherwise
 it ships one generic exiled card: "win iff `originalPrivate` holds", which drops the main clause
 (Unsourced, see Rulings).
@@ -162,7 +166,7 @@ RULING: WNMS sample threshold base | 3 x players dealt in at setup, fixed for th
 RULING: WNMS hardcore values | morale 6, rounds 5, +3 zombies per non-colony location | Brief G.3 citing R p6, p15; Confirmed (brief) but recheck against the card when a photo is sourced
 RULING: Setup zombies cannot overrun | Objective setup zombies are placed before survivors exist, so no kill | No survivors present; Unsourced
 RULING: mainObjectiveComplete under morale/rounds end | False even if the condition holds | R p14 "do not check the main objective" ([W1], [W2]); Confirmed
-RULING: Exile of a betrayer | Draws an exiled card (keeps the deck count honest) but the betrayal condition is unchanged | Two-exile rule implies the engine tracks betrayal status; card wording not sourced; Unsourced
+RULING: Exile of a betrayer | Every exiled seat draws an exiled card, hidden; it does not apply to a betrayal holder, whose condition is unchanged; no public reveal | Corrected for the draw and no reveal ([W1] "the exiled player immediately draws 1 exiled secret objective card"; [W2] "adjusts his secret objective"; mirrors 10 R-EXILEOBJ); appliesToBetrayal:false Unsourced until card photos
 RULING: Exiled card timing | Drawn before the exiled seat moves its colony survivors out | [W2] "must immediately draw", then move; Fan-source
 RULING: Generic exiled objective fallback | Until the 10 cards are sourced, one generic card drops the main clause and keeps the private clause | Exiled cards "adjust" the objective ([W2]); exact texts unsourced; Unsourced
 RULING: Outsider cards in hand counts | Count as item cards for secret objectives | [W2] Cards section; Fan-source

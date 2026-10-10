@@ -19,7 +19,7 @@ https://zatu.com/products/dead-of-winter (both read 2026-10-10 via search).
   the UI. (C.4; CLAUDE.md)
 - 50.1.3 **The engine supplies every number.** Crisis totals, food needed, cards added to the crisis,
   dice targets, exposure odds, kill odds, objective progress, vote counts and hand counts come from
-  the view, the `PendingDecision` or the action annotations (50.6.4). The client does no
+  the view, the `ViewDecision` or its action annotations (50.6). The client does no
   arithmetic on game values; formatting only (percent, plural). (C.5; J "UI arithmetic")
 - 50.1.4 **Read from the current state, never a cached roll.** A prompt's target or a tray's dice
   come from the presented state at the animation cursor, not from a previous event. (J)
@@ -74,7 +74,7 @@ https://zatu.com/products/dead-of-winter (both read 2026-10-10 via search).
 - 50.3.1 Centre: the canvas. Top: a slim bar mirroring the colony tracks (morale, round, food,
   waste, "cards added: n", zombies at the colony gates), all from the view.
 - 50.3.2 Left rail (`[` toggles): seat rail, one row per seat in turn order: leader portrait,
-  followers, unused dice count, hand count, first-player mark, exiled badge, persona name and
+  followers, unused dice values (public, Ruling A-DICE), hand count, first-player mark, exiled badge, persona name and
   difficulty for bots, "thinking" indicator.
 - 50.3.3 Right rail (`]` toggles): event feed (50.7) and table-talk bubbles.
 - 50.3.4 Bottom: the human's hand as a fan (DOM, card faces from 30.7), scrollable when long;
@@ -88,7 +88,7 @@ https://zatu.com/products/dead-of-winter (both read 2026-10-10 via search).
 
 - 50.4.1 `gameStore`: holds the authoritative `GameState` privately (not exported to components),
   the event log, the RNG seed and the seat→decider map. `dispatch(action)` validates against
-  `legalActions`, calls `engine.step`, appends events, then hands events to the director.
+  the decision's `legal` answers, calls `engine.step`, appends events, then hands events to the director.
 - 50.4.2 `presentedStore`: the view as of the presentation cursor (`view(stateAtCursor, humanSeat)`)
   plus the event being animated. **All UI reads this store.** (C.5)
 - 50.4.3 Presentation director: a queue of events; each event type maps to a presenter
@@ -105,7 +105,7 @@ https://zatu.com/products/dead-of-winter (both read 2026-10-10 via search).
 
 ## 50.5 Decision prompts that explain themselves (C.5)
 
-- 50.5.1 Exactly one prompt is open at a time, for the one `PendingDecision` (00). If the decision
+- 50.5.1 Exactly one prompt is open at a time, for the one `PendingDecision` (00), seen as `view.decision` (`ViewDecision`). If the decision
   is not the human's, the prompt area shows "Waiting for <seat name>…".
 - 50.5.2 A prompt docks next to its subject (a location, a figure, a card, the crisis pile), placed
   by projecting the subject's world position to the screen, clamped away from the rails and the
@@ -113,7 +113,7 @@ https://zatu.com/products/dead-of-winter (both read 2026-10-10 via search).
 - 50.5.3 Every option line says what will happen and quotes engine numbers, e.g.:
   "Search the Hospital with <survivor>? Needs a 3+: you have 4, 5. Exposure after the move:
   25% wound, 17% frostbite, 8% bite." (C.5)
-- 50.5.4 Every `legalActions` entry has one control. Button text is the action's label template
+- 50.5.4 Every `decision.legal` entry has one control. Button text is the action's label template
   filled with engine values; E2E tests pick buttons by exact text (50.10.5).
 - 50.5.5 Hover or focus on an option highlights its target in the world (figure, location, card).
 - 50.5.6 Prompt kinds and their controls follow the decision kinds in 10.15: die pickers for
@@ -124,19 +124,43 @@ https://zatu.com/products/dead-of-winter (both read 2026-10-10 via search).
 
 ## 50.6 Engine numbers the client needs (contract input to `00`)
 
-- 50.6.1 View: morale, round, food supply, starvation tokens, waste count, waste threshold, cards
-  added to the crisis (count only), zombies per location and per gate, barricades, noise,
-  occupants with wounds and frostbite, helpless count, each seat's unused dice values (own) or
-  count (others), hand counts, exiled flags, main objective progress, own secret objective
-  progress text parts.
-- 50.6.2 Per round: food needed this colony phase, the waste count at which morale drops, zombies
-  each location will receive (from occupants and noise) for the preview.
-- 50.6.3 Crisis: prevent symbol, cards needed (`ceil` per player count from the engine), and after
-  reveal the per-card success count; never the face-down cards before reveal.
-- 50.6.4 Per legal action annotation: dice required, exposure odds (wound, frostbite, bite) after a
-  move, kill odds where a card has them, search target, label parameters. If `00` does not carry
-  an annotation field, the store calls a pure engine helper (`engine.preview(view, action)`);
-  the client still computes nothing.
+Every number the UI shows comes from one export below. The client adds, rounds or estimates
+nothing (10.0.8). Paths are fields of `PlayerView` (`src/engine/view.ts`) unless marked.
+
+- 50.6.1 View:
+
+  | Number shown | Export |
+  |---|---|
+  | morale / max | `view.morale`, `view.moraleMax` |
+  | round, rounds left | `view.round`, `view.roundsLeft` |
+  | food supply, starvation tokens | `view.food`, `view.starvation` |
+  | waste count, top waste card | `view.waste.count`, `view.waste.top` |
+  | waste threshold and morale loss | `numbers.wasteMoraleStep`, `numbers.wasteMoraleLoss` |
+  | cards added to the crisis (count only) | `view.crisis.contributed`, per seat `seats[i].contributed` |
+  | zombies and barricades per entrance | `locations[i].entrances[j].zombies`, `.barricades` |
+  | noise, helpless, free spaces, deck count | `locations[i].noise`, `.helpless`, `.freeSurvivorSpaces`, `.deckCount` |
+  | occupants with wounds and frostbite | `survivors[i].location`, `.wounds`, `.frostbite` |
+  | every seat's unused dice values | `seats[i].dice` filtered on `!used` (public at the table, Ruling A-DICE) |
+  | hand counts, exiled flags | `seats[i].handCount`, `seats[i].exiled` |
+  | main objective progress | `view.main.progress`, `view.main.target` |
+  | own secret objective progress | `view.you.objectiveStatus[]` (`current`, `target`, `met`, `label` key) |
+
+  Dice are rolled in the open, so every seat's unused dice show their values, not a count. The
+  human's own dice are also the drag sources; other seats' dice are display only.
+- 50.6.2 Per round: food needed this colony phase = `numbers.foodNeeded`; the waste count at which
+  morale drops = `numbers.wasteMoraleStep`; zombies each location will receive =
+  `numbers.zombiesIncoming[loc]` (`fromSurvivors`, `noiseTokens`); colony survivor count =
+  `numbers.colonySurvivors`.
+- 50.6.3 Crisis: prevent symbols = `view.crisis.prevent`; cards needed to prevent =
+  `numbers.crisisPrevent` (the number of non-exiled players, no rounding; 10 crisis rules); bonus
+  threshold = `numbers.crisisBonus`; after reveal, the total, per-symbol counts and outcome =
+  `view.lastCrisis.total`, `.symbols`, `.outcome`. Never the face-down cards before reveal.
+- 50.6.4 Per legal action: `decision.annotations[k]` (`ActionPreview`, same order as
+  `decision.legal`) gives dice required = `dieMin`, exposure odds (wound, frostbite, bite) after a
+  move = `exposure`, kill odds where a card has them = `hitOdds`, the location or target =
+  `location` / `target`, and label parameters = `label`. For a hypothetical answer that is not in
+  `legal` (drag preview), the store calls `engine.preview(view, answer)`, which returns the same
+  `ActionPreview`. The client still computes nothing.
 
 ## 50.7 Event feed and table talk (D.5)
 
@@ -194,3 +218,4 @@ https://zatu.com/products/dead-of-winter (both read 2026-10-10 via search).
 - RULING: colony board 20 × 20 in, location tile 6 × 8.5 in | used for world layout | physical dimensions not in container; only layout depends on them | Unsourced
 - RULING: gate 1 at near-left, numbering clockwise | used for colonyLayout.ts | gate numbering exists (E.2) but positions are not stated | Unsourced
 - RULING: vote timing | no timer on the human's vote; the "3, 2, 1" is presentation only, played when all votes are in | brief D.4 lists a narrator countdown but no rule imposes a time limit; a timer could force a human vote | Unsourced
+- RULING: other seats' dice | every seat's unused dice values are shown, not a count; crisis cards needed = numbers.crisisPrevent (non-exiled players, no rounding), bonus = numbers.crisisBonus | dice are rolled openly (Ruling A-DICE; view.ts SeatPublic.dice) and 10.4.15 / R-CRISISPLAYERS | Unsourced for dice (follows 00 A-DICE); crisis threshold Confirmed via R-CRISISPLAYERS

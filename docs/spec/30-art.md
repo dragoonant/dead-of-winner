@@ -92,7 +92,8 @@ write prompts, manifests and wiring code, and must stop and hand off at every `[
   generated texture; never a scanned board.
 - 30.5.2 Six location tiles, each with a small diorama (police station, grocery store, school, gas
   station, library, hospital), its survivor slots, its single entrance, 4 noise slots and its
-  item-deck spot. Slot counts come from `data/board.json` (spec `10` 10.2.5), never from art.
+  item-deck spot. Slot counts come from `src/data/core/locations.json` (spec `20` §20.2; spec `10`
+  10.2.5), never from art.
 - 30.5.3 Until a diorama GLB exists, a location renders as a flat generated card face (30.7) with
   procedural slot markers.
 

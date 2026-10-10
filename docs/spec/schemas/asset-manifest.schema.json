@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/asset-manifest.schema.json",
+  "title": "Asset manifest (public/assets/asset-manifest.json)",
+  "description": "Spec 20 §20.15 and spec 30 §30.8. A JSON array of runtime (non-audio) asset entries sorted by id.",
+  "type": "array",
+  "items": { "$ref": "#/$defs/Entry" },
+  "$defs": {
+    "AssetId": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*)*$", "maxLength": 80 },
+    "AssetPath": {
+      "type": "string", "minLength": 1, "maxLength": 200,
+      "pattern": "^(?!/)(?!docs/)(?!.*\\.\\.)[A-Za-z0-9._/-]+$"
+    },
+    "Entry": {
+      "type": "object",
+      "required": ["id", "kind", "pipeline", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/AssetId" },
+        "kind": { "enum": ["figure", "zombie", "prop", "board", "location", "icon", "portrait", "title", "texture"] },
+        "path": { "$ref": "#/$defs/AssetPath" },
+        "fallback": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "tris": { "type": "integer", "minimum": 0 },
+        "scale": { "type": "number", "exclusiveMinimum": 0 },
+        "heightIn": { "type": "number", "exclusiveMinimum": 0 },
+        "concept": { "type": "string", "pattern": "^art/(?!.*\\.\\.)[A-Za-z0-9._/-]+$" },
+        "pipeline": { "enum": ["hunyuan-2.1", "svg", "gemini", "procedural"] },
+        "status": { "enum": ["placeholder", "concept", "model", "final"] },
+        "batch": { "type": "integer", "minimum": 0 },
+        "notes": { "type": "string", "maxLength": 300 }
+      },
+      "allOf": [
+        { "if": { "properties": { "status": { "not": { "const": "placeholder" } } } },
+          "then": { "required": ["path"] } },
+        { "if": { "properties": { "kind": { "enum": ["figure", "zombie", "prop", "board", "location"] } } },
+          "then": { "required": ["fallback"] } },
+        { "if": { "properties": { "kind": { "enum": ["figure", "zombie", "prop"] } } },
+          "then": { "properties": { "tris": { "type": "integer", "maximum": 7000 } } } }
+      ]
+    }
+  }
+}

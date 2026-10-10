@@ -6,7 +6,9 @@ original 1:1; all wording here is ours. Every clause has a stable number and a s
 **Source keys.** `R pN` = official rulebook page, `F x.y` = official FAQ v1.1 entry, both as cited by
 the brief (`docs/DEAD-OF-WINTER-HANDOFF.md` Part E; the PDFs are not in this container). `E.n` /
 `C.n` = brief section. `[UBG]` = https://www.ultraboardgames.com/dead-of-winter/game-rules.php,
-`[RP]` = https://rulespal.com/dead-of-winter/rulebook (public rules summaries, read 2026-10-10).
+`[RP]` = https://rulespal.com/dead-of-winter/rulebook (public rules summaries, read 2026-10-10),
+`[OG]` = https://www.orderofgamers.com/downloads/DeadofWinter_v1.2.pdf (Order of Gamers fan rules
+summary v1.2, read 2026-10-10).
 `Ruling` = see the Rulings section at the end.
 
 **Seat directions.** Seats are stored in clockwise turn order. `left(s)` = next seat clockwise,
@@ -31,7 +33,8 @@ the brief (`docs/DEAD-OF-WINTER-HANDOFF.md` Part E; the PDFs are not in this con
   - `rollExposure(survivor, location, reason)` (10.7.4): every exposure roll, including the bite
     chain.
 - 10.0.6 Hidden information: only `view(state, seatId)` reaches deciders. Hidden: other hands
-  (count only), other secret objectives, face-down crisis contributions (count only), the held
+  (count only), other secret objectives, face-down crisis contributions (which cards; each seat's
+  contribution count and the total are public, 10.4.16), the held
   Crossroads card (except to its holder), all deck orders. (C.4)
 - 10.0.7 Exactly one `PendingDecision` is open at a time; it names a `seat` or `'all'`
   (simultaneous votes). `legalActions` is never empty for an open decision; a turn decision always
@@ -55,7 +58,7 @@ the brief (`docs/DEAD-OF-WINTER-HANDOFF.md` Part E; the PDFs are not in this con
 | 10.1.5 | Survivor cards | 30 | name, profession, influence, attack, search, ability; influence values are unique (Ruling R-INFL) |
 | 10.1.6 | Starting item cards | 25 | |
 | 10.1.7 | Location item decks | 6 x 20 | Police Station, Grocery Store, School, Gas Station, Library, Hospital |
-| 10.1.8 | Crisis cards | 20 | prevent symbol, failure effect, optional bonus |
+| 10.1.8 | Crisis cards | 20 | prevent section of 1–2 symbols, failure effect, optional bonus |
 | 10.1.9 | Crossroads cards | 80 | some carry a mature mark (10.3.4) |
 | 10.1.10 | Wound tokens | 25 | double-sided: wound / frostbite |
 | 10.1.11 | Helpless survivor tokens | 20 | |
@@ -67,7 +70,8 @@ the brief (`docs/DEAD-OF-WINTER-HANDOFF.md` Part E; the PDFs are not in this con
 | 10.1.17 | Exposure die | 1 d12 | faces in 10.7.1 |
 
 - 10.1.18 Item symbol types: Weapon, Fuel, Education, Food, Medicine, Tool, Survivor (outsider /
-  survivor-adding cards). Crisis cards name one prevent symbol. (E.1)
+  survivor-adding cards). A crisis card's prevent section shows 1 or 2 of these symbols
+  (10.4.14). (E.1; R p12; [OG] Cards; Ruling R-PREVENT2)
 
 ## 10.2 Board (R p5; E.2)
 
@@ -80,7 +84,8 @@ the brief (`docs/DEAD-OF-WINTER-HANDOFF.md` Part E; the PDFs are not in this con
 - 10.2.3 Each non-colony location: N survivor spaces, one entrance with M entrance spaces, exactly 4
   noise spaces, its item deck, and a symbol-likelihood row (display only). (E.2; [RP] "4 noise")
 - 10.2.4 An entrance space holds either one zombie or one barricade, never both. (R p5; [RP])
-- 10.2.5 Space counts are data, not code: `data/board.json` holds `colony.entrances[1..6].spaces`,
+- 10.2.5 Space counts are data, not code: `src/data/core/locations.json` (spec 20 §20.2 owns every
+  data path) holds `colony.entrances[1..6].spaces`,
   `colony.survivorSpaces`, and per location `survivorSpaces`, `entranceSpaces`, `symbolRow`. Until
   verified from photos the values are placeholders (Ruling R-SPACES): colony 3 spaces per entrance,
   30 survivor spaces; police 3/3, grocery 4/4, school 4/4, gas 2/2, library 3/3, hospital 4/4
@@ -144,20 +149,28 @@ A round = Player Turns Phase then Colony Phase. The game may end at any `checkGa
 - 10.4.11 **Check main objective.** If complete, the game ends now (10.13.1). (R p13)
 - 10.4.12 **Move the round tracker** down 1; at 0 the game ends now with no objective check
   (10.13.1). (R p13)
-- 10.4.12a **Pass the first-player token** to `right(firstPlayer)`. (R p13; E.4.7; Ruling R-FIRSTPASS)
+- 10.4.12a **Pass the first-player token** to `right(firstPlayer)`. (R p13; E.4.7; [RP]; [OG] step 7; Ruling R-FIRSTPASS)
 
 ### Crisis resolution (R p12; E.4.3)
 - 10.4.13 During any seat's own turn it may add any number of item cards face down from hand or
-  from its survivors' equipped items (10.6.2). Exiled seats cannot (10.11.4).
+  from its survivors' equipped items (10.6.2). Exiled seats cannot (10.11.4). Cards are placed
+  openly face down, so how many cards each seat added is public at once; which cards is not
+  (spec 40 Ruling "Visible per-seat crisis contribution counts").
 - 10.4.14 At resolution the engine shuffles the contributions and reveals them one at a time
-  (presentation order only). Each card bearing the crisis's prevent symbol = +1, every other card =
-  −1. A food card counts as 1 card regardless of how much food it would give. (R p12; E.6)
+  (presentation order only). The prevent section is a set of 1 or 2 symbols. Each card whose symbol
+  is in that set = +1 (with two symbols, any mix of the two scores), every other card = −1. A food
+  card counts as 1 card regardless of how much food it would give. (R p12 "a symbol matching a
+  symbol in the prevent section"; [OG] Cards "any combination"; E.6; Ruling R-PREVENT2)
 - 10.4.15 `players` = number of non-exiled seats. `total ≥ players` → prevented; `total ≥ players +
   2` → prevented and +1 morale; otherwise the crisis failure effect resolves (DSL). Optional bonus
-  contributions on some crises resolve per card text. (R p12; [UBG])
+  contributions on some crises resolve per card text. (R p12 and its crisis example; [RP] "the
+  number of non-exiled players"; [UBG]; [OG] abbreviates to "number of players"; Ruling
+  R-CRISISPLAYERS)
 - 10.4.16 All contributed cards leave the game (not the waste pile). The crisis card leaves the
   game. Contribution identities stay hidden in views until the end recap, except the revealed
-  symbols at resolution (count per symbol, not per seat). (R p12; C.4)
+  symbols at resolution (count per symbol, not per seat). Each seat's contribution count (how many
+  cards, not which) is public from the moment it contributes: `view.ts` `SeatPublic.contributed`
+  per seat and `crisis.contributed` in total (10.4.13; spec 40 Ruling). (R p12; C.4)
 
 ## 10.5 Actions that need a die (R p8–10; E.5)
 
@@ -173,19 +186,21 @@ for the round. Every die action names one survivor.
   random card from the target seat's hand. No exposure roll. Allowed anywhere, exiled or not.
   (R p9; E.5; [UBG])
 - 10.5.3 **Search.** Survivor at a non-colony location with a non-empty deck; die ≥ survivor's
-  search value. Draw 1 card (private). Loop: keep (end loop) or, if the location has an empty noise
-  space, place a noise token there and draw 1 more. When the loop ends, keep exactly 1 of all cards
-  drawn (decision `searchKeepWhich`); the rest go to the bottom of that deck in an order the engine
-  fixes (seeded). Kept cards go to hand. Repeatable. (R p10; E.5; decisions `searchKeepOrNoise`,
-  `searchKeepWhich`)
+  search value. Draw 1 card (private). Loop: stop (`searchStop`) or, if the location has an empty
+  noise space, place a noise token there and draw 1 more (`searchMore`). When the loop ends, keep
+  exactly 1 of all cards drawn (decision `searchKeepWhich`, action `searchKeep`); the rest go to
+  the bottom of that deck in an order the engine fixes (seeded). Kept cards go to hand.
+  Repeatable. (R p10; E.5; decisions `searchKeepOrNoise`, `searchKeepWhich`)
 - 10.5.4 **Barricade.** Any die; an empty entrance space at the survivor's location (colony: seat
   chooses the entrance). Place a barricade. (R p10; E.5)
 - 10.5.5 **Clean waste.** Any die; survivor at the colony. Remove the top 3 waste cards from the
   game (fewer if fewer). (R p10; E.5)
-- 10.5.6 **Attract.** Any die. Move up to 2 zombies, chosen one at a time from any other
-  location(s), into empty entrance spaces at the survivor's location. Attract never places into a
-  full entrance, never breaks barricades and never overruns; it stops early when no empty space or
-  no source zombie remains. (R p10; F 5.1.1)
+- 10.5.6 **Attract.** Any die. Move exactly `min(2, zombies at other locations, empty entrance
+  spaces at the survivor's location)` zombies, chosen one at a time from any other location(s),
+  into empty entrance spaces at the survivor's location. The seat may not move fewer when 2 can
+  move. Attract never places into a full entrance, never breaks barricades and never overruns; it
+  stops early only when no empty space or no source zombie remains. (R p10; [RP] "move 2
+  zombies"; [OG]; F 5.1.1; Ruling R-ATTRACTSHORT)
 - 10.5.7 **Survivor ability `(N+)`.** Die ≥ N per use; repeatable unless the card says once per
   round. `(4)` on Loretta Clay reads as `(4+)`. (R p10; F 1.2.1)
 
@@ -193,7 +208,9 @@ for the round. Every die action names one survivor.
 
 - 10.6.1 **Play a card** (active seat only). Resolve its effect; it goes to the waste pile, unless it
   is an Equip card, which attaches to one of the seat's survivors (any location) and stays until
-  contributed or handed off. Exiled: played cards leave the game instead (10.11.4). Cards that add
+  contributed or handed off. Exiled: played cards leave the game instead (10.11.4). A played Outsider card (card data marks
+  the type) always leaves the game instead of entering the waste, exiled or not, and counts as an
+  item card everywhere else (F 3.1.2; [OG] Cards; Ruling R-OUTSIDER). Cards that add
   a survivor (helpless included) cannot be played when the colony has no empty survivor space
   (exiled: a non-colony space, 10.11.4). (R p10; E.6; E.9)
 - 10.6.2 **Contribute to the crisis.** Any number of hand or equipped cards, face down. (R p10; E.6)
@@ -205,10 +222,13 @@ for the round. Every die action names one survivor.
 - 10.6.5 **Request.** The active seat names an item need; each other seat in turn order answers
   `give <card>` or `decline` (decision `requestResponse`). A given card is revealed and the
   requester must play it at once for its effect or to pay an ability cost; it cannot be contributed
-  to the crisis (Ruling R-REQUEST). Exiled seats may request and give. (R p11; F 5.2.1; F 3.1.2)
+  to the crisis. Exception by type: a given Outsider card may be contributed to the crisis instead
+  of played (Ruling R-REQUEST). Exiled seats may request and give. (R p11; F 5.2.1; F 3.1.2; [OG]
+  Cards)
 - 10.6.6 **Hand off.** Move an equipped item from one survivor to another survivor at the same
   location. A once-per-round item ability already used stays used. (R p11; E.6; Ruling R-HANDOFF)
-- 10.6.7 **Call an exile vote** (10.12). Once per turn. (R p15; E.6)
+- 10.6.7 **Call an exile vote** (10.12). Once per turn, naming another non-exiled seat; never
+  itself. (R p11; R p15; E.6; [RP]; [OG])
 - 10.6.8 **End turn.** Always legal. (C.4)
 
 ## 10.7 Exposure and the bite chain: `rollExposure` (R p11; E.7)
@@ -277,9 +297,11 @@ for the round. Every die action names one survivor.
   3. Morale −1 unless cause = `removed` (a card that removes a survivor from the game, unless the
      card says otherwise) or the controller is exiled. Helpless deaths cost 1. (R p11; E.7)
   4. If it was the leader and followers remain → 10.9.5.
-  5. If it was the seat's last survivor: the seat discards its whole hand (to waste; exiled: out of
-     the game), draws a survivor who becomes leader at the colony (exiled: a non-colony location
-     of its choice, F 6.2.1); in Player Elimination the seat is eliminated instead (10.14.5).
+  5. If it was the seat's last survivor: every card in the seat's hand leaves the game, exiled or
+     not (never the waste pile, so it never feeds the waste check 10.4.8); the seat draws a
+     survivor who becomes leader at the colony (exiled: a non-colony location of its choice,
+     F 6.2.1); in Player Elimination the seat is eliminated instead (10.14.5). (R p14 "removes from
+     the game all cards in her hand"; [OG] Survivors; [RP] says "discards"; Ruling R-LASTHAND)
   6. Emit `survivorKilled` (Crossroads/objective hooks), then `checkGameEnd`. (R p14; E.9)
 - 10.9.7 A survivor at a location with no free survivor space can still be placed by rules that
   force placement (10.11.6); voluntary moves need a free space (10.6.3).
@@ -303,9 +325,13 @@ for the round. Every die action names one survivor.
 ## 10.11 Exile (R p14; F 5.4; E.11)
 
 - 10.11.1 A seat is exiled by a successful vote (10.12). An exiled seat cannot be voted again.
-- 10.11.2 Objective: a non-betrayer discards its secret objective and draws 1 exiled secret
-  objective; a betrayer keeps its betrayal objective. Whether the exiled seat was a betrayer
-  becomes public (Ruling R-EXILEOBJ).
+- 10.11.2 Objective: every exiled seat immediately draws 1 exiled secret objective card, hidden
+  (owner view only), before it moves its colony survivors (11 §7.1). The card adjusts the seat's
+  winning condition per 11 §7.2–§7.3. It does not apply to a betrayal holder
+  (`appliesToBetrayal: false`; verify from card photos), whose betrayal condition stands. Nothing
+  is revealed: betrayer status stays hidden (R p7 forbids showing a secret objective) and the
+  engine applies the two-exile rule (10.11.5) silently. (R p14; [RP]; [OG] Exile "adjusts his
+  secret objective"; Ruling R-EXILEOBJ)
 - 10.11.3 Immediately, every colony survivor of the exiled seat moves to a non-colony location of
   its choice with a free survivor space, rolling exposure each; these moves do not use the
   survivors' move for the turn. (R p14; E.11)
@@ -313,8 +339,9 @@ for the round. Every die action names one survivor.
   survivors go to a non-colony location; cannot spend food tokens on dice (a food card it plays
   gives +1 die each instead of its effect); cannot vote; its survivors' deaths cost no morale; its
   played cards leave the game instead of entering the waste; its survivors never move into the
-  colony. It may still request and give cards, contribute to the main objective, play food cards
-  for food tokens, attack, search and call votes. (R p14; E.11; [RP]; Ruling R-EXILEFOOD)
+  colony (Ruling R-EXILECOLONY). It may still request and give cards, contribute to the main
+  objective, play food cards for food tokens, attack, search and call votes. (R p14; E.11; [RP];
+  [OG] Exile; Ruling R-EXILEFOOD)
 - 10.11.5 If two seats are exiled and neither holds a betrayal objective, morale drops to 0 at once
   (game ends, 10.13.1). (R p14; [UBG]; [RP])
 - 10.11.6 If an exiled survivor must be placed and no non-colony location has a free survivor space,
@@ -323,7 +350,9 @@ for the round. Every die action names one survivor.
 
 ## 10.12 Voting (R p15; E.6; C.4)
 
-- 10.12.1 The active seat (exiled or not) may call one exile vote per turn, naming a non-exiled seat.
+- 10.12.1 The active seat (exiled or not) may call one exile vote per turn, naming another
+  non-exiled seat. A seat can never target itself. (R p11 "cannot initiate a vote to exile
+  themselves"; [RP]; [OG]; Ruling R-SELFVOTE)
 - 10.12.2 Before votes, table talk may happen (persona lines, spec 41); this adds no decision.
 - 10.12.3 Every non-exiled seat, the caller and the target included, votes yes/no simultaneously:
   one `PendingDecision{seat:'all', kind:'vote'}`; answers are collected privately and submitted as
@@ -332,6 +361,12 @@ for the round. Every die action names one survivor.
 - 10.12.5 Tie → the first player decides: the outcome equals the first player's vote; if the first
   player is exiled (did not vote), it answers a `voteTiebreak` decision. ([UBG]; Ruling R-VOTETIE)
 - 10.12.6 Votes are revealed publicly after resolution.
+- 10.12.7 **Card votes.** A Crossroads (or other) card that calls a vote uses the same ballot: one
+  `PendingDecision{seat:'all', kind:'vote'}` collected as one `castVotes` (`VotesCast{purpose:
+  'card'}`); every non-exiled seat votes; ties follow 10.12.5 (first player); votes are revealed
+  after resolution (10.12.6). The card's data names the two outcomes (yes/no map to them) and what each does; nobody is exiled
+  unless the card says so. A card vote is not the active seat's once-per-turn exile vote
+  (10.12.1). (R p15; [RP] "a crossroads-called vote"; [OG] Voting; Ruling R-CARDVOTE)
 
 ## 10.13 Ending and winning (R p14; E.12)
 
@@ -339,8 +374,8 @@ for the round. Every die action names one survivor.
   (10.4.12); or the main objective is found complete at 10.4.11 (or an objective/card says the game
   ends). Morale and round endings skip the main objective check. (R p14; E.12)
 - 10.13.2 Each seat then wins iff its current secret objective is complete at that moment (exiled:
-  its exiled objective; betrayer: its betrayal objective). Non-betrayal objectives require the main
-  objective complete. Any number of seats may win, including none. (R p14; [RP])
+  its exiled objective; betrayer: its betrayal objective). Whether an objective requires the main
+  objective is a clause in its card data (11 §4.1); the engine never adds it. Any number of seats may win, including none. (R p14; [RP])
 - 10.13.3 End recap reveals all secret objectives, all face-down contributions by seat and crisis,
   every Crossroads card drawn and whether it triggered, and every vote. (C.4)
 
@@ -364,7 +399,7 @@ for the round. Every die action names one survivor.
 
 ## Rulings
 
-RULING: Requested cards and the crisis (R p11 vs F 3.1.2) | Given cards are played at once and never contributed to a crisis; the FAQ's Outsider case is an exception for that card only, encoded on the card | Unsourced (brief E.6 recommendation; mirrors docs/needs-rules-check.md)
+RULING: R-REQUEST requested cards and the crisis (R p11 vs F 3.1.2) | Given cards are played at once and never contributed to a crisis, except Outsider cards: as a type they may be requested and then contributed (10.6.5) | Fan-source + FAQ (F 3.1.2 per brief; [OG] Cards "can even request and play these cards into the crisis"); replaces the earlier one-card exception
 RULING: R-D12 exposure faces | 6 blank, 3 wound, 2 frostbite, 1 bitten | Fan-source (brief E.7 community count; matches C.5 odds 25/17/8); verify on a physical die
 RULING: R-SPACES board space counts | Data file with placeholders (colony 3 per entrance, 30 occupant spaces; police 3/3, grocery 4/4, school 4/4, gas 2/2, library 3/3, hospital 4/4) | Unsourced; [UBG] and [RP] give no counts; verify from board/card photos into docs/spec/sources/
 RULING: R-LOCORDER non-colony order for Add Zombies | police, grocery, school, gas, library, hospital (brief E.1 listing order) | Unsourced; the rulebook p5 arrangement should replace it if it differs
@@ -375,11 +410,19 @@ RULING: R-MORALEMAX morale ceiling | Clamp at the board track maximum (data valu
 RULING: R-HELPSPACE helpless occupy colony spaces | Yes; they block survivor additions when full | Unsourced
 RULING: R-SETUPORDER survivor choice | Seats choose in turn order with hidden picks | Unsourced (table does it simultaneously; outcome identical)
 RULING: R-TURNSTART start-of-turn order | Crossroads draw, then frostbite wounds | Unsourced
-RULING: R-FIRSTPASS first-player token direction | Passes to the right (previous seat clockwise) | Confirmed per brief E.4.7 citing R p13
+RULING: R-FIRSTPASS first-player token direction | Passes to the right (previous seat clockwise) while turns run left | Confirmed (R p13 per brief E.4.7; [RP] "passes the token to the player on his right"; [OG] step 7)
 RULING: R-BITEHELPLESS bite spread and helpless tokens | Spread skips helpless tokens | Unsourced ([RP] silent); consistent with overrun killing helpless last
 RULING: R-HANDOFF hand-off target | Any survivor at the same location, including another seat's | Unsourced
-RULING: R-EXILEOBJ exiled betrayer | Betrayer keeps the betrayal objective, non-betrayer draws an exiled objective; betrayer status becomes public at exile | Unsourced ([UBG] and [RP] do not say; public reveal needed to apply 10.11.5 at the table)
+RULING: R-EXILEOBJ exiled objective | Every exiled seat draws 1 hidden exiled objective; it does not apply to a betrayal holder (appliesToBetrayal:false, verify from card photos); nothing is revealed and the engine applies 10.11.5 silently | Corrected (R p14; [RP] "the exiled player immediately draws 1 exiled secret objective card", R p7 no showing; [OG] v1.2 "adjusts his secret objective"); the earlier public-reveal ruling is withdrawn
 RULING: R-EXILEFOOD exiled food cards | Exiled seat chooses per food card: food tokens, or +1 die each | Unsourced (brief E.11 lists both)
 RULING: R-VOTETIE exile vote ties | First player's vote decides; exiled first player gets a tiebreak decision | Confirmed ([UBG]: ties broken by the first player, including exile votes)
 RULING: R-EMPTYDECK search with empty location deck | Search is illegal at a location whose deck is empty | Unsourced ([RP] silent)
 RULING: R-ATTACKSURV attacking survivors | Allowed at any shared location, exiled or not; target's attack value is the threshold | Confirmed ([UBG]; brief E.5)
+RULING: R-LASTHAND last survivor lost | The whole hand leaves the game for every seat, exiled or not; it never enters the waste | Corrected (R p14 "removes from the game all cards in her hand"; [OG] Survivors); [RP] says "discards"
+RULING: R-PREVENT2 crisis prevent section | A set of 1–2 symbols; a card scores +1 if its symbol is in the set | Corrected (R p12 "a symbol matching a symbol in the prevent section"; [OG] Cards "two item symbols ... any combination")
+RULING: R-OUTSIDER played Outsider cards | Leave the game instead of entering the waste; count as item cards otherwise | Fan-source + FAQ ([OG] Cards; F 3.1.2 per brief)
+RULING: R-CRISISPLAYERS crisis threshold | `players` = non-exiled seats | Confirmed (R p12 crisis example; [RP] "the number of non-exiled players"); [OG] abbreviates to "number of players"
+RULING: R-SELFVOTE exile vote target | Another non-exiled seat; never the caller | Confirmed (R p11; [RP]; [OG] "You cannot initiate a vote to exile yourself")
+RULING: R-CARDVOTE votes called by cards | Same seat:'all' ballot, non-exiled seats vote, first player breaks ties, card data decides the outcome | Unsourced for the procedure ([RP] and [OG] mention Crossroads-called votes only in passing); reuses the exile-vote rules
+RULING: R-ATTRACTSHORT attract with fewer than 2 movable | Moves exactly min(2, available source zombies, empty spaces); never fewer by choice | Unsourced for the short case; "move 2 zombies" is Confirmed (R p10; [RP]; [OG])
+RULING: R-EXILECOLONY exiled survivors and the colony | Exiled survivors cannot enter the colony (no move there; forced placement only for non-exiled survivors, 10.11.6) | Unsourced (implied by F 5.4.1 and non-colony placement in R p14; [RP] and [OG] state no explicit ban)

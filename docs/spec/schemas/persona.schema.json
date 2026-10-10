@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner.local/schemas/persona.schema.json",
+  "title": "Bot persona (spec 41 §41.1.3)",
+  "description": "One file per persona at src/data/personas/<id>.json. The file name equals id. All line text is original writing (IP rule).",
+  "type": "object",
+  "required": ["id", "name", "epithet", "voiceId", "portrait", "knobs", "lines"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "Bare persona id, e.g. 'quartermaster' (41.4)" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40, "description": "Never equal to any survivor name (41.1.2)" },
+    "epithet": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "voiceId": { "type": "string", "minLength": 1, "description": "ElevenLabs library voice id, or 'tbd' until M6 (41.1.4)" },
+    "portrait": { "type": "string", "minLength": 1, "description": "Asset id in public/assets/asset-manifest.json, or 'initials' until M5" },
+    "knobs": {
+      "type": "object",
+      "required": ["generosity", "riskAppetite", "paranoia", "trust", "chattiness", "bluffing"],
+      "additionalProperties": false,
+      "properties": {
+        "generosity": { "$ref": "#/$defs/Unit" },
+        "riskAppetite": { "$ref": "#/$defs/Unit" },
+        "paranoia": { "$ref": "#/$defs/Unit" },
+        "trust": { "$ref": "#/$defs/Unit" },
+        "chattiness": { "$ref": "#/$defs/Unit" },
+        "bluffing": { "$ref": "#/$defs/Unit" }
+      }
+    },
+    "derived": {
+      "type": "object",
+      "description": "Per-persona overrides of the 41.3 formulas",
+      "additionalProperties": false,
+      "properties": {
+        "voteThreshold": { "$ref": "#/$defs/Unit" },
+        "callThreshold": { "$ref": "#/$defs/Unit" },
+        "crisisTargetP": { "$ref": "#/$defs/Unit" },
+        "requestGiveWeight": { "$ref": "#/$defs/Unit" },
+        "searchPushDivisor": { "type": "number", "exclusiveMinimum": 0 },
+        "moveThresholdFactor": { "type": "number", "exclusiveMinimum": 0 },
+        "secretWeight": { "type": "number", "minimum": 0 },
+        "imageWeight": { "type": "number", "minimum": 0 },
+        "talkBaseChance": { "$ref": "#/$defs/Unit" }
+      }
+    },
+    "lines": {
+      "type": "object",
+      "description": "Trigger key (41.6.1 table) -> line bank",
+      "propertyNames": { "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-z][a-zA-Z0-9]*)*$" },
+      "additionalProperties": { "type": "array", "items": { "$ref": "#/$defs/Line" }, "minItems": 1 }
+    },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "Unit": { "type": "number", "minimum": 0, "maximum": 1 },
+    "Line": {
+      "type": "object",
+      "required": ["id", "text", "voiced"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)*$", "description": "Unique within the persona file" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 200, "description": "Original wording; slots as {name} (41.8)" },
+        "slots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["me", "seat", "target", "accuser", "survivor", "loc", "n", "matching", "symbol", "morale", "food", "round", "need"] }
+        },
+        "voiced": { "type": "boolean" },
+        "weight": { "type": "number", "exclusiveMinimum": 0 },
+        "when": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "role": { "enum": ["loyal", "betrayer"], "description": "Only on lines with role-neutral content (41.5.4)" },
+            "exiled": { "type": "boolean" },
+            "minRound": { "type": "integer", "minimum": 1 },
+            "moraleAtMost": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    }
+  }
+}

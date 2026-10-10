@@ -6,7 +6,9 @@ line here first. IDs are never renumbered or reused; a retired line keeps its ID
 
 **Line format (parsed by `tools/checklist-coverage.ts`).** One table row per assertion:
 `| <PREFIX>-<NNN> | <Mn> <must|should> | <assertion> | <ref> |`. Regex:
-`^\| ([A-Z]+-\d{3}) \| (M\d+) (must|should) \|`. `Mn` is the milestone the test is due in; `must`
+`^\| ([A-Z]+(?:-[A-Z]+)*-\d{3}) \| (M\d+) (must|should) \|` (multi-part prefixes such as
+`AI-FAIR-002` match). Non-rules prefixes (ARCH, SIM, DSL, DATA, AI, AI-FAIR) are registered in
+"Non-rules prefixes" below and use the same row format. `Mn` is the milestone the test is due in; `must`
 lines fail coverage when uncovered in or after that milestone, `should` lines only warn.
 
 **Refs.** `10.x.y` = `10-rules-core.md` clause; `11 §x.y` = `11-objectives.md` section;
@@ -40,7 +42,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | SETUP-017 | M1 must | Helpless tokens occupy colony survivor spaces and count toward capacity | 10.2.7; R-HELPSPACE |
 | SETUP-018 | M8 should | Full content counts: 10 main, 24 secret, 10 betrayal, 10 exiled, 30 survivors, 25 starting items, 6 x 20 location items, 20 crises, 80 Crossroads | 10.1.1–10.1.9; 11 §1 |
 | SETUP-019 | M1 must | No engine cap on zombies, wounds, food, noise or barricades beyond board spaces | 10.0.10; 10.1.10–10.1.15; R-TOKENS |
-| SETUP-020 | M2 must | Every item card carries exactly one symbol from the 7-symbol set; every crisis names one prevent symbol | 10.1.18; 10.1.8 |
+| SETUP-020 | M2 must | Every item card carries exactly one symbol from the 7-symbol set; every crisis names 1–2 prevent symbols | 10.1.18; 10.1.8; R-PREVENT2 |
 | SETUP-021 | M2 must | Survivor influence values are unique across the survivor data (validation fails on a duplicate) | 10.1.5; 10.9.1; R-INFL |
 | SETUP-022 | M8 should | Variant `betrayerVariant`: pool = n non-betrayal + 1 betrayal | 10.14.3; 11 §4.4 |
 | SETUP-023 | M8 should | Variant `coop`: hardcore side, no secret objectives dealt, no vote action, non-co-op cards removed | 10.14.1; 11 §6.8 |
@@ -75,12 +77,12 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | ACT-007 | M1 must | Barricade is illegal when the location's entrance(s) have no empty space | 10.5.4; 10.2.4 |
 | ACT-008 | M1 must | Clean waste: any die, survivor at the colony; removes the top 3 waste cards from the game (fewer if fewer) | 10.5.5 |
 | ACT-009 | M1 must | Clean waste is illegal for a survivor outside the colony | 10.5.5 |
-| ACT-010 | M1 must | Attract: moves up to 2 zombies, one at a time, from other locations into empty entrance spaces at the survivor's location | 10.5.6 |
+| ACT-010 | M1 must | Attract: moves exactly min(2, source zombies elsewhere, empty entrance spaces here) zombies, one at a time, from other locations into empty entrance spaces at the survivor's location; never fewer by choice | 10.5.6; R-ATTRACTSHORT |
 | ACT-011 | M1 must | Attract never places into a full entrance, never breaks a barricade, never overruns, and stops early when no space or source remains | 10.5.6; 10.8.4 |
 | ACT-012 | M2 must | Ability `(N+)`: needs a die ≥ N per use; repeatable unless marked once per round | 10.5.7 |
 | ACT-013 | M2 should | Loretta Clay's `(4)` cost is read as `(4+)` | 10.5.7 |
 | ACT-014 | M1 must | Request: each other seat in turn order answers `give` or `decline` via `requestResponse` | 10.6.5 |
-| ACT-015 | M1 must | A given card is revealed and must be played at once (effect or ability cost); it cannot be contributed to the crisis | 10.6.5; K-1 |
+| ACT-015 | M1 must | A given card is revealed and must be played at once (effect or ability cost); it cannot be contributed to the crisis, except a given Outsider card, which may be contributed instead | 10.6.5; R-REQUEST; K-1 |
 | ACT-016 | M1 must | Exiled seats may request and may give | 10.6.5; 10.11.4 |
 | ACT-017 | M1 must | Hand off: moves an equipped item between two survivors at the same location (any seat's); a used once-per-round ability stays used | 10.6.6; R-HANDOFF |
 | ACT-018 | M1 must | Hand off is illegal between survivors at different locations | 10.6.6 |
@@ -110,7 +112,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 |---|---|---|---|
 | SRCH-001 | M1 must | Search needs a non-colony location, a non-empty deck and a die ≥ the survivor's search value | 10.5.3; R-EMPTYDECK; GOLD-03 |
 | SRCH-002 | M1 must | Search draws 1 card and opens `searchKeepOrNoise` for the active seat | 10.5.3; GOLD-03 |
-| SRCH-003 | M1 must | `makeNoise` places a noise token and draws 1 more; illegal when the location's 4 noise spaces are full or the deck is empty | 10.5.3; 10.8.7; GOLD-03 |
+| SRCH-003 | M1 must | `searchMore` places a noise token and draws 1 more; illegal when the location's 4 noise spaces are full or the deck is empty | 10.5.3; 10.8.7; GOLD-03 |
 | SRCH-004 | M1 must | When the loop ends, exactly 1 drawn card is kept (`searchKeepWhich`); the rest go to the deck bottom in seeded order | 10.5.3; GOLD-03 |
 | SRCH-005 | M1 must | The kept card goes to the active seat's hand | 10.5.3 |
 | SRCH-006 | M1 must | Search may be repeated with further qualifying dice | 10.5.3 |
@@ -126,7 +128,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | MOVE-004 | M1 must | A survivor added this turn may move | 10.6.3 |
 | MOVE-005 | M1 must | Move needs no die | 10.6 |
 | MOVE-006 | M1 must | Forced placements (10.11.6) may use a location with no free space; voluntary moves may not | 10.9.7 |
-| MOVE-007 | M1 must | An exiled seat's survivor can never move into the colony | 10.11.4 |
+| MOVE-007 | M1 must | An exiled seat's survivor can never move into the colony | 10.11.4; R-EXILECOLONY |
 
 ## EXPO- Exposure and the bite chain
 
@@ -161,6 +163,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | CARD-010 | M1 must | Every `{"code": "<hook>"}` in card data resolves to a registered hook | 11 §1.2; 10.10.2 |
 | CARD-011 | M1 must | A card that "removes" a survivor uses cause `removed` and costs no morale unless the card says so | 10.9.6 |
 | CARD-012 | M1 should | Over a long sim, no hand-size limit is enforced | 10.0.9; R-HAND |
+| CARD-013 | M1 must | A played Outsider card leaves the game instead of entering the waste, exiled or not; the waste count is unchanged | 10.6.1; R-OUTSIDER |
 
 ## XRD- Crossroads
 
@@ -176,6 +179,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | XRD-008 | M1 must | At most one Crossroads card triggers per turn | 10.10.4 |
 | XRD-009 | M1 must | An untriggered card goes to the bottom of the Crossroads deck at end of turn | 10.4.6; 10.10.5 |
 | XRD-010 | M1 must | Triggers are declarative DSL predicates over events (move, search, wound type, location, survivor, start of turn) | 10.10.2 |
+| XRD-011 | M1 must | A Crossroads option that calls a vote opens one `PendingDecision{seat:'all', kind:'vote'}` and resolves the card's data outcome for the result | 10.12.7; 10.10.4; R-CARDVOTE |
 
 ## CRIS- Crisis
 
@@ -193,7 +197,8 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | CRIS-010 | M1 must | Contributed cards and the crisis card leave the game (not waste) | 10.4.16 |
 | CRIS-011 | M1 must | Reveal order is a seeded shuffle; the total does not depend on order | 10.4.14 |
 | CRIS-012 | M1 must | The engine exposes the running crisis total and needed total at resolution | 10.0.8 |
-| CRIS-013 | M1 must | A card received by request cannot be contributed | 10.6.5; K-1 |
+| CRIS-013 | M1 must | A card received by request cannot be contributed, except an Outsider card, which may be | 10.6.5; R-REQUEST; K-1 |
+| CRIS-014 | M1 must | Two-symbol crisis fixture (prevent {Fuel, Tool}): every Fuel and every Tool card scores +1 in any mix, any other card −1 | 10.4.14; R-PREVENT2; GOLD-04 |
 
 ## COL- Colony phase
 
@@ -244,8 +249,8 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | SURV-010 | M1 must | `killSurvivor` removes the survivor and its wound tokens | 10.9.6 |
 | SURV-011 | M1 must | Equipped items of a killed survivor: at the colony → controller's hand; elsewhere → shuffled into that location deck | 10.9.6 |
 | SURV-012 | M1 must | Death costs 1 morale, except cause `removed` or an exiled controller | 10.9.6 |
-| SURV-013 | M1 must | A seat losing its last survivor discards its hand to waste and draws a new leader at the colony | 10.9.6 |
-| SURV-014 | M1 must | Exiled seat losing its last survivor: hand leaves the game, new leader goes to a non-colony location of its choice | 10.9.6; 10.11.4 |
+| SURV-013 | M1 must | A seat losing its last survivor has its whole hand removed from the game (waste unchanged) and draws a new leader at the colony | 10.9.6; R-LASTHAND |
+| SURV-014 | M1 must | Exiled seat losing its last survivor: hand removed from the game (waste unchanged), new leader goes to a non-colony location of its choice | 10.9.6; 10.11.4; R-LASTHAND |
 | SURV-015 | M1 must | `killSurvivor` emits `survivorKilled` and then `checkGameEnd` | 10.9.6 |
 | SURV-016 | M1 must | All deaths, whatever the cause, run through `killSurvivor` | 10.0.5; 10.9.6 |
 | SURV-017 | M8 should | Variant `playerElimination`: a seat losing its last survivor is out instead of drawing | 10.14.5 |
@@ -289,7 +294,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 |---|---|---|---|
 | EXIL-001 | M1 must | A successful vote exiles the target; an exiled seat is never a legal vote target | 10.11.1; 11 §7.7 |
 | EXIL-002 | M1 must | The exiled seat draws 1 exiled objective before moving its colony survivors | 11 §7.1 |
-| EXIL-003 | M1 must | A betrayer's winning condition is unchanged by exile | 10.11.2; 11 §7.3; GOLD-11 |
+| EXIL-003 | M1 must | Every exiled seat, a betrayal holder included, draws 1 hidden exiled objective; a betrayal holder's winning condition is unchanged and nothing is revealed | 10.11.2; 11 §7.1; 11 §7.3; R-EXILEOBJ; GOLD-11 |
 | EXIL-004 | M1 must | Every colony survivor of the exiled seat moves to a non-colony location of its choice with a free space, rolling exposure each, without using its move | 10.11.3 |
 | EXIL-005 | M1 must | Exiled seat loses: crisis contribution, food-token dice, voting, colony entry | 10.11.4; GOLD-11 |
 | EXIL-006 | M1 must | Exiled seat keeps: request, give, attack, search, call votes, play food cards | 10.11.4 |
@@ -306,7 +311,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | id | ms | assertion | ref |
 |---|---|---|---|
 | VOTE-001 | M1 must | The active seat (exiled or not) may call at most one exile vote per turn | 10.12.1; 10.6.7 |
-| VOTE-002 | M1 must | The vote target must be a non-exiled seat | 10.12.1 |
+| VOTE-002 | M1 must | The vote target must be another non-exiled seat; a self-target is never in `legalActions` | 10.12.1; 10.6.7; R-SELFVOTE |
 | VOTE-003 | M1 must | One `PendingDecision{seat:'all', kind:'vote'}` collects every non-exiled seat's vote, caller and target included | 10.12.3 |
 | VOTE-004 | M1 must | Exiled seats cannot vote | 10.12.3; 10.11.4 |
 | VOTE-005 | M1 must | More yes than no → exile; more no → nothing | 10.12.4 |
@@ -315,6 +320,7 @@ lines fail coverage when uncovered in or after that milestone, `should` lines on
 | VOTE-008 | M1 must | Votes are revealed publicly only after resolution | 10.12.6 |
 | VOTE-009 | M1 must | Table talk before a vote adds no decision | 10.12.2 |
 | VOTE-010 | M8 should | `coop`/`twoPlayer`: the vote action is never legal | 10.14.1 |
+| VOTE-011 | M1 must | A card-called vote: every non-exiled seat votes on one `seat:'all'` decision, the first player breaks ties, the card data decides the outcome, and the active seat keeps its once-per-turn exile vote | 10.12.7; R-CARDVOTE |
 
 ## END- Ending and winning
 
@@ -357,6 +363,117 @@ Every VIEW line also runs as the sim leak test on every game (B.4; 60.4).
 | VIEW-017 | M1 must | Each seat's view is deterministic: same state → same serialization | 10.0.6 |
 | VIEW-018 | M1 must | Events delivered to a seat are filtered the same way as its view (no hidden id in a `CardDrawn` for another seat) | 10.0.6 |
 
+## Non-rules prefixes
+
+IDs that live outside the rules specs are registered here so that 60.2.3 ("IDs come only from 12")
+holds. The owning spec states each assertion and stays authoritative for its wording; this file
+fixes the ID, milestone and strength. Coverage tooling parses these rows with the same regex.
+
+| prefix | owning spec | IDs | default |
+|---|---|---|---|
+| ARCH | `00-architecture.md` §00.11 | ARCH-001..005 | M0 must |
+| SIM | `60-testing.md` §60.4 | SIM-001..010 | M1 must |
+| DSL | `21-card-effects-dsl.md` §21.13 | DSL-001..014 | M2 must |
+| DATA | `20-data-schema.md` §20.13 | DATA-001..043 (gaps kept) | M2 must; asset manifest M5 should |
+| AI | `40-ai.md` §40.14 | AI-001..017 | M4 must |
+| AI-FAIR | `40-ai.md` §40.11 | AI-FAIR-002 | M4 must |
+
+A new ID in one of these specs needs a row here first, like any rules line.
+
+### ARCH- Architecture and contracts
+
+| id | ms | assertion | ref |
+|---|---|---|---|
+| ARCH-001 | M0 must | Assertion as stated for ARCH-001 in 00 §00.11 | 00 §00.11 |
+| ARCH-002 | M0 must | Assertion as stated for ARCH-002 in 00 §00.11 | 00 §00.11 |
+| ARCH-003 | M0 must | Assertion as stated for ARCH-003 in 00 §00.11 | 00 §00.11 |
+| ARCH-004 | M0 must | Assertion as stated for ARCH-004 in 00 §00.11 | 00 §00.11 |
+| ARCH-005 | M0 must | Assertion as stated for ARCH-005 in 00 §00.11 | 00 §00.11 |
+
+### SIM- Simulator invariants
+
+| id | ms | assertion | ref |
+|---|---|---|---|
+| SIM-001 | M1 must | Assertion as stated for SIM-001 in 60 §60.4 | 60 §60.4 |
+| SIM-002 | M1 must | Assertion as stated for SIM-002 in 60 §60.4 | 60 §60.4 |
+| SIM-003 | M1 must | Assertion as stated for SIM-003 in 60 §60.4 | 60 §60.4 |
+| SIM-004 | M1 must | Assertion as stated for SIM-004 in 60 §60.4 | 60 §60.4 |
+| SIM-005 | M1 must | Assertion as stated for SIM-005 in 60 §60.4 | 60 §60.4 |
+| SIM-006 | M1 must | Assertion as stated for SIM-006 in 60 §60.4 | 60 §60.4 |
+| SIM-007 | M1 must | Assertion as stated for SIM-007 in 60 §60.4 | 60 §60.4 |
+| SIM-008 | M1 must | Assertion as stated for SIM-008 in 60 §60.4 | 60 §60.4 |
+| SIM-009 | M1 must | Assertion as stated for SIM-009 in 60 §60.4 | 60 §60.4 |
+| SIM-010 | M1 must | Assertion as stated for SIM-010 in 60 §60.4 | 60 §60.4 |
+
+### DSL- Card-effects DSL
+
+| id | ms | assertion | ref |
+|---|---|---|---|
+| DSL-001 | M2 must | Assertion as stated for DSL-001 in 21 §21.13 | 21 §21.13 |
+| DSL-002 | M2 must | Assertion as stated for DSL-002 in 21 §21.13 | 21 §21.13 |
+| DSL-003 | M2 must | Assertion as stated for DSL-003 in 21 §21.13 | 21 §21.13 |
+| DSL-004 | M2 must | Assertion as stated for DSL-004 in 21 §21.13 | 21 §21.13 |
+| DSL-005 | M2 must | Assertion as stated for DSL-005 in 21 §21.13 | 21 §21.13 |
+| DSL-006 | M2 must | Assertion as stated for DSL-006 in 21 §21.13 | 21 §21.13 |
+| DSL-007 | M2 must | Assertion as stated for DSL-007 in 21 §21.13 | 21 §21.13 |
+| DSL-008 | M2 must | Assertion as stated for DSL-008 in 21 §21.13 | 21 §21.13 |
+| DSL-009 | M2 must | Assertion as stated for DSL-009 in 21 §21.13 | 21 §21.13 |
+| DSL-010 | M2 must | Assertion as stated for DSL-010 in 21 §21.13 | 21 §21.13 |
+| DSL-011 | M2 must | Assertion as stated for DSL-011 in 21 §21.13 | 21 §21.13 |
+| DSL-012 | M2 must | Assertion as stated for DSL-012 in 21 §21.13 | 21 §21.13 |
+| DSL-013 | M2 must | Assertion as stated for DSL-013 in 21 §21.13 | 21 §21.13 |
+| DSL-014 | M2 must | Assertion as stated for DSL-014 in 21 §21.13 | 21 §21.13 |
+
+### DATA- Data validation
+
+| id | ms | assertion | ref |
+|---|---|---|---|
+| DATA-001 | M2 must | Assertion as stated for DATA-001 in 20 §20.13 | 20 §20.13 |
+| DATA-002 | M2 must | Assertion as stated for DATA-002 in 20 §20.13 | 20 §20.13 |
+| DATA-003 | M2 must | Assertion as stated for DATA-003 in 20 §20.13 | 20 §20.13 |
+| DATA-004 | M2 must | Assertion as stated for DATA-004 in 20 §20.13 | 20 §20.13 |
+| DATA-005 | M2 must | Assertion as stated for DATA-005 in 20 §20.13 | 20 §20.13 |
+| DATA-006 | M2 must | Assertion as stated for DATA-006 in 20 §20.13 | 20 §20.13 |
+| DATA-007 | M2 must | Assertion as stated for DATA-007 in 20 §20.13 | 20 §20.13 |
+| DATA-010 | M2 must | Assertion as stated for DATA-010 in 20 §20.13 | 20 §20.13 |
+| DATA-011 | M2 must | Assertion as stated for DATA-011 in 20 §20.13 | 20 §20.13 |
+| DATA-012 | M2 must | Assertion as stated for DATA-012 in 20 §20.13 | 20 §20.13 |
+| DATA-013 | M2 must | Assertion as stated for DATA-013 in 20 §20.13 | 20 §20.13 |
+| DATA-014 | M2 must | Assertion as stated for DATA-014 in 20 §20.13 | 20 §20.13 |
+| DATA-015 | M2 must | Assertion as stated for DATA-015 in 20 §20.13 | 20 §20.13 |
+| DATA-016 | M2 must | Assertion as stated for DATA-016 in 20 §20.13 | 20 §20.13 |
+| DATA-020 | M2 must | Assertion as stated for DATA-020 in 20 §20.13 | 20 §20.13 |
+| DATA-021 | M2 must | Assertion as stated for DATA-021 in 20 §20.13 | 20 §20.13 |
+| DATA-022 | M2 should | Assertion as stated for DATA-022 in 20 §20.13 | 20 §20.13 |
+| DATA-030 | M2 should | Assertion as stated for DATA-030 in 20 §20.13 | 20 §20.13 |
+| DATA-040 | M5 should | Assertion as stated for DATA-040 in 20 §20.13 | 20 §20.13 |
+| DATA-041 | M5 should | Assertion as stated for DATA-041 in 20 §20.13 | 20 §20.13 |
+| DATA-042 | M5 should | Assertion as stated for DATA-042 in 20 §20.13 | 20 §20.13 |
+| DATA-043 | M5 should | Assertion as stated for DATA-043 in 20 §20.13 | 20 §20.13 |
+
+### AI- AI colonists
+
+| id | ms | assertion | ref |
+|---|---|---|---|
+| AI-001 | M4 must | Assertion as stated for AI-001 in 40 §40.14 | 40 §40.14 |
+| AI-002 | M4 must | Assertion as stated for AI-002 in 40 §40.14 | 40 §40.14 |
+| AI-003 | M4 must | Assertion as stated for AI-003 in 40 §40.14 | 40 §40.14 |
+| AI-004 | M4 must | Assertion as stated for AI-004 in 40 §40.14 | 40 §40.14 |
+| AI-005 | M4 must | Assertion as stated for AI-005 in 40 §40.14 | 40 §40.14 |
+| AI-006 | M4 must | Assertion as stated for AI-006 in 40 §40.14 | 40 §40.14 |
+| AI-007 | M4 must | Assertion as stated for AI-007 in 40 §40.14 | 40 §40.14 |
+| AI-008 | M4 must | Assertion as stated for AI-008 in 40 §40.14 | 40 §40.14 |
+| AI-009 | M4 must | Assertion as stated for AI-009 in 40 §40.14 | 40 §40.14 |
+| AI-010 | M4 must | Assertion as stated for AI-010 in 40 §40.14 | 40 §40.14 |
+| AI-011 | M4 must | Assertion as stated for AI-011 in 40 §40.14 | 40 §40.14 |
+| AI-012 | M4 must | Assertion as stated for AI-012 in 40 §40.14 | 40 §40.14 |
+| AI-013 | M4 must | Assertion as stated for AI-013 in 40 §40.14 | 40 §40.14 |
+| AI-014 | M4 must | Assertion as stated for AI-014 in 40 §40.14 | 40 §40.14 |
+| AI-015 | M4 must | Assertion as stated for AI-015 in 40 §40.14 | 40 §40.14 |
+| AI-016 | M4 must | Assertion as stated for AI-016 in 40 §40.14 | 40 §40.14 |
+| AI-017 | M4 must | Assertion as stated for AI-017 in 40 §40.14 | 40 §40.14 |
+| AI-FAIR-002 | M4 must | Metamorphic leak test: re-dealing every hidden part of the state never changes a bot's decision (assertion as stated in 40.11.2) | 40.11.2; 60 §60.5 |
+
 ---
 
 ## Coverage
@@ -370,18 +487,25 @@ Every VIEW line also runs as the sim leak test on every game (B.4; 60.4).
 | SRCH | 7 |
 | MOVE | 7 |
 | EXPO | 12 |
-| CARD | 12 |
-| XRD | 10 |
-| CRIS | 13 |
+| CARD | 13 |
+| XRD | 11 |
+| CRIS | 14 |
 | COL | 14 |
 | ZOM | 9 |
 | SURV | 17 |
 | OBJ | 28 |
 | EXIL | 13 |
-| VOTE | 10 |
+| VOTE | 11 |
 | END | 11 |
 | VIEW | 18 |
-| **total** | **248** |
+| **rules total** | **252** |
+| ARCH | 5 |
+| SIM | 10 |
+| DSL | 14 |
+| DATA | 22 |
+| AI | 17 |
+| AI-FAIR | 1 |
+| **all total** | **321** |
 
 Clause coverage: every numbered clause of `10` (10.0.1–10.15) and every section of `11` (§1–§8) is
 cited by at least one line above. 10.15 (decision kinds) is covered by the lines that name each
@@ -389,6 +513,6 @@ decision; 11 §9 is this file.
 
 ## Rulings
 
-RULING: K-1 requested cards and the crisis | CRIS-013 and ACT-015 test that a given card is never contributable | Mirrors 10 Rulings (R-REQUEST); Unsourced
-RULING: K-2 exiled betrayer status in views | VIEW-012 asserts `isBetrayal` stays hidden; the engine applies the two-exile rule itself, so no public reveal is needed. 10.11.2 ("becomes public") conflicts with 11 §5.4 / §7.8; this checklist follows 11 until the spec review settles it | rulespal.com/dead-of-winter/rulebook (read 2026-10-10): exile text mentions no reveal and says secret objectives may not be shown; Fan-source
-RULING: K-3 exile objective for a betrayer | EXIL-003 tests only that the betrayal condition is unchanged, not whether an exiled card is drawn (10.11.2 says keeps; 11 §7.1 says draws) | Outcome identical for scoring; Unsourced
+RULING: K-1 requested cards and the crisis | CRIS-013 and ACT-015 test that a given card is never contributable except an Outsider card; CARD-013 tests played Outsiders leave the game | Mirrors 10 R-REQUEST; Fan-source + FAQ ([OG] Cards; F 3.1.2)
+RULING: K-2 exiled betrayer status in views | VIEW-012 asserts `isBetrayal` stays hidden; the engine applies the two-exile rule itself. Closed: 10.11.2 now says nothing is revealed (R-EXILEOBJ) | Corrected (R p7, R p14; rulespal.com/dead-of-winter/rulebook; orderofgamers.com DeadofWinter_v1.2.pdf)
+RULING: K-3 exile objective for a betrayer | Closed: EXIL-003 asserts every exiled seat draws, and a betrayal holder's condition is unchanged (10.11.2 and 11 §7.1 now agree) | Corrected (R p14; rulespal.com/dead-of-winter/rulebook; orderofgamers.com DeadofWinter_v1.2.pdf "adjusts his secret objective")

@@ -3,9 +3,10 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import * as engine from '../../src/engine/index'
 import {
-  ACTION_KINDS, ANSWERS_BY_KIND, DECISION_KINDS, DSL_EVENT_MAP, DSL_EVENT_NAMES, collectBallots,
-  createRng, eventForSeat, exposureOdds, faceOfD12, resolveAiBudgetMs, rngFromState,
-  scriptRemaining, scriptedRng, type EngineEvent,
+  ACTION_KINDS, ANSWERS_BY_KIND, DECISION_KINDS, DSL_EVENT_BINDINGS, DSL_EVENT_MAP, DSL_EVENT_NAMES,
+  HIDDEN_SOURCE_KEY, collectBallots, createRng, eventForSeat, exposureOdds, faceOfD12,
+  lastingForSeat, resolveAiBudgetMs, rngFromState, scriptRemaining, scriptedRng, type EngineEvent,
+  type LastingEffect,
 } from '../../src/engine/index'
 
 const schema = JSON.parse(
@@ -64,12 +65,16 @@ describe('engine contracts (00-architecture)', () => {
       expect(typeof engine[name]).toBe('function')
     }
     const e = engine.createEngine({ version: 't', hash: 'h', locations: [], survivors: [], items: [], crises: [], crossroads: [], objectives: [], personas: [] })
-    for (const m of ['newGame', 'step', 'pending', 'legalActions', 'view', 'eventsFor', 'preview', 'replay', 'save', 'load'] as const) {
+    for (const m of ['newGame', 'step', 'pending', 'legalActions', 'view', 'eventsFor', 'preview', 'replay', 'replayEvents', 'save', 'load'] as const) {
       expect(typeof e[m]).toBe('function')
     }
     expect([...ACTION_KINDS].sort()).toEqual([...(schema.$defs.ActionKind!.enum ?? [])].sort())
     expect([...DSL_EVENT_NAMES].sort()).toEqual([...(schema.$defs.EventName!.enum ?? [])].sort())
     expect(Object.keys(DSL_EVENT_MAP).sort()).toEqual([...DSL_EVENT_NAMES].sort())
+    expect(Object.keys(DSL_EVENT_BINDINGS).sort()).toEqual([...DSL_EVENT_NAMES].sort())
+    // Once per round, not once per colony step (7x).
+    expect(DSL_EVENT_MAP.colonyPhaseStarted).toBe('ColonyPhaseStarted')
+    expect(DSL_EVENT_BINDINGS.survivorWounded).toEqual({ eventSurvivor: 'survivor', face: 'kind' })
     expect(Object.keys(ANSWERS_BY_KIND).sort()).toEqual([...DECISION_KINDS].sort())
     expect(ANSWERS_BY_KIND.turnAction).toContain('endTurn')
   })
@@ -82,6 +87,9 @@ describe('engine contracts (00-architecture)', () => {
     expect(collectBallots(['s0', 's1'], [{ type: 'ballot', seat: 's1', vote: 'no' }, { type: 'ballot', seat: 's0', vote: 'yes' }]))
       .toEqual({ type: 'castVotes', votes: { s0: 'yes', s1: 'no' } })
     expect(() => collectBallots(['s0', 's1'], [{ type: 'ballot', seat: 's0', vote: 'yes' }])).toThrow()
+    // Card votes (21.7 vote:{options}; 10.12.7) carry option ids, not only yes/no.
+    expect(collectBallots(['s0', 's1'], [{ type: 'ballot', seat: 's0', vote: 'a' }, { type: 'ballot', seat: 's1', vote: 'b' }]))
+      .toEqual({ type: 'castVotes', votes: { s0: 'a', s1: 'b' } })
     expect(resolveAiBudgetMs({})).toBe(250)
     expect(resolveAiBudgetMs({ DOW_AI_BUDGET_MS: '0' })).toBe(0)
     expect(resolveAiBudgetMs({ DOW_AI_BUDGET_MS: 'abc' })).toBe(250)
@@ -92,4 +100,30 @@ describe('engine contracts (00-architecture)', () => {
     expect(sparky.wound).toBeCloseTo(4 / 12)
     expect(exposureOdds('kill', { skip: ['kill'] }).blank).toBe(1)
   })
+
+  it('VIEW-019 effects from hidden objectives never reveal their owner to other seats', () => {
+    const fx: LastingEffect = {
+      id: 'l1', sourceKey: 'objective.betrayal.x#h1', scope: { global: true }, scopeSeats: [],
+      modifier: { woundsToDie: 2 }, hiddenOwner: 's2', expires: { kind: 'never' },
+    }
+    expect(lastingForSeat(fx, 's2').sourceKey).toBe('objective.betrayal.x#h1')
+    expect(lastingForSeat(fx, 's0').sourceKey).toBe(HIDDEN_SOURCE_KEY)
+    expect(lastingForSeat(fx, 's0', true).sourceKey).toBe('objective.betrayal.x#h1')
+    expect(lastingForSeat({ ...fx, hiddenOwner: null }, 's0').sourceKey).toBe('objective.betrayal.x#h1')
+    const added: EngineEvent = { seq: 2, round: 1, type: 'LastingAdded', id: 'l1', sourceKey: fx.sourceKey, modifier: 'woundsToDie', vis: { redact: ['sourceKey'], except: ['s2'] } }
+    expect(eventForSeat(added, 's0')).not.toHaveProperty('sourceKey')
+    const progress: EngineEvent = { seq: 3, round: 1, type: 'ObjectiveProgress', objective: 'objective.betrayal.x', counter: 'c', value: 1, target: 3, seat: 's2', vis: { to: ['s2'] } }
+    expect(eventForSeat(progress, 's0')).toBeNull()
+    expect(eventForSeat(progress, 's2')).toEqual(progress)
+  })
+
+  it('VIEW-020 the game seed is not part of any public event', () => {
+    const started: EngineEvent = { seq: 0, round: 0, type: 'GameStarted', seats: ['s0', 's1'], mainObjective: 'objective.main.x' }
+    expect(JSON.stringify(eventForSeat(started, 's1'))).not.toContain('seed')
+    // @ts-expect-error GameStarted has no seed field (00.9.5): the engine is deterministic from it.
+    const leaky: EngineEvent = { seq: 0, round: 0, type: 'GameStarted', seats: ['s0'], mainObjective: 'm', seed: 'n:1' }
+    void leaky
+  })
+
+  it.todo('VIEW-020 sim: the seed string never appears in any view or delivered event (needs view, M1)')
 })

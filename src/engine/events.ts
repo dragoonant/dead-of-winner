@@ -7,6 +7,7 @@ import type {
   BallotChoice, CardInstanceId, ContentId, CrisisOutcome, DecisionKind, DslEventName,
   ExposureReason, Face, GameResult, ItemDeckId, ItemSymbol, KillCause, LocationId, NonColonyId,
   ColonyStep, PreventSymbol, RequestNeed, SeatId, SurvivorInstanceId, WoundKind, ActionKind,
+  VotePurpose,
 } from './types'
 
 /**
@@ -22,18 +23,22 @@ export type Visibility = { to: SeatId[] } | { redact: string[]; except: SeatId[]
 interface Base { seq: number; round: number; vis?: Visibility }
 
 export type EngineEvent =
-  | (Base & { type: 'GameStarted'; seats: SeatId[]; mainObjective: ContentId; seed: string })
-  | (Base & { type: 'SurvivorsDealt'; seat: SeatId; survivors?: SurvivorInstanceId[] })
+  /** No seed: the engine is deterministic from it, so it would leak every deck order (00.9.5). */
+  | (Base & { type: 'GameStarted'; seats: SeatId[]; mainObjective: ContentId })
+  /** Dealt survivor record ids (not instances; 00.3.7); redacted except for `seat`. */
+  | (Base & { type: 'SurvivorsDealt'; seat: SeatId; survivors?: ContentId[] })
   | (Base & { type: 'GroupsRevealed'; groups: Record<SeatId, { leader: SurvivorInstanceId; followers: SurvivorInstanceId[] }> })
   | (Base & { type: 'FirstPlayerSet'; seat: SeatId })
   | (Base & { type: 'RoundStarted' })
-  | (Base & { type: 'CrisisRevealed'; crisis: ContentId; prevent: PreventSymbol })
+  | (Base & { type: 'CrisisRevealed'; crisis: ContentId; prevent: PreventSymbol[] })
   | (Base & { type: 'DiceRolled'; seat: SeatId; dice: { id: number; value: number }[] })
   | (Base & { type: 'DieRolled'; purpose: string; value: number; seat?: SeatId; survivor?: SurvivorInstanceId })
   | (Base & { type: 'DieChanged'; seat: SeatId; die: number; from: number; to: number; reason: 'food' | 'card' | 'ability' })
   | (Base & { type: 'DiceLost'; seat: SeatId; dice: number[] })
   | (Base & { type: 'TurnStarted'; seat: SeatId })
   | (Base & { type: 'TurnEnded'; seat: SeatId })
+  /** Once per round, before the first colony step (DSL colonyPhaseStarted). */
+  | (Base & { type: 'ColonyPhaseStarted' })
   | (Base & { type: 'ColonyStepStarted'; step: ColonyStep })
   | (Base & { type: 'ActionTaken'; seat: SeatId; kind: ActionKind; survivor?: SurvivorInstanceId; die?: number; dieValue?: number })
   | (Base & { type: 'ActionResolved'; seat: SeatId; kind: ActionKind; actor: SurvivorInstanceId | null; location: LocationId | null })
@@ -72,17 +77,22 @@ export type EngineEvent =
   | (Base & { type: 'FoodChanged'; total: number; delta: number })
   | (Base & { type: 'MoraleChanged'; total: number; delta: number; reason: string })
   | (Base & { type: 'StarvationChanged'; total: number; delta: number })
+  /** One per contributed card at resolution, public, in shuffled order; no card id, no seat (10.4.14). */
+  | (Base & { type: 'CrisisCardRevealed'; index: number; symbol: ItemSymbol; delta: 1 | -1 })
   | (Base & { type: 'CrisisResolved'; crisis: ContentId; total: number; players: number; symbols: Partial<Record<ItemSymbol, number>>; outcome: CrisisOutcome })
   | (Base & { type: 'RequestMade'; seat: SeatId; need: RequestNeed })
   | (Base & { type: 'RequestAnswered'; seat: SeatId; requester: SeatId; given: boolean; card?: CardInstanceId })
   | (Base & { type: 'SurvivorAttacked'; attacker: SurvivorInstanceId; target: SurvivorInstanceId; roll: number; hit: boolean })
   | (Base & { type: 'CardStolen'; from: SeatId; to: SeatId; card?: CardInstanceId })
-  | (Base & { type: 'VoteCalled'; caller: SeatId; target: SeatId })
-  | (Base & { type: 'VotesCast'; caller: SeatId; target: SeatId; votes: Record<SeatId, BallotChoice>; tiebreak: BallotChoice | null; exiled: boolean })
+  /** Exile vote: purpose 'exile', caller and target set. Card vote: purpose 'card', sourceKey/sourceCard set. */
+  | (Base & { type: 'VoteCalled'; purpose: VotePurpose; caller: SeatId | null; target: SeatId | null; sourceKey: string | null; sourceCard: ContentId | null; options: string[] })
+  | (Base & { type: 'VotesCast'; purpose: VotePurpose; caller: SeatId | null; target: SeatId | null; sourceKey: string | null; sourceCard: ContentId | null; votes: Record<SeatId, BallotChoice>; tiebreak: BallotChoice | null; result: string; exiled: boolean })
   | (Base & { type: 'SeatExiled'; seat: SeatId })
   | (Base & { type: 'ExiledObjectiveDrawn'; seat: SeatId; objective?: ContentId })
-  | (Base & { type: 'LastingAdded'; id: string; sourceKey: string; modifier: string })
+  /** sourceKey is redacted (except the owner) when the source is a hidden objective (00.6.8). */
+  | (Base & { type: 'LastingAdded'; id: string; sourceKey?: string; modifier: string })
   | (Base & { type: 'LastingExpired'; id: string })
+  /** Main objective: public, no seat. Secret/betrayal/exiled counters: vis {to:[seat]} (00.6.8). */
   | (Base & { type: 'ObjectiveProgress'; objective: ContentId; counter: string; value: number; target: number | null; seat?: SeatId })
   | (Base & { type: 'RoundTrackMoved'; roundsLeft: number })
   | (Base & { type: 'FirstPlayerPassed'; seat: SeatId })
@@ -115,7 +125,44 @@ export const DSL_EVENT_MAP: Record<DslEventName, EventType> = {
   searchResolved: 'SearchKept',
   crisisRevealed: 'CrisisRevealed',
   crisisResolved: 'CrisisResolved',
-  colonyPhaseStarted: 'ColonyStepStarted',
+  colonyPhaseStarted: 'ColonyPhaseStarted',
   voteResolved: 'VotesCast',
   seatExiled: 'SeatExiled',
+}
+
+/** EvalContext fields a trigger binds from its event (00.7.4). Values are event field names. */
+export interface DslEventBinding {
+  eventSurvivor?: string
+  eventLocation?: string
+  eventSeat?: string
+  /** `eventIs.face`. */
+  face?: string
+  /** `eventIs.reason`. */
+  reason?: string
+  /** `eventIs.cause`. */
+  cause?: string
+}
+
+/**
+ * Event-field -> ctx binding per DSL trigger (00.7.4). When eventSurvivor is bound and eventSeat /
+ * eventLocation are not, the engine fills them from that survivor's state at trigger time.
+ */
+export const DSL_EVENT_BINDINGS: Record<DslEventName, DslEventBinding> = {
+  turnStarted: { eventSeat: 'seat' },
+  turnEnded: { eventSeat: 'seat' },
+  roundStarted: {},
+  actionResolved: { eventSeat: 'seat', eventSurvivor: 'actor', eventLocation: 'location' },
+  survivorMoved: { eventSurvivor: 'survivor', eventLocation: 'to' },
+  zombieKilled: { eventSurvivor: 'by', eventLocation: 'location' },
+  survivorWounded: { eventSurvivor: 'survivor', face: 'kind' },
+  exposureRolled: { eventSurvivor: 'survivor', eventLocation: 'location', face: 'face', reason: 'reason' },
+  survivorKilled: { eventSurvivor: 'survivor', eventSeat: 'seat', eventLocation: 'location', cause: 'cause' },
+  survivorAdded: { eventSurvivor: 'survivor', eventSeat: 'seat', eventLocation: 'location' },
+  cardPlayed: { eventSeat: 'seat' },
+  searchResolved: { eventSeat: 'seat', eventSurvivor: 'survivor', eventLocation: 'location' },
+  crisisRevealed: {},
+  crisisResolved: { cause: 'outcome' },
+  colonyPhaseStarted: {},
+  voteResolved: { eventSeat: 'target', cause: 'result' },
+  seatExiled: { eventSeat: 'seat' },
 }

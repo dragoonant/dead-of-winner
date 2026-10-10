@@ -38,13 +38,31 @@ the Mallet/Whirr lessons turned into test rules.
   influence survivor at the location', ...)`. One `it` may carry one ID; an ID may appear in
   several tests. IDs come only from `12`; a new rule needs a new checklist line first. (B.4)
 - 60.2.4 Golden tests: `tests/golden/GOLD-xx.test.ts`, `it('GOLD-xx ...')`. (13)
-- 60.2.5 Other prefixes: `VIEW-` (hidden information, owned by `12`), `DATA-` (data validation),
-  `AI-` (bot behaviour, from `40`), `UI-` (client units), `E2E-` (Playwright titles), `SIM-`
-  (simulator invariants, 60.4.3).
+- 60.2.5 Other prefixes. Registered in `12` (rows parsed like rules rows): `VIEW-` (hidden
+  information, a rules section of `12`), and the "Non-rules prefixes" table of `12`: `ARCH-`
+  (00 §00.11), `SIM-` (simulator invariants, 60.4.3), `DSL-` (21 §21.13), `DATA-` (20 §20.13),
+  `AI-` (40 §40.14) and `AI-FAIR-` (40 §40.11). Not coverage-tracked, allowed by name only:
+  `GOLD-xx` (two digits, scenarios in `13`), `UI-NNN` (client units) and `E2E-NNN` (Playwright
+  titles). Any other prefix is an error (60.2.6).
 - 60.2.6 **Coverage is by name, not lines.** `tools/checklist-coverage.ts` (run inside `npm test`
-  as `tests/engine/checklist-coverage.test.ts`) parses every ID in `12`, greps test titles, and
-  prints covered / uncovered / unknown IDs. Unknown IDs (in tests but not in `12`) fail the test;
-  uncovered IDs fail only for checklist lines marked `must` in the current milestone.
+  as `tests/engine/checklist-coverage.test.ts`) works in four passes:
+  1. **Registry.** Parse `12` with the row format and regex that `12` itself defines in its "Line
+     format" paragraph (row `| <PREFIX>-<NNN> | <Mn> <must|should> | <assertion> | <ref> |`; the
+     regex there is authoritative, and the tool imports it as one constant rather than retyping
+     it). Rules rows and the non-rules rows (ARCH, SIM, DSL, DATA, AI, AI-FAIR) are parsed the same
+     way. The prefix set is the prefixes of parsed rows plus the "Non-rules prefixes" table.
+  2. **Owner drift.** Scan the owning sections for every token matching the pass-3 ID pattern
+     (unanchored) with that section's prefix: `00` §00.11 (ARCH), `20` §20.13 (DATA), `21` §21.13
+     (DSL), `40` §40.11 and §40.14 (AI, AI-FAIR) and the whole of `60` (SIM; `SIM-010` sits in
+     60.2.8). An ID defined in an owning spec with no row in `12`, or a row in `12` whose ID is
+     absent from its owning spec, fails.
+  3. **Titles.** Grep every `it(` / `test(` title under `tests/` for a leading ID token
+     (`^[A-Z]+(?:-[A-Z]+)*-\d{2,3}\b`). A token whose prefix is neither in the prefix set nor in the
+     name-only list of 60.2.5 fails as **unknown prefix**. A token with a known prefix but no row
+     in `12` fails as **unknown ID**.
+  4. **Coverage.** Print covered / uncovered per prefix. An uncovered row fails only when it is
+     `must` and its `Mn` is at or before the current milestone (env `CHECKLIST_MILESTONE`, e.g. `M1`, set
+     by CI per stage; default `M0`); `should` rows only warn.
 - 60.2.7 Lean mode (default): about 10 focused tests per stage, no adversarial verify loop.
   Verify loops are on for card data batches and the AI milestone. (CLAUDE.md)
 - 60.2.8 Determinism: every test that rolls dice or shuffles sets a seed through `rng.ts`; no
@@ -72,8 +90,9 @@ the Mallet/Whirr lessons turned into test rules.
 - 60.4.3 Invariants checked after **every** step (a failure stops the game, prints seed, step,
   decision and the last 20 events, and the run exits non-zero):
   - `SIM-001` exactly one `PendingDecision` while the game is open; none after it ends.
-  - `SIM-002` `legalActions` is non-empty for the open decision. (J)
-  - `SIM-003` every action the bot returns is in `legalActions`.
+  - `SIM-002` the open decision's legal answers (`legalActions`, `decision.legal` in each
+    answerer's view) are non-empty. (J)
+  - `SIM-003` every answer a decider returns is in its `decision.legal`.
   - `SIM-004` morale within `[0, moraleMax]`; food ≥ 0; round within the objective's range.
   - `SIM-005` card conservation: every card id is in exactly one zone.
   - `SIM-006` zombies: each entrance space holds at most one zombie or one barricade; counts in
@@ -104,11 +123,13 @@ the Mallet/Whirr lessons turned into test rules.
 
 ## 60.6 Per-decision AI time budgets (CLAUDE.md, B.4)
 
-- 60.6.1 Every AI decision reads its budget from one helper, `src/ai/budget.ts`:
-  `AI_BUDGET_MS` (Node: `process.env`) or `VITE_AI_BUDGET_MS` (browser build), default 150 ms.
-  `AI_BUDGET_SCALE` (default 1; CI sets 2) multiplies it. No AI code hard-codes a time limit.
-- 60.6.2 Tests and the sim set `AI_BUDGET_MS` low (default 20 ms in `--ci`) and never assert on
-  wall time except `bench:ai`.
+- 60.6.1 Every AI decision reads its wall-clock budget from `DecideContext.budgetMs`, which the
+  host fills with `resolveAiBudgetMs(env, override)` from `src/engine/decider.ts`: env var
+  `DOW_AI_BUDGET_MS` (Node: `process.env`) or `VITE_DOW_AI_BUDGET_MS` (browser build), default
+  250 ms, `0` = no wall-clock cap (00.10.2; 40.12.2). No AI code hard-codes a time limit.
+- 60.6.2 Tests, the sim and `bench:ai` set `DOW_AI_BUDGET_MS=0` so only the deterministic node caps
+  apply and slow CI runners cannot change outcomes (40.12.3). No test asserts on wall time except
+  `bench:ai --budget-ms N`.
 - 60.6.3 Planners are anytime: on budget expiry they return the best legal action found so far,
   never nothing.
 
@@ -155,4 +176,5 @@ the Mallet/Whirr lessons turned into test rules.
 ## Rulings
 
 - RULING: sim decision cap | `SIM_MAX_DECISIONS` default 4000 per game | brief J reports 3,700-decision games in Whirr; a DoW game has fewer decisions, so 4000 catches loops without false failures | Unsourced
-- RULING: AI time budget default | 150 ms per decision, scaled ×2 on CI | no source; keeps a full sim game well under the 60 s wall cap | Unsourced
+- RULING: AI time budget default | DOW_AI_BUDGET_MS, default 250 ms, 0 in tests/sim/CI (node caps only) | follows the frozen decider.ts and 40.12; replaces the earlier 150 ms ×2 CI scaling, which made results machine-dependent | Unsourced
+- RULING: checklist ID registry | 12's row format and regex are authoritative; owning specs (00, 20, 21, 40, 60) are drift-checked against 12; unknown prefixes fail; GOLD/UI/E2E are name-only | keeps 60.2.3 "IDs come only from 12" true for non-rules IDs | Confirmed (12 Line format and Non-rules prefixes)

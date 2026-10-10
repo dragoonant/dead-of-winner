@@ -48,9 +48,11 @@ records** of one schema.
 | `src/data/objectives/exiled.json` | `objective.schema.json` (Exiled) | 10 | 1 generic or 10 (11 §7.4) |
 | `src/data/personas/*.json` | `persona.json` (owned by spec 41) | 4–6 | per spec 41 |
 | `src/data/index.ts` | n/a | builds `DataBundle` | |
+| `public/assets/asset-manifest.json` | `asset-manifest.schema.json` (20.15) | 1 per runtime asset | placeholders for every first-slice survivor and symbol |
 
 - 20.2.1 The folder decides the schema; `tools/validate-data.ts` maps folder → schema with the
-  table above.
+  table above. The asset manifest is the one file outside `src/data/`; the validator maps it by its
+  exact path. It is not part of the `DataBundle` (the engine never sees asset ids).
 - 20.2.2 Path aliases in earlier specs: spec 10.2.5 `data/board.json` = `src/data/core/locations.json`;
   spec 11 §1.1 and spec 41 `content/...` = `src/data/...`. (Ruling D-PATHS)
 - 20.2.3 Content batches (M8) add records to these files or add `crossroads/batch-NN.json` files;
@@ -221,6 +223,7 @@ allowUnionTypes: true, allErrors: true}`. Each check below is a test ID for `tes
 | DATA-004 | Survivor influence values are unique. |
 | DATA-005 | Every `{ref: name}` is bound earlier in the same effect tree (`choose.as`, `forEach.as`, `reveal.as`, `rollD6.as`). |
 | DATA-006 | `limit` appears only on `action`, `passive` and `trigger` abilities. |
+| DATA-007 | DSL trigger events (21.5.2): `DSL_EVENT_NAMES` (types.ts), `effect.schema.json` `$defs.EventName` and the 21.5 table list the same names; each has a `DSL_EVENT_MAP` entry (events.ts) whose value is an `EngineEvent` type and equals the 21.5 "events.ts type" column. |
 | DATA-010 | Per location, item `copies` sum to `deckSize` (20). |
 | DATA-011 | Starting-deck `copies` sum to 25. |
 | DATA-012 | Non-equip items have exactly one `play` ability; equip items have none. |
@@ -231,6 +234,10 @@ allowUnionTypes: true, allErrors: true}`. Each check below is a test ID for `tes
 | DATA-020 | Every `src` ref resolves to an existing entry heading. |
 | DATA-021 | `status: verified` records only cite entries with status Confirmed or Corrected; any Placeholder entry forces `status: placeholder`. |
 | DATA-022 | Report (warning, not error): counts of placeholder / partial records per file. |
+| DATA-040 | `public/assets/asset-manifest.json` validates against `asset-manifest.schema.json` (20.15.3); ids are unique and sorted. |
+| DATA-041 | Every survivor record id has a manifest entry of kind `figure`; every symbol except `none` has `icon.<symbol>` (kind `icon`); every location id has `location.<id>` (20.15.4). Placeholder entries satisfy this. |
+| DATA-042 | Every manifest `path` exists under `public/assets/` unless `status` is `placeholder`; every `concept` exists on disk when given. |
+| DATA-043 | No manifest id appears in `tools/audio-manifest.json` (30.8.4); skipped while that file does not exist. |
 | DATA-030 | `text` is not identical to `mech` and contains no string from `docs/spec/sources/denylist.txt` (optional, gitignored list of original card sentences kept locally for an IP smoke check). |
 
 ## 20.14 First-slice content manifest (G.7)
@@ -242,6 +249,27 @@ allowUnionTypes: true, allErrors: true}`. Each check below is a test ID for `tes
 - 8 crises including Blizzard and Fuel Shortage; 20 Crossroads including Hunted.
 - The M2 dry run (spec 21 §21.12) encodes all of it before the DSL freezes.
 
+## 20.15 Asset manifest (`asset-manifest.schema.json`; spec 30 §30.8)
+
+- 20.15.1 Ownership: this spec owns the schema and the validator checks; spec 30 owns the content
+  (which assets exist, their pipelines and status). Art agents edit `public/assets/asset-manifest.json`;
+  data agents never do.
+- 20.15.2 The file is a JSON array of entries sorted by `id` (20.1.6). Entry:
+  `{id, kind, path?, fallback?, tris?, scale?, heightIn?, concept?, pipeline, status, batch?, notes?}`
+  with the enums of 30.8.2. `path` is relative to `public/assets/`; `concept` is repo-relative
+  under `art/`.
+- 20.15.3 Schema-enforced: `path` is required unless `status` is `placeholder`; `fallback` is required
+  for kinds `figure`, `zombie`, `prop`, `board`, `location`; `tris` ≤ 7000 for `figure`, `zombie`,
+  `prop`; `path` never starts with `/`, never contains `..` and never starts with `docs/`.
+- 20.15.4 Asset ids for content are derived, never stored in data (Ruling D-ARTID): a survivor's
+  figure is the entry whose `id` equals the survivor record id (`survivor.forest-plum`, kind
+  `figure`; the card portrait renders from it or its `concept`, 30.7.3); a symbol icon is
+  `icon.<symbol>` for every symbol in 20.7.3 except `none`; a location card or board is
+  `location.<locationId>` (`location.colony` for the colony board). No content schema has an `art`
+  field.
+- 20.15.5 Ids are unique in the manifest and never collide with `tools/audio-manifest.json` ids
+  (30.8.4).
+
 ---
 
 ## Rulings
@@ -252,3 +280,4 @@ RULING: D-NONE cards without a crisis symbol | Symbol `none`; they always score 
 RULING: D-TAGS survivor tags | Tags are inert labels; any rules effect (e.g. an animal that cannot equip) is DSL or a hook on that survivor | Unsourced; keeps one mechanism per concept
 RULING: D-OUTSIDER-COUNT Outsider cards in hand counts | Counted as items by default (`handCount.outsiderCountsAsItem` defaults true) | Fan-source ([W2] in spec 11)
 RULING: D-BLIZZARD-SYMBOL Blizzard prevent symbol | Entered as `fuel` with status partial | Unsourced; the brief gives the failure effect (R p4, p12) but not the symbol
+RULING: D-ARTID art references | Asset ids are derived from record ids (`<recordId>`, `icon.<symbol>`, `location.<id>`); survivor/card records carry no `art` field, so `survivor.schema.json` and types.ts stay unchanged; spec 30.8.3 "survivor `art`" reads as "the survivor's derived asset id" | Unsourced (engineering); one id per concept, no frozen-contract change, procedural fallbacks keep placeholders playable
