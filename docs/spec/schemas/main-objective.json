@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/main-objective.json",
+  "title": "Main objective card, both sides (spec 20 §3.7; ObjectiveDescriptor kind main)",
+  "type": "object",
+  "required": ["kind", "id", "name", "code", "time", "sides", "text", "sources", "status"],
+  "properties": {
+    "kind": { "const": "mainObjective" },
+    "id": { "$ref": "common.json#/$defs/mainObjectiveId" },
+    "name": { "type": "string", "minLength": 1 },
+    "code": { "type": "string", "pattern": "^M(0[1-9]|10)$", "description": "the story section (R p16-17)" },
+    "time": { "enum": ["short", "medium", "long"] },
+    "sides": {
+      "type": "object",
+      "required": ["normal", "hardcore"],
+      "properties": {
+        "normal": { "$ref": "#/$defs/side" },
+        "hardcore": { "$ref": "#/$defs/side" }
+      },
+      "additionalProperties": false
+    },
+    "text": {
+      "type": "object",
+      "required": ["normal", "hardcore"],
+      "properties": {
+        "story": { "type": "string", "maxLength": 2000, "description": "our own journal entry (never the printed story)" },
+        "normal": { "$ref": "#/$defs/sideText" },
+        "hardcore": { "$ref": "#/$defs/sideText" }
+      },
+      "additionalProperties": false
+    },
+    "sources": { "$ref": "common.json#/$defs/sources" },
+    "status": { "$ref": "common.json#/$defs/status" },
+    "notes": { "type": "string" },
+    "tags": { "type": "array", "items": { "$ref": "common.json#/$defs/slug" } }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sideText": {
+      "type": "object",
+      "required": ["setup", "victory"],
+      "properties": { "setup": { "$ref": "common.json#/$defs/prose" }, "victory": { "$ref": "common.json#/$defs/prose" } },
+      "additionalProperties": false
+    },
+    "side": {
+      "type": "object",
+      "required": ["morale", "rounds", "complete"],
+      "properties": {
+        "morale": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "rounds": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "setup": { "type": "array", "items": { "$ref": "common.json#/$defs/effectNode" }, "description": "applied after the standard setup, in order (zombies, tokens)" },
+        "counters": { "$ref": "common.json#/$defs/counters" },
+        "complete": { "$ref": "common.json#/$defs/conditionNode", "description": "checked at colony.objective (E.4 step 5)" },
+        "triggers": { "type": "array", "items": { "$ref": "common.json#/$defs/triggerDef" } },
+        "contributions": {
+          "type": "array",
+          "description": "cards a seat may play onto the objective (F 4.1.1): each row maps a symbol to the counter it advances",
+          "items": {
+            "type": "object",
+            "required": ["symbol", "counter"],
+            "properties": { "symbol": { "$ref": "common.json#/$defs/itemSymbol" }, "counter": { "$ref": "common.json#/$defs/slug" }, "exiledMayContribute": { "type": "boolean" } },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

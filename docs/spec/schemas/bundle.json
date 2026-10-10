@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/bundle.json",
+  "title": "DataBundle source form (spec 20 §4): src/data/*.json assembled by the loader; cross-record rules live in tools/validate-data.ts",
+  "type": "object",
+  "required": ["version", "records"],
+  "properties": {
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z0-9.]+)?$", "description": "dataVersion stamped into every GameState; bump on any mechanical change" },
+    "records": {
+      "type": "object",
+      "required": ["survivors", "items", "decks", "locations", "crises", "crossroads", "mainObjectives", "secretObjectives", "personas"],
+      "properties": {
+        "survivors": { "type": "array", "items": { "$ref": "survivor.json" } },
+        "items": { "type": "array", "items": { "$ref": "item.json" } },
+        "decks": { "type": "array", "items": { "$ref": "deck.json" } },
+        "locations": { "type": "array", "items": { "$ref": "location.json" } },
+        "crises": { "type": "array", "items": { "$ref": "crisis.json" } },
+        "crossroads": { "type": "array", "items": { "$ref": "crossroads.json" } },
+        "mainObjectives": { "type": "array", "items": { "$ref": "main-objective.json" } },
+        "secretObjectives": { "type": "array", "items": { "$ref": "secret-objective.json" } },
+        "personas": { "type": "array", "items": { "$ref": "persona.json" } }
+      },
+      "additionalProperties": false
+    },
+    "slices": {
+      "type": "object",
+      "description": "named content slices (G.7 'first'): record ids each slice loads; ids must exist and be non-placeholder",
+      "additionalProperties": { "type": "array", "items": { "$ref": "common.json#/$defs/id" }, "uniqueItems": true }
+    }
+  },
+  "additionalProperties": false
+}

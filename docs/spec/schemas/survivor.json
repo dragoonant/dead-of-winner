@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/survivor.json",
+  "title": "Survivor card (spec 20 §3.1)",
+  "type": "object",
+  "required": ["kind", "id", "name", "occupation", "stats", "ability", "coop", "text", "sources", "status"],
+  "properties": {
+    "kind": { "const": "survivor" },
+    "id": { "$ref": "common.json#/$defs/survivorId" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "occupation": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "set": { "enum": ["base"], "default": "base" },
+    "stats": {
+      "type": "object",
+      "required": ["influence", "attack", "search"],
+      "properties": {
+        "influence": { "type": "integer", "minimum": 1, "maximum": 99 },
+        "attack": { "type": "integer", "minimum": 1, "maximum": 6, "description": "die needed to attack: N means N+" },
+        "search": { "type": "integer", "minimum": 1, "maximum": 6, "description": "die needed to search: N means N+" }
+      },
+      "additionalProperties": false
+    },
+    "ability": {
+      "oneOf": [
+        { "$ref": "common.json#/$defs/abilityDef" },
+        { "type": "object", "required": ["unknown"], "properties": { "unknown": { "const": true } }, "additionalProperties": false }
+      ]
+    },
+    "crossroads": { "$ref": "common.json#/$defs/crossroadsId", "description": "the Crossroads card named after this survivor" },
+    "coop": { "type": "boolean", "description": "false = removed in the co-op variant (Annaleigh Chan, Gray Beard)" },
+    "text": {
+      "type": "object",
+      "required": ["ability"],
+      "properties": {
+        "ability": { "$ref": "common.json#/$defs/prose", "description": "our words; the card face text" },
+        "bio": { "$ref": "common.json#/$defs/prose" }
+      },
+      "additionalProperties": false
+    },
+    "art": {
+      "type": "object",
+      "properties": { "portrait": { "type": "string" }, "figure": { "type": "string" } },
+      "additionalProperties": false
+    },
+    "sources": { "$ref": "common.json#/$defs/sources" },
+    "status": { "$ref": "common.json#/$defs/status" },
+    "notes": { "type": "string" },
+    "tags": { "type": "array", "items": { "$ref": "common.json#/$defs/slug" } }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    { "$ref": "common.json#/$defs/recordBase" },
+    {
+      "if": { "type": "object", "properties": { "ability": { "type": "object", "properties": { "unknown": { "const": true } }, "required": ["unknown"] } } },
+      "then": { "type": "object", "properties": { "status": { "const": "placeholder" } } }
+    }
+  ]
+}

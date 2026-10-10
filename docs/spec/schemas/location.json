@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/location.json",
+  "title": "Location card or the colony board (spec 20 §3.4)",
+  "type": "object",
+  "required": ["kind", "id", "name", "spaces", "symbolOrder", "deck", "sources", "status"],
+  "properties": {
+    "kind": { "const": "location" },
+    "id": { "$ref": "common.json#/$defs/locationId" },
+    "name": { "type": "string", "minLength": 1 },
+    "number": { "type": "integer", "minimum": 1, "maximum": 6, "description": "the d6 value that picks this location at random (W); absent for the colony" },
+    "spaces": {
+      "type": "object",
+      "required": ["survivors", "entrances", "entranceSpaces", "noise"],
+      "properties": {
+        "survivors": { "type": "integer", "minimum": 1, "description": "survivor spaces (verify from photos)" },
+        "entrances": { "type": "integer", "minimum": 1, "maximum": 6, "description": "6 at the colony, 1 elsewhere (R p5)" },
+        "entranceSpaces": { "type": "integer", "minimum": 1, "description": "zombie/barricade spaces per entrance (verify from photos)" },
+        "noise": { "type": "integer", "minimum": 0, "maximum": 4, "description": "4 at every non-colony location, 0 at the colony (R p5)" }
+      },
+      "additionalProperties": false
+    },
+    "symbolOrder": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "common.json#/$defs/itemSymbol" },
+      "description": "the printed row, likeliest first (R p5); [] at the colony"
+    },
+    "deck": { "anyOf": [ { "$ref": "common.json#/$defs/deckId" }, { "type": "null" } ], "description": "null at the colony" },
+    "text": { "type": "object", "properties": { "blurb": { "$ref": "common.json#/$defs/prose" } }, "additionalProperties": false },
+    "sources": { "$ref": "common.json#/$defs/sources" },
+    "status": { "$ref": "common.json#/$defs/status" },
+    "notes": { "type": "string" },
+    "tags": { "type": "array", "items": { "$ref": "common.json#/$defs/slug" } }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "type": "object", "properties": { "id": { "const": "colony" } } },
+      "then": {
+        "type": "object",
+        "properties": {
+          "deck": { "type": "null" },
+          "symbolOrder": { "type": "array", "maxItems": 0 },
+          "spaces": { "type": "object", "properties": { "entrances": { "const": 6 }, "noise": { "const": 0 } } }
+        },
+        "not": { "type": "object", "required": ["number"] }
+      },
+      "else": {
+        "type": "object",
+        "required": ["number"],
+        "properties": {
+          "deck": { "type": "string" },
+          "symbolOrder": { "type": "array", "minItems": 1 },
+          "spaces": { "type": "object", "properties": { "entrances": { "const": 1 }, "noise": { "const": 4 } } }
+        }
+      }
+    }
+  ]
+}

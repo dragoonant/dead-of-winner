@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/crossroads.json",
+  "title": "Crossroads card (spec 20 §3.6; CrossroadsDescriptor in hooks.ts)",
+  "type": "object",
+  "required": ["kind", "id", "name", "mature", "trigger", "options", "text", "sources", "status"],
+  "properties": {
+    "kind": { "const": "crossroads" },
+    "id": { "$ref": "common.json#/$defs/crossroadsId" },
+    "name": { "type": "string", "minLength": 1 },
+    "survivor": { "$ref": "common.json#/$defs/survivorId", "description": "set when the card is named after a survivor; such cards usually test survivorIs in the trigger" },
+    "mature": { "type": "boolean", "description": "carries the mature mark; removed by the removeMature variant (R p4)" },
+    "coop": { "type": "boolean", "default": true, "description": "false = removed in the co-op variant" },
+    "trigger": {
+      "type": "object",
+      "required": ["point", "when"],
+      "properties": {
+        "point": { "$ref": "common.json#/$defs/windowId", "description": "evaluated after the action resolved (FAQ 2.1.1): normally an action.* window" },
+        "when": { "$ref": "common.json#/$defs/conditionNode" }
+      },
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "effect"],
+        "properties": {
+          "id": { "$ref": "common.json#/$defs/slug" },
+          "effect": { "type": "array", "minItems": 1, "items": { "$ref": "common.json#/$defs/effectNode" } },
+          "requires": { "$ref": "common.json#/$defs/conditionNode", "description": "an option whose requires is false is impossible and the other is forced (R p12)" },
+          "vote": { "type": "boolean", "description": "true = the option opens a table vote; its first effect must be op vote" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "text": {
+      "type": "object",
+      "required": ["vignette", "options"],
+      "properties": {
+        "vignette": { "type": "string", "minLength": 1, "maxLength": 900, "description": "our own scene that leads to the same two options (Part F)" },
+        "trigger": { "$ref": "common.json#/$defs/prose", "description": "the trigger in words, shown in the recap" },
+        "options": { "type": "object", "minProperties": 2, "maxProperties": 2, "additionalProperties": { "$ref": "common.json#/$defs/prose" } }
+      },
+      "additionalProperties": false
+    },
+    "voice": { "type": "object", "properties": { "vignette": { "type": "string" } }, "additionalProperties": false },
+    "sources": { "$ref": "common.json#/$defs/sources" },
+    "status": { "$ref": "common.json#/$defs/status" },
+    "notes": { "type": "string" },
+    "tags": { "type": "array", "items": { "$ref": "common.json#/$defs/slug" } }
+  },
+  "additionalProperties": false
+}

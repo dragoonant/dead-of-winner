@@ -1,0 +1,282 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/common.json",
+  "title": "Shared definitions (mirror of src/engine/hooks.ts and types.ts; frozen after M0, additive only)",
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-zA-Z0-9]*(\\.[a-z0-9][a-zA-Z0-9-]*)+$" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9][a-zA-Z0-9-]*$" },
+    "survivorId": { "type": "string", "pattern": "^sv\\.[a-z0-9][a-z0-9-]*$" },
+    "itemId": { "type": "string", "pattern": "^it\\.[a-z0-9][a-z0-9-]*$" },
+    "deckId": { "type": "string", "pattern": "^deck\\.[a-z0-9][a-z0-9-]*$" },
+    "crisisId": { "type": "string", "pattern": "^cr\\.[a-z0-9][a-z0-9-]*$" },
+    "crossroadsId": { "type": "string", "pattern": "^xr\\.[a-z0-9][a-z0-9-]*$" },
+    "mainObjectiveId": { "type": "string", "pattern": "^obj\\.main\\.[a-z0-9][a-z0-9-]*$" },
+    "secretObjectiveId": { "type": "string", "pattern": "^obj\\.(secret|betrayal|exiled)\\.[a-z0-9][a-z0-9-]*$" },
+    "personaId": { "type": "string", "pattern": "^ps\\.[a-z0-9][a-z0-9-]*$" },
+    "locationId": {
+      "description": "engine LocationId: 'colony' or a location record id",
+      "anyOf": [ { "const": "colony" }, { "type": "string", "pattern": "^loc\\.[a-z0-9][a-z0-9-]*$" } ]
+    },
+    "itemSymbol": { "enum": ["weapon", "fuel", "education", "food", "medicine", "tool", "survivor"] },
+    "exposureFace": { "enum": ["blank", "wound", "frostbite", "bite"] },
+    "exposureReason": { "enum": ["move", "zombieKill", "biteChain", "card", "ability"] },
+    "woundKind": { "enum": ["wound", "frostbite"] },
+    "effectDuration": { "enum": ["instant", "turn", "round", "nextRound", "game"] },
+    "windowId": {
+      "enum": [
+        "setup.done", "round.start", "crisis.revealed", "dice.rolled", "turn.start", "turn.end",
+        "action.attack", "action.search", "action.barricade", "action.cleanWaste", "action.attract", "action.ability",
+        "action.playCard", "action.contribute", "action.move", "action.request", "action.handOff", "action.vote", "action.spendFood",
+        "exposure.rolled", "wound.taken", "survivor.killed", "survivor.added", "zombie.killed", "zombie.added", "entrance.overrun",
+        "noise.added", "search.drawn", "search.kept", "card.played", "card.equipped",
+        "colony.payFood", "colony.waste", "colony.crisis", "colony.zombies", "colony.objective", "colony.roundTick",
+        "crisis.resolved", "morale.changed", "vote.result", "seat.exiled", "game.end"
+      ]
+    },
+    "triggerWindow": { "anyOf": [ { "$ref": "#/$defs/windowId" }, { "enum": ["passive", "action"] } ] },
+    "conditionTest": {
+      "enum": [
+        "atLocation", "isColony", "isNonColony", "locationIs", "survivorIs", "survivorOwnedBy", "survivorHasKeyword",
+        "woundsAtLeast", "woundsAtMost", "hasFrostbite", "hasEquipped", "equippedAtLeast", "influenceAtLeast", "influenceAtMost",
+        "exposureFace", "exposureReason", "woundKind", "movedThisTurn", "actionWas", "symbolDrawn", "cardKeptHasSymbol",
+        "handAtLeast", "handAtMost", "handHasSymbol", "foodAtLeast", "foodAtMost", "moraleAtLeast", "moraleAtMost",
+        "roundsLeftAtMost", "roundsLeftAtLeast", "starvationAtLeast", "wasteAtLeast", "zombiesAtLeast", "zombiesAtMost",
+        "barricadesAtLeast", "noiseAtLeast", "helplessAtLeast", "survivorsAtLeast", "survivorsAtMost", "emptySurvivorSpace",
+        "seatIsExiled", "seatCountAtLeast", "dieAtLeast", "hasUnusedDie", "crisisPrevented", "objectiveCounterAtLeast",
+        "isActiveSeat", "isFirstSeat", "isLeader", "variantIs"
+      ]
+    },
+    "subject": { "enum": ["self", "survivor", "target", "seat", "activeSeat", "holder", "location", "colony", "card"] },
+    "codeRef": {
+      "type": "object",
+      "required": ["code"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^(survivor|item|crisis|crossroads|objective|rule)\\.[a-z0-9-]+\\.[a-zA-Z0-9]+$" },
+        "params": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "conditionNode": {
+      "oneOf": [
+        { "type": "object", "required": ["all"], "properties": { "all": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/conditionNode" } } }, "additionalProperties": false },
+        { "type": "object", "required": ["any"], "properties": { "any": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/conditionNode" } } }, "additionalProperties": false },
+        { "type": "object", "required": ["not"], "properties": { "not": { "$ref": "#/$defs/conditionNode" } }, "additionalProperties": false },
+        { "$ref": "#/$defs/codeRef" },
+        {
+          "type": "object",
+          "required": ["test"],
+          "properties": {
+            "test": { "$ref": "#/$defs/conditionTest" },
+            "subject": { "$ref": "#/$defs/subject" },
+            "value": {},
+            "location": { "$ref": "#/$defs/locationId" },
+            "symbol": { "$ref": "#/$defs/itemSymbol" },
+            "face": { "$ref": "#/$defs/exposureFace" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "effectOp": {
+      "enum": [
+        "morale", "food", "starvation", "roundTrack", "objectiveCounter",
+        "addZombies", "killZombies", "moveZombies", "addBarricade", "removeBarricade", "addNoise", "removeNoise",
+        "wound", "heal", "exposure", "killSurvivor", "removeSurvivor", "addSurvivor", "addHelpless", "removeHelpless",
+        "moveSurvivor", "newLeader",
+        "draw", "drawFromDeck", "discard", "removeCard", "giveCard", "stealCard", "contribute", "peekDeck", "revealDeck",
+        "shuffleDeck", "cleanWaste", "equip", "extraSearchKeep", "extraSearchLook",
+        "modDie", "addDie", "refundDie",
+        "forbid", "grant", "treatFaceAs",
+        "choose", "vote", "exile", "endGame"
+      ]
+    },
+    "forbidWhat": {
+      "enum": [
+        "move", "search", "attack", "attackSurvivor", "barricade", "cleanWaste", "attract", "request", "callVote", "vote",
+        "playCard", "contribute", "useAbility", "spendFood", "addSurvivor", "addHelpless", "heal"
+      ]
+    },
+    "grantWhat": {
+      "enum": [
+        "noExposureOnMove", "noExposureOnKill", "noExposureOnAbility", "biteIsWound", "frostbiteIsWound", "nonBiteIsBlank",
+        "extraSearchKeep", "extraSearchLook", "extraMove", "killTwoPerAttack", "fourWoundsToDie", "copyAbilitiesAtLocation",
+        "attackValueMinus", "searchValueMinus", "freeBarricade", "moveRollWound", "noMoraleOnDeath"
+      ]
+    },
+    "scopeWho": {
+      "enum": [
+        "self", "survivor", "target", "seatSurvivors", "allSurvivors", "atLocation", "lowestInfluenceAtLocation",
+        "highestInfluenceAtLocation", "seat", "activeSeat", "allSeats", "otherSeats", "nonExiledSeats", "location",
+        "allLocations", "nonColonyLocations", "colony", "chosen"
+      ]
+    },
+    "countOrAll": { "anyOf": [ { "type": "integer", "minimum": 0 }, { "const": "all" } ] },
+    "scopeNode": {
+      "type": "object",
+      "required": ["who"],
+      "properties": {
+        "who": { "$ref": "#/$defs/scopeWho" },
+        "location": { "$ref": "#/$defs/locationId" },
+        "filter": { "$ref": "#/$defs/conditionNode" },
+        "count": { "$ref": "#/$defs/countOrAll" },
+        "chooser": { "enum": ["activeSeat", "owner", "engine"] }
+      },
+      "additionalProperties": false,
+      "if": { "type": "object", "properties": { "who": { "const": "chosen" } } },
+      "then": { "type": "object", "required": ["who", "chooser"] }
+    },
+    "effectOption": {
+      "type": "object",
+      "required": ["id", "label", "effect"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "label": { "type": "string", "minLength": 1 },
+        "effect": { "type": "array", "items": { "$ref": "#/$defs/effectNode" } },
+        "requires": { "$ref": "#/$defs/conditionNode" }
+      },
+      "additionalProperties": false
+    },
+    "effectNode": {
+      "oneOf": [
+        { "$ref": "#/$defs/codeRef" },
+        {
+          "type": "object",
+          "required": ["op"],
+          "properties": {
+            "op": { "$ref": "#/$defs/effectOp" },
+            "value": { "anyOf": [ { "type": "number" }, { "type": "string" } ] },
+            "kind": { "$ref": "#/$defs/woundKind" },
+            "symbol": { "$ref": "#/$defs/itemSymbol" },
+            "face": { "$ref": "#/$defs/exposureFace" },
+            "asFace": { "$ref": "#/$defs/exposureFace" },
+            "location": { "anyOf": [ { "$ref": "#/$defs/locationId" }, { "enum": ["here", "chosen"] } ] },
+            "scope": { "$ref": "#/$defs/scopeNode" },
+            "what": { "anyOf": [ { "$ref": "#/$defs/forbidWhat" }, { "$ref": "#/$defs/grantWhat" } ] },
+            "duration": { "$ref": "#/$defs/effectDuration" },
+            "count": { "$ref": "#/$defs/countOrAll" },
+            "then": { "type": "array", "items": { "$ref": "#/$defs/effectNode" } },
+            "onRoll": {
+              "type": "object",
+              "required": ["then"],
+              "properties": {
+                "atLeast": { "type": "integer", "minimum": 0, "maximum": 6 },
+                "atMost": { "type": "integer", "minimum": 0, "maximum": 6 },
+                "then": { "type": "array", "items": { "$ref": "#/$defs/effectNode" } }
+              },
+              "additionalProperties": false
+            },
+            "options": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/effectOption" } },
+            "optional": { "type": "boolean" }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            { "if": { "type": "object", "properties": { "op": { "const": "forbid" } } }, "then": { "type": "object", "required": ["op", "what", "duration"], "properties": { "what": { "$ref": "#/$defs/forbidWhat" } } } },
+            { "if": { "type": "object", "properties": { "op": { "const": "grant" } } }, "then": { "type": "object", "required": ["op", "what", "duration"], "properties": { "what": { "$ref": "#/$defs/grantWhat" } } } },
+            { "if": { "type": "object", "properties": { "op": { "const": "treatFaceAs" } } }, "then": { "type": "object", "required": ["op", "face", "asFace", "duration"] } },
+            { "if": { "type": "object", "properties": { "op": { "enum": ["choose", "vote"] } } }, "then": { "type": "object", "required": ["op", "options"] } },
+            { "if": { "type": "object", "properties": { "op": { "enum": ["morale", "food", "starvation", "roundTrack", "objectiveCounter", "revealDeck"] } } }, "then": { "type": "object", "required": ["op", "value"] } },
+            { "if": { "type": "object", "properties": { "op": { "const": "killZombies" } } }, "then": { "type": "object", "properties": { "value": { "enum": ["noExposure", "exposureOnce"], "description": "default (absent): the killer rolls exposure once per zombie (21 §4, R p13)" } } } },
+            { "if": { "type": "object", "properties": { "op": { "const": "moveSurvivor" } } }, "then": { "type": "object", "properties": { "value": { "const": "noExposure" } } } }
+          ]
+        }
+      ]
+    },
+    "useLimit": { "enum": ["oncePerTurn", "oncePerRound", "oncePerGame"] },
+    "abilityLocation": { "anyOf": [ { "enum": ["anywhere", "colony", "nonColony"] }, { "$ref": "#/$defs/locationId" } ] },
+    "dataCost": {
+      "description": "DescriptorCost (hooks.ts): die = minimum value of the die spent; an attack die on top is asked by countsAs 'attack'",
+      "type": "object",
+      "properties": {
+        "die": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "cards": { "type": "object", "required": ["count"], "properties": { "symbol": { "$ref": "#/$defs/itemSymbol" }, "count": { "type": "integer", "minimum": 1 } }, "additionalProperties": false },
+        "food": { "type": "integer", "minimum": 1 },
+        "removeSelf": { "type": "boolean" },
+        "noise": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "abilityDef": {
+      "description": "One ability of a survivor or an equipped item; compiles to one CardEffectDescriptor",
+      "type": "object",
+      "required": ["id", "kind", "effect"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "kind": { "enum": ["passive", "action", "triggered"] },
+        "trigger": { "$ref": "#/$defs/windowId" },
+        "location": { "$ref": "#/$defs/abilityLocation" },
+        "when": { "$ref": "#/$defs/conditionNode" },
+        "cost": { "$ref": "#/$defs/dataCost" },
+        "limit": { "$ref": "#/$defs/useLimit" },
+        "scope": { "$ref": "#/$defs/scopeNode" },
+        "duration": { "$ref": "#/$defs/effectDuration" },
+        "effect": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/effectNode" } },
+        "optional": { "type": "boolean" },
+        "countsAs": { "enum": ["attack", "search", "barricade", "move", "cleanWaste", "attract"] }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        { "if": { "type": "object", "properties": { "kind": { "const": "triggered" } } }, "then": { "type": "object", "required": ["id", "kind", "effect", "trigger"] } },
+        { "if": { "type": "object", "properties": { "kind": { "enum": ["passive", "action"] } } }, "then": { "not": { "type": "object", "required": ["trigger"] } } },
+        { "if": { "type": "object", "properties": { "kind": { "const": "passive" } } }, "then": { "not": { "anyOf": [ { "type": "object", "required": ["cost"] }, { "type": "object", "required": ["limit"] }, { "type": "object", "required": ["optional"] } ] } } }
+      ]
+    },
+    "triggerDef": {
+      "description": "An objective or crisis trigger: a triggered ability without a holder survivor",
+      "type": "object",
+      "required": ["id", "trigger", "effect"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "trigger": { "$ref": "#/$defs/windowId" },
+        "when": { "$ref": "#/$defs/conditionNode" },
+        "scope": { "$ref": "#/$defs/scopeNode" },
+        "effect": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/effectNode" } },
+        "optional": { "type": "boolean" },
+        "limit": { "$ref": "#/$defs/useLimit" }
+      },
+      "additionalProperties": false
+    },
+    "counters": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/slug" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["need"],
+        "properties": {
+          "need": { "anyOf": [ { "type": "integer", "minimum": 0 }, { "const": "perSeat" } ] },
+          "perSeatMultiplier": { "type": "integer", "minimum": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sourceCite": {
+      "description": "'<TAG>[ ref](; <TAG>[ ref])*[ (verify)]'; tags: R rulebook (R* = column inferred), F FAQ, W fandom wiki, T TV Tropes, O Order of Gamers, C/S self-consistency, B brief, BGG, PHOTO",
+      "type": "string",
+      "pattern": "^(R\\*?|F|W|T|O|C|S|B|BGG|PHOTO)( [^;()]+)?(; (R\\*?|F|W|T|O|C|S|B|BGG|PHOTO)( [^;()]+)?)*( \\(verify\\))?$"
+    },
+    "sources": {
+      "description": "field path (dot path into this record) -> citation",
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-zA-Z0-9_.\\[\\]-]+$" },
+      "additionalProperties": { "$ref": "#/$defs/sourceCite" },
+      "minProperties": 1
+    },
+    "status": {
+      "description": "placeholder: shape only, never loaded into a game; draft: playable in dev builds, flagged; verified: every mechanical field sourced without (verify)",
+      "enum": ["placeholder", "draft", "verified"]
+    },
+    "prose": { "type": "string", "minLength": 1, "maxLength": 600 },
+    "recordBase": {
+      "type": "object",
+      "required": ["kind", "id", "name", "sources", "status"],
+      "properties": {
+        "kind": { "type": "string" },
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "sources": { "$ref": "#/$defs/sources" },
+        "status": { "$ref": "#/$defs/status" },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "tags": { "type": "array", "items": { "$ref": "#/$defs/slug" }, "uniqueItems": true }
+      }
+    }
+  }
+}

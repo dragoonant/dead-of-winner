@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/deck.json",
+  "title": "Item deck composition (spec 20 §3.3): the starter deck and one per location",
+  "type": "object",
+  "required": ["kind", "id", "name", "size", "cards", "sources", "status"],
+  "properties": {
+    "kind": { "const": "deck" },
+    "id": { "$ref": "common.json#/$defs/deckId" },
+    "name": { "type": "string", "minLength": 1 },
+    "size": { "type": "integer", "minimum": 1, "description": "must equal the sum of counts (20 per location, 25 starter; R p2)" },
+    "cards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["item", "count"],
+        "properties": {
+          "item": { "$ref": "common.json#/$defs/itemId" },
+          "count": { "type": "integer", "minimum": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sources": { "$ref": "common.json#/$defs/sources" },
+    "status": { "$ref": "common.json#/$defs/status" },
+    "notes": { "type": "string" },
+    "tags": { "type": "array", "items": { "$ref": "common.json#/$defs/slug" } }
+  },
+  "additionalProperties": false
+}

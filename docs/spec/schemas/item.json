@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/item.json",
+  "title": "Item card definition (spec 20 §3.2); copies per deck live in deck.json",
+  "type": "object",
+  "required": ["kind", "id", "name", "symbol", "class", "text", "sources", "status"],
+  "properties": {
+    "kind": { "const": "item" },
+    "id": { "$ref": "common.json#/$defs/itemId" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "symbol": { "$ref": "common.json#/$defs/itemSymbol", "description": "the printed symbol; crisis and objective matching use `symbols` when present" },
+    "symbols": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "common.json#/$defs/itemSymbol" }, "description": "every symbol the card carries (defaults to [symbol])" },
+    "class": {
+      "enum": ["wastePile", "event", "equip", "none"],
+      "description": "where the card goes when played (R p10, W): waste pile, removed from the game, equipped to a survivor; none = no play text (Junk)"
+    },
+    "food": { "type": "integer", "minimum": 1, "maximum": 9, "description": "Food N: tokens added when played; an exiled seat may take +1 on an unused die instead (R p14, F 5.4.4; 10 R15.4)" },
+    "outsiders": { "type": "integer", "minimum": 1, "maximum": 9, "description": "Outsider cards: the printed number (meaning (verify), see items-sources I2)" },
+    "play": {
+      "type": "object",
+      "description": "what happens when the card is played from hand as a turn action; absent for class 'none' and for equip cards whose only effect is the equipped ability",
+      "required": ["effect"],
+      "properties": {
+        "when": { "$ref": "common.json#/$defs/conditionNode", "description": "playable only when true (E_CARD_NOT_PLAYABLE otherwise)" },
+        "cost": { "$ref": "common.json#/$defs/dataCost" },
+        "effect": { "type": "array", "minItems": 1, "items": { "$ref": "common.json#/$defs/effectNode" } },
+        "countsAs": { "enum": ["move", "attack", "search", "barricade", "attract"] }
+      },
+      "additionalProperties": false
+    },
+    "equipped": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.json#/$defs/abilityDef" },
+      "description": "abilities the bearer has while the card is equipped (class equip only)"
+    },
+    "text": {
+      "type": "object",
+      "properties": {
+        "ability": { "$ref": "common.json#/$defs/prose", "description": "our words; omitted only for class none" },
+        "flavor": { "$ref": "common.json#/$defs/prose" }
+      },
+      "additionalProperties": false
+    },
+    "art": { "type": "object", "properties": { "image": { "type": "string" } }, "additionalProperties": false },
+    "sources": { "$ref": "common.json#/$defs/sources" },
+    "status": { "$ref": "common.json#/$defs/status" },
+    "notes": { "type": "string" },
+    "tags": { "type": "array", "items": { "$ref": "common.json#/$defs/slug" } }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    { "if": { "type": "object", "properties": { "class": { "const": "equip" } } }, "then": { "type": "object", "required": ["equipped"] } },
+    { "if": { "type": "object", "properties": { "class": { "enum": ["wastePile", "event"] } } }, "then": { "type": "object", "required": ["play"] } },
+    { "if": { "type": "object", "properties": { "class": { "const": "none" } } }, "then": { "not": { "anyOf": [ { "type": "object", "required": ["play"] }, { "type": "object", "required": ["equipped"] } ] } } },
+    { "if": { "type": "object", "properties": { "class": { "not": { "const": "equip" } } } }, "then": { "not": { "type": "object", "required": ["equipped"] } } },
+    { "if": { "type": "object", "properties": { "symbol": { "const": "survivor" } } }, "then": { "type": "object", "required": ["outsiders"], "properties": { "class": { "const": "event" } } } }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/persona.json",
+  "title": "AI persona: the player, not the survivor (spec 20 §3.9; shape owned by 41 §6)",
+  "type": "object",
+  "required": ["kind", "id", "name", "blurb", "scalars", "lines", "sources", "status"],
+  "properties": {
+    "kind": { "const": "persona" },
+    "id": { "$ref": "common.json#/$defs/personaId" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "blurb": { "type": "string", "minLength": 1, "maxLength": 120, "description": "one line for the seat picker, ours" },
+    "scalars": {
+      "type": "object",
+      "required": ["generosity", "risk", "paranoia", "trust", "chattiness", "bluffing", "voteThreshold", "callThreshold"],
+      "properties": {
+        "generosity": { "$ref": "#/$defs/unit" },
+        "risk": { "$ref": "#/$defs/unit" },
+        "paranoia": { "type": "number", "minimum": 0.5, "maximum": 1.6, "description": "evidence multiplier, not a unit scalar (41 §2, 40 §8.2)" },
+        "trust": { "$ref": "#/$defs/unit" },
+        "chattiness": { "$ref": "#/$defs/unit" },
+        "bluffing": { "$ref": "#/$defs/unit" },
+        "voteThreshold": { "$ref": "#/$defs/unit", "description": "votes yes above this suspicion (41 §2)" },
+        "callThreshold": { "$ref": "#/$defs/unit", "description": "calls a vote above this suspicion (41 §2)" }
+      },
+      "additionalProperties": false
+    },
+    "voice": {
+      "type": "object",
+      "required": ["libraryVoiceId", "direction"],
+      "properties": {
+        "libraryVoiceId": { "type": "string", "minLength": 1 },
+        "direction": { "type": "string", "minLength": 1, "maxLength": 400, "description": "the 41 §1.1 voice text, for the audition page" }
+      },
+      "additionalProperties": false
+    },
+    "portrait": {
+      "type": "object",
+      "required": ["file", "direction"],
+      "properties": {
+        "file": { "type": "string", "minLength": 1 },
+        "direction": { "type": "string", "minLength": 1, "maxLength": 400, "description": "our portrait brief, for the concept prompt" }
+      },
+      "additionalProperties": false
+    },
+    "lines": {
+      "type": "object",
+      "description": "line bank keyed by event (41 §3); slot fills in braces",
+      "propertyNames": { "pattern": "^[a-z]+(\\.[a-zA-Z]+)*$" },
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "required": ["text"],
+          "properties": {
+            "text": { "type": "string", "minLength": 1, "maxLength": 90 },
+            "voiced": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "minProperties": 1
+    },
+    "sources": { "$ref": "common.json#/$defs/sources", "description": "personas are original: cite 'B H.7' for the archetype" },
+    "status": { "$ref": "common.json#/$defs/status" },
+    "notes": { "type": "string" },
+    "tags": { "type": "array", "items": { "$ref": "common.json#/$defs/slug" } }
+  },
+  "additionalProperties": false,
+  "$defs": { "unit": { "type": "number", "minimum": 0, "maximum": 1 } }
+}

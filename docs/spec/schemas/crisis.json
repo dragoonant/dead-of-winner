@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dead-of-winner/schemas/crisis.json",
+  "title": "Crisis card (spec 20 §3.5; CrisisDescriptor in hooks.ts)",
+  "type": "object",
+  "required": ["kind", "id", "name", "prevent", "fail", "text", "sources", "status"],
+  "properties": {
+    "kind": { "const": "crisis" },
+    "id": { "$ref": "common.json#/$defs/crisisId" },
+    "name": { "type": "string", "minLength": 1 },
+    "prevent": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "common.json#/$defs/itemSymbol" }, "description": "a contributed card with any of these symbols scores +1, any other card -1 (R p12)" },
+    "need": {
+      "type": "object",
+      "description": "points needed = perSeat x non-exiled seats + plus; default {perSeat:1, plus:0} (R p12)",
+      "required": ["perSeat", "plus"],
+      "properties": { "perSeat": { "type": "integer", "minimum": 0 }, "plus": { "type": "integer" } },
+      "additionalProperties": false
+    },
+    "fail": { "type": "array", "minItems": 1, "items": { "$ref": "common.json#/$defs/effectNode" } },
+    "bonus": {
+      "type": "object",
+      "required": ["extraCards", "effect"],
+      "properties": {
+        "extraCards": { "type": "integer", "minimum": 1, "description": "points above the need that earn the bonus (R p12: 2 extra cards = 1 morale on most cards)" },
+        "effect": { "type": "array", "minItems": 1, "items": { "$ref": "common.json#/$defs/effectNode" } }
+      },
+      "additionalProperties": false
+    },
+    "text": {
+      "type": "object",
+      "required": ["fail"],
+      "properties": {
+        "fail": { "$ref": "common.json#/$defs/prose" },
+        "bonus": { "$ref": "common.json#/$defs/prose" },
+        "flavor": { "$ref": "common.json#/$defs/prose" }
+      },
+      "additionalProperties": false
+    },
+    "sources": { "$ref": "common.json#/$defs/sources" },
+    "status": { "$ref": "common.json#/$defs/status" },
+    "notes": { "type": "string" },
+    "tags": { "type": "array", "items": { "$ref": "common.json#/$defs/slug" } }
+  },
+  "additionalProperties": false
+}
