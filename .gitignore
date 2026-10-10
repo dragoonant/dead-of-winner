@@ -11,3 +11,5 @@ playwright-report
 docs/sources/
 Tokens.txt
 .claude/worktrees/
+# never commit rules or card PDFs (repo is public)
+*.pdf
