@@ -1,20 +1,19 @@
 # Handoff
 
-**Current state:** M1 landed. The rules engine behind the frozen contracts is complete and wired through `src/engine/index.ts`
-(`createGame`, `step`, `validate`, `legalActions`, `replay`, `save`/`load`, `view`, `query.*`), the random bot plays whole games,
-and `npm run sim -- --games 30 --seed 1` ends every game with zero invariant failures and zero hidden-information leaks.
-Typecheck is clean; 289 tests pass in 23 files, the six golden scripts among them. `npm run validate:data` is green on the
-fixture bundle. Nothing is playable in the browser yet; the Pages deploy still shows the placeholder title screen. Rules
-decisions taken while building are logged under "## M1" in `docs/needs-rules-check.md`.
+**Current state:** M3 landed: playable on GitHub Pages (https://dragoonant.github.io/dead-of-winner/) as one human against
+1-4 Random bots, 2-5 seats, on the real card data in `src/data/` (30 survivors, 39 items, 20 crises, 20 Crossroads, 10 main and
+27 secret-type objectives). The client (`src/client/`) drives the engine only through `view` + `legalActions` + `query`; the store
+(`store/gameStore.ts`) is the only caller of `step`. Gates: typecheck clean, `npm test` green, `validate-data` 0 errors,
+`npm run sim -- --games 20 --seed 4` 0 violations / 0 leaks, `npm run e2e` plays a full game through UI clicks to the recap.
+See "Client (M3)" in `STATUS.md` for URL params, screenshots and known gaps.
 
 ## Next
-1. M2: data verification. Check the fixture slice (`tests/fixtures/bundle/`) card by card against `docs/spec/sources/`, then
-   enter the rest of the base game into `src/data/` through the schemas, so the sim can seat 4 and 5 (12 survivors seat 3 today).
-   The 13 unregistered-until-M1 code hooks in `src/engine/code-hooks.ts` carry the objective rulings to confirm.
-2. M3: the client (`docs/spec/50-client.md`) on `view` + `legalActions` + `query`; the store is the only caller of `step`.
-3. AI tiers (40/41) above the random bot, then art (30).
+1. M4: slim AI (`docs/spec/40-ai.md`, `41-personas.md`): a tier above Random that feeds the colony, prevents crises and does not
+   attack its own side, so games run their full length; hook it into `src/client/bot/deciders.ts` and `npm run bench:ai`.
+2. Owner playtest gate before M5 polish/art: play a few games on Pages, note rules or text that read wrong, and the forms that
+   feel clumsy (the generic option list for itemTarget / effectChoice is the weakest).
+3. Art (30) after the playtest.
 
 ## Owner ask
-Still open: 9-10 standard secret objective texts, 7 betrayal texts and 17 official English crisis names. If you have a physical
-copy, check the conflict tables in `docs/spec/sources/*-sources.md` against it (the Fan-source rows and the flagged numbers)
-and skim `docs/needs-rules-check.md`, including the M1 section, correcting any ruling your copy contradicts.
+Play on Pages and report. Still open: 9 standard secret objective texts, 7 betrayal texts and 17 official English crisis names;
+photos of real cards (like the All I Need Is My Books and Talia Jones photos used in M3) are the fastest way to close them.

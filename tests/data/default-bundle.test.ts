@@ -12,7 +12,7 @@ describe('default bundle (src/data)', () => {
   it('DATA-M2-002 names-only objective stubs (status unknown / text null) are never loaded', () => {
     const { raw } = assembleBundleFromDir(DEFAULT_DATA_DIR)
     const loaded = raw.records.secretObjectives as unknown as { status?: string; text: unknown }[]
-    expect(loaded.length).toBe(26)
+    expect(loaded.length).toBe(27) // 26 in M2 + All I Need Is My Books (owner photo, M3)
     expect(loaded.every((o) => o.status !== 'unknown' && o.text != null)).toBe(true)
   })
 

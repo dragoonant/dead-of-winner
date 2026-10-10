@@ -287,6 +287,12 @@ const objectives: Record<string, CodeObjectiveHook> = {
     const symbol = String(params?.['symbol'] ?? 'education') as ItemSymbol
     return report(`${symbol} cards equipped`, equippedWith(state, seat, symbol), num(params, 'n', 1))
   },
+  /** All I Need Is My Books: the most `symbol` cards equipped to any one survivor the seat controls (M3 data, owner photo). */
+  'rule.single-survivor.equippedSymbolAtLeast': (state, seat, params) => {
+    const symbol = String(params?.['symbol'] ?? 'education') as ItemSymbol
+    const best = Math.max(0, ...aliveOf(state, seat).map((s) => s.equipped.filter((c) => symbolsOf(defOf(state, c)).includes(symbol)).length))
+    return report(`${symbol} cards on one survivor`, best, num(params, 'n', 2))
+  },
   /** New Friends (betrayer): locations outside the colony whose item deck is empty. */
   'rule.location-deck.emptyAtLeast': (state, _seat, params) =>
     report('emptied item decks', state.locationOrder.filter((l) => l !== 'colony' && state.locations[l]!.deck.length === 0).length, num(params, 'n', 1)),

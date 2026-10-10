@@ -73,10 +73,16 @@ const hasBadNumber = (x: unknown, path = ''): string | null => {
 
 /** The counts that must stay fixed over a game (captured right after createGame). */
 export interface Totals { cards: number; survivors: number; crises: number; crossroads: number }
+const inPlacement = (s: GameState): boolean => {
+  const p = s.pending
+  const id = p?.context.survivorId
+  return (p?.context.data as { code?: string } | undefined)?.code === 'exiledSurvivorPlacement' && !!id && !s.survivors[id]
+}
 export function totalsOf(s: GameState): Totals {
   return {
     cards: Object.keys(s.cards).length,
-    survivors: s.survivorDeck.length + Object.keys(s.survivors).length + s.seatOrder.reduce((n, id) => n + s.seats[id]!.offered.length, 0),
+    survivors: s.survivorDeck.length + Object.keys(s.survivors).length + s.seatOrder.reduce((n, id) => n + s.seats[id]!.offered.length, 0)
+      + (inPlacement(s) ? 1 : 0), // an exiled owner's replacement survivor waits in the placement decision (R10.5) until placed
     crises: s.crisisDeck.length + (s.crisis.cardId && !s.crisis.result ? 1 : 0) + s.crisis.history.length, // a resolved card is counted through the history until the next round flips a new one
     crossroads: s.crossroads.deck.length + (s.crossroads.held ? 1 : 0) + s.crossroads.log.filter((e) => e.triggered).length, // a triggered card is logged the moment it turns face up (active), then leaves the game
   }

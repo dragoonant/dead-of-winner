@@ -16,19 +16,20 @@
       {
         "code": "survivor.talia-jones.reorderTop"
       }
-    ]
+    ],
+    "location": "anywhere"
   },
   "coop": true,
   "text": {
-    "ability": "Once a round, Talia looks at the top two crisis cards and may rearrange them; she may say exactly two words about them to the table.",
+    "ability": "Anywhere, once per round: look at the top two crisis cards and put them back in any order. (The card also lets her say two words about them; that part is table talk and is not enforced.)",
     "bio": "Reads cards for a living and claims to hear the next one coming."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "W; T; BGG ludopedia-51115"
+    "stats.influence": "PHOTO owner 2026-10-10",
+    "stats.attack": "PHOTO owner 2026-10-10",
+    "stats.search": "PHOTO owner 2026-10-10",
+    "ability": "PHOTO owner 2026-10-10"
   },
   "status": "draft",
-  "notes": "src: survivors-sources.md row 29. The code hook peeks at the top two crisis cards; the reorder and the two words are table talk (spec 21 section 13)."
+  "notes": "Checked against the owner's photo of the English card (2026-10-10): influence 28, attack 3+, search 1+. The code hook peeks at the top two crisis cards for the reorder; the two words are table talk (spec 21 section 13)."
 }

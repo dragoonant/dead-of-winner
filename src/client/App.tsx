@@ -1,19 +1,26 @@
-// Placeholder title screen so the Pages deploy has something to show before M3.
-const style: React.CSSProperties = {
-  minHeight: '100vh', margin: 0, display: 'grid', placeItems: 'center',
-  background: '#14161a', color: '#e8e6e1', fontFamily: 'Georgia, serif', textAlign: 'center',
-}
+// App shell: the title screen is eager and light; the game screen (3D table, HUD, engine, bots) is a lazy chunk.
+import { Suspense, lazy, useState, type ReactElement } from 'react'
+import { parseUrl, randomSeedWord, requestFromUrl, type LaunchRequest } from './launch'
+import { useSettingsStore } from './store/settingsStore'
+import { StartScreen } from './ui/StartScreen'
 
-export function App() {
+const GameScreen = lazy(() => import('./GameScreen'))
+
+type Screen = { kind: 'start'; error?: string } | { kind: 'game'; request: LaunchRequest; nonce: number }
+
+const urlOptions = parseUrl(typeof location !== 'undefined' ? location.search : '')
+if (urlOptions.speed !== undefined) useSettingsStore.getState().set({ speed: urlOptions.speed })
+
+export function App(): ReactElement {
+  const [screen, setScreen] = useState<Screen>(() => {
+    const req = requestFromUrl(urlOptions, randomSeedWord)
+    return req ? { kind: 'game', request: req, nonce: 0 } : { kind: 'start' }
+  })
+  const start = (request: LaunchRequest): void => setScreen((s) => ({ kind: 'game', request, nonce: (s.kind === 'game' ? s.nonce : 0) + 1 }))
+  if (screen.kind === 'start') return <StartScreen onStart={start} error={screen.error ?? null} />
   return (
-    <div style={style}>
-      <div>
-        <h1 style={{ color: '#c9a227', fontSize: '3rem', margin: 0 }}>Dead of Winner</h1>
-        <p style={{ color: '#7fb2d6' }}>A colony of AI survivors, one human at the table. Coming soon.</p>
-        <p style={{ fontSize: '0.8rem', opacity: 0.7 }}>
-          An unofficial fan project. Not affiliated with Plaid Hat Games, Fantasy Flight Games or Asmodee.
-        </p>
-      </div>
-    </div>
+    <Suspense fallback={<div className="start"><div className="start-card panel" style={{ textAlign: 'center' }}>Loading the table...</div></div>}>
+      <GameScreen key={screen.nonce} request={screen.request} fps={urlOptions.fps} onExit={(error) => setScreen(error ? { kind: 'start', error } : { kind: 'start' })} onRestart={start} />
+    </Suspense>
   )
 }

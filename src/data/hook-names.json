@@ -27,6 +27,7 @@
     "rule.seat-survivors.allWoundless",
     "rule.seat-survivors.anyWoundsAtLeast",
     "rule.seat-survivors.weaponsEquippedAtLeast",
+    "rule.single-survivor.equippedSymbolAtLeast",
     "rule.location-deck.emptyAtLeast",
     "rule.locations.barricadedAtLeast",
     "rule.seat.mostEquippedWeapons",

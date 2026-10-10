@@ -38,7 +38,7 @@
 ## Card data (M2)
 - `src/data/` is the default bundle for the engine, `npm run sim` and the data tests (`tools/default-bundle.ts`: `loadDefaultBundle()`);
   `tests/fixtures/bundle/` stays for unit tests. Counts: 30 survivors, 39 items, 7 decks, 7 locations, 20 crises, 20 Crossroads,
-  10 main objectives (normal + hardcore), 26 playable secret-type objectives (13 standard, 3 betrayal, 10 exiled).
+  10 main objectives (normal + hardcore), 27 playable secret-type objectives (14 standard, 3 betrayal, 10 exiled).
 - Objectives live as arrays in `src/data/objectives/{main,secret,betrayal,exiled}.json`; names-only stubs (`status: "unknown"`,
   text null) are skipped by the loader.
 - 14 new code hooks in `src/engine/code-hooks.ts` (crises, Crossroads, objectives), with golden checks in `tests/engine/m2-hooks.test.ts`.
@@ -46,6 +46,30 @@
   30/30 end, 0 violations, 0 leaks.
 - Known gaps: 18 names-only objectives excluded (11 standard secret, 7 betrayal); 17 of the 20 crisis names are ours (`name-ours` tag);
   hooks choose for the player where the card says "of its choice" (rulings in `docs/needs-rules-check.md` section M2).
+
+## Client (M3)
+Playable in the browser against Random bots: https://dragoonant.github.io/dead-of-winner/ (local: `npm run dev`, or
+`npm run build && npm run preview` for the `/dead-of-winner/` build).
+- How to play: the start screen seats you plus 1-4 bots (default 3), picks a main objective (or Random), a seed and the animation
+  speed. Every decision opens in the prompt dock at the bottom centre: on your turn pick an action chip (grouped by survivor; Table
+  for cards, requests, votes and Add to crisis), read the odds line, pick the die, Confirm; End turn when done. Top bar: Objectives
+  (O), How to play, Settings; keys: 1-4 camera, Space skips an animation, E ends the turn, S saves, ? lists the keys.
+- URL params: `seats=human,bot,bot,bot` (2-5 seats, skips the start screen), `seed=<word>`, `objective=<id or word>` (e.g.
+  `samples`) or `random`, `speed=0..8` (0 = instant), `test=1` (exposes `window.__game` and the DOM proxies for tests), `fps`.
+- Data: the client loads `src/data` (validated by `loadBundle`, same hash as the node loader, `tests/client/bundle.test.ts`); the
+  fixture fallback is gone. Chunks: `title` (start screen), `react`, `engine` (engine + data + ajv), `three` (three/R3F/drei),
+  `client` (game screen); the start screen loads only `title` + `react`, then the `engine` chunk for the objective list.
+- E2E (`npm run e2e`, production build under `/dead-of-winner/`): `tests/e2e/play.spec.ts` plays a whole game as the human vs
+  3 Random bots (`?seed=e2e&seats=human,bot,bot,bot&objective=samples`) by clicking dock buttons by exact text
+  (`tests/e2e/policy.ts`) to the recap, checks the dock does not cover the dice tray, and opens Objectives and How to play.
+  Screenshots (gitignored): `e2e-out/m3-start.png`, `m3-turn.png`, `m3-crisis.png`, `m3-recap.png`.
+- Fixed in M3: the browser bundle loaded names-only objective stubs (now mirrors the node loader); an overrun kill inside a card
+  effect (crisis fail) dropped the exiled owner's replacement-placement decision, losing a survivor card (`effects.ts` addZombies);
+  the sim counted that waiting survivor as missing; the colony-phase feed line printed twice; discard lines read "Rook card".
+- Known gaps: Random bots wreck morale, so most games end in 2-3 rounds (M4 slim AI); the generic option list serves
+  itemTarget / effectChoice / objectiveChoice (works, terse); decision kinds the e2e run has not hit yet: crossroadsOption,
+  exilePlacement, searchKeepWhich, newLeader, objectiveChoice (forms exist); placeholder 3D art; objective part labels are mapped
+  to plain words only for the common tests; the "two words" table talk on Talia Jones is not modelled.
 
 ## Spec status
 | Spec | Status |
@@ -59,15 +83,14 @@
 | 21 effects DSL | written, interpreter implemented (`effects.ts`) |
 | 30 art | written (tile layout follows the Long Night location photos, ruling L1) |
 | 40 AI, 41 personas | written; random tier implemented |
-| 50 client | written |
+| 50 client | written; M3 vertical slice implemented (`src/client/`) |
 | 60 testing | written; sim, invariants and leak test implemented |
 | Card data (survivors, items, crisis, Crossroads, objectives) | M2 slice in `src/data/` (see Card data (M2)); verify pass against the physical cards still open |
 
 ## Next
-- M2: card data verification (the fixture slice against the source tables, then the rest of the base game into `src/data/`),
-  more survivors so the sim can seat 4 and 5.
-- M3: the client (50) on top of `view` + `legalActions` + `query`.
-- Remaining source gaps: 9-10 standard secret objective texts, 7 betrayal texts, official English crisis names (17).
+- M4: slim AI tier above Random (40/41) so bots keep the colony alive and games run their length.
+- Owner playtest gate: play a few games on Pages and log what reads wrong or plays wrong.
+- Remaining source gaps: 9 standard secret objective texts, 7 betrayal texts, official English crisis names (17).
 - Owner request: if you have a physical copy, check the conflict tables in `docs/spec/sources/*-sources.md` against it
   (the rows marked Fan-source and the flagged numbers: Fuel Shortage, Zombie Wave, We Need More Samples hardcore,
   Leave It All Behind, Stockpile, and the location card space counts), and skim the M1 rulings in `docs/needs-rules-check.md`.

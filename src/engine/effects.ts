@@ -918,6 +918,8 @@ function applyOp(q: Q, node: OpNode, w: Work, rc: RunCtx, later: Job[]): EffectN
         const n = node.value === 'perSurvivor' ? survivorsAt(st(), loc).length : numValue(q, node, rc, countOf(node, 1))
         if (n <= 0) continue
         const r = routines.addZombies(st(), loc, n, zombieSourceOf(rc.sourceKind)); acc.state = r.state; emit(acc, ...r.events)
+        // an overrun kill can mint a decision (new leader, exiled owner's replacement placement): keep it, as killSurvivor does
+        if (r.pending) { q.acc.pending = r.pending; break }
       }
       return
     }
