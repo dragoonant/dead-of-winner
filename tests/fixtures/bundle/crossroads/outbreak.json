@@ -1,0 +1,142 @@
+{
+  "kind": "crossroads",
+  "id": "xr.outbreak",
+  "name": "Outbreak",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "helplessAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 1
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Send them away",
+              "effect": [
+                {
+                  "op": "removeHelpless",
+                  "count": 1,
+                  "location": "colony"
+                },
+                {
+                  "op": "morale",
+                  "value": -1
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Keep them",
+              "effect": [
+                {
+                  "op": "wound",
+                  "count": 1,
+                  "kind": "wound",
+                  "scope": {
+                    "who": "atLocation",
+                    "location": "colony"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "vote": true
+    },
+    {
+      "id": "down",
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Send them away",
+              "effect": [
+                {
+                  "op": "removeHelpless",
+                  "count": 1,
+                  "location": "colony"
+                },
+                {
+                  "op": "morale",
+                  "value": -1
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Keep them",
+              "effect": [
+                {
+                  "op": "wound",
+                  "count": 1,
+                  "kind": "wound",
+                  "scope": {
+                    "who": "atLocation",
+                    "location": "colony"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "vote": true
+    }
+  ],
+  "text": {
+    "trigger": "You have a survivor at the colony and at least one helpless survivor shelters there (vote).",
+    "vignette": "One of the rescued strangers is running a fever and swollen under the jaw. Nobody wants to say the word aloud, but the room has gone quiet and everyone is edging toward the door.",
+    "options": {
+      "up": "Vote to turn the sick one out: a helpless survivor leaves and morale drops by 1.",
+      "down": "Vote to keep them. The sickness spreads: every survivor at the colony takes one wound."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #22. Only seats with a survivor at the colony vote (F 2.4.1). The card's die roll to kill helpless survivors on the no branch is omitted."
+}

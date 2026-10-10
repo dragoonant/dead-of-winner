@@ -1,0 +1,37 @@
+{
+  "kind": "item",
+  "id": "it.baseball-bat",
+  "name": "Baseball Bat",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "swing",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "countsAs": "attack",
+      "when": {
+        "test": "zombiesAtLeast",
+        "subject": "location",
+        "value": 1
+      },
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 2,
+          "location": "here"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the bearer attacks and drops two zombies, rolling for exposure on each kill."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114; BGG official-rulings"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School / Baseball Bat (BO)"
+}

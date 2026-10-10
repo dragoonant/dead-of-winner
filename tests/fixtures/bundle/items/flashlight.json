@@ -1,0 +1,32 @@
+{
+  "kind": "item",
+  "id": "it.flashlight",
+  "name": "Flashlight",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "beam",
+      "kind": "triggered",
+      "trigger": "search.drawn",
+      "limit": "oncePerRound",
+      "optional": true,
+      "effect": [
+        {
+          "op": "extraSearchLook",
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round, when the bearer searches, they look at three cards instead of one."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Hospital / Flashlight"
+}

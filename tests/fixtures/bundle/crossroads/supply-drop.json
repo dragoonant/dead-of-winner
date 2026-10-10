@@ -1,0 +1,80 @@
+{
+  "kind": "crossroads",
+  "id": "xr.supply-drop",
+  "name": "Supply Drop",
+  "mature": false,
+  "trigger": {
+    "point": "action.barricade",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "fetch",
+      "effect": [
+        {
+          "op": "exposure",
+          "count": 3,
+          "value": "card",
+          "scope": {
+            "who": "chosen",
+            "chooser": "owner",
+            "count": 1,
+            "filter": {
+              "test": "atLocation",
+              "location": "colony"
+            }
+          },
+          "then": [
+            {
+              "op": "food",
+              "value": 5
+            },
+            {
+              "op": "morale",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ignore",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "You have a survivor at the colony.",
+    "vignette": "A cargo plane drops a crate somewhere past the ridge. The stenciled letters on the parachute are in no language you can read. Whoever sent it knows people are alive here.",
+    "options": {
+      "fetch": "Send a survivor to fetch it: roll for exposure three times on a survivor at the colony. If they live, add 5 food and morale rises by 1.",
+      "ignore": "Leave it. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #42. The reward should apply only if the survivor lives; the engine must skip then on a death."
+}

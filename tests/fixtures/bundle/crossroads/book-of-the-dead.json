@@ -1,0 +1,68 @@
+{
+  "kind": "crossroads",
+  "id": "xr.book-of-the-dead",
+  "name": "Book of the Dead",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "actionWas",
+          "value": "search"
+        },
+        {
+          "test": "locationIs",
+          "subject": "location",
+          "location": "loc.library"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "laugh",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "throwIt",
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "loc.library"
+        },
+        {
+          "op": "food",
+          "value": 4
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor of yours searches the Library.",
+    "vignette": "Behind a locked grille in the rare-books room sits a huge, dusty volume with a title that makes your skin crawl. You carry it out like a holy relic and call the whole colony together for the unveiling.",
+    "options": {
+      "laugh": "It turns out to be a band biography and the colony howls with laughter. Morale rises by 1.",
+      "throwIt": "Drop it out of a window onto a passing zombie. One zombie at the Library dies and its courier bag holds four food tokens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #69. "
+}

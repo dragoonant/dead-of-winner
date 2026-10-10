@@ -1,0 +1,46 @@
+{
+  "kind": "deck",
+  "id": "deck.hospital",
+  "name": "Hospital items",
+  "size": 20,
+  "cards": [
+    {
+      "item": "it.medicine",
+      "count": 4
+    },
+    {
+      "item": "it.adrenaline-shot",
+      "count": 2
+    },
+    {
+      "item": "it.fuel",
+      "count": 4
+    },
+    {
+      "item": "it.food-2",
+      "count": 4
+    },
+    {
+      "item": "it.junk",
+      "count": 1
+    },
+    {
+      "item": "it.mop",
+      "count": 1
+    },
+    {
+      "item": "it.flashlight",
+      "count": 1
+    },
+    {
+      "item": "it.outsiders-2",
+      "count": 3
+    }
+  ],
+  "sources": {
+    "cards": "BGG card-spread; BGG ludopedia-51114; S",
+    "size": "R p2; R p6"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Hospital"
+}

@@ -1,0 +1,43 @@
+{
+  "kind": "survivor",
+  "id": "sv.daniel-smith",
+  "name": "Daniel Smith",
+  "occupation": "Sheriff",
+  "stats": {
+    "influence": 66,
+    "attack": 2,
+    "search": 5
+  },
+  "ability": {
+    "id": "doubleTap",
+    "kind": "action",
+    "cost": {
+      "die": 4
+    },
+    "when": {
+      "test": "zombiesAtLeast",
+      "subject": "location",
+      "value": 1
+    },
+    "effect": [
+      {
+        "op": "killZombies",
+        "count": 2,
+        "location": "here",
+        "value": "exposureOnce"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "(4+) Daniel drops two zombies where he stands and rolls for exposure only once."
+  },
+  "sources": {
+    "stats.influence": "R p7; W; C",
+    "stats.attack": "R* p7; W",
+    "stats.search": "R* p7; W",
+    "ability": "R p7; W; T"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 11 (C2)"
+}

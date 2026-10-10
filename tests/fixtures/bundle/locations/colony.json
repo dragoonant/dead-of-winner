@@ -1,0 +1,21 @@
+{
+  "kind": "location",
+  "id": "colony",
+  "name": "Colony",
+  "spaces": {
+    "survivors": 24,
+    "entrances": 6,
+    "entranceSpaces": 3,
+    "noise": 0
+  },
+  "symbolOrder": [],
+  "deck": null,
+  "sources": {
+    "spaces.entrances": "R p5",
+    "spaces.noise": "R p5",
+    "spaces.survivors": "R p5",
+    "spaces.entranceSpaces": "R p5; PHOTO colony entrances 4-5"
+  },
+  "status": "draft",
+  "notes": "src: locations-sources.md Colony board (L4, L5)"
+}

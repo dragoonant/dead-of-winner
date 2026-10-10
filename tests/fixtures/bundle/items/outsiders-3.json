@@ -1,0 +1,40 @@
+{
+  "kind": "item",
+  "id": "it.outsiders-3",
+  "name": "3 Outsiders",
+  "symbol": "survivor",
+  "class": "event",
+  "outsiders": 3,
+  "play": {
+    "when": {
+      "test": "emptySurvivorSpace",
+      "location": "colony"
+    },
+    "effect": [
+      {
+        "op": "addSurvivor",
+        "count": 1,
+        "scope": {
+          "who": "seat"
+        }
+      },
+      {
+        "op": "addHelpless",
+        "count": 2,
+        "location": "colony"
+      }
+    ]
+  },
+  "text": {
+    "ability": "A stranger reaches the gate with 2 more in tow: a new survivor joins your group and 2 helpless survivor tokens go to the colony."
+  },
+  "sources": {
+    "symbol": "W",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "R p14; BGG card-spread; BGG ludopedia-51114",
+    "outsiders": "BGG card-spread; O",
+    "play.when": "R p14"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Outsider cards (I2, I5): 3 Outsiders"
+}

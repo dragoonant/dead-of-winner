@@ -1,0 +1,42 @@
+{
+  "kind": "survivor",
+  "id": "sv.carla-thompson",
+  "name": "Carla Thompson",
+  "occupation": "Police Dispatcher",
+  "stats": {
+    "influence": 22,
+    "attack": 4,
+    "search": 2
+  },
+  "ability": {
+    "id": "keenEye",
+    "kind": "triggered",
+    "trigger": "search.drawn",
+    "location": "loc.police-station",
+    "limit": "oncePerRound",
+    "optional": true,
+    "effect": [
+      {
+        "op": "extraSearchLook",
+        "count": 1
+      },
+      {
+        "op": "extraSearchKeep",
+        "count": 1
+      }
+    ]
+  },
+  "crossroads": "xr.carla-thompson",
+  "coop": true,
+  "text": {
+    "ability": "Once a round, a search at the Police Station lets Carla look at one more card and keep one more card."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; T"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 10"
+}

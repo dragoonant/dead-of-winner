@@ -1,0 +1,97 @@
+{
+  "kind": "crossroads",
+  "id": "xr.lovers-quarrel",
+  "name": "Lover's Quarrel",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "test": "actionWas",
+          "value": "move"
+        },
+        {
+          "test": "isNonColony",
+          "subject": "location"
+        },
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "value": 2
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "shout",
+      "effect": [
+        {
+          "op": "addNoise",
+          "count": 4,
+          "location": "here"
+        }
+      ]
+    },
+    {
+      "id": "cool",
+      "effect": [
+        {
+          "op": "forbid",
+          "what": "move",
+          "scope": {
+            "who": "atLocation",
+            "filter": {
+              "test": "survivorOwnedBy",
+              "subject": "survivor",
+              "value": "activeSeat"
+            }
+          },
+          "duration": "turn"
+        },
+        {
+          "op": "forbid",
+          "what": "search",
+          "scope": {
+            "who": "atLocation",
+            "filter": {
+              "test": "survivorOwnedBy",
+              "subject": "survivor",
+              "value": "activeSeat"
+            }
+          },
+          "duration": "turn"
+        },
+        {
+          "op": "forbid",
+          "what": "attack",
+          "scope": {
+            "who": "atLocation",
+            "filter": {
+              "test": "survivorOwnedBy",
+              "subject": "survivor",
+              "value": "activeSeat"
+            }
+          },
+          "duration": "turn"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Two of your survivors share a spot away from the colony.",
+    "vignette": "Two of your people have been snapping at each other since the last stop, and now the argument is no longer quiet. Every zombie in earshot has heard the word that was just shouted.",
+    "options": {
+      "shout": "Let it ride. Four noise tokens go on their location.",
+      "cool": "Separate them. For the rest of the turn those survivors cannot move, search or attack."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #10. "
+}

@@ -1,0 +1,51 @@
+{
+  "kind": "secretObjective",
+  "id": "obj.exiled.atonement",
+  "name": "Atonement",
+  "type": "exiled",
+  "requiresMain": true,
+  "complete": {
+    "code": "rule.objective.mainComplete"
+  },
+  "betrayer": {
+    "firstCondition": {
+      "all": [
+        {
+          "test": "handHasSymbol",
+          "subject": "holder",
+          "symbol": "fuel",
+          "value": 1
+        },
+        {
+          "test": "handHasSymbol",
+          "subject": "holder",
+          "symbol": "food",
+          "value": 1
+        },
+        {
+          "test": "handHasSymbol",
+          "subject": "holder",
+          "symbol": "medicine",
+          "value": 1
+        },
+        {
+          "test": "handHasSymbol",
+          "subject": "holder",
+          "symbol": "tool",
+          "value": 1
+        }
+      ]
+    }
+  },
+  "text": {
+    "goal": "The colony pulls through.",
+    "betrayer": "Your first demand becomes one each of fuel, food, medicine and tool cards in your hand."
+  },
+  "sources": {
+    "complete": "BGG ludopedia-51112",
+    "requiresMain": "BGG ludopedia-51112",
+    "betrayer.firstCondition": "BGG ludopedia-51112"
+  },
+  "status": "draft",
+  "notes": "src: objectives-sources.md D row 2"
+}

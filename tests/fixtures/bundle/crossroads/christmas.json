@@ -1,0 +1,130 @@
+{
+  "kind": "crossroads",
+  "id": "xr.christmas",
+  "name": "Christmas",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Hold the feast",
+              "effect": [
+                {
+                  "op": "food",
+                  "value": -5
+                },
+                {
+                  "op": "morale",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Keep rationing",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "vote": true
+    },
+    {
+      "id": "down",
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Hold the feast",
+              "effect": [
+                {
+                  "op": "food",
+                  "value": -5
+                },
+                {
+                  "op": "morale",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Keep rationing",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "vote": true
+    }
+  ],
+  "text": {
+    "trigger": "You have a survivor at the colony (vote).",
+    "vignette": "Someone has found a crumpled paper calendar and realised it is nearly the holiday. Maybe, someone says quietly, the colony could cook one real meal for everybody and pretend for an evening.",
+    "options": {
+      "up": "Vote to feast: spend 5 food and morale rises by 1.",
+      "down": "Vote to keep rationing. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #15. Vote card: both options open the same vote; thumbs-up wins = first branch. Forest Plum clause omitted."
+}

@@ -1,0 +1,35 @@
+{
+  "kind": "secretObjective",
+  "id": "obj.betrayal.trigger-happy",
+  "name": "Trigger Happy",
+  "type": "betrayal",
+  "code": "S16",
+  "requiresMain": false,
+  "ai": {
+    "lever": "hoard:weapon"
+  },
+  "complete": {
+    "all": [
+      {
+        "test": "moraleAtMost",
+        "subject": "colony",
+        "value": 0
+      },
+      {
+        "code": "rule.seat-survivors.weaponsEquippedAtLeast",
+        "params": {
+          "n": 4
+        }
+      }
+    ]
+  },
+  "text": {
+    "goal": "Let the colony collapse (morale zero) while your survivors carry at least four weapon cards between them."
+  },
+  "sources": {
+    "complete": "PHOTO es-secret-objectives; BGG etwest-names; R p18",
+    "requiresMain": "R p3"
+  },
+  "status": "draft",
+  "notes": "src: objectives-sources.md C S16"
+}

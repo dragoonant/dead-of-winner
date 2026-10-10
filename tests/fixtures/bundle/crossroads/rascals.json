@@ -1,0 +1,68 @@
+{
+  "kind": "crossroads",
+  "id": "xr.rascals",
+  "name": "Rascals",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "actionWas",
+          "value": "search"
+        },
+        {
+          "test": "locationIs",
+          "subject": "location",
+          "location": "loc.hospital"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "race",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 1
+        },
+        {
+          "op": "addZombies",
+          "value": 5,
+          "location": "colony"
+        }
+      ]
+    },
+    {
+      "id": "skip",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor of yours searches the Hospital.",
+    "vignette": "A row of mobility scooters sits charging in a corridor, and one quick lap proves they cannot outrun anything. They could, however, make for a very silly race back at the colony.",
+    "options": {
+      "race": "Hold scooter races at the colony. Morale rises by 1, but the cheering draws five zombies to the colony.",
+      "skip": "Too silly. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #70. "
+}

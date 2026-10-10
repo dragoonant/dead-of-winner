@@ -1,0 +1,34 @@
+{
+  "kind": "crisis",
+  "id": "cr.horror-in-the-night",
+  "name": "Horror in the Night",
+  "prevent": [
+    "food"
+  ],
+  "fail": [
+    {
+      "op": "morale",
+      "value": -2
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Something screams outside until dawn. Morale drops by 2.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "PHOTO horror-in-the-night",
+    "fail": "PHOTO horror-in-the-night",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 20 Horror in the Night (official name, photo)"
+}

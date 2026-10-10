@@ -1,0 +1,70 @@
+{
+  "kind": "crossroads",
+  "id": "xr.crazed-survivor",
+  "name": "Crazed Survivor",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "actionWas",
+          "value": "search"
+        },
+        {
+          "test": "isNonColony",
+          "subject": "location"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "fight",
+      "effect": [
+        {
+          "op": "food",
+          "value": 3
+        },
+        {
+          "op": "exposure",
+          "count": 2,
+          "value": "card",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    },
+    {
+      "id": "flee",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor of yours searches away from the colony.",
+    "vignette": "Someone comes out of the dark screaming before you can say a word, swinging a rake handle with both hands. There is no talking to her and no time to run.",
+    "options": {
+      "fight": "Put her down. Add 3 food from her pack and roll for exposure twice on the searching survivor.",
+      "flee": "Back away and run. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #67. "
+}

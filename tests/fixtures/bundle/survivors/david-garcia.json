@@ -1,0 +1,35 @@
+{
+  "kind": "survivor",
+  "id": "sv.david-garcia",
+  "name": "David Garcia",
+  "occupation": "Accountant",
+  "stats": {
+    "influence": 50,
+    "attack": 4,
+    "search": 3
+  },
+  "ability": {
+    "id": "sharpLook",
+    "kind": "triggered",
+    "trigger": "search.drawn",
+    "effect": [
+      {
+        "op": "extraSearchLook",
+        "count": 1
+      }
+    ]
+  },
+  "crossroads": "xr.david-garcia",
+  "coop": true,
+  "text": {
+    "ability": "Whenever David searches he looks at one more card (look only; the keep limit stays)."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 12 (C8)"
+}

@@ -1,0 +1,38 @@
+{
+  "kind": "item",
+  "id": "it.colt-1911-pistol",
+  "name": "Colt 1911 Pistol",
+  "symbol": "weapon",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "steadyShot",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "countsAs": "attack",
+      "when": {
+        "test": "zombiesAtLeast",
+        "subject": "location",
+        "value": 1
+      },
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "here",
+          "value": "noExposure"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the bearer can attack and drop the zombie without any exposure roll."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Police Station / Colt 1911 Pistol"
+}

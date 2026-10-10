@@ -1,0 +1,33 @@
+{
+  "kind": "secretObjective",
+  "id": "obj.exiled.barter",
+  "name": "Barter",
+  "type": "exiled",
+  "requiresMain": false,
+  "complete": {
+    "test": "handHasSymbol",
+    "subject": "holder",
+    "symbol": "medicine",
+    "value": 4
+  },
+  "betrayer": {
+    "firstCondition": {
+      "code": "rule.seat.equippedSymbolAtLeast",
+      "params": {
+        "symbol": "education",
+        "n": 3
+      }
+    }
+  },
+  "text": {
+    "goal": "You hold at least four medicine cards.",
+    "betrayer": "Your first demand becomes at least three education cards equipped to your survivors."
+  },
+  "sources": {
+    "complete": "PHOTO barter; BGG ludopedia-51112",
+    "requiresMain": "PHOTO barter; BGG ludopedia-51112",
+    "betrayer.firstCondition": "PHOTO barter; BGG ludopedia-51112"
+  },
+  "status": "draft",
+  "notes": "src: objectives-sources.md D row 7 (D2)"
+}

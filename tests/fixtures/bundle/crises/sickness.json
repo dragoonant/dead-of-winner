@@ -1,0 +1,48 @@
+{
+  "kind": "crisis",
+  "id": "cr.sickness",
+  "name": "Sickness",
+  "prevent": [
+    "medicine"
+  ],
+  "fail": [
+    {
+      "op": "wound",
+      "count": 1,
+      "kind": "wound",
+      "scope": {
+        "who": "allSurvivors",
+        "filter": {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      }
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Every survivor still in the colony's care takes one ordinary wound, and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "PHOTO es-enfermedad; BGG ludopedia-51114",
+    "fail": "PHOTO es-enfermedad; BGG ludopedia-51114",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 14 Sickness (name ours; C5). Scope filters out exiled seats' survivors with seatIsExiled on the candidate"
+}

@@ -1,0 +1,32 @@
+{
+  "kind": "secretObjective",
+  "id": "obj.exiled.vengeance",
+  "name": "Vengeance",
+  "type": "exiled",
+  "requiresMain": false,
+  "complete": {
+    "code": "rule.survivors-removed.atLeast",
+    "params": {
+      "n": 5
+    }
+  },
+  "betrayer": {
+    "firstCondition": {
+      "code": "rule.survivors-removed.atLeast",
+      "params": {
+        "n": 4
+      }
+    }
+  },
+  "text": {
+    "goal": "At least five survivors have left the game (helpless tokens do not count).",
+    "betrayer": "Your first demand becomes at least four survivors gone from the game."
+  },
+  "sources": {
+    "complete": "PHOTO es-venganza; BGG ludopedia-51112",
+    "requiresMain": "PHOTO es-venganza; BGG ludopedia-51112",
+    "betrayer.firstCondition": "PHOTO es-venganza; BGG ludopedia-51112"
+  },
+  "status": "draft",
+  "notes": "src: objectives-sources.md D row 9 (D4)"
+}

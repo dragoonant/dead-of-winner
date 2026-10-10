@@ -1,0 +1,35 @@
+{
+  "kind": "survivor",
+  "id": "sv.annaleigh-chan",
+  "name": "Annaleigh Chan",
+  "occupation": "Lawyer",
+  "stats": {
+    "influence": 38,
+    "attack": 2,
+    "search": 2
+  },
+  "ability": {
+    "id": "eavesdrop",
+    "kind": "action",
+    "location": "colony",
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "code": "survivor.annaleigh-chan.peekHands"
+      }
+    ]
+  },
+  "crossroads": "xr.annaleigh-chan",
+  "coop": false,
+  "text": {
+    "ability": "Once a round, at the colony, Annaleigh looks at one random card from another player's hand. Not used in the co-op variant."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; T; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 3 (C10)"
+}

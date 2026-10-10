@@ -1,0 +1,27 @@
+{
+  "kind": "item",
+  "id": "it.scissors",
+  "name": "Scissors",
+  "symbol": "tool",
+  "class": "wastePile",
+  "play": {
+    "effect": [
+      {
+        "op": "killZombies",
+        "count": 1,
+        "location": "chosen",
+        "value": "noExposure"
+      }
+    ]
+  },
+  "text": {
+    "ability": "Stab one zombie at the location of one of your survivors; nobody rolls for exposure."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School / Scissors (I8: location from P)"
+}

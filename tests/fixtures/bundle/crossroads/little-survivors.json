@@ -1,0 +1,68 @@
+{
+  "kind": "crossroads",
+  "id": "xr.little-survivors",
+  "name": "Little Survivors",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "test": "actionWas",
+          "value": "move"
+        },
+        {
+          "test": "survivorsAtMost",
+          "subject": "location",
+          "value": 1
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "bringThem",
+      "effect": [
+        {
+          "op": "addHelpless",
+          "count": 3,
+          "location": "colony"
+        },
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "leaveThem",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Your survivor moves to a place where nobody else is.",
+    "vignette": "Small faces watch you from behind a cracked window, five or six of them, none older than a schoolyard. They are gone before you can raise a hand. They may be the last ones left in the whole street.",
+    "options": {
+      "bringThem": "Coax them out and carry them home: three helpless survivors arrive at the colony and morale rises by 1.",
+      "leaveThem": "They have survived this long on their own. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #28. "
+}

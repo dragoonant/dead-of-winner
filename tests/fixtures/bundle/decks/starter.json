@@ -1,0 +1,30 @@
+{
+  "kind": "deck",
+  "id": "deck.starter",
+  "name": "Starting items",
+  "size": 25,
+  "cards": [
+    {
+      "item": "it.food-1",
+      "count": 10
+    },
+    {
+      "item": "it.medicine",
+      "count": 5
+    },
+    {
+      "item": "it.fuel",
+      "count": 5
+    },
+    {
+      "item": "it.junk",
+      "count": 5
+    }
+  ],
+  "sources": {
+    "cards": "BGG card-spread; BGG ludopedia-51114; S",
+    "size": "R p2; R p6"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Starting items (25)"
+}

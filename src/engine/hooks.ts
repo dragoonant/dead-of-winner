@@ -181,7 +181,8 @@ export interface HookResult { state: GameState; events: GameEvent[] }
 /** Code escape hatch ({code, params}); implementations live in src/engine/code-hooks.ts. */
 export type CodeConditionHook = (ctx: HookContext, params: Record<string, unknown>) => boolean
 export type CodeEffectHook = (ctx: HookContext, params: Record<string, unknown>) => HookResult
-export type CodeObjectiveHook = (state: GameState, seat: SeatId | null) => { complete: boolean; parts: { label: string; have: number; need: number }[] }
+/** `params` (additive, M1) = the `{code, params}` node's params, so one hook serves every card that names it with a different number. */
+export type CodeObjectiveHook = (state: GameState, seat: SeatId | null, params?: Record<string, unknown>) => { complete: boolean; parts: { label: string; have: number; need: number }[] }
 export interface CodeHookRegistry {
   conditions: Record<string, CodeConditionHook>
   effects: Record<string, CodeEffectHook>

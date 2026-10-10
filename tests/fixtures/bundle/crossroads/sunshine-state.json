@@ -1,0 +1,65 @@
+{
+  "kind": "crossroads",
+  "id": "xr.sunshine-state",
+  "name": "The Sunshine State",
+  "mature": false,
+  "trigger": {
+    "point": "action.cleanWaste",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "helplessAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 2
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "letIn",
+      "effect": [
+        {
+          "op": "removeHelpless",
+          "count": 2,
+          "location": "colony"
+        },
+        {
+          "op": "morale",
+          "value": -1
+        }
+      ]
+    },
+    {
+      "id": "refuse",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "You have a survivor at the colony and two or more helpless survivors shelter there.",
+    "vignette": "An elderly couple has been sitting by the gate for two days with a hand-lettered sign. They have a car trunk of cans and no one to protect them. They are very polite about it.",
+    "options": {
+      "letIn": "Let them in. Two helpless survivors leave the colony in the night and morale drops by 1.",
+      "refuse": "Turn them away. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #50. "
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "item",
+  "id": "it.gas-station-blueprints",
+  "name": "Gas Station Blueprints",
+  "symbol": "education",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "plans",
+      "kind": "triggered",
+      "trigger": "search.drawn",
+      "location": "loc.gas-station",
+      "limit": "oncePerRound",
+      "optional": true,
+      "effect": [
+        {
+          "op": "extraSearchLook",
+          "count": 1
+        },
+        {
+          "op": "extraSearchKeep",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round, when the bearer searches the Gas Station, they may look at one more card and keep one more card."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Library / Gas Station Blueprints"
+}

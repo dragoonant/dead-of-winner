@@ -1,0 +1,27 @@
+{
+  "_comment": "Code-hook names the data may reference ({\"code\": ...}). Used by loadBundle/validate-data when src/engine/code-hooks.ts does not exist yet; keep in step with CODE_HOOKS (spec 21 §11, V-20).",
+  "conditions": [
+    "crossroads.riot.helplessOutnumber"
+  ],
+  "effects": [
+    "survivor.annaleigh-chan.peekHands",
+    "survivor.sparky.skipBiteSpread",
+    "survivor.talia-jones.reorderTop",
+    "crossroads.bev-russel.immune",
+    "item.rotten-flesh.skipBiteSpread"
+  ],
+  "objectives": [
+    "rule.objective.mainComplete",
+    "rule.survivors-removed.atLeast",
+    "rule.group-size.mostSurvivors",
+    "rule.seat-survivors.allWoundless",
+    "rule.seat-survivors.anyWoundsAtLeast",
+    "rule.seat-survivors.weaponsEquippedAtLeast",
+    "rule.location-deck.emptyAtLeast",
+    "rule.locations.barricadedAtLeast",
+    "rule.seat.mostEquippedWeapons",
+    "rule.foreign-survivors.woundedAtLeast",
+    "rule.barricades.totalAtLeast",
+    "rule.seat.equippedSymbolAtLeast"
+  ]
+}

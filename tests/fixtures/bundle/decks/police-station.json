@@ -1,0 +1,58 @@
+{
+  "kind": "deck",
+  "id": "deck.police-station",
+  "name": "Police Station items",
+  "size": 20,
+  "cards": [
+    {
+      "item": "it.colt-1911-pistol",
+      "count": 3
+    },
+    {
+      "item": "it.fn-slp-shotgun",
+      "count": 1
+    },
+    {
+      "item": "it.tikka-t3-tactical-rifle",
+      "count": 2
+    },
+    {
+      "item": "it.fuel",
+      "count": 4
+    },
+    {
+      "item": "it.junk",
+      "count": 1
+    },
+    {
+      "item": "it.night-vision-goggles",
+      "count": 1
+    },
+    {
+      "item": "it.walkie-talkie",
+      "count": 1
+    },
+    {
+      "item": "it.pad-lock",
+      "count": 1
+    },
+    {
+      "item": "it.food-1",
+      "count": 3
+    },
+    {
+      "item": "it.outsiders-1",
+      "count": 1
+    },
+    {
+      "item": "it.outsiders-2",
+      "count": 2
+    }
+  ],
+  "sources": {
+    "cards": "BGG card-spread; BGG ludopedia-51114; S",
+    "size": "R p2; R p6"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Police Station"
+}

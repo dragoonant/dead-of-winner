@@ -1,0 +1,32 @@
+{
+  "kind": "secretObjective",
+  "id": "obj.exiled.south",
+  "name": "South",
+  "type": "exiled",
+  "requiresMain": true,
+  "complete": {
+    "test": "handHasSymbol",
+    "subject": "holder",
+    "symbol": "fuel",
+    "value": 4
+  },
+  "betrayer": {
+    "firstCondition": {
+      "code": "rule.foreign-survivors.woundedAtLeast",
+      "params": {
+        "n": 4
+      }
+    }
+  },
+  "text": {
+    "goal": "The colony pulls through and you hold at least four fuel cards.",
+    "betrayer": "Your first demand becomes at least four survivors you do not control carrying a wound each."
+  },
+  "sources": {
+    "complete": "BGG ludopedia-51112",
+    "requiresMain": "BGG ludopedia-51112",
+    "betrayer.firstCondition": "BGG ludopedia-51112"
+  },
+  "status": "draft",
+  "notes": "src: objectives-sources.md D row 5"
+}

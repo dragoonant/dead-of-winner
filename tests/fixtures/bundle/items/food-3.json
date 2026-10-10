@@ -1,0 +1,27 @@
+{
+  "kind": "item",
+  "id": "it.food-3",
+  "name": "Food 3",
+  "symbol": "food",
+  "class": "wastePile",
+  "food": 3,
+  "play": {
+    "effect": [
+      {
+        "op": "food",
+        "value": 3
+      }
+    ]
+  },
+  "text": {
+    "ability": "Add 3 food tokens to the supply."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114",
+    "food": "B G.2; BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Food 3"
+}

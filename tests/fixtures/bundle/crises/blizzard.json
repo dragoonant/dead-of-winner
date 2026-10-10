@@ -1,0 +1,42 @@
+{
+  "kind": "crisis",
+  "id": "cr.blizzard",
+  "name": "Blizzard",
+  "prevent": [
+    "fuel"
+  ],
+  "fail": [
+    {
+      "op": "forbid",
+      "what": "move",
+      "scope": {
+        "who": "nonExiledSeats"
+      },
+      "duration": "nextRound"
+    },
+    {
+      "op": "morale",
+      "value": -1
+    }
+  ],
+  "bonus": {
+    "extraCards": 2,
+    "effect": [
+      {
+        "op": "morale",
+        "value": 1
+      }
+    ]
+  },
+  "text": {
+    "fail": "Nobody who still belongs to the colony may move until the end of next round, and morale drops by 1.",
+    "bonus": "Two cards beyond the need lift morale by 1."
+  },
+  "sources": {
+    "prevent": "R p4; BGG ludopedia-51114",
+    "fail": "R p4",
+    "bonus": "R p12"
+  },
+  "status": "draft",
+  "notes": "src: crises-sources.md row 9 Blizzard (official name, C6)"
+}

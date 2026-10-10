@@ -1,0 +1,35 @@
+{
+  "kind": "secretObjective",
+  "id": "obj.betrayal.cult-leader",
+  "name": "Cult Leader",
+  "type": "betrayal",
+  "code": "S17",
+  "requiresMain": false,
+  "ai": {
+    "lever": "custom"
+  },
+  "complete": {
+    "all": [
+      {
+        "test": "moraleAtMost",
+        "subject": "colony",
+        "value": 0
+      },
+      {
+        "code": "rule.group-size.mostSurvivors",
+        "params": {
+          "margin": 2
+        }
+      }
+    ]
+  },
+  "text": {
+    "goal": "Let the colony collapse (morale zero) while you control at least two more survivors than anyone else."
+  },
+  "sources": {
+    "complete": "PHOTO es-secret-objectives; BGG etwest-names; R p18",
+    "requiresMain": "R p3"
+  },
+  "status": "draft",
+  "notes": "src: objectives-sources.md C S17"
+}

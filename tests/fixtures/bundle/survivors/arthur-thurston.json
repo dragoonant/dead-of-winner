@@ -1,0 +1,42 @@
+{
+  "kind": "survivor",
+  "id": "sv.arthur-thurston",
+  "name": "Arthur Thurston",
+  "occupation": "Principal",
+  "stats": {
+    "influence": 62,
+    "attack": 4,
+    "search": 2
+  },
+  "ability": {
+    "id": "keenEye",
+    "kind": "triggered",
+    "trigger": "search.drawn",
+    "location": "loc.school",
+    "limit": "oncePerRound",
+    "optional": true,
+    "effect": [
+      {
+        "op": "extraSearchLook",
+        "count": 1
+      },
+      {
+        "op": "extraSearchKeep",
+        "count": 1
+      }
+    ]
+  },
+  "crossroads": "xr.arthur-thurston",
+  "coop": true,
+  "text": {
+    "ability": "Once a round, a search at the School lets Arthur look at one more card and keep one more card."
+  },
+  "sources": {
+    "stats.influence": "W; C",
+    "stats.attack": "W",
+    "stats.search": "W",
+    "ability": "W; T"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 4"
+}

@@ -1,0 +1,33 @@
+{
+  "kind": "item",
+  "id": "it.barricades-123",
+  "name": "1,2,3 Barricades",
+  "symbol": "education",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "quickWall",
+      "kind": "action",
+      "location": "colony",
+      "limit": "oncePerRound",
+      "countsAs": "barricade",
+      "effect": [
+        {
+          "op": "addBarricade",
+          "count": 1,
+          "location": "colony"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round on its owner's turn, if the bearer is at the colony, put up one barricade without spending a die."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School / 1,2,3 Barricades"
+}

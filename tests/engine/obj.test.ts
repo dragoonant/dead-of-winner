@@ -1,0 +1,90 @@
+import { describe, expect, it } from 'vitest'
+import { beginColonyPhase } from '../../src/engine/colony-phase'
+import { objectiveNeed } from '../../src/engine/effects'
+import { checkMainObjective, endGame, evaluateWinners, mainObjectiveStatus, objectiveProgressFromView, ownObjectiveProgress, seatStatus } from '../../src/engine/objectives'
+import { view } from '../../src/engine/view'
+import { makeColony, of, types } from './col-fixture'
+
+const FOOD3 = ['it.food', 'it.food', 'it.food']
+
+describe('objectives', () => {
+  it('OBJ-001 We Need More Samples at 4 seats needs 12 samples; complete only at 12', () => {
+    const base = makeColony({ seats: ['s1', 's2', 's3', 's4'] })
+    expect(objectiveNeed(base, 'samples')).toBe(12)
+    const at11 = { ...base, objective: { ...base.objective, counters: { samples: 11 } } }
+    expect(mainObjectiveStatus(at11)).toMatchObject({ complete: false, parts: [{ label: 'samples', have: 11, need: 12 }] })
+    const at12 = { ...base, objective: { ...base.objective, counters: { samples: 12 } } }
+    const r = checkMainObjective(at12)
+    expect(r.complete).toBe(true)
+    expect(r.events.map((e) => e.type)).toEqual(['ObjectiveChecked', 'ObjectiveComplete'])
+    expect(r.events[1]).toMatchObject({ seat: null })
+  })
+
+  it('OBJ-002 samples reaching the need during a turn end nothing; the game ends at colony step 5', () => {
+    const s = makeColony({ objective: { counters: { samples: 9 } } })
+    expect(s.phase).toBe('playerTurns')
+    expect(s.objective.complete).toBe(false)
+    const r = beginColonyPhase(s)
+    const t = types(r.events)
+    expect(t.indexOf('ObjectiveChecked')).toBeGreaterThan(t.indexOf('CrisisResolved'))
+    expect(of(r.events, 'GameEnded')[0]).toMatchObject({ reason: 'objectiveComplete' })
+    expect(r.state.objective.complete).toBe(true)
+  })
+
+  it('OBJ-003 morale 0 with the main goal met but unchecked: objectiveComplete false, no ObjectiveChecked, the requiresMain secret loses', () => {
+    const s = makeColony({ morale: 0, objective: { counters: { samples: 9 } }, secret: { s1: 'obj.secret.hunger' }, hands: { s1: FOOD3 } })
+    const r = endGame(s, 'moraleZero')
+    expect(of(r.events, 'GameEnded')[0]).toMatchObject({ reason: 'moraleZero', objectiveComplete: false, winners: [] })
+    expect(types(r.events)).not.toContain('ObjectiveChecked')
+    expect(r.state.seats['s1']!.outcome).toBe('lost')
+    expect(r.pending.kind).toBe('gameOver')
+  })
+
+  it('OBJ-004 a requiresMain secret objective needs the main objective too: the private part alone loses, both win', () => {
+    const base = makeColony({ secret: { s1: 'obj.secret.hunger', s2: 'obj.secret.collector' }, hands: { s1: FOOD3, s2: ['it.fuel'] } })
+    expect(seatStatus(base, 's1').complete).toBe(false)
+    expect(evaluateWinners(base)).toEqual([])
+    const done = { ...base, objective: { ...base.objective, complete: true } }
+    expect(seatStatus(done, 's1')).toMatchObject({ complete: true })
+    expect(evaluateWinners(done)).toEqual(['s1'])
+  })
+
+  it('OBJ-005 a betrayal objective met at morale zero wins while the standard seats lose', () => {
+    const s = makeColony({ morale: 0, secret: { s1: 'obj.betrayal.trigger', s2: 'obj.secret.hunger', s3: 'obj.secret.collector' }, hands: { s1: ['it.weapon', 'it.weapon'], s2: FOOD3, s3: FOOD3 } })
+    const r = endGame(s, 'moraleZero')
+    expect(of(r.events, 'GameEnded')[0]).toMatchObject({ winners: ['s1'] })
+    expect(r.state.seats['s1']!.outcome).toBe('won')
+    expect(r.state.seats['s2']!.outcome).toBe('lost')
+    expect(r.state.seats['s3']!.outcome).toBe('lost')
+  })
+
+  it('OBJ-005 an exiled betrayer keeps the betrayal card with its first condition swapped; a standard exile gets the exiled card alone', () => {
+    // exiled betrayer: condition 1 (morale 0) becomes "4 cards in hand"; the weapon part stays; no main objective needed
+    const b = makeColony({ exiled: ['s1'], secret: { s1: 'obj.betrayal.trigger' }, exiledObj: { s1: 'obj.exiled.remorse' }, hands: { s1: ['it.weapon', 'it.weapon', 'it.fuel', 'it.fuel'] }, morale: 5 })
+    expect(seatStatus(b, 's1')).toMatchObject({ complete: true })
+    const short = { ...b, seats: { ...b.seats, s1: { ...b.seats['s1']!, hand: b.seats['s1']!.hand.slice(0, 2) } } }
+    expect(seatStatus(short, 's1').complete).toBe(false)
+    // exiled standard seat: only the exiled card counts (2 medicine + main complete), the hunger card is gone
+    const e = makeColony({ exiled: ['s2'], secret: { s2: 'obj.secret.hunger' }, exiledObj: { s2: 'obj.exiled.remorse' }, hands: { s2: ['it.med', 'it.med'] }, objective: { complete: true } })
+    expect(seatStatus(e, 's2')).toMatchObject({ complete: true, goal: { kind: 'exiled', objectiveId: 'obj.exiled.remorse' } })
+    expect(seatStatus({ ...e, objective: { ...e.objective, complete: false } }, 's2').complete).toBe(false)
+  })
+
+  it("OBJ-006 progress for s1 shows s1's secret objective and the main one; another seat's objective id cannot be asked for", () => {
+    const s = makeColony({ secret: { s1: 'obj.secret.hunger', s2: 'obj.secret.collector' }, hands: { s1: ['it.food', 'it.fuel'], s2: FOOD3 } })
+    const v = view(s, 's1')
+    const mine = objectiveProgressFromView(v, 'obj.secret.hunger')
+    expect(mine).toMatchObject({ objectiveId: 'obj.secret.hunger', kind: 'secret', complete: false, requiresMain: true })
+    expect(mine.parts).toEqual([{ label: 'Main objective', have: 0, need: 1 }, { label: 'hand has symbol food', have: 1, need: 3 }])
+    expect(objectiveProgressFromView(v).kind).toBe('main')
+    expect(ownObjectiveProgress(v).own?.objectiveId).toBe('obj.secret.hunger')
+    expect(() => objectiveProgressFromView(v, 'obj.secret.collector')).toThrow()
+  })
+
+  it('OBJ-008 a hand-count condition counts every item card, an Outsider included; a symbol condition counts only the symbol', () => {
+    const s = makeColony({ secret: { s1: 'obj.secret.collector', s2: 'obj.secret.hunger' }, hands: { s1: ['it.fuel', 'it.food', 'it.outsiders'], s2: ['it.food', 'it.food', 'it.outsiders'] }, objective: { complete: true } })
+    expect(seatStatus(s, 's1').complete).toBe(true)
+    expect(seatStatus(s, 's2').complete).toBe(false)
+    expect(seatStatus(s, 's2').parts[1]).toMatchObject({ have: 2, need: 3 })
+  })
+})

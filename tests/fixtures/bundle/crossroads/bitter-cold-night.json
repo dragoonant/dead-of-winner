@@ -1,0 +1,69 @@
+{
+  "kind": "crossroads",
+  "id": "xr.bitter-cold-night",
+  "name": "Bitter Cold Night",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "test": "exposureReason",
+          "subject": "survivor",
+          "value": "move"
+        },
+        {
+          "test": "exposureFace",
+          "subject": "survivor",
+          "face": "frostbite"
+        },
+        {
+          "test": "survivorsAtLeast",
+          "subject": "location",
+          "value": 2
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "letIn",
+      "effect": [
+        {
+          "op": "wound",
+          "kind": "frostbite",
+          "count": 1,
+          "scope": {
+            "who": "atLocation"
+          }
+        }
+      ]
+    },
+    {
+      "id": "keepOut",
+      "effect": [
+        {
+          "op": "killSurvivor",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Your moving survivor took frostbite on the exposure roll and arrives where others are sheltering.",
+    "vignette": "You reach the only lit shelter for a mile, half frozen, and hammer on the door. If they let you in, the wind comes with you, and the fire is all that is keeping them alive.",
+    "options": {
+      "letIn": "They open the door. The wind gusts in and every survivor at the location takes one frostbite wound.",
+      "keepOut": "They keep it shut. The survivor who was moving dies in the snow."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #45. "
+}

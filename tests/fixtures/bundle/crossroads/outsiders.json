@@ -1,0 +1,66 @@
+{
+  "kind": "crossroads",
+  "id": "xr.outsiders",
+  "name": "Outsiders",
+  "mature": false,
+  "trigger": {
+    "point": "action.barricade",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "emptySurvivorSpace",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "welcome",
+      "effect": [
+        {
+          "op": "addSurvivor",
+          "count": 1,
+          "scope": {
+            "who": "allSeats"
+          }
+        },
+        {
+          "op": "addHelpless",
+          "count": 1,
+          "location": "colony"
+        }
+      ]
+    },
+    {
+      "id": "turnAway",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "You have a survivor at the colony and there is room for more.",
+    "vignette": "A truck rattles up to the gate loaded with people and not much else. They will work for shelter, they say, at least for the winter. After that they will be on their own.",
+    "options": {
+      "welcome": "Take them in. Every player adds a survivor to their group and a helpless survivor joins the colony.",
+      "turnAway": "Send them on their way. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #48. Printed card adds one helpless per player; encoded as one token (engine may add one per seat)."
+}

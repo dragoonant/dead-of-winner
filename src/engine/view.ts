@@ -187,6 +187,9 @@ export function view(state: GameState, seatId: SeatId): SeatView {
   }
   const cards: Record<CardId, CardInstance> = {}
   for (const c of visible) { const inst = state.cards[c]; if (inst) cards[c] = inst }
+  // item uses are keyed by card instance: only the instances the viewer may see (an item back in another hand after its bearer died would name itself)
+  const cardUses: GameState['cardUses'] = {}
+  for (const [c, uses] of Object.entries(state.cardUses)) if (visible.has(c)) cardUses[c] = uses
   // effects: public ones plus the viewer's own private (secret/exiled objective) ones
   const effects = ended ? state.effects : state.effects.filter((e) => !isPrivateEffect(e) || e.ownerSeat === seatId)
   // the pending decision: full for its addressee (or 'all'); a public stub for everyone else
@@ -212,7 +215,7 @@ export function view(state: GameState, seatId: SeatId): SeatView {
       searchDrawn: state.search && state.search.seat === seatId ? state.search.drawn : [],
     },
     survivors: state.survivors, survivorDeckCount: state.survivorDeck.length, locations, locationOrder: state.locationOrder, cards,
-    waste: state.waste, removed: state.removed, removedHiddenCount: state.removedHidden.length, cardUses: state.cardUses,
+    waste: state.waste, removed: state.removed, removedHiddenCount: state.removedHidden.length, cardUses,
     morale: state.morale, food: state.food, starvation: state.starvation,
     crisisDeckCount: state.crisisDeck.length,
     crisis: {
@@ -230,6 +233,7 @@ export function view(state: GameState, seatId: SeatId): SeatView {
 }
 
 // ---------- event redaction (what a seat's feed may show; the engine's events stay complete) ----------
+const PRIVATE_AUTO_KINDS: ReadonlySet<string> = new Set(['searchKeepWhich', 'searchKeepOrNoise', 'effectChoice', 'itemTarget', 'requestResponse', 'chooseSurvivors'])
 /** null = the seat must not see the event at all; otherwise the event with hidden fields blanked. */
 export function redactEvent(ev: GameEvent, seatId: SeatId): GameEvent | null {
   switch (ev.type) {
@@ -250,6 +254,8 @@ export function redactEvent(ev: GameEvent, seatId: SeatId): GameEvent | null {
     case 'ObjectiveProgress': return ev.seat === null || ev.seat === seatId ? ev : null
     case 'ObjectiveComplete': return ev.seat === null || ev.seat === seatId ? ev : null
     case 'ActionRejected': return ev.action.seat === seatId || ev.action.seat === 'all' ? ev : null
+    // VIEW-018: an auto-kept card or a one-option private choice names a card another seat must not see; `newLeader` and the rest stay
+    case 'DecisionAutoResolved': return ev.seat !== seatId && PRIVATE_AUTO_KINDS.has(ev.kind) ? { ...ev, optionId: '' } : ev
     default: return ev
   }
 }

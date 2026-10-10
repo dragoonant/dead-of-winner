@@ -1,0 +1,31 @@
+{
+  "kind": "item",
+  "id": "it.reading-lamp",
+  "name": "Reading Lamp",
+  "symbol": "tool",
+  "class": "wastePile",
+  "play": {
+    "effect": [
+      {
+        "op": "killZombies",
+        "count": 1,
+        "location": "here",
+        "scope": {
+          "who": "seatSurvivors",
+          "count": 1,
+          "chooser": "owner"
+        }
+      }
+    ]
+  },
+  "text": {
+    "ability": "Swing it at a zombie: one of your survivors attacks without spending a die."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Library / Reading Lamp"
+}

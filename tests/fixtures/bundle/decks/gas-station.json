@@ -1,0 +1,46 @@
+{
+  "kind": "deck",
+  "id": "deck.gas-station",
+  "name": "Gas Station items",
+  "size": 20,
+  "cards": [
+    {
+      "item": "it.fuel",
+      "count": 6
+    },
+    {
+      "item": "it.fn-slp-shotgun",
+      "count": 1
+    },
+    {
+      "item": "it.switchblade",
+      "count": 2
+    },
+    {
+      "item": "it.lighter",
+      "count": 2
+    },
+    {
+      "item": "it.food-1",
+      "count": 3
+    },
+    {
+      "item": "it.medicine",
+      "count": 3
+    },
+    {
+      "item": "it.outsiders-1",
+      "count": 1
+    },
+    {
+      "item": "it.outsiders-2",
+      "count": 2
+    }
+  ],
+  "sources": {
+    "cards": "BGG card-spread; BGG ludopedia-51114; S",
+    "size": "R p2; R p6"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Gas Station"
+}

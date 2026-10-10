@@ -1,0 +1,30 @@
+{
+  "kind": "location",
+  "id": "loc.gas-station",
+  "name": "Gas Station",
+  "number": 6,
+  "spaces": {
+    "survivors": 2,
+    "entrances": 1,
+    "entranceSpaces": 3,
+    "noise": 4
+  },
+  "symbolOrder": [
+    "fuel",
+    "weapon",
+    "food",
+    "medicine",
+    "survivor"
+  ],
+  "deck": "deck.gas-station",
+  "sources": {
+    "number": "PHOTO tln gas-station; W",
+    "spaces.noise": "R p5",
+    "spaces.entrances": "R p5",
+    "spaces.survivors": "PHOTO tln gas-station",
+    "spaces.entranceSpaces": "PHOTO tln gas-station",
+    "symbolOrder": "PHOTO tln gas-station; BGG card-spread; S"
+  },
+  "status": "draft",
+  "notes": "src: locations-sources.md Location cards row 06 (ruling L1)"
+}

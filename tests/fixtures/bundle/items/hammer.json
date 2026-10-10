@@ -1,0 +1,35 @@
+{
+  "kind": "item",
+  "id": "it.hammer",
+  "name": "Hammer",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "doubleWall",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "countsAs": "barricade",
+      "cost": {
+        "die": 1
+      },
+      "effect": [
+        {
+          "op": "addBarricade",
+          "count": 2,
+          "location": "here"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the bearer's barricade action puts up two barricades rather than one."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Grocery Store / Hammer"
+}

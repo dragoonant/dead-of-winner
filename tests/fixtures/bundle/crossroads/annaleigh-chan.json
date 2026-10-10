@@ -1,0 +1,66 @@
+{
+  "kind": "crossroads",
+  "id": "xr.annaleigh-chan",
+  "name": "Annaleigh Chan",
+  "survivor": "sv.annaleigh-chan",
+  "mature": false,
+  "coop": false,
+  "trigger": {
+    "point": "action.ability",
+    "when": {
+      "all": [
+        {
+          "test": "survivorIs",
+          "subject": "survivor",
+          "value": "sv.annaleigh-chan"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "openGates",
+      "effect": [
+        {
+          "op": "addZombies",
+          "value": 1,
+          "scope": {
+            "who": "nonColonyLocations"
+          }
+        }
+      ]
+    },
+    {
+      "id": "giveUp",
+      "effect": [
+        {
+          "op": "killSurvivor",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Annaleigh uses an ability.",
+    "vignette": "Annaleigh stands at the gate of an abandoned prison with the keys in her hand. She says she knows someone who is inside, whatever he is now, and that she cannot leave him there.",
+    "options": {
+      "openGates": "Open the cells. A zombie spills out at every location away from the colony.",
+      "giveUp": "She puts down the keys and the gun and does not pick either up again. Annaleigh dies."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #65. "
+}

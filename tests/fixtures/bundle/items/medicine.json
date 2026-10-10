@@ -1,0 +1,34 @@
+{
+  "kind": "item",
+  "id": "it.medicine",
+  "name": "Medicine",
+  "symbol": "medicine",
+  "class": "wastePile",
+  "play": {
+    "effect": [
+      {
+        "op": "heal",
+        "count": 1,
+        "scope": {
+          "who": "chosen",
+          "chooser": "owner",
+          "filter": {
+            "test": "woundsAtLeast",
+            "subject": "survivor",
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  "text": {
+    "ability": "Take one wound token off a survivor who has one. Play it after the wound lands; it cannot rescue a survivor from a fatal wound."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "R p12; BGG card-spread; BGG ludopedia-51114",
+    "play": "R p12; BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Medicine (I4)"
+}

@@ -1,0 +1,33 @@
+{
+  "kind": "item",
+  "id": "it.snow-shoes",
+  "name": "Snow Shoes",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "grip",
+      "kind": "passive",
+      "effect": [
+        {
+          "op": "grant",
+          "what": "frostbiteIsWound",
+          "scope": {
+            "who": "self"
+          },
+          "duration": "game"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "A frostbite wound the bearer would take is an ordinary wound instead."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Grocery Store / Snow Shoes"
+}

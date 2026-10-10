@@ -1,0 +1,76 @@
+{
+  "kind": "crossroads",
+  "id": "xr.maude",
+  "name": "Maude",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "actionWas",
+          "value": "search"
+        },
+        {
+          "test": "locationIs",
+          "subject": "location",
+          "location": "loc.grocery-store"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "haul",
+      "effect": [
+        {
+          "op": "moveSurvivor",
+          "value": "noExposure",
+          "location": "colony",
+          "scope": {
+            "who": "survivor"
+          }
+        },
+        {
+          "op": "food",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "stash",
+      "effect": [
+        {
+          "op": "draw",
+          "value": "loc.grocery-store",
+          "symbol": "food",
+          "count": 2,
+          "scope": {
+            "who": "seat"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor of yours searches the Grocery Store.",
+    "vignette": "Behind the loading dock you find a pallet of canned goods nobody has touched, and a faded photo of someone named Maude pinned above it. Something about the place makes you want to leave quickly and quietly.",
+    "options": {
+      "haul": "Run the haul home at once: the searching survivor goes to the colony without a move roll and three food tokens are added.",
+      "stash": "Pack two food cards for later and stay out a while longer."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #6. Simplified: the printed card also bars playing food that turn."
+}

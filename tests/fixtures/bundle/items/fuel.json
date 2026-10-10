@@ -1,0 +1,38 @@
+{
+  "kind": "item",
+  "id": "it.fuel",
+  "name": "Fuel",
+  "symbol": "fuel",
+  "class": "wastePile",
+  "play": {
+    "countsAs": "move",
+    "effect": [
+      {
+        "op": "moveSurvivor",
+        "value": "noExposure",
+        "location": "chosen",
+        "scope": {
+          "who": "seatSurvivors",
+          "count": 1,
+          "chooser": "owner",
+          "filter": {
+            "not": {
+              "test": "movedThisTurn",
+              "subject": "survivor"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "text": {
+    "ability": "Burn it on the road: move one of your survivors without rolling for exposure."
+  },
+  "sources": {
+    "symbol": "R p10; W",
+    "class": "R p10",
+    "play": "R p10"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Fuel"
+}

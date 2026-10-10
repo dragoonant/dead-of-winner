@@ -1,0 +1,70 @@
+{
+  "kind": "crossroads",
+  "id": "xr.carla-thompson",
+  "name": "Carla Thompson",
+  "survivor": "sv.carla-thompson",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "survivorIs",
+          "subject": "survivor",
+          "value": "sv.carla-thompson"
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "goIn",
+      "effect": [
+        {
+          "op": "exposure",
+          "count": 2,
+          "value": "card",
+          "scope": {
+            "who": "survivor"
+          },
+          "then": [
+            {
+              "op": "morale",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stayOut",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Carla searches.",
+    "vignette": "Carla remembers a house full of family photographs that the colony would give anything to see again. She also remembers that the house had a tenant who never left.",
+    "options": {
+      "goIn": "Go in after the photos. Carla rolls for exposure twice; if she lives, morale rises by 1.",
+      "stayOut": "Too risky. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #75. Reward should apply only if Carla survives the rolls."
+}

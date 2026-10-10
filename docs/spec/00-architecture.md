@@ -351,6 +351,9 @@ E_SELF_TARGET E_NOT_LEADER_CANDIDATE`. New codes are additive.
 | 2026-10-10 | hooks.ts | `OP_HOOK_POINTS.vote` lists every `action.*` window (`ACTION_WINDOWS`) | review: a Crossroads vote after `playCard`/`barricade` drew a validator warning |
 | 2026-10-10 | events.ts | `DeckShuffled.location: LocationId \| 'survivor' \| 'crisis' \| 'exiledObjective'` | review: survivor/crisis deck reshuffles had no event (SETUP-010, Talia Jones) |
 | 2026-10-10 | index.ts | `query.exposureOdds(view, survivorId, reason?: ExposureReason)` | review: odds for `card`/`ability`/`biteChain` rolls (Hunted, Daniel Smith) |
+| 2026-10-10 | hooks.ts | `CodeObjectiveHook(state, seat, params?)`: optional third argument carrying the `{code, params}` node's params | M1: one `rule.*` hook serves every card that names it with its own number (margin, n) |
+| 2026-10-10 | view.ts | `view.cardUses` lists only card instances in zones the viewer may see; `redactEvent(DecisionAutoResolved)` blanks `optionId` for another seat when the kind is `searchKeepWhich`, `searchKeepOrNoise`, `effectChoice`, `itemTarget`, `requestResponse` or `chooseSurvivors` | M1 leak sim: a used item that returned to a hand named itself through `cardUses`; VIEW-018 |
+| 2026-10-10 | index.ts | bodies wired (M1); `registerBundle` / `bundleFor` live in `src/engine/bundles.ts` and are re-exported unchanged, so the rules modules read records without importing index.ts | M1: no runtime import cycle through the public module |
 
 Rulings taken while writing the contracts (the orchestrator appends them to `docs/needs-rules-check.md`):
 - RULING: exposure die face counts | `EXPOSURE_FACES` = 6 blank, 3 wound, 2 frostbite, 1 bite; `exposureFaceOf` isolates a correction | Fan-source (R p11 names the faces only)

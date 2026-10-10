@@ -1,0 +1,30 @@
+{
+  "kind": "item",
+  "id": "it.megaphone",
+  "name": "Megaphone",
+  "symbol": "tool",
+  "class": "wastePile",
+  "play": {
+    "effect": [
+      {
+        "op": "moveZombies",
+        "count": 4,
+        "location": "chosen",
+        "scope": {
+          "who": "chosen",
+          "chooser": "owner"
+        }
+      }
+    ]
+  },
+  "text": {
+    "ability": "Shout down a street: four zombies from one location shuffle into empty spaces at a location where you have a survivor."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114; F 5.1.1"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School / Megaphone (I3, I6, I9)"
+}

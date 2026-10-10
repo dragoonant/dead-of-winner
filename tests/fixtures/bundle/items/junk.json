@@ -1,0 +1,29 @@
+{
+  "kind": "item",
+  "id": "it.junk",
+  "name": "Junk",
+  "symbol": "tool",
+  "class": "wastePile",
+  "play": {
+    "effect": [
+      {
+        "op": "modDie",
+        "value": "reroll",
+        "count": 1,
+        "scope": {
+          "who": "seat"
+        }
+      }
+    ]
+  },
+  "text": {
+    "ability": "Throw one of your unused action dice again and keep the new result."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Junk"
+}

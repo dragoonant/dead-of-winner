@@ -1,0 +1,36 @@
+{
+  "kind": "survivor",
+  "id": "sv.ashley-ross",
+  "name": "Ashley Ross",
+  "occupation": "Construction Worker",
+  "stats": {
+    "influence": 52,
+    "attack": 2,
+    "search": 5
+  },
+  "ability": {
+    "id": "quickBuild",
+    "kind": "action",
+    "limit": "oncePerRound",
+    "countsAs": "barricade",
+    "effect": [
+      {
+        "op": "addBarricade",
+        "count": 1,
+        "location": "here"
+      }
+    ]
+  },
+  "coop": true,
+  "text": {
+    "ability": "Once a round Ashley puts up a barricade without spending a die."
+  },
+  "sources": {
+    "stats.influence": "R p7; W; C",
+    "stats.attack": "R p7; W; T",
+    "stats.search": "R* p7; W",
+    "ability": "R p7; W; T"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 5"
+}

@@ -1,0 +1,107 @@
+{
+  "kind": "mainObjective",
+  "id": "obj.main.we-need-more-samples",
+  "name": "We Need More Samples",
+  "code": "M10",
+  "time": "short",
+  "sides": {
+    "normal": {
+      "morale": 6,
+      "rounds": 6,
+      "setup": [
+        {
+          "op": "addZombies",
+          "value": 1,
+          "scope": {
+            "who": "nonColonyLocations"
+          }
+        }
+      ],
+      "counters": {
+        "samples": {
+          "need": "perSeat",
+          "perSeatMultiplier": 3
+        }
+      },
+      "complete": {
+        "test": "objectiveCounterAtLeast",
+        "value": "samples"
+      },
+      "triggers": [
+        {
+          "id": "sample",
+          "trigger": "zombie.killed",
+          "effect": [
+            {
+              "op": "objectiveCounter",
+              "value": "samples",
+              "count": 1,
+              "onRoll": {
+                "atLeast": 4,
+                "then": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "hardcore": {
+      "morale": 6,
+      "rounds": 5,
+      "setup": [
+        {
+          "op": "addZombies",
+          "value": 3,
+          "scope": {
+            "who": "nonColonyLocations"
+          }
+        }
+      ],
+      "counters": {
+        "samples": {
+          "need": "perSeat",
+          "perSeatMultiplier": 3
+        }
+      },
+      "complete": {
+        "test": "objectiveCounterAtLeast",
+        "value": "samples"
+      },
+      "triggers": [
+        {
+          "id": "sample",
+          "trigger": "zombie.killed",
+          "effect": [
+            {
+              "op": "objectiveCounter",
+              "value": "samples",
+              "count": 1,
+              "onRoll": {
+                "atLeast": 4,
+                "then": []
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "text": {
+    "normal": {
+      "setup": "Morale 6, six rounds, one zombie at every location outside the colony.",
+      "victory": "Whenever a zombie dies, roll a die; a 4 or better bags a sample. Collect three samples for every player who started the game."
+    },
+    "hardcore": {
+      "setup": "Morale 6, five rounds, three zombies at every location outside the colony.",
+      "victory": "The same sampling roll and the same three samples per starting player."
+    }
+  },
+  "sources": {
+    "sides.normal": "R p6; R p15; BGG 2054328",
+    "sides.hardcore": "R p15; BGG 2054328",
+    "code": "R p15",
+    "time": "R p15"
+  },
+  "status": "draft",
+  "notes": "src: objectives-sources.md A, M10 (O7: hardcore keeps 3 per player)"
+}

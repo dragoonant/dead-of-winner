@@ -1,0 +1,59 @@
+{
+  "kind": "crossroads",
+  "id": "xr.heads-up",
+  "name": "Heads Up",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "actionWas",
+          "value": "search"
+        },
+        {
+          "test": "locationIs",
+          "subject": "location",
+          "location": "loc.police-station"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "fridge",
+      "effect": [
+        {
+          "op": "addNoise",
+          "count": 4,
+          "location": "loc.police-station"
+        }
+      ]
+    },
+    {
+      "id": "vat",
+      "effect": [
+        {
+          "op": "addNoise",
+          "count": 4,
+          "location": "loc.police-station"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A survivor of yours searches the Police Station.",
+    "vignette": "The basement morgue has two likely hiding places left to check and only nerve enough for one. Whichever door you open, something inside is awake and not at all pleased to see you.",
+    "options": {
+      "fridge": "Open the cold locker. It screams and every noise space at the Police Station fills.",
+      "vat": "Lift the lid of the vat. It screams and every noise space at the Police Station fills."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1",
+    "options": "BGG crossroads-v1.1",
+    "mature": "BGG crossroads-v1.1 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1 card #59. Both options have the same effect on the printed card."
+}

@@ -1,0 +1,40 @@
+{
+  "kind": "secretObjective",
+  "id": "obj.betrayal.serial-killers",
+  "name": "Serial Killers",
+  "type": "betrayal",
+  "code": "S18",
+  "requiresMain": false,
+  "ai": {
+    "lever": "killSurvivors"
+  },
+  "complete": {
+    "all": [
+      {
+        "test": "moraleAtMost",
+        "subject": "colony",
+        "value": 0
+      },
+      {
+        "code": "rule.survivors-removed.atLeast",
+        "params": {
+          "n": 5
+        }
+      },
+      {
+        "test": "survivorsAtLeast",
+        "subject": "holder",
+        "value": 2
+      }
+    ]
+  },
+  "text": {
+    "goal": "Let the colony collapse (morale zero) with at least five survivors gone from the game and at least two of your own still standing."
+  },
+  "sources": {
+    "complete": "PHOTO es-secret-objectives; BGG etwest-names; R p19",
+    "requiresMain": "R p3"
+  },
+  "status": "draft",
+  "notes": "src: objectives-sources.md C S18"
+}

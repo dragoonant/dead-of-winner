@@ -249,10 +249,13 @@ describe('view', () => {
 })
 
 describe('api', () => {
-  it('CONTRACT-012 the unbuilt bodies throw NotImplementedError (M0) and the windows list is frozen', () => {
+  it('CONTRACT-012 a bad setup is a rejection, never a throw (M1); NotImplementedError stays exported; the windows list is frozen', () => {
     const bundle: DataBundle = { version: 'test', byId: {} }
-    expect(() => createGame({ seats: [{ id: 's1', kind: 'human' }], mainObjective: 'random' }, 'seed', bundle)).toThrow(NotImplementedError)
-    expect(() => query.crisis(view(fixture(), 's1'))).toThrow(NotImplementedError)
+    const r = createGame({ seats: [{ id: 's1', kind: 'human' }], mainObjective: 'random' }, 'seed', bundle)
+    expect(r.rejection?.code).toBe('E_BAD_SETUP')
+    expect(r.pending.kind).toBe('gameOver')
+    expect(new NotImplementedError('x')).toBeInstanceOf(Error)
+    expect(query.crisis(view(fixture(), 's1'))).toMatchObject({ cardId: 'crisis.c', cardsIn: 2, cardsBySeat: { s1: 1, s2: 1, s3: 0 }, myPoints: -1, minTotal: -2, maxTotal: 0 })
     expect(new Set(WINDOW_IDS).size).toBe(WINDOW_IDS.length)
     expect(WINDOW_IDS).toContain('action.move')
     expect(WINDOW_IDS).toContain('exposure.rolled')

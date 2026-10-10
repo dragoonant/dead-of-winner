@@ -177,3 +177,25 @@ RULING: exiled objective shape | two branches per record: requiresMain + complet
 RULING: reveal of a non-betrayer's original objective on exile | public from that moment; an additive SecretObjectiveRevealed event recommended for M1 (00 section 16); SeatExiled stays private for the drawn id | Unsourced shape, Confirmed mechanics (BO: printed on the exiled cards)
 RULING: Shelter exiled card 'at least 3 locations' | the colony counts as one of them | Unsourced (P single source, card silent)
 RULING: 'main objective complete' as a condition node | {code:'rule.objective.mainComplete'} (Forgiveness betrayer branch) | Unsourced (shape only)
+
+## M1 engine, random bot, headless sim (2026-10-10)
+
+RULING: sim table size | the fixture bundle's 12 survivors deal 3 seats (4 offered each), so `npm run sim` defaults to the largest table the bundle can seat, up to 4, unless `--seats` is given | Confirmed (R p7: four survivors dealt per player)
+RULING: two-seat golden scripts | GOLD-001..003 are built on the twoPlayer variant because the engine refuses a plain two-seat table (R p15); no printed value of the scripts depends on it (the sample need is per seat on either side) | Confirmed (R p15)
+RULING: returned search cards | each card put under the deck emits `CardDiscarded {to:'deck', reason:'searchReturned', revealed:false}`; the id stays private to the searcher | Confirmed mechanics (R p10), Unsourced shape
+RULING: item use counters in views | `view.cardUses` lists only card instances the viewer may see: an item whose bearer died at the colony returns to a hand and must not name itself | Confirmed mechanics (R10.3), Unsourced shape
+RULING: DecisionAutoResolved redaction | `optionId` is blanked for other seats when the auto-resolved kind can name a private card (searchKeepWhich, searchKeepOrNoise, effectChoice, itemTarget, requestResponse, chooseSurvivors); newLeader and the rest stay | Unsourced shape (VIEW-018 generalised)
+RULING: legalActions and abilities | a listed `useAbility` has passed the effect layer's own checks (`when`, food and card costs), so an offered ability is never refused on use (00 §5 feasibility) | Unsourced shape
+RULING: objective code hooks | `{code, params}` nodes pass their params to the hook (`CodeObjectiveHook` third argument, additive); mostSurvivors reads `margin`, the atLeast hooks `n`, Shelter `locations`/`barricades`, Barter `symbol` | Unsourced shape
+RULING: Masochist wound count | frostbite tokens count as wounds for "at least two wounds" | Confirmed (R p11: a frostbite token is a wound), Unsourced card wording
+RULING: Germ-a-phobe / The Chosen with no survivors | a seat with no survivors does not satisfy "none of your survivors is wounded" | Unsourced
+RULING: Shelter "at least three locations" | the colony counts as one of them (M0b ruling kept) | Unsourced
+RULING: peek abilities in the event feed | Annaleigh Chan and Talia Jones reveal hidden ids to their owner through a private `EffectApplied` (ownerSeat); the leak sim allows exactly those events for the owner; no view ever carries them | Confirmed mechanics (card text), Unsourced shape
+RULING: an item's use in the ending step | `AbilityUsed.cardId` of an equipped item is public even when its bearer dies in the same step and the card returns to a hand | Confirmed (R7.6: equipped cards are face up)
+RULING: morale zero inside the colony phase | the game ends at once; a leader slot emptied by a death in that same step stays empty because every in-flight decision drops (R17.1) | Confirmed (R p14)
+RULING: crisis card removal timing | the contributed cards are logged as removed at the reveal commit, before the fail or bonus effect runs; GOLD-004 lists them after the morale change, and the test asserts the reveal, resolve, effect and morale order only | Unsourced shape
+RULING: zombie step with an empty colony | no `ZombiesToAdd` is emitted for a count of 0 (GOLD-005d reads `count 0`; COL-010/011 expect silence); the test asserts that nothing is added | Unsourced shape
+RULING: search odds estimate | `query.searchOdds` subtracts only visible cards whose definition is printed in exactly one deck; a definition shared by two decks is never subtracted, so the estimate errs toward the printed mix | Unsourced (AI heuristic H.2)
+RULING: random bot weights | a weighted draw over legalActions, seeded by (seed, decision id): search 10, colony zombie attack 12 and other 8 (both divided by 1 + 2 x wounds), matching crisis card 10 and nothing 2, all-no ballot 20, endTurn 20 with no unused die, attack a survivor 0.3, call a vote 0.05 | Unsourced (40 random tier)
+RULING: concede outside the player turns | a human seat may concede on any decision addressed to it in setup and the colony phase too; the generic step handles it before the phase modules | Confirmed (R17.4)
+RULING: malformed actions | an action that is not an object, has an unknown type or a non-string decisionId/seat, or whose payload the modules cannot digest, is `E_BAD_PAYLOAD` with the same state; only EngineInvariantError ever throws | Confirmed (00 §2)

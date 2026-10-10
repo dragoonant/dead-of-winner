@@ -1,0 +1,66 @@
+{
+  "kind": "deck",
+  "id": "deck.library",
+  "name": "Library items",
+  "size": 20,
+  "cards": [
+    {
+      "item": "it.hospital-blueprints",
+      "count": 1
+    },
+    {
+      "item": "it.gas-station-blueprints",
+      "count": 1
+    },
+    {
+      "item": "it.library-blueprints",
+      "count": 1
+    },
+    {
+      "item": "it.police-station-blueprints",
+      "count": 1
+    },
+    {
+      "item": "it.grocery-store-blueprints",
+      "count": 1
+    },
+    {
+      "item": "it.survivors-cookbook",
+      "count": 1
+    },
+    {
+      "item": "it.journey-in-jazzercise",
+      "count": 1
+    },
+    {
+      "item": "it.fuel",
+      "count": 4
+    },
+    {
+      "item": "it.food-1",
+      "count": 4
+    },
+    {
+      "item": "it.junk",
+      "count": 1
+    },
+    {
+      "item": "it.reading-lamp",
+      "count": 1
+    },
+    {
+      "item": "it.outsiders-1",
+      "count": 1
+    },
+    {
+      "item": "it.outsiders-2",
+      "count": 2
+    }
+  ],
+  "sources": {
+    "cards": "BGG card-spread; BGG ludopedia-51114; S",
+    "size": "R p2; R p6"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Library"
+}

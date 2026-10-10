@@ -1,0 +1,26 @@
+{
+  "kind": "item",
+  "id": "it.pad-lock",
+  "name": "Pad Lock",
+  "symbol": "tool",
+  "class": "wastePile",
+  "play": {
+    "effect": [
+      {
+        "op": "addBarricade",
+        "count": 2,
+        "location": "chosen"
+      }
+    ]
+  },
+  "text": {
+    "ability": "Seal up to two entrances at a location where one of your survivors stands: two barricades, no die needed."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "play": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Police Station / Pad Lock"
+}

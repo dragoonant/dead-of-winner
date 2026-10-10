@@ -1,0 +1,39 @@
+{
+  "kind": "survivor",
+  "id": "sv.brian-lee",
+  "name": "Brian Lee",
+  "occupation": "Mayor",
+  "stats": {
+    "influence": 68,
+    "attack": 3,
+    "search": 4
+  },
+  "ability": {
+    "id": "rally",
+    "kind": "action",
+    "limit": "oncePerRound",
+    "effect": [
+      {
+        "op": "modDie",
+        "value": 1,
+        "count": 1,
+        "scope": {
+          "who": "seat"
+        }
+      }
+    ]
+  },
+  "crossroads": "xr.brian-lee",
+  "coop": true,
+  "text": {
+    "ability": "Once a round Brian raises one of your unused action dice by 1."
+  },
+  "sources": {
+    "stats.influence": "R p7; W; C",
+    "stats.attack": "R* p7; W",
+    "stats.search": "R* p7; W",
+    "ability": "R p7; W; BGG ludopedia-51115"
+  },
+  "status": "draft",
+  "notes": "src: survivors-sources.md row 8"
+}

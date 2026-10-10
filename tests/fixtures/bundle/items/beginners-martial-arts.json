@@ -1,0 +1,38 @@
+{
+  "kind": "item",
+  "id": "it.beginners-martial-arts",
+  "name": "Beginner's Martial Arts",
+  "symbol": "education",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "discipline",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "countsAs": "attack",
+      "when": {
+        "test": "zombiesAtLeast",
+        "subject": "location",
+        "value": 1
+      },
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "here",
+          "value": "noExposure"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the bearer attacks and drops the zombie with no exposure roll."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG card-spread; BGG ludopedia-51114"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md School / Beginner's Martial Arts"
+}

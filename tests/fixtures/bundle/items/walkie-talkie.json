@@ -1,0 +1,44 @@
+{
+  "kind": "item",
+  "id": "it.walkie-talkie",
+  "name": "Walkie Talkie",
+  "symbol": "tool",
+  "class": "equip",
+  "equipped": [
+    {
+      "id": "trade",
+      "kind": "action",
+      "limit": "oncePerRound",
+      "effect": [
+        {
+          "op": "modDie",
+          "value": -1,
+          "count": 1,
+          "scope": {
+            "who": "otherSeats",
+            "count": 1,
+            "chooser": "owner"
+          }
+        },
+        {
+          "op": "modDie",
+          "value": 1,
+          "count": 1,
+          "scope": {
+            "who": "seat"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ability": "Once a round the owner drags one of another player's unused dice down by 1 to lift one of their own unused dice by 1."
+  },
+  "sources": {
+    "symbol": "W; BGG card-spread",
+    "class": "BGG card-spread; BGG ludopedia-51114",
+    "equipped": "BGG ludopedia-51114 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: items-sources.md Police Station / Walkie Talkie (I7: once per round from P)"
+}

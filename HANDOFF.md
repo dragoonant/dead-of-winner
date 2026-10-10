@@ -1,17 +1,20 @@
 # Handoff
 
-**Current state:** M0 landed. Specs 00-60, JSON Schemas, source tables and the frozen engine contracts
-(`src/engine/*`) are committed. Typecheck and 16 tests pass. Nothing is playable yet; the Pages deploy still shows
-the placeholder title screen. Rules ambiguities are logged as 164 rulings in `docs/needs-rules-check.md` (92 from M0, 72 from the M0b card research).
+**Current state:** M1 landed. The rules engine behind the frozen contracts is complete and wired through `src/engine/index.ts`
+(`createGame`, `step`, `validate`, `legalActions`, `replay`, `save`/`load`, `view`, `query.*`), the random bot plays whole games,
+and `npm run sim -- --games 30 --seed 1` ends every game with zero invariant failures and zero hidden-information leaks.
+Typecheck is clean; 289 tests pass in 23 files, the six golden scripts among them. `npm run validate:data` is green on the
+fixture bundle. Nothing is playable in the browser yet; the Pages deploy still shows the placeholder title screen. Rules
+decisions taken while building are logged under "## M1" in `docs/needs-rules-check.md`.
 
 ## Next
-1. M1: implement the engine against the frozen contracts and `docs/spec/12-rules-test-checklist.md`, the six golden
-   examples (`13`), and a headless `npm run sim`. Contract changes are additive only, logged in `00` §16.
-2. Card data entry from `docs/spec/sources/` into `data/` (validated by the schemas in `docs/spec/schemas/`).
-3. AI (40/41), then the client (50) and art (30).
+1. M2: data verification. Check the fixture slice (`tests/fixtures/bundle/`) card by card against `docs/spec/sources/`, then
+   enter the rest of the base game into `src/data/` through the schemas, so the sim can seat 4 and 5 (12 survivors seat 3 today).
+   The 13 unregistered-until-M1 code hooks in `src/engine/code-hooks.ts` carry the objective rulings to confirm.
+2. M3: the client (`docs/spec/50-client.md`) on `view` + `legalActions` + `query`; the store is the only caller of `step`.
+3. AI tiers (40/41) above the random bot, then art (30).
 
 ## Owner ask
-The BGG and Ludopedia downloads arrived on 2026-10-10 and are folded into `docs/spec/sources/`. Still open:
-9-10 standard secret objective texts, 7 betrayal texts and 17 official English crisis names. If you have a physical
-copy, check the conflict tables in `docs/spec/sources/*-sources.md` against it (the Fan-source rows and the flagged
-numbers) and skim `docs/needs-rules-check.md`, correcting any ruling your copy contradicts.
+Still open: 9-10 standard secret objective texts, 7 betrayal texts and 17 official English crisis names. If you have a physical
+copy, check the conflict tables in `docs/spec/sources/*-sources.md` against it (the Fan-source rows and the flagged numbers)
+and skim `docs/needs-rules-check.md`, including the M1 section, correcting any ruling your copy contradicts.
