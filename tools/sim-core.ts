@@ -18,6 +18,8 @@ export interface SimOptions {
   validateSample: number // legal actions re-validated per decision (0 = none)
   saveAt: number // the decision index at which the save/load round trip runs
   tier?: AiTier // the decider every seat uses (default random)
+  onEvents?: (events: GameEvent[], state: GameState, game: number) => void // diagnostics: every step's events
+  onFinal?: (s: GameState) => void // diagnostics: the final state of every game
 }
 export const DEFAULT_OPTIONS: SimOptions = { games: 30, seed: '1', seats: 4, objective: 'random', cap: 3000, stall: 200, validateSample: 12, saveAt: 40 }
 
@@ -37,6 +39,7 @@ export interface GameSummary {
   violations: Violation[]
   leaks: Violation[]
   moraleLost: Record<string, number> // morale points lost, by MoraleChanged reason
+  tally: Record<string, number> // diagnostic counters: kill:<cause>, crisis:<prevented|failed>, objCards, ...
   decisionMs: number[] // wall time of every decider call
   exiles: { seat: SeatId; betrayer: boolean }[]
   finalMorale: number
@@ -53,6 +56,7 @@ export interface SimReport {
   betrayerPresent: number
   betrayerWon: number
   moraleLostBy: Record<string, number>
+  tally: Record<string, number>
   violations: Violation[]
   leaks: Violation[]
   ms: number
@@ -226,9 +230,11 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
   const exiles: { seat: SeatId; betrayer: boolean }[] = []
   let r: StepResult = createGame(setup, seed, bundle)
   const moraleLost: Record<string, number> = {}
+  const tally: Record<string, number> = {}
+  const bump = (k: string, n = 1) => { tally[k] = (tally[k] ?? 0) + n }
   if (r.rejection) {
     viol('createGame', `${r.rejection.code}: ${r.rejection.message}`)
-    return { seed, index, decisions: 0, steps: 0, rounds: 0, ended: false, endReason: null, objectiveComplete: false, winners: [], betrayerPresent: false, betrayerWon: false, violations, leaks, moraleLost, decisionMs: [], exiles: [], finalMorale: 0, ms: Date.now() - t0 }
+    return { seed, index, decisions: 0, steps: 0, rounds: 0, ended: false, endReason: null, objectiveComplete: false, winners: [], betrayerPresent: false, betrayerWon: false, violations, leaks, moraleLost, tally, decisionMs: [], exiles: [], finalMorale: 0, ms: Date.now() - t0 }
   }
   const totals = totalsOf(r.state)
   const betrayerPresent = r.state.seatOrder.some((id) => holdsBetrayal(r.state, id))
@@ -270,8 +276,19 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
     steps++
     if (next.rejection) { viol('rejected', `legal ${action.type} rejected: ${next.rejection.code} ${next.rejection.message} ${JSON.stringify(next.rejection.detail ?? {})}`); break }
     decision++
+    o.onEvents?.(next.events, next.state, index)
+    if (action.type !== 'pass') bump(`act:${action.type}`)
+    if (action.type === 'attack' && action.target.kind === 'survivor') bump('hunt')
     for (const ev of next.events) {
       if (ev.type === 'MoraleChanged' && ev.delta < 0) moraleLost[ev.reason] = (moraleLost[ev.reason] ?? 0) - ev.delta
+      if (ev.type === 'SurvivorKilled') bump(`kill:${ev.cause}`)
+      else if (ev.type === 'CrisisResolved') { bump(ev.prevented ? 'crisis:prevented' : 'crisis:failed'); bump('crisis:needed', ev.needed); bump('crisis:total', ev.total); bump('crisis:cards', ev.cards) }
+      else if (ev.type === 'CardAddedToObjective') bump('objCards')
+      else if (ev.type === 'ZombieKilled') { bump('zKill', ev.zombies); bump(`kills:${action.type}`, ev.zombies) }
+      else if (ev.type === 'ExposureRolled') bump(`exp:${ev.reason}`)
+      else if (ev.type === 'WoundHealed') bump('healed')
+      else if (ev.type === 'SurvivorMoved' && ev.kind === 'action') bump('moves')
+      else if (ev.type === 'Starvation') bump('starve')
       if (ev.type === 'SeatExiled') exiles.push({ seat: ev.seat, betrayer: holdsBetrayal(next.state, ev.seat) })
     }
     // every bot sees the events its seat is allowed to see, then keeps whatever memory it likes (suspicion ledger)
@@ -306,11 +323,13 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
     const ack = step(r.state, { type: 'ack', decisionId: r.pending.id, seat: r.state.seatOrder[0]! })
     if (ack.rejection) viol('ack', `${ack.rejection.code}`)
   }
+  o.onFinal?.(r.state)
   const winners = r.state.result?.winners ?? []
+  for (const id of r.state.seatOrder) if (holdsBetrayal(r.state, id)) { const k = r.state.seats[id]!.secretObjectiveId!.replace('obj.betrayal.', ''); bump(`bet:${k}`); if (winners.includes(id)) bump(`bet:${k}:won`) }
   return {
     seed, index, decisions: decision, steps, rounds: r.state.roundNumber, ended, endReason: r.state.result?.reason ?? null,
     objectiveComplete: r.state.objective.complete, winners, betrayerPresent,
-    betrayerWon: winners.some((id) => holdsBetrayal(r.state, id)), violations, leaks, moraleLost, decisionMs, exiles, finalMorale: r.state.morale, ms: Date.now() - t0,
+    betrayerWon: winners.some((id) => holdsBetrayal(r.state, id)), violations, leaks, moraleLost, tally, decisionMs, exiles, finalMorale: r.state.morale, ms: Date.now() - t0,
   }
 }
 
@@ -333,6 +352,8 @@ export function summarize(games: GameSummary[], ms: number): SimReport {
   const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0)
   const moraleLostBy: Record<string, number> = {}
   for (const g of games) for (const [k, v] of Object.entries(g.moraleLost)) moraleLostBy[k] = (moraleLostBy[k] ?? 0) + v
+  const tally: Record<string, number> = {}
+  for (const g of games) for (const [k, v] of Object.entries(g.tally)) tally[k] = (tally[k] ?? 0) + v
   return {
     games: games.length, finished: finished.length, endedBy,
     meanRounds: Math.round(mean(finished.map((g) => g.rounds)) * 100) / 100,
@@ -341,7 +362,7 @@ export function summarize(games: GameSummary[], ms: number): SimReport {
     gamesWithWinner: games.filter((g) => g.winners.length > 0).length,
     betrayerPresent: games.filter((g) => g.betrayerPresent).length,
     betrayerWon: games.filter((g) => g.betrayerWon).length,
-    moraleLostBy,
+    moraleLostBy, tally,
     violations: games.flatMap((g) => g.violations),
     leaks: games.flatMap((g) => g.leaks),
     ms,

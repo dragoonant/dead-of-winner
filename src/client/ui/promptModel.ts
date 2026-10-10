@@ -31,6 +31,7 @@ function familyOf(a: Action): { key: string; label: string; survivorId: string |
     case 'move': return { key: `move:${sid}`, label: 'Move', survivorId: sid ?? null }
     case 'useAbility': return { key: `ability:${sid}:${a.abilityId}`, label: `Ability: ${camelWords(a.abilityId)}`, survivorId: sid ?? null }
     case 'playCard': return { key: `card:${a.cardId}`, label: 'Play card', survivorId: null }
+    case 'contributeObjective': return { key: 'objective', label: 'Add to objective', survivorId: null }
     case 'spendFood': return { key: 'spendFood', label: 'Spend food', survivorId: null }
     case 'request': return { key: 'request', label: 'Ask for a card', survivorId: null }
     case 'handOff': return { key: 'handOff', label: 'Hand off an item', survivorId: null }
@@ -49,6 +50,7 @@ function variantLabel(a: Action, N: LabelNames): string {
     case 'move': return N.loc(a.to)
     case 'useAbility': return camelWords(a.abilityId)
     case 'playCard': return a.equipTo ? `Equip on ${N.survivor(a.equipTo)}` : `Play ${N.card(a.cardId)}`
+    case 'contributeObjective': return N.card(a.cardId)
     case 'spendFood': return `${a.tokens} food on die ${a.dieId.split(':d')[1] ?? ''}`.trim()
     case 'request': return `${N.seat(a.to)}: ${a.defId ? 'a specific card' : a.symbol ? `a ${a.symbol} card` : 'a card'}`
     case 'handOff': return `${N.card(a.cardId)} to ${N.survivor(a.toSurvivorId)}`

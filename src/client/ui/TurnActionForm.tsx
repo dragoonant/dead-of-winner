@@ -80,6 +80,10 @@ export function describeAction(v: SeatView, a: Action): string {
       const defId = v.cards[a.cardId]?.defId
       return T.playCardText({ card: nameOf(defId), text: itemText(defId), equipTo: a.equipTo ? nameOf(a.equipTo) : null })
     }
+    case 'contributeObjective': {
+      const o = v.objective
+      return T.objectiveCardText({ card: nameOf(v.cards[a.cardId]?.defId), objective: nameOf(o.id), have: Object.entries(o.counters).map(([k, n]) => `${k} ${n}`).join(', ') })
+    }
     case 'request': return T.requestText({ to: N.seat(a.to), want: a.defId ? nameOf(a.defId) : a.symbol ? `a ${a.symbol} card` : 'a card', handCount: v.seats[a.to]?.handCount ?? 0 })
     case 'handOff': {
       const from = Object.values(v.survivors).find((s) => s.equipped.includes(a.cardId))

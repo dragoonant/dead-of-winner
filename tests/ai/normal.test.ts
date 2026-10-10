@@ -140,3 +140,32 @@ describe('AI-007 suspicion ledger', () => {
     expect(l.score('s2')).toBeGreaterThan(0.6)
   })
 })
+
+describe('AI-008 adding cards under the main objective', () => {
+  async function turnWithMedicine(betrayer: boolean): Promise<{ pick: Action; legal: Action[] }> {
+    let st = createGame({ seats: SEATS.slice(0, 3).map((id) => ({ id, kind: 'bot' as const })), mainObjective: 'obj.main.find-a-cure' }, 'ai8', bundle).state
+    const setupDecider = createDecider('normal', undefined, 'ai8')
+    for (let k = 0; k < 200 && st.pending.kind !== 'turnAction'; k++) {
+      const seat = st.pending.seat as string
+      st = step(st, await setupDecider.decide(view(st, seat), st.pending, legalActions(st))).state
+    }
+    const seat = st.pending.seat as string
+    const id = 'c:test-med'
+    st = {
+      ...st,
+      cards: { ...st.cards, [id]: { id, defId: 'it.medicine' } },
+      seats: { ...st.seats, [seat]: { ...st.seats[seat]!, hand: [...st.seats[seat]!.hand, id], ...(betrayer ? { secretObjectiveId: 'obj.betrayal.serial-killers' } : {}) } },
+    }
+    const legal = legalActions(st)
+    const d = createDecider('normal', undefined, 'ai8')
+    return { pick: await d.decide(view(st, seat), st.pending, legal), legal }
+  }
+  it('a loyal seat adds a counting card to Find a Cure; a betrayer hoards it', async () => {
+    const loyal = await turnWithMedicine(false)
+    expect(loyal.legal.some((a) => a.type === 'contributeObjective')).toBe(true)
+    expect(loyal.pick.type).toBe('contributeObjective')
+    const traitor = await turnWithMedicine(true)
+    expect(traitor.legal.some((a) => a.type === 'contributeObjective')).toBe(true)
+    expect(traitor.pick.type).not.toBe('contributeObjective')
+  })
+})

@@ -116,7 +116,7 @@ export type ObjectiveSide = {
   counters?: Counters
   complete: ConditionNode
   triggers?: TriggerDef[]
-  contributions?: { symbol: ItemSymbol; counter: string; exiledMayContribute?: boolean }[]
+  contributions?: { symbol: ItemSymbol; counter: string; exiledMayContribute?: boolean; excludeStarter?: boolean }[]
 }
 export type MainObjectiveRecord = RecordBase & {
   kind: 'mainObjective'

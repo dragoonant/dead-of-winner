@@ -40,6 +40,7 @@ describe('event feed', () => {
   })
 
   it('crisis reveals carry the running total, exposure rolls name the face, zombies are placed one by one', () => {
+    expect(feedLine({ type: 'CardAddedToObjective', seat: 's1', cardId: 'c:9', defId: 'it.medicine', counter: 'medicine' }, N)).toBe('seat s1 adds medicine to the main objective.')
     expect(feedLine({ type: 'CrisisCardRevealed', cardId: 'c:1', defId: 'it.fuel', points: 1, runningTotal: 2 }, N)).toBe('Crisis card: fuel (+1), running total 2.')
     expect(feedLine({ type: 'ExposureRolled', rollId: 'r:1', survivorId: 'sv.sparky', reason: 'move', raw: 7, face: 'frostbite' }, N)).toBe('Exposure roll for sparky: FROSTBITE (move).')
     expect(feedLine({ type: 'ZombieAdded', location: 'colony', entrance: 3, source: 'colonyStep', zombies: 2 }, N)).toBe('A zombie arrives at the Colony, gate 3 (2 there).')

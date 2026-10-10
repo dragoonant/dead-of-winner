@@ -46,6 +46,7 @@ async function main(): Promise<void> {
   console.log(`  mean rounds ${report.meanRounds}, mean decisions ${report.meanDecisions}`)
   console.log(`  bot wins: ${report.botWins} winning seats in ${report.gamesWithWinner} games`)
   console.log(`  betrayer present in ${report.betrayerPresent} games, won ${report.betrayerWon}`)
+  console.log(`  tally: ${Object.entries(report.tally).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(', ') || 'none'}`)
   console.log(`  morale lost by: ${Object.entries(report.moraleLostBy).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(', ') || 'none'}`)
   console.log(`  violations: ${report.violations.length}, leaks: ${report.leaks.length}`)
   const show = (list: { seed: string; index: number; decision: number; kind: string; message: string; detail?: string }[], label: string) => {

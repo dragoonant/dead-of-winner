@@ -110,7 +110,7 @@ export interface LocationState {
 }
 
 // ---------- cards ----------
-export interface CardInstance { id: CardId; defId: Id } // zone is derived: deck, hand, equipped, waste, crisis, objective, removed
+export interface CardInstance { id: CardId; defId: Id; starter?: true } // zone is derived: deck, hand, equipped, waste, crisis, objective, removed
 
 // ---------- crisis (E.4 step 3) ----------
 export interface Contribution { seat: SeatId; cardId: CardId }

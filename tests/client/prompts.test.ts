@@ -67,6 +67,15 @@ describe('turn action grouping and engine numbers on a real game', () => {
     expect(fams.some((f) => f.type === 'endTurn' as Action['type'])).toBe(false)
   })
 
+  it('OBJ-016 contributeObjective candidates become one "Add to objective" family with a variant per card', () => {
+    const act = (cardId: string): Action => ({ type: 'contributeObjective', decisionId: 'd:1', seat: 's1', cardId })
+    const fams = groupTurnActions([act('c:1'), act('c:2')], N)
+    expect(fams).toHaveLength(1)
+    expect(fams[0]).toMatchObject({ key: 'objective', type: 'contributeObjective', label: 'Add to objective', survivorId: null })
+    expect(fams[0]!.variants.map((v) => v.label)).toEqual(['c:1', 'c:2'])
+    expect(T.objectiveCardText({ card: 'Medicine', objective: 'Find a Cure', have: 'medicine 1' })).toContain('Add Medicine to the main objective (Find a Cure)?')
+  })
+
   it('dieRequirement and exposure odds come from the engine, never the client', async () => {
     const s = await playTo('grp2', (st) => st.pending.kind === 'turnAction' && st.turnCount >= 2)
     const seat = s.pending.seat as string

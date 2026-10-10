@@ -105,6 +105,7 @@ export function feedLine(ev: GameEvent, N: Names): string | null {
     case 'CardEquipped': return `${N.seat(ev.seat)} equips a card on ${N.survivor(ev.survivorId)}.`
     case 'CardHandedOff': return `${N.survivor(ev.fromSurvivorId)} hands an item to ${N.survivor(ev.toSurvivorId)}.`
     case 'CardContributed': return `${N.seat(ev.seat)} adds a face-down card to the crisis.`
+    case 'CardAddedToObjective': return `${N.seat(ev.seat)} adds ${N.item(ev.defId)} to the main objective.`
     case 'CardGiven': return `${N.seat(ev.from)} gives ${N.item(ev.defId)} to ${N.seat(ev.to)}.`
     case 'CardDiscarded': {
       if (ev.to === 'deck') return null

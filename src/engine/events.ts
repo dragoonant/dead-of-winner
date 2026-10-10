@@ -83,6 +83,8 @@ export interface CardDrawn extends Ev<'CardDrawn'> { seat: SeatId; from: Locatio
 export interface CardPlayed extends Ev<'CardPlayed'> { seat: SeatId; cardId: CardId; defId: Id; survivorId?: SurvivorId; to: 'waste' | 'equipped' | 'removed' }
 export interface CardEquipped extends Ev<'CardEquipped'> { seat: SeatId; cardId: CardId; survivorId: SurvivorId }
 export interface CardHandedOff extends Ev<'CardHandedOff'> { cardId: CardId; fromSurvivorId: SurvivorId; toSurvivorId: SurvivorId }
+/** A card joined the main objective, face up and public (spec 11 O2.4). counter is the objective counter it raised (null when the card counts for nothing). */
+export interface CardAddedToObjective extends Ev<'CardAddedToObjective'> { seat: SeatId; cardId: CardId; defId: Id; counter: string | null }
 export interface CardContributed extends Ev<'CardContributed'> { seat: SeatId; cardId: CardId; from: 'hand' | 'equipped' } // cardId PRIVATE to seat
 export interface CardGiven extends Ev<'CardGiven'> { from: SeatId; to: SeatId; cardId: CardId; defId: Id } // public: a given card is revealed and played at once (F 5.2.1)
 export interface CardDiscarded extends Ev<'CardDiscarded'> { seat: SeatId | null; cardId: CardId; to: 'waste' | 'removed' | 'deck'; reason: string; revealed?: false } // revealed:false → state.removedHidden; cardId PRIVATE to seat (F 2.3.1, R p14)
@@ -138,7 +140,7 @@ export type GameEvent =
   | SurvivorKilled | SurvivorRemoved | EquippedReturned | SurvivorAdded | HelplessAdded | HelplessKilled | HandDiscarded | SeatEliminated | SurvivorMoved
   | AttackDeclared | SurvivorAttacked | CardStolen
   | ZombiesToAdd | ZombieAdded | ZombieKilled | ZombieMoved | BarricadeAdded | BarricadeDestroyed | EntranceOverrun | NoiseAdded | NoiseRolled | NoiseCleared
-  | SearchStarted | SearchDrawn | SearchKept | CardDrawn | CardPlayed | CardEquipped | CardHandedOff | CardContributed | CardGiven | CardDiscarded | WasteCleaned
+  | SearchStarted | SearchDrawn | SearchKept | CardDrawn | CardPlayed | CardEquipped | CardHandedOff | CardContributed | CardAddedToObjective | CardGiven | CardDiscarded | WasteCleaned
   | RequestMade | RequestAnswered
   | FoodPaid | Starvation | FoodChanged | WasteChecked | MoraleChanged | CrisisRevealed | CrisisCardRevealed | CrisisResolved | CrisisEffectApplied | ObjectiveChecked
   | CrossroadsDrawn | CrossroadsTriggered | CrossroadsResolved | CrossroadsReturned | CrossroadsDeckShuffled

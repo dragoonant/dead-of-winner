@@ -64,6 +64,9 @@ export function spendFoodText(i: { dieValue: number | null; tokens: number; food
 export function playCardText(i: { card: string; text: string; equipTo?: string | null }): string {
   return `${i.equipTo ? `Equip ${i.card} on ${i.equipTo}` : `Play ${i.card}`}?${i.text ? ` ${i.text}` : ''}`
 }
+export function objectiveCardText(i: { card: string; objective: string; have: string }): string {
+  return `Add ${i.card} to the main objective (${i.objective})?${i.have ? ` Progress so far: ${i.have}.` : ''} The card stays there for good, so it cannot be used for anything else.`
+}
 export function requestText(i: { to: string; want: string; handCount: number }): string {
   return `Ask ${i.to} for ${i.want}? They have ${plural(i.handCount, 'card')}.`
 }

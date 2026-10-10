@@ -27,7 +27,7 @@
   detector, a mid-game save/load round trip, replay determinism and the hidden-information leak test on every seat's view and
   every redacted event. `npm run sim -- --games 30 --seed 1`: 30/30 games end (all by morale zero, mean 3.0 rounds, mean 88
   decisions, betrayer dealt in 10), 0 violations, 0 leaks, about 1 s. The fixture's 12 survivors seat 3; `--seats 4` needs more data.
-- Tests: 23 files, 289 tests, typecheck clean. Engine tests per checklist prefix (ACT, ATK, CARD, COL, CRIS, DICE, EFF, END, EXIL,
+- Tests (M1): 23 files, 289 tests, typecheck clean; M4b brings the suite to 33 files and 354 tests (OBJ-010..016 for the objective rule, AI-008). Engine tests per checklist prefix (ACT, ATK, CARD, COL, CRIS, DICE, EFF, END, EXIL,
   EXPO, MOVE, OBJ, SETUP, SRCH, SURV, VOTE, XRD, ZOM), the six golden scripts `GOLD-001..006` with variants
   (`tests/engine/golden.test.ts`), the API and sim tests (`tests/engine/api.test.ts`: ACT-002, ACT-003, ACT-009, ACT-013,
   VIEW-013, QRY-001) and the data tests (DATA-001..010).
@@ -85,31 +85,51 @@ event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
   waste cleaned near a multiple of 10, searches ranked by `query.searchOdds` weighted by the crisis' prevent symbols, the seat's secret
   objective and food shortage, moves only when search gain beats the exposure cost (colony not stripped while threatened), survivor and item
   abilities that kill without exposure, barricade, heal, feed or clean, never an attack on a survivor. Crisis: loyal seats contribute matching
-  cards up to the estimated shortfall and never cards their objective needs; the betrayer contributes a wrong card about half the time unless the
-  table's suspicion of it is high. Requests answered by generosity and suspicion of the asker. Suspicion: a Bayesian ledger over "seat j is the
+  cards up to the estimated shortfall and never cards their objective needs; the betrayer's sabotage is described under M4b below. Requests answered by generosity and suspicion of the asker. Suspicion: a Bayesian ledger over "seat j is the
   betrayer" from crisis shortfalls split over the seats that put cards in, declined requests and attacks on others; vote yes only on the top
   suspect above the persona threshold from round 2 (higher after a first exile), never self, the betrayer protects itself.
-- Bench (`npm run bench:ai -- --games 40 --seed 1 --tier normal|random`, default objective We Need More Samples, 4 bots):
+- M4b balance pass: the engine gained the missing rule, **adding cards under the main objective** (`contributeObjective {cardId}`, event
+  `CardAddedToObjective`, additive, logged in 00 §16; no die, own turn, exiled seats included; only symbols the objective counts, starter-deck
+  cards refused where the card says "starting cards do not count" via `CardInstance.starter` + `excludeStarter`). The human gets an "Add to
+  objective" button in the turn prompt and a feed line; Normal loyal seats add counting cards first thing each turn (unless the crisis needs the
+  card or the seat's own secret objective counts it), a betrayer hoards them (one cover contribution a round once the table suspects it).
+  AI changes: weapons and kill-ability survivors are picked and valued for Samples (survivor picks, colony-bound kill abilities such as Thomas
+  Heart keep their owner home, equipped noExposure weapons), a fuel card is played before a move to skip its exposure roll, medicine is valued
+  higher, crisis contributions run a little over the estimate, spare food is spent on dice, Outsiders stay in hand. Betrayer: wrong cards and
+  withheld cards when the crisis is within two points of the line (more as rounds run out), colony help fades late, own survivors protected,
+  hoards what its card needs (weapons for Trigger Happy, Outsiders for Cult Leader and a thin Serial Killers), asks for weapons, refuses
+  requests for what it hoards, paces the collapse to its private goal.
+- Bench (`npm run bench:ai -- --games 40 --seed 1 --tier normal|random`, default objective We Need More Samples, 4 bots; before = M4, after = M4b):
 
-| 40 games, seed 1 | random | normal |
-|---|---|---|
-| colony objective completed | 0% (0/40) | 15% (6/40) |
-| mean rounds | 2.83 | 4.43 |
-| ended by | moraleZero 40 | moraleZero 31, objective 6, roundsOut 3 |
-| betrayer present / betrayer won | 13 / 0 | 13 / 0 |
-| exiles correct / innocent | 0 / 1 | 3 / 0 |
-| decision ms mean / p95 / max | 0.01 / 0.02 / 0.25 | 0.12 / 0.29 / 2.03 |
-| rejected actions / stalls | 0 / 0 | 0 / 0 |
+| 40 games, seed 1, Samples | random | normal before | normal after |
+|---|---|---|---|
+| colony objective completed | 0% (0/40) | 15% (6/40) | 30% (12/40) |
+| mean rounds | 2.83 | 4.43 | 4.65 |
+| ended by | moraleZero 40 | moraleZero 31, objective 6, roundsOut 3 | moraleZero 24, objective 12, roundsOut 4 |
+| morale lost per game (killed / crisis / waste) | 3.6 / 1.3 / 0.7 | 4.2 / 1.4 / 0.3 | 2.9 / 1.8 / 0.6 |
+| betrayer present / betrayer won | 13 / 0 | 13 / 0 | 13 / 3 (23%) |
+| exiles correct / innocent | 0 / 1 | 3 / 0 | 1 / 0 |
+| decision ms mean / p95 / max | 0.01 / 0.02 / 0.45 | 0.12 / 0.29 / 2.03 | 0.14 / 0.33 / 2.5 |
+| rejected / stalls / leaks | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
 
-  With `--objective random` (all ten main objectives): random 0/40 completed, 2.33 rounds; normal 0/40 (1 in 200 games), 4.97 rounds, 16 of
-  40 games reach the last round alive. `npm run sim -- --games 20 --seed 5 [--tier normal]`: 0 violations, 0 leaks (random 2.3 rounds, normal 4.85).
-- Known weaknesses: Normal still loses most games to morale (about one survivor a round to exposure, overruns and frostbite, a failed crisis every
-  other round); only survival objectives and We Need More Samples (a kill-for-samples drive, 0.85 morale points per kill) can complete, and the
-  card-contribution objectives (Find a Cure, Leave It All Behind, Stockpile) have no contribution action in the engine at all; the betrayer almost
-  never wins (it sabotages crises but does not play its own win condition); suspicion needs wrong cards to read from, so a quiet betrayer is only
-  found by its contribution pattern; requests only ask for food or medicine (a given card is played at once); no Easy/Hard tier, no spend-food on
-  dice, no fuel-before-move trick, abilities valued only for kill, barricade, heal, food and waste. `AI_TUNE='{"death":2}'` overrides the tuning
-  constants in `src/ai/normal/plan.ts` for bench experiments.
+  Larger pools (the 40-game rows swing by ±7 points): Samples, 300 games seed 90: normal 24% completed, 4.66 rounds, betrayer won 19%
+  (24/128), exiles 8 correct / 3 innocent; random 0/300, 2.82 rounds, betrayer 1/132. Samples seed 2 (40 games): normal 25%, 4.5 rounds,
+  betrayer 1/17. `--objective random` (all ten main objectives, 40 games): seed 1 normal 0% (random tier 0%), 4.45 rounds, betrayer 3/26;
+  seed 2 normal 5%, 4.85 rounds, betrayer 1/17. Per objective (30 games, M4b): Find a Cure about 30-37% (cards under the objective now count),
+  Too Many Mouths about 17%; Leave It All Behind and Stockpile collect about half their cards but still never finish (every survivor armed;
+  food, barricades and six cards), Winter Has Come ends at round 2-4 when no seat holds a fuel card for the colony-phase duty, Eight Weeks
+  of Darkness, Kill Them, Home Sweet Home and Raiding Party never complete. `npm run sim -- --games 20 --seed 5 --tier normal`: 0 violations,
+  0 leaks. The sim and bench print morale lost by reason and a `tally` of diagnostic counters (kills by cause and action, exposure rolls,
+  crisis points, objective cards).
+- Known weaknesses: Samples sits at 24-30% against a 35% target. The arithmetic is hard: 12 samples need about 24 kills, every kill that is
+  not an item or ability kill rolls the exposure die (1 in 12 bite, 1 in 6 frostbite, which ticks a wound a turn until healed), so a win needs
+  free kills and luck; parameter sweeps over 20 constants moved the rate by less than the bench noise, only the structural changes above
+  counted. Crises still fail 2.5 times in 4.4 (the table rarely holds four cards of the one symbol; trading cannot help because a requested
+  card is played at once). The betrayer reaches about 20% on pools of 130+ betrayer games (Cult Leader 33%, Trigger Happy 21%, Serial
+  Killers 16%) and is still found more often than an innocent is exiled; it never attacks survivors (every attack hunt tried lifted the exile
+  rate more than the win rate). Requests only ask for food, medicine or (Trigger Happy) weapons; no Easy/Hard tier; abilities are valued only
+  for kill, barricade, heal, food and waste. `AI_TUNE='{"death":2}'` overrides the tuning constants in `src/ai/normal/plan.ts` for bench
+  experiments.
 
 ## Spec status
 | Spec | Status |

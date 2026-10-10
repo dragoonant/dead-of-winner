@@ -235,7 +235,8 @@
           {
             "symbol": "medicine",
             "counter": "medicine",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           }
         ],
         "complete": {
@@ -272,7 +273,8 @@
           {
             "symbol": "medicine",
             "counter": "medicine",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           }
         ],
         "complete": {
@@ -595,7 +597,8 @@
           {
             "symbol": "food",
             "counter": "food",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           }
         ],
         "complete": {
@@ -639,7 +642,8 @@
           {
             "symbol": "food",
             "counter": "food",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           }
         ],
         "complete": {
@@ -708,17 +712,20 @@
           {
             "symbol": "medicine",
             "counter": "medicine",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           },
           {
             "symbol": "tool",
             "counter": "tool",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           },
           {
             "symbol": "fuel",
             "counter": "fuel",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           }
         ],
         "complete": {
@@ -774,17 +781,20 @@
           {
             "symbol": "medicine",
             "counter": "medicine",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           },
           {
             "symbol": "tool",
             "counter": "tool",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           },
           {
             "symbol": "fuel",
             "counter": "fuel",
-            "exiledMayContribute": true
+            "exiledMayContribute": true,
+            "excludeStarter": true
           }
         ],
         "complete": {

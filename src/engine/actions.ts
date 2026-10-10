@@ -26,6 +26,8 @@ export interface AttractAction extends Base<'attract'> { survivorId: SurvivorId;
 export interface UseAbilityAction extends Base<'useAbility'> { survivorId: SurvivorId; abilityId: Id; dieId?: DieId; data?: Record<string, unknown> } // (N+) abilities spend a die ≥ N
 export interface PlayCardAction extends Base<'playCard'> { cardId: CardId; equipTo?: SurvivorId; data?: Record<string, unknown> } // from hand, own turn only (E.6)
 export interface ContributeCrisisAction extends Base<'contributeCrisis'> { cardIds: CardId[] } // face down, from hand or equipped; also answers `crisisContribution` ([] = nothing)
+/** Add one hand card to the main objective (F 4.1.1, ruling O7.1): no die, own turn, only a card whose symbol the objective counts (starter-deck cards excluded where the objective says so). */
+export interface ContributeObjectiveAction extends Base<'contributeObjective'> { cardId: CardId }
 export interface MoveAction extends Base<'move'> { survivorId: SurvivorId; to: LocationId } // once per survivor per turn; exposure after
 export interface SpendFoodAction extends Base<'spendFood'> { dieId: DieId; tokens: number } // +1 per token on one unused die, max 6 (F 5.3.1)
 export interface RequestAction extends Base<'request'> { to: SeatId; symbol?: ItemSymbol; defId?: Id; note?: string } // ask for an item card
@@ -51,7 +53,7 @@ export type Action =
   | PassAction | AckAction | ConcedeAction | EffectChoiceAction
   | ChooseSurvivorsAction | ChooseLeaderAction
   | AttackAction | SearchAction | BarricadeAction | CleanWasteAction | AttractAction | UseAbilityAction | PlayCardAction
-  | ContributeCrisisAction | MoveAction | SpendFoodAction | RequestAction | HandOffAction | CallVoteAction | EndTurnAction
+  | ContributeCrisisAction | ContributeObjectiveAction | MoveAction | SpendFoodAction | RequestAction | HandOffAction | CallVoteAction | EndTurnAction
   | KeepCardAction | MakeNoiseAction | RespondRequestAction | ChooseCrossroadsOptionAction | BiteSpreadAction | PlaceExiledAction
   | ObjectiveChoiceAction | ItemTargetAction
   | CastVotesAction
@@ -61,7 +63,7 @@ export type ActionOf<T extends ActionType> = Extract<Action, { type: T }>
 
 /** The turn actions a `turnAction` decision accepts (00 §5). */
 export const TURN_ACTION_TYPES = [
-  'attack', 'search', 'barricade', 'cleanWaste', 'attract', 'useAbility', 'playCard', 'contributeCrisis', 'move', 'spendFood',
+  'attack', 'search', 'barricade', 'cleanWaste', 'attract', 'useAbility', 'playCard', 'contributeCrisis', 'contributeObjective', 'move', 'spendFood',
   'request', 'handOff', 'callVote', 'endTurn',
 ] as const satisfies readonly ActionType[]
 export type TurnActionType = (typeof TURN_ACTION_TYPES)[number]

@@ -61,6 +61,7 @@ export function weightOf(v: SeatView, pending: PendingDecision, a: Action): numb
     case 'spendFood': return 0.5
     case 'request': return 0.3
     case 'handOff': return 0.3
+    case 'contributeObjective': return 2
     case 'callVote': return 0.05
     case 'contributeCrisis': {
       if (a.cardIds.length === 0) return 2

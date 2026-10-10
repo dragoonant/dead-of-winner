@@ -70,12 +70,17 @@ async function main(): Promise<void> {
   for (let i = 0; i < o.games; i++) games.push(await runGame(bundle, `${o.seed}-${i}`, i, o))
   const r = summarizeBench(o, games)
   if (o.json) { console.log(JSON.stringify(r, null, 2)); return }
+  const lost: Record<string, number> = {}
+  const tally: Record<string, number> = {}
+  for (const g of games) { for (const [k, v] of Object.entries(g.moraleLost)) lost[k] = (lost[k] ?? 0) + v; for (const [k, v] of Object.entries(g.tally)) tally[k] = (tally[k] ?? 0) + v }
   const rows: [string, string][] = [
     ['tier / games / seats', `${r.tier} / ${r.games} / ${r.seats} (seed ${r.seed}, objective ${r.objective})`],
     ['colony objective completed', pct(games.filter((g) => g.objectiveComplete).length, r.games)],
     ['mean rounds (games ended)', String(r.meanRounds)],
     ['ended by', Object.entries(r.endedBy).map(([k, v]) => `${k} ${v}`).join(', ')],
     ['mean final morale', String(r.meanFinalMorale)],
+    ['morale lost by (per game)', Object.entries(lost).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${r2(v / r.games)}`).join(', ')],
+    ['tally (per game)', Object.entries(tally).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${r2(v / r.games)}`).join(', ')],
     ['betrayer present / betrayer won', `${r.betrayerPresent} games / ${pct(r.betrayerWon, r.betrayerPresent)}`],
     ['exiles (correct / innocent)', `${r.exiles} (${r.exilesCorrect} / ${r.exilesInnocent})`],
     ['decision ms mean / p95 / max', `${r.meanDecisionMs} / ${r.p95DecisionMs} / ${r.maxDecisionMs}`],

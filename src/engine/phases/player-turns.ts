@@ -21,6 +21,7 @@ import { applyCleanWaste, legalCleanWaste } from '../actions/clean'
 import { contributeCandidates, contributeCrisis } from '../actions/crisis'
 import { rejected } from '../actions/die-common'
 import { handOff, handOffCandidates } from '../actions/handoff'
+import { contributeObjective, contributeObjectiveCandidates } from '../actions/objective'
 import { applyMove, legalMoves } from '../actions/move'
 import { playCard, playCardCandidates } from '../actions/play'
 import { request, requestCandidates, respondRequest } from '../actions/request'
@@ -333,6 +334,7 @@ function turnActionPart(state: GameState, action: Action & { type: TurnActionTyp
     case 'useAbility': return applyUseAbility(state, action)
     case 'playCard': return playCard(state, action)
     case 'contributeCrisis': return contributeCrisis(state, action)
+    case 'contributeObjective': return contributeObjective(state, action)
     case 'spendFood': return spendFoodPart(state, action)
     case 'request': return request(state, action)
     case 'handOff': return handOff(state, action)
@@ -449,7 +451,7 @@ export function legalPlayerTurnsActions(state: GameState): Action[] {
       if (pd.seat === 'all') return []
       return [
         ...legalAttacks(state), ...legalSearches(state), ...legalBarricades(state), ...legalCleanWaste(state), ...legalAttracts(state), ...legalMoves(state),
-        ...playCardCandidates(state), ...contributeCandidates(state), ...requestCandidates(state), ...handOffCandidates(state), ...legalAbilities(state),
+        ...playCardCandidates(state), ...contributeCandidates(state), ...contributeObjectiveCandidates(state), ...requestCandidates(state), ...handOffCandidates(state), ...legalAbilities(state),
         ...spendFoodCandidates(state), ...legalCallVotes(state),
         { type: 'endTurn', decisionId: pd.id, seat: pd.seat },
       ]

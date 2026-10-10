@@ -58,7 +58,7 @@
           "items": {
             "type": "object",
             "required": ["symbol", "counter"],
-            "properties": { "symbol": { "$ref": "common.json#/$defs/itemSymbol" }, "counter": { "$ref": "common.json#/$defs/slug" }, "exiledMayContribute": { "type": "boolean" } },
+            "properties": { "symbol": { "$ref": "common.json#/$defs/itemSymbol" }, "counter": { "$ref": "common.json#/$defs/slug" }, "exiledMayContribute": { "type": "boolean" }, "excludeStarter": { "type": "boolean" } },
             "additionalProperties": false
           }
         }

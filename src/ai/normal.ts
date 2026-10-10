@@ -6,8 +6,8 @@ import { deriveSeed, nextFloat, query } from '../engine/index'
 import type { Action, Decider, GameEvent, PendingDecision, SeatId } from '../engine/index'
 import type { SeatView } from '../engine/view'
 import { crossroadsValue, labelScore, optionOf } from './normal/options'
-import { foodOf, isBetrayer, matchesCrisis, recOf, reservedCards, statsOf, symbolsOfCard, woundsOn } from './normal/info'
-import { PlanCache, planTurn, type PlanEnv, type PlanMemory } from './normal/plan'
+import { betrayalKind, betrayerPush, foodOf, isBetrayer, mainObjectiveNeeds, matchesCrisis, recOf, reservedCards, statsOf, symbolsOfCard, woundsOn } from './normal/info'
+import { PlanCache, TUNE, planTurn, type PlanEnv, type PlanMemory } from './normal/plan'
 import { Ledger } from './normal/suspicion'
 import { DEFAULT_SCALARS, getPersona, type Persona, type PersonaScalars } from './personas'
 
@@ -35,7 +35,7 @@ function makeRand(seed: string, seat: string, id: string): () => number {
 export function createNormalDecider(seed: string, personaId?: string): AiDecider {
   const persona = getPersona(personaId)
   const scalars: PersonaScalars = persona?.scalars ?? DEFAULT_SCALARS
-  const mem: PlanMemory = { requestTurn: -1, voteRound: -1, calledAt: -1 }
+  const mem: PlanMemory = { requestTurn: -1, voteRound: -1, calledAt: -1, objRound: -1, fuelWho: null }
   let ledger: Ledger | null = null
   let selfLedger: Ledger | null = null // the betrayer's view of how the table sees it
   const stats: DeciderStats = { decisions: 0, totalMs: 0, maxMs: 0, degraded: 0 }
@@ -62,7 +62,7 @@ export function createNormalDecider(seed: string, personaId?: string): AiDecider
       l.syncView(v)
       selfLedger?.syncView(v)
       const rand = makeRand(seed, v.seat, pending.id)
-      const env: PlanEnv = { v, me: v.seat, scalars, ledger: l, betrayer: isBetrayer(v), mem, rand, expired: () => now() > deadline }
+      const env: PlanEnv = { v, me: v.seat, scalars, ledger: l, betrayer: isBetrayer(v), selfScore: () => (selfLedger ? selfLedger.score(v.seat) : 0), mem, rand, expired: () => now() > deadline }
       let pick: Action | undefined
       try { pick = decideKind(env, pending, legal, selfLedger, mem) } catch (e) { pick = undefined; stats.degraded++; stats.lastError = e instanceof Error ? (e.stack ?? e.message) : String(e) }
       const out = pick && (legal.length === 0 || isAcceptable(pick, legal)) ? pick : legal[0]!
@@ -88,9 +88,12 @@ function decideKind(env: PlanEnv, pending: PendingDecision, legal: Action[], sel
   const { v } = env
   switch (pending.kind) {
     case 'turnAction': {
-      const pick = planTurn(new PlanCache(env), legal)
+      const cache = new PlanCache(env)
+      const pick = planTurn(cache, legal)
+      mem.fuelWho = pick.type === 'playCard' ? cache.fuelWho : null
       if (pick.type === 'request') mem.requestTurn = v.turnCount
       if (pick.type === 'callVote') mem.voteRound = v.roundNumber
+      if (pick.type === 'contributeObjective') mem.objRound = v.roundNumber
       return pick
     }
     case 'chooseSurvivors': return chooseSurvivors(env, legal)
@@ -102,7 +105,7 @@ function decideKind(env: PlanEnv, pending: PendingDecision, legal: Action[], sel
     case 'crossroadsOption': return crossroads(env, pending, legal, selfLedger)
     case 'biteSpreadOption': return biteSpread(env, pending, legal)
     case 'exilePlacement': return exilePlacement(env, legal)
-    case 'itemTarget': return itemTarget(env, pending, legal)
+    case 'itemTarget': return itemTarget(env, pending, legal, mem)
     case 'effectChoice': case 'objectiveChoice': return genericChoice(env, pending, legal)
     case 'gameOver': return legal.find((a) => a.type === 'ack') ?? legal[0]!
     default: return legal[0]!
@@ -112,9 +115,14 @@ function decideKind(env: PlanEnv, pending: PendingDecision, legal: Action[], sel
 // ---------- setup ----------
 function chooseSurvivors(env: PlanEnv, legal: Action[]): Action {
   const { v, scalars } = env
+  const n = (r: Record<string, unknown> | undefined, k: string): boolean => JSON.stringify(r ?? {}).includes(k)
   const val = (id: string): number => {
     const s = statsOf(v, id)
-    const ab = recOf(v, id)?.['ability'] ? 0.3 : 0
+    const abRec = recOf(v, id)?.['ability'] as Record<string, unknown> | undefined
+    let kills = 0
+    for (const n of (abRec?.['effect'] as Record<string, unknown>[] | undefined) ?? []) if (n['op'] === 'killZombies') kills += typeof n['count'] === 'number' ? n['count'] : 1
+    const killing = kills > 0 && n(abRec, 'exposureOnce') ? 0.5 : kills > 0 && JSON.stringify(abRec).includes('noExposure') ? kills : 0
+    const ab = (abRec ? 0.3 : 0) + killing * (v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.pickKill : 0.15)
     return s.influence / 25 + (6 - s.attack) * (0.3 + 0.2 * scalars.risk) + (6 - s.search) * 0.45 + ab
   }
   let best = legal[0]!
@@ -165,14 +173,20 @@ function contribute(env: PlanEnv, legal: Action[], selfLedger: Ledger | null): A
   const order = rotate(v.seatOrder, v.firstSeat)
   const later = order.slice(order.indexOf(me) + 1).filter((s) => !v.seats[s]!.seat.exiled && !v.seats[s]!.seat.eliminated && v.seats[s]!.handCount > 0)
   const othersIn = q.cardsIn - v.me.contributions.length
-  const expectedOthers = othersIn * 0.85 + later.length * 0.65
+  const expectedOthers = othersIn * TUNE.inP + later.length * TUNE.laterP
   const shortfall = q.needed - (q.myPoints + expectedOthers)
 
   if (env.betrayer) {
     const perceived = selfLedger?.score(me) ?? 0.3
-    const pWrong = 0.5 * (1 - Math.min(1, Math.max(0, (perceived - 0.2) / 0.4)))
-    if (other.length > 0 && env.rand() < pWrong) { env.ledger.noteOwnWrong(1); return mk([other[0]!]) }
-    // otherwise look like everyone else: one matching card if there is one
+    const push = Math.min(1, betrayerPush(v) * TUNE.pushScale)
+    const hide = Math.min(1, Math.max(0, (perceived - 0.25) / 0.35)) // how exposed the table's suspicion has made it
+    const margin = q.myPoints + expectedOthers - q.needed // expected surplus without anything more from me
+    const appetite = Math.min(0.95, TUNE.sabBase + 0.6 * push + (v.morale <= 3 ? 0.15 : 0)) * (1 - 0.7 * hide)
+    const r = env.rand()
+    // a wrong card turns a pass into a fail when the pile is within two points of the line; it is also the one move the ledger can trace
+    if (other.length > 0 && margin <= 2.2 && margin >= -2.5 && r < appetite) { env.ledger.noteOwnWrong(1); return mk([other[0]!]) }
+    // quiet sabotage: keep the matching card at home when that is what tips the pile under (a short pile with no wrong card leaves no trace)
+    if (matching.length > 0 && margin + 1 >= 0 && margin < 1.2 && r < appetite + 0.25 && !(r < appetite)) return none
     return matching.length > 0 && q.myPoints <= 0 ? mk([matching[0]!]) : none
   }
 
@@ -182,7 +196,7 @@ function contribute(env: PlanEnv, legal: Action[], selfLedger: Ledger | null): A
   if (pool.length === 0) return none
   const spare = pool.length
   const margin = spare >= 3 ? 0.6 : spare >= 2 ? 0.3 : 0
-  let k = Math.max(0, Math.ceil(shortfall + margin - 0.3 + 0.2 * scalars.generosity))
+  let k = Math.max(0, Math.ceil(shortfall + margin - 0.3 + 0.2 * scalars.generosity + TUNE.cExtra))
   if (k === 0 && q.myPoints <= 0 && expectedOthers < q.needed + 1) k = 1
   k = Math.min(k, pool.length, Math.max(1, q.bonusAt - q.myPoints))
   return mk(pool.slice(0, k))
@@ -231,6 +245,11 @@ function respondRequest(env: PlanEnv, pending: PendingDecision, legal: Action[],
   const helpsColony = pending.context.symbol === 'food' && f.shortfall > 0
   if (env.betrayer) {
     const perceived = selfLedger?.score(v.seat) ?? 0.3
+    const push = Math.min(1, betrayerPush(v) * TUNE.pushScale)
+    const sym = String(pending.context.symbol ?? '')
+    const hoarded = sym !== '' && (mainObjectiveNeeds(v).some((n) => n.symbol === sym) || (betrayalKind(v) === 'trigger-happy' && sym === 'weapon'))
+    // a plausible refusal: "I need it myself" for what the betrayer hoards, a flat no late in the game; otherwise help now and then for cover
+    if (perceived < 0.5 && (hoarded || (helpsColony && push > 0.3))) return decline ?? legal[0]!
     if (helpsColony && perceived < 0.35) return decline ?? legal[0]!
     return env.rand() < 0.4 + 0.4 * scalars.generosity ? cheapest : (decline ?? cheapest)
   }
@@ -333,13 +352,15 @@ function entrancePick(env: PlanEnv, pending: PendingDecision, acts: Action[]): A
   return best
 }
 
-function itemTarget(env: PlanEnv, pending: PendingDecision, legal: Action[]): Action {
+function itemTarget(env: PlanEnv, pending: PendingDecision, legal: Action[], mem: PlanMemory): Action {
   const { v, me } = env
   const code = String((pending.context.data as { code?: string } | undefined)?.code ?? '')
   const acts = legal.filter((a): a is Extract<Action, { type: 'itemTarget' }> => a.type === 'itemTarget')
   if (acts.length === 0) return legal[0]!
   const ent = entrancePick(env, pending, acts)
   if (ent) return ent
+  const planned = mem.fuelWho ? acts.find((a) => (a.targets[0] ?? a.optionId) === mem.fuelWho) : undefined
+  if (planned) { mem.fuelWho = null; return planned }
   const cache = new PlanCache(env)
   const score = (a: Extract<Action, { type: 'itemTarget' }>): number => {
     const id = a.targets[0] ?? a.optionId ?? ''

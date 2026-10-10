@@ -173,7 +173,7 @@ export function createGameInternal(setup: GameSetup, seed: string, bundle: DataB
   const sh = <T,>(xs: readonly T[]): T[] => { const [o, r] = shuffle(rng, xs); rng = r; return o }
   let cardSeq = 0
   const cards: GameState['cards'] = {}
-  const mint = (defId: Id): CardId => { cardSeq += 1; const id = `c:${cardSeq}`; cards[id] = { id, defId }; return id }
+  const mint = (defId: Id, starter = false): CardId => { cardSeq += 1; const id = `c:${cardSeq}`; cards[id] = starter ? { id, defId, starter: true } : { id, defId }; return id }
 
   // main objective (R3.2)
   let mainId: Id
@@ -199,7 +199,7 @@ export function createGameInternal(setup: GameSetup, seed: string, bundle: DataB
   const starterDefs = sh(expandDeck(recordOf<DeckRec>(bundle, 'deck.starter')!).filter((d) => !(coop && isNonCoop(recordOf<ItemRec>(bundle, d)))))
   const per = startingItemCount(setup)
   seatIds.forEach((sid, i) => {
-    const hand = starterDefs.slice(i * per, (i + 1) * per).map(mint)
+    const hand = starterDefs.slice(i * per, (i + 1) * per).map((d) => mint(d, true))
     seats[sid] = { ...seats[sid]!, hand }
     events.push({ type: 'StartingItemsDealt', seat: sid, cardIds: hand })
   })
@@ -213,7 +213,7 @@ export function createGameInternal(setup: GameSetup, seed: string, bundle: DataB
     let deck: CardId[] = []
     if (rec.id !== 'colony') {
       const defs = expandDeck(recordOf<DeckRec>(bundle, rec.deck!)!).filter((d) => !(coop && isNonCoop(recordOf<ItemRec>(bundle, d))))
-      deck = sh(defs.map(mint))
+      deck = sh(defs.map((d) => mint(d)))
       events.push({ type: 'DeckShuffled', location: rec.id, reason: 'setup' })
     }
     locations[rec.id] = { id: rec.id, entrances, noise: 0, deck, helpless: 0, capacity: { survivors: rec.spaces.survivors, entranceSpaces: rec.spaces.entranceSpaces, noiseSpaces: rec.spaces.noise } }

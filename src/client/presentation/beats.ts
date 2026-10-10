@@ -15,7 +15,7 @@ export const BEAT_SPEC: Partial<Record<GameEventType, Spec>> = {
   ActionDiceRolled: { kind: 'roll', ms: 700 }, DiceRolled: { kind: 'roll', ms: 700 }, NoiseRolled: { kind: 'roll', ms: 700 }, SurvivorAttacked: { kind: 'roll', ms: 700 },
   SurvivorMoved: { kind: 'move', ms: 500 },
   ExposureRolled: { kind: 'exposure', ms: 900 }, WoundTaken: { kind: 'exposure', ms: 300 }, SurvivorKilled: { kind: 'exposure', ms: 600 },
-  SearchDrawn: { kind: 'card', ms: 400 }, SearchKept: { kind: 'card', ms: 400 }, NoiseAdded: { kind: 'card', ms: 400 }, CardContributed: { kind: 'card', ms: 400 },
+  SearchDrawn: { kind: 'card', ms: 400 }, SearchKept: { kind: 'card', ms: 400 }, NoiseAdded: { kind: 'card', ms: 400 }, CardContributed: { kind: 'card', ms: 400 }, CardAddedToObjective: { kind: 'card', ms: 400 },
   CrisisRevealed: { kind: 'banner', ms: 1200 }, CrisisCardRevealed: { kind: 'crisisCard', ms: 500 }, CrisisResolved: { kind: 'banner', ms: 1000 },
   ZombieAdded: { kind: 'zombie', ms: 250 }, BarricadeDestroyed: { kind: 'zombie', ms: 250 }, EntranceOverrun: { kind: 'zombie', ms: 250 },
   FoodPaid: { kind: 'tick', ms: 400 }, Starvation: { kind: 'tick', ms: 400 }, WasteChecked: { kind: 'tick', ms: 400 }, MoraleChanged: { kind: 'tick', ms: 400 },

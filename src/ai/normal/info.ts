@@ -1,7 +1,7 @@
 // Read-only facts the Normal AI derives from a SeatView and the public data bundle (hidden-information contract, 00 §4):
 // card symbols, the crisis' prevent symbols, what the seat's own secret objective counts, and the cards it should keep.
 // Nothing here touches GameState or the rng.
-import { bundleFor } from '../../engine/index'
+import { bundleFor, query } from '../../engine/index'
 import type { ItemSymbol, SeatId, SurvivorId } from '../../engine/index'
 import type { SeatView } from '../../engine/view'
 
@@ -37,6 +37,37 @@ export const woundsOn = (v: SeatView, id: SurvivorId): number => { const s = v.s
 
 export const aliveSurvivorsOf = (v: SeatView, seat: SeatId): SurvivorId[] => (v.seats[seat]?.survivors ?? []).filter((id) => v.survivors[id]?.status === 'alive')
 export const isBetrayer = (v: SeatView): boolean => (v.me.secretObjectiveId ?? '').startsWith('obj.betrayal.')
+/** Which betrayal card the seat holds ('trigger-happy', 'cult-leader', 'serial-killers', ...), or '' for a loyal seat. */
+export const betrayalKind = (v: SeatView): string => (isBetrayer(v) ? (v.me.secretObjectiveId ?? '').replace('obj.betrayal.', '') : '')
+/** A betrayer's wish to bring the colony down: 0 early, rising as rounds run out and morale thins (the betrayal cards all need morale 0). */
+export function betrayerPush(v: SeatView): number {
+  let p = v.roundsLeft <= 1 ? 0.9 : v.roundsLeft <= 2 ? 0.6 : v.roundsLeft <= 3 ? 0.3 : v.roundNumber >= 2 ? 0.1 : 0
+  if (v.morale <= 3) p += 0.25
+  if (v.morale <= 1) p += 0.2
+  p = Math.min(1, p)
+  // the colony must fall with the card's other condition already met: pace the collapse to the private goal
+  const g = betrayalProgress(v)
+  if (g >= 1) return Math.max(p, 0.8)
+  return v.roundsLeft <= 1 ? p : p * (0.4 + 0.6 * g)
+}
+/** 0..1: how close the held betrayal card's non-morale condition is (1 = met right now). */
+export function betrayalProgress(v: SeatView): number {
+  const kind = betrayalKind(v)
+  const mine = v.seats[v.seat]?.survivors.filter((id) => v.survivors[id]?.status === 'alive') ?? []
+  if (kind === 'trigger-happy') {
+    const eq = mine.reduce((n, id) => n + (v.survivors[id]?.equipped ?? []).filter((c) => symbolsOfCard(v, c).includes('weapon')).length, 0)
+    return Math.min(1, eq / 4)
+  }
+  if (kind === 'serial-killers') {
+    const gone = Object.values(v.survivors).filter((s) => s.status !== 'alive').length
+    return mine.length < 2 ? 0.2 : Math.min(1, gone / 5)
+  }
+  if (kind === 'cult-leader') {
+    const others = v.seatOrder.filter((s) => s !== v.seat).map((s) => v.seats[s]?.survivors.filter((id) => v.survivors[id]?.status === 'alive').length ?? 0)
+    return Math.max(0, Math.min(1, (mine.length - Math.max(0, ...others) + 2) / 4))
+  }
+  return 0.5
+}
 
 // ---------- what the seat's own objective counts (hold-in-hand objectives only) ----------
 export interface ObjectiveNeeds { symbols: Partial<Record<ItemSymbol, number>>; anyCards: number }
@@ -75,6 +106,8 @@ export function reservedCards(v: SeatView): Set<string> {
     }
   }
   if (needs.anyCards > 0) for (const c of v.me.hand) { if (out.size >= needs.anyCards + 0) break; out.add(c) }
+  // Winter Has Come: some seat must hand over a fuel card at the start of every colony phase or the game ends; keep one at home
+  if (v.objective.id === 'obj.main.winter-has-come' && !isBetrayer(v)) { const f = v.me.hand.find((c) => !out.has(c) && symbolsOfCard(v, c).includes('fuel')); if (f) out.add(f) }
   return out
 }
 /** Symbols the seat's objective still lacks in hand. */
@@ -86,6 +119,30 @@ export function missingObjectiveSymbols(v: SeatView): ItemSymbol[] {
     if (have < n) out.push(sym)
   }
   return out
+}
+
+// ---------- what the main objective counts (cards added under it) ----------
+export interface ObjNeed { symbol: ItemSymbol; counter: string; remaining: number; excludeStarter: boolean }
+/** Symbols the main objective still wants under it (empty when the objective takes no cards), with how many more it needs. */
+export function mainObjectiveNeeds(v: SeatView): ObjNeed[] {
+  const side = recOf(v, v.objective.id)?.['sides']?.[v.objective.side] as Rec | undefined
+  const contribs = (side?.['contributions'] as Rec[] | undefined) ?? []
+  if (contribs.length === 0 || v.objective.complete) return []
+  let parts: readonly { label: string; have: number; need: number }[] = []
+  try { parts = query.objectiveProgress(v).parts } catch { parts = [] }
+  const out: ObjNeed[] = []
+  for (const c of contribs) {
+    const part = parts.find((p) => p.label === c['counter'])
+    const need = part ? part.need : 2
+    const have = part ? part.have : (v.objective.counters[c['counter'] as string] ?? 0)
+    const remaining = Number.isFinite(need) ? Math.max(0, need - have) : 0
+    if (remaining > 0) out.push({ symbol: c['symbol'] as ItemSymbol, counter: c['counter'] as string, remaining, excludeStarter: !!c['excludeStarter'] })
+  }
+  return out
+}
+/** Hand cards of `symbol` that would count for the main objective right now. */
+export function countableInHand(v: SeatView, n: ObjNeed): string[] {
+  return v.me.hand.filter((c) => symbolsOfCard(v, c).includes(n.symbol) && !(n.excludeStarter && v.cards[c]?.starter))
 }
 
 export function symbolOrder(v: SeatView, loc: string): ItemSymbol[] {
