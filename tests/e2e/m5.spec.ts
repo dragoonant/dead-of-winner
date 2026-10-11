@@ -25,6 +25,8 @@ test('the table: survivor cards in the prompt, the textured board, the item card
   test.setTimeout(120_000)
   const errors: string[] = []
   watch(page, errors)
+  const glbRequests = new Set<string>()
+  page.on('request', (r) => { if (r.url().endsWith('.glb')) glbRequests.add(r.url().replace(/^.*\//, '')) })
   await page.addInitScript(() => { try { localStorage.setItem('dow.settings', JSON.stringify({ speed: 8 })) } catch { /* private mode */ } })
   await page.goto(URL)
   await expect(page.getByTestId('game-screen')).toHaveAttribute('data-ready', 'true', { timeout: 30_000 })
@@ -59,6 +61,15 @@ test('the table: survivor cards in the prompt, the textured board, the item card
   await page.addStyleTag({ content: '.dock,.rail,.tray,.topbar{visibility:hidden !important}' })
   await page.waitForTimeout(400)
   await page.screenshot({ path: `${OUT}/m5-table.png` })
+
+  // the figures: only the survivors in this game (2 each for 4 seats) and the zombie variants are requested, never the whole manifest of 34
+  await page.waitForLoadState('networkidle')
+  await page.waitForTimeout(1500)
+  await page.screenshot({ path: `${OUT}/m5-figures.png` })
+  const names = [...glbRequests]
+  expect(names.length, names.join(',')).toBeGreaterThan(0)
+  expect(names.length, names.join(',')).toBeLessThanOrEqual(8 + 4)
+  expect(names.filter((n) => !n.startsWith('zombie-')).length).toBeLessThanOrEqual(8)
   expect(errors, errors.join('\n')).toEqual([])
 })
 
@@ -84,8 +95,12 @@ test('the ?gallery view lists every figure (procedural where no model is listed)
   const g = page.getByTestId('figure-gallery')
   await expect(g).toBeVisible({ timeout: 30_000 })
   await expect.poll(async () => Number(await g.getAttribute('data-count')), { timeout: 30_000 }).toBeGreaterThan(30)
-  await page.waitForTimeout(800)
+  // every model on this page has loaded (the pager steps through the rest)
+  await expect.poll(async () => [await g.getAttribute('data-loaded'), await g.getAttribute('data-wanted')], { timeout: 60_000 }).toEqual(['10', '10'])
+  await page.waitForTimeout(1200)
   await page.screenshot({ path: `${OUT}/m5-gallery.png` })
+  await page.getByTestId('gallery-next').click()
+  await expect(g).toHaveAttribute('data-page', '2')
   expect(errors, errors.join('\n')).toEqual([])
 })
 

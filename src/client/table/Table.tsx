@@ -6,7 +6,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactElemen
 import * as THREE from 'three'
 import { ensureFonts, useLocationArt } from '../cards/art'
 import { locNumber, locShort, locationSymbolOrder, nameOf } from '../data'
-import { GlbSurvivor, ZombieField } from '../figures/GlbBody'
+import { FigureLights } from '../figures/figureLook'
+import { FIGURE_LEAN, GlbSurvivor, SURVIVOR_HEIGHT, ZombieField } from '../figures/GlbBody'
 import { useGlbClone } from '../figures/glbLoader'
 import { survivorSlug, useGlbManifest, zombieSlugs } from '../figures/glbManifest'
 import { useGameStore } from '../store/gameStore'
@@ -195,7 +196,8 @@ function Figure({ fig, colour, selected, label }: { fig: FigureModel; colour: st
   const pips: [number, THREE.Material][] = []
   for (let i = 0; i < fig.wounds; i++) pips.push([i, M.wound])
   for (let i = 0; i < fig.frostbite; i++) pips.push([fig.wounds + i, M.frost])
-  const top = clone ? 2.9 : 1.95
+  const top = clone ? SURVIVOR_HEIGHT * Math.cos(FIGURE_LEAN) + 0.5 : 1.95
+  const topZ = clone ? -SURVIVOR_HEIGHT * Math.sin(FIGURE_LEAN) : 0 // the leaning figure's head is further back
   return (
     <group
       ref={g}
@@ -204,10 +206,10 @@ function Figure({ fig, colour, selected, label }: { fig: FigureModel; colour: st
       onPointerOut={() => { document.body.style.cursor = ''; ui.set({ hoverSurvivor: null }) }}
     >
       {clone ? <GlbSurvivor clone={clone} colour={colour} /> : <ProceduralBody colour={colour} />}
-      {fig.leader && <mesh geometry={G.ring} material={M.gold} position-y={top - 0.2} rotation-x={Math.PI / 2} scale={0.5} />}
+      {fig.leader && <mesh geometry={G.ring} material={M.gold} position={[0, top - 0.2, topZ]} rotation-x={Math.PI / 2} scale={0.5} />}
       {selected && <mesh geometry={G.ring} material={M.select} position-y={0.16} rotation-x={Math.PI / 2} scale={1.35} />}
-      {pips.map(([i, mat]) => <mesh key={i} geometry={G.pip} material={mat} position={[-0.36 + i * 0.2, top, 0]} />)}
-      <LabelSprite text={label} border={colour} position={[0, 0.3, 1.0]} height={0.62} fontPx={12} />
+      {pips.map(([i, mat]) => <mesh key={i} geometry={G.pip} material={mat} position={[-0.36 + i * 0.2, top, topZ]} />)}
+      <LabelSprite text={label} border={colour} position={[0, 0.3, 1.2]} height={0.62} fontPx={12} />
     </group>
   )
 }
@@ -280,6 +282,7 @@ export default function Table(): ReactElement {
       <color attach="background" args={['#0b0e14']} />
       <fog attach="fog" args={['#0b0e14', 70, 160]} />
       <Lights />
+      <FigureLights />
       <CameraRig />
       {v && model && <Scene m={model} seatOrder={v.seatOrder} hands={hands} names={names} selected={selected} />}
     </Canvas>

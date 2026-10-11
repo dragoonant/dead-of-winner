@@ -6,6 +6,7 @@ import { Box3, Matrix4, Vector3, type Mesh, type Object3D } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js'
+import { paintFigure } from './figureLook'
 import { glbEntry, glbUrl } from './glbManifest'
 
 export interface LoadedGlb {
@@ -17,7 +18,22 @@ type Entry = { status: 'loading' | 'ready' | 'failed'; glb?: LoadedGlb }
 const cache = new Map<string, Entry>()
 const listeners = new Set<() => void>()
 
+/** The pipeline bakes a black round base (a "Cylinder" mesh, material base_black) under every model. The table draws its own seat-coloured base,
+ *  so the baked one is dropped and the scale is fitted to the figure alone. */
+function dropBakedBase(scene: Object3D): void {
+  const doomed: Object3D[] = []
+  scene.traverse((o) => {
+    const m = o as Mesh
+    if (!m.isMesh) return
+    const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as { name?: string } | undefined
+    if (/^base/i.test(mat?.name ?? '') || m.name === 'Cylinder') doomed.push(o)
+  })
+  for (const o of doomed) o.removeFromParent()
+}
+
 function makeLoaded(scene: Object3D): LoadedGlb {
+  dropBakedBase(scene)
+  paintFigure(scene)
   scene.updateMatrixWorld(true)
   const box = new Box3().setFromObject(scene)
   const size = box.getSize(new Vector3())

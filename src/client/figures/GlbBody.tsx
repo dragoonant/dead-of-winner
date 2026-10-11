@@ -7,9 +7,15 @@ import { G, Instanced, M, matsFor } from '../table/sceneKit'
 import type { Pt } from '../table/layout'
 import { flattenMeshes, useGlbs, type LoadedGlb } from './glbLoader'
 
-export const SURVIVOR_HEIGHT = 2.5
-export const SURVIVOR_MAX_WIDTH = 1.5
-export const ZOMBIE_HEIGHT = 2.3
+// Inches on the table. The models are authored at 1.2 in (strict miniature scale), which is unreadable from the default camera, so figures are drawn
+// at about twice that and clamped to the slot spacing (1.62 in): a wide pose shrinks rather than overlapping its neighbour.
+export const SURVIVOR_HEIGHT = 2.8
+export const SURVIVOR_MAX_WIDTH = 1.75
+export const ZOMBIE_HEIGHT = 2.5
+export const ZOMBIE_MAX_WIDTH = 1.6
+/** The default camera looks down steeply, so an upright figure shows little but its head. Figures lean back (top away from the camera, face up
+ *  toward it) by this many radians about their feet, like a miniature held up for a photo. Their base stays flat in the slot. */
+export const FIGURE_LEAN = 0.42
 
 /** The body of a survivor from its loaded GLB (see `useGlbClone`), on a seat-coloured base. */
 export function GlbSurvivor({ clone, colour }: { clone: { object: THREE.Object3D; glb: LoadedGlb }; colour: string }): ReactElement {
@@ -17,17 +23,20 @@ export function GlbSurvivor({ clone, colour }: { clone: { object: THREE.Object3D
   return (
     <>
       <mesh geometry={G.base} material={matsFor(colour).base} position-y={0.07} />
-      <group position={[fit.offset.x, 0.14 + fit.offset.y, fit.offset.z]} scale={fit.scale}><primitive object={clone.object} /></group>
+      <group position-y={0.14} rotation-x={-FIGURE_LEAN}>
+        <group position={[fit.offset.x, fit.offset.y, fit.offset.z]} scale={fit.scale}><primitive object={clone.object} /></group>
+      </group>
     </>
   )
 }
 
 function ZombieVariant({ glb, points, offset }: { glb: LoadedGlb; points: readonly Pt[]; offset: number }): ReactElement {
   const parts = useMemo(() => flattenMeshes(glb), [glb])
-  const fit = useMemo(() => glb.fit(ZOMBIE_HEIGHT, 1.7), [glb])
+  const fit = useMemo(() => glb.fit(ZOMBIE_HEIGHT, ZOMBIE_MAX_WIDTH), [glb])
   const refs = useRef<(THREE.InstancedMesh | null)[]>([])
   useLayoutEffect(() => {
     const place = new THREE.Matrix4()
+    const tilt = new THREE.Matrix4().makeRotationX(-FIGURE_LEAN)
     const rot = new THREE.Matrix4()
     const m = new THREE.Matrix4()
     parts.forEach((p, k) => {
@@ -38,7 +47,7 @@ function ZombieVariant({ glb, points, offset }: { glb: LoadedGlb; points: readon
         const yaw = Math.atan2(-pt.x, -pt.z) + (((i + offset) * 2.399) % 1 - 0.5) * 0.7
         place.makeTranslation(pt.x, 0.1, pt.z)
         rot.makeRotationY(yaw)
-        m.copy(place).multiply(rot).multiply(fit.matrix).multiply(p.matrix)
+        m.copy(place).multiply(tilt).multiply(rot).multiply(fit.matrix).multiply(p.matrix)
         inst.setMatrixAt(i, m)
       })
       inst.count = points.length
