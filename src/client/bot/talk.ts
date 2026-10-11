@@ -3,6 +3,7 @@
 // public slots (seat and survivor names, numbers), so they cannot reveal hidden state; pacing is the talker's (about one line per bot
 // per turn, scaled by the persona's chattiness).
 import { create } from 'zustand'
+import { speakPersonaLine } from '../audio/personaVoice'
 import { createTalker, type Fills, type Talker, type TalkKey } from '../../ai/talk'
 import { getPersona } from '../../ai/personas'
 import type { GameEvent, GameState, SeatId } from '../../engine/index'
@@ -45,6 +46,7 @@ export function say(seat: SeatId, key: TalkKey, fills: Fills, opts?: { force?: b
   const t = talkerFor(st, seat)
   const text = t?.say(key, fills, st.turnCount, opts)
   if (!text) return false
+  speakPersonaLine(st.setup.seats.find((x) => x.id === seat)?.persona, key, text)
   const name = seatNameOf(st.setup, seat)
   usePresentedStore.setState((s) => {
     const last = s.feed[s.feed.length - 1]

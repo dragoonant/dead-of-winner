@@ -4,7 +4,8 @@
 // At speed 0 (instant) or after skipAll(), batches drain synchronously with one store commit per pump.
 import { redactEvent, type GameEvent, type GameState } from '../../engine/index'
 import { makeNames } from '../data'
-import { scaled } from '../store/settingsStore'
+import { scaled, useSettingsStore } from '../store/settingsStore'
+import { prepareBeatAudio, resetPresentationAudio, stopPresentationAudio } from '../audio/presentAudio'
 import { applyEvent } from './apply'
 import { buildBeats, totalMs, type Beat, type SeqEvent } from './beats'
 import { FACE_WORD, feedLine, rollPurposeLabel, type Names } from './feed'
@@ -26,6 +27,7 @@ const defaultClock: DirectorClock = {
   setTimeout: (fn, ms) => setTimeout(fn, ms),
   clearTimeout: (h) => clearTimeout(h as ReturnType<typeof setTimeout>),
 }
+const speedIsInstant = (): boolean => useSettingsStore.getState().speed <= 0
 let clock: DirectorClock = defaultClock
 /** Tests: replace the clock (null restores the real one). */
 export function setDirectorClock(c: DirectorClock | null): void { clock = c ?? defaultClock }
@@ -177,8 +179,14 @@ function pump(): void {
       }
       if (cur.index >= cur.beats.length) { finishBatch(); continue }
       const beat = cur.beats[cur.index]!
-      const dur = fastForward || beat.baseMs === 0 ? 0 : scaled(Math.max(60, Math.round(beat.baseMs * cur.compress)))
+      let dur = fastForward || beat.baseMs === 0 ? 0 : scaled(Math.max(60, Math.round(beat.baseMs * cur.compress)))
+      // audio: effects, narration, music (killed events never reach it); a narrated beat is held until the narrator finishes
+      const sound = prepareBeatAudio(
+        beat.events.flatMap((se) => redactEvent(se.event, cur!.batch.viewer) ?? []), cur.state, cur.batch.viewer, { silent: fastForward || speedIsInstant() },
+      )
+      if (dur > 0 && sound.holdMs > dur) dur = sound.holdMs
       startBeat(beat, dur)
+      sound.play()
       if (dur > 0) {
         timerBeat = beat
         timer = clock.setTimeout(() => {
@@ -210,6 +218,7 @@ export function enqueueBatch(batch: Batch): void {
 /** Skip the beat now playing (any click). */
 export function skipBeat(): void {
   if (timer === null || !timerBeat) return
+  stopPresentationAudio()
   clock.clearTimeout(timer)
   const beat = timerBeat
   timer = null
@@ -222,6 +231,7 @@ export function skipBeat(): void {
 /** Show everything queued at once (rolls and feed lines still reach their logs). */
 export function skipAll(): void {
   fastForward = true
+  stopPresentationAudio()
   if (timer !== null) skipBeat()
   else pump()
 }
@@ -241,6 +251,7 @@ export function resetPresentation(state: GameState | null, seq = 0): void {
   queue.length = 0
   cur = null
   fastForward = false
+  resetPresentationAudio()
   draft = { patch: {}, feed: [], dice: [] }
   usePresentedStore.setState({ ...INITIAL_PRESENTED, paused: usePresentedStore.getState().paused, state, cursor: seq, rev: usePresentedStore.getState().rev + 1 })
 }

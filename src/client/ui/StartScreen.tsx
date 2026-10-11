@@ -3,6 +3,7 @@
 import { useEffect, useState, type CSSProperties, type ReactElement } from 'react'
 import { BOT_NAMES, mainObjectives, setClientBundle, type MainObjectiveInfo } from '../data'
 import type { AiTier } from '../../engine/types'
+import { useTitleMusic } from '../audio/useAudioSettings'
 import { loadClientBundle } from '../dataLoad'
 import { DEFAULT_PERSONAS, randomSeedWord, type BotChoice, type LaunchRequest } from '../launch'
 import { SPEED_PRESETS, speedName, useSettingsStore, type SpeedPreset } from '../store/settingsStore'
@@ -26,6 +27,7 @@ export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) 
   const set = useSettingsStore((s) => s.set)
   const save = peekAutosave()
   const titleArt = useArt(titleCandidates())
+  useTitleMusic()
 
   useEffect(() => {
     let alive = true

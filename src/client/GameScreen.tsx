@@ -1,5 +1,6 @@
 // The in-game screen: table canvas plus every HUD panel. Lazy-loaded from App so the title screen stays light.
 import { useEffect, useMemo, useState, type ReactElement } from 'react'
+import { useGameAudio } from './audio/useAudioSettings'
 import { HandFan } from './cards/HandFan'
 import { HoverSurvivorCard } from './cards/SurvivorChip'
 import { startBotDriver, stopBotDriver } from './bot/botDriver'
@@ -85,6 +86,7 @@ export default function GameScreen({ request, fps, onExit, onRestart }: {
   const [ready, setReady] = useState(false)
   const state = useGameStore((s) => s.state)
   const fatal = useGameStore((s) => s.fatal)
+  useGameAudio()
 
   useEffect(() => {
     let alive = true

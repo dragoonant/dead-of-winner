@@ -5,6 +5,7 @@ import { ExiledCard } from '../cards/ObjectiveCards'
 import { MainObjectiveCard, SecretObjectiveCard } from '../cards/ObjectiveCards'
 import { nameOf, partLabel, rec } from '../data'
 import { useTrueView } from '../store/hooks'
+import { AudioSettingsSection } from '../audio/AudioSettings'
 import { SPEED_PRESETS, speedName, useSettingsStore, type SpeedPreset } from '../store/settingsStore'
 import { ui, useUiStore } from '../store/uiStore'
 
@@ -129,8 +130,9 @@ export function SettingsPopover(): ReactElement | null {
         </select>
       </label>
       <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <input type="checkbox" checked={s.narration} onChange={(e) => s.set({ narration: e.target.checked })} /> Narration pauses
+        <input type="checkbox" checked={s.narration} onChange={(e) => s.set({ narration: e.target.checked })} data-testid="settings-narration" /> Narration (the table pauses while the narrator speaks)
       </label>
+      <AudioSettingsSection />
       <button className="btn" onClick={() => ui.set({ keysOpen: true, settingsOpen: false })}>Key list</button>
       <button className="btn" onClick={() => ui.set({ settingsOpen: false })}>Close</button>
     </div>
