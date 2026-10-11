@@ -14,11 +14,49 @@ import { SPEED_PRESETS, speedName, useSettingsStore, type SpeedPreset } from '..
 import { peekAutosave } from '../store/savePeek'
 import { seatColourAt, usePalette } from '../table/seats'
 import { titleCandidates, useArt } from '../cards/art'
+import { MainObjectiveCard, ObjectiveCardBack } from '../cards/ObjectiveCards'
+import '../cards/cards.css'
 import './hud.css'
 
 interface PersonaInfo { id: string; name: string; blurb: string }
 
 const MAX_BOTS = 4
+
+/** The selected main objective as a card: its printed face for the chosen side, or the face-down back for "Random". Click to read it larger. */
+function ObjectiveCardPanel({ objective, hardcore, count }: { objective: string; hardcore: boolean; count: number }): ReactElement {
+  const [open, setOpen] = useState(false)
+  const random = objective === 'random'
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent): void => { if (e.key === 'Escape') setOpen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+  return (
+    <div className="obj-card-view" data-testid="setup-objective-card" data-objective={objective} data-side={random ? 'back' : hardcore ? 'hardcore' : 'normal'}>
+      {random ? (
+        <>
+          <ObjectiveCardBack size="lg" />
+          <div className="obj-card-cap muted">{count ? `One of the ${count} main objectives.` : 'One of the main objectives.'}</div>
+        </>
+      ) : (
+        <>
+          <button className="obj-card-btn" onClick={() => setOpen(true)} aria-label="Read this objective card larger" data-testid="setup-objective-card-open">
+            <MainObjectiveCard id={objective} hardcore={hardcore} size="lg" />
+          </button>
+          <div className="obj-card-cap muted">{hardcore ? 'Hardcore side' : 'Normal side'} · click to enlarge</div>
+        </>
+      )}
+      {open && !random && (
+        <div className="obj-modal" role="dialog" aria-modal="true" aria-label="Main objective card" data-testid="setup-objective-modal" onClick={() => setOpen(false)}>
+          <button className="obj-modal-card" onClick={() => setOpen(false)} aria-label="Close">
+            <MainObjectiveCard id={objective} hardcore={hardcore} size="xl" />
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
 
 function VariantRow({ id, label, hint, checked, disabled, onChange }: { id: string; label: string; hint: string; checked: boolean; disabled?: boolean; onChange: (on: boolean) => void }): ReactElement {
   return (
@@ -39,6 +77,7 @@ export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) 
   const [objective, setObjective] = useState<string>('random')
   const [objectives, setObjectives] = useState<MainObjectiveInfo[]>([])
   const [matureCards, setMatureCards] = useState<number | null>(null)
+  const [cardShown, setCardShown] = useState(false)
   const [dataError, setDataError] = useState<string | null>(null)
   const [seed, setSeed] = useState(() => randomSeedWord())
   const [choice, setChoice] = useState<VariantChoice>(() => ({ ...DEFAULT_VARIANT_CHOICE, ...choiceFromVariants(urlVariants) }))
@@ -129,6 +168,14 @@ export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) 
               {objectives.length === 0 && !dataError && <span className="muted">Loading the card data...</span>}
             </div>
             {dataError && <div className="error">{dataError}</div>}
+          </div>
+          <div className="obj-card-col">
+            <button className="btn chip obj-card-toggle" aria-expanded={cardShown} onClick={() => setCardShown(!cardShown)} data-testid="setup-objective-card-toggle">
+              {cardShown ? 'Hide' : 'Show'} the objective card
+            </button>
+            <div className={`obj-card-panel ${cardShown ? 'open' : ''}`}>
+              <ObjectiveCardPanel objective={objective} hardcore={choice.hardcore || coopRules} count={objectives.length} />
+            </div>
           </div>
           <div data-testid="setup-variants">
             <h2>Variants</h2>

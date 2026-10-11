@@ -18,21 +18,43 @@ function ClipboardClip(): ReactElement {
   )
 }
 
-export function MainObjectiveCard({ id, hardcore, size = 'md' }: { id: string; hardcore?: boolean; size?: CardSize }): ReactElement {
+export type ObjectiveSide = 'normal' | 'hardcore'
+/** Which printed face of a main objective is in play: the hardcore variant (or co-op rules) uses the harder side. */
+export const objectiveSide = (hardcore?: boolean): ObjectiveSide => (hardcore ? 'hardcore' : 'normal')
+
+/** What a main objective card prints for one side, read from the card data. */
+export function objectiveFace(id: string, hardcore?: boolean): { side: ObjectiveSide; name: string; setup: string; victory: string; time: string } {
   const r = rec(id)
-  const side = hardcore ? 'hardcore' : 'normal'
+  const side = objectiveSide(hardcore)
   const t = (r?.['text']?.[side] ?? {}) as { setup?: string; victory?: string }
-  const name = hardcore && id.endsWith('x-weeks-of-darkness') ? 'Ten Weeks of Darkness' : nameOf(id)
-  const time = TIME[(r?.['time'] as string | undefined) ?? ''] ?? ''
+  const name = side === 'hardcore' && id.endsWith('x-weeks-of-darkness') ? 'Ten Weeks of Darkness' : nameOf(id)
+  return { side, name, setup: t.setup ?? '', victory: t.victory ?? '', time: TIME[(r?.['time'] as string | undefined) ?? ''] ?? '' }
+}
+
+/** The face-down back shown on the start screen while the objective is still "Random". */
+export function ObjectiveCardBack({ size = 'md' }: { size?: CardSize }): ReactElement {
   return (
-    <div className={`dcard ${size}`} data-card="main-objective" data-id={id}>
+    <div className={`dcard ${size}`} data-card="main-objective-back">
+      <div className="dcard-face mo-back">
+        <div className="mo-back-band" />
+        <p>Random objective — revealed when the game starts</p>
+        <div className="mo-back-band" />
+      </div>
+    </div>
+  )
+}
+
+export function MainObjectiveCard({ id, hardcore, size = 'md' }: { id: string; hardcore?: boolean; size?: CardSize }): ReactElement {
+  const { side, name, setup, victory, time } = objectiveFace(id, hardcore)
+  return (
+    <div className={`dcard ${size}`} data-card="main-objective" data-id={id} data-side={side}>
       <div className="dcard-face">
         <div className="mo-board" />
         <ClipboardClip />
         <div className="mo-sheet">
           <h4 style={name.length > 16 ? { fontSize: '9.2cqw' } : undefined}>{name}</h4>
-          <div className="mo-sec"><h5><WarnIcon />Set up<WarnIcon /></h5><p className="ital">{t.setup ?? ''}</p></div>
-          <div className="mo-sec"><h5>Victory</h5><p>{t.victory ?? ''}</p></div>
+          <div className="mo-sec"><h5><WarnIcon />Set up<WarnIcon /></h5><p className="ital">{setup}</p></div>
+          <div className="mo-sec"><h5>Victory</h5><p>{victory}</p></div>
           {time && <div className="mo-sec time"><h5>Time</h5><p>{time}</p></div>}
         </div>
       </div>

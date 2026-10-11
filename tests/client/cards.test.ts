@@ -7,7 +7,7 @@ import { loadDefaultBundle } from '../../tools/default-bundle'
 import { CrisisCard } from '../../src/client/cards/CrisisCard'
 import { CrossroadsCard } from '../../src/client/cards/CrossroadsCard'
 import { ItemCard } from '../../src/client/cards/ItemCard'
-import { BetrayalCard, ExiledCard, MainObjectiveCard, SecretObjectiveCard } from '../../src/client/cards/ObjectiveCards'
+import { BetrayalCard, ExiledCard, MainObjectiveCard, ObjectiveCardBack, SecretObjectiveCard, objectiveFace, objectiveSide } from '../../src/client/cards/ObjectiveCards'
 import { SurvivorCard } from '../../src/client/cards/SurvivorCard'
 import { hash01, portraitCandidates, locationCandidates, slugOf } from '../../src/client/cards/art'
 import { crisisInfo, itemDeck, setClientBundle, survivorAbilityKeyword } from '../../src/client/data'
@@ -72,6 +72,31 @@ describe('card faces', () => {
     expect(html(createElement(SecretObjectiveCard, { id: secret.id }))).not.toContain('class="stamp"')
     expect(text(html(createElement(BetrayalCard, { id: betrayal.id })))).toContain('Betrayal!')
     expect(text(html(createElement(ExiledCard, { id: exiled.id })))).toContain('Exiled')
+  })
+
+  it('the start screen picks the normal or the hardcore face of a main objective, straight from the data', () => {
+    expect(objectiveSide(false)).toBe('normal')
+    expect(objectiveSide(undefined)).toBe('normal')
+    expect(objectiveSide(true)).toBe('hardcore')
+    const b = loadDefaultBundle()
+    expect(b.records.mainObjectives).toHaveLength(10)
+    for (const o of b.records.mainObjectives) {
+      const n = objectiveFace(o.id, false)
+      const h = objectiveFace(o.id, true)
+      expect([n.side, h.side]).toEqual(['normal', 'hardcore'])
+      expect(n.setup).toBe(o.text?.normal?.setup)
+      expect(n.victory).toBe(o.text?.normal?.victory)
+      expect(h.setup).toBe(o.text?.hardcore?.setup)
+      expect(h.victory).toBe(o.text?.hardcore?.victory)
+      expect(n.setup.length).toBeGreaterThan(0)
+      expect(h.setup).not.toBe(n.setup)
+      // the card prints the side it was given
+      expect(text(html(createElement(MainObjectiveCard, { id: o.id, hardcore: true })))).toContain(h.victory)
+      expect(text(html(createElement(MainObjectiveCard, { id: o.id })))).toContain(n.victory)
+    }
+    expect(objectiveFace('obj.main.x-weeks-of-darkness', false).name).toBe('Eight Weeks of Darkness')
+    expect(objectiveFace('obj.main.x-weeks-of-darkness', true).name).toBe('Ten Weeks of Darkness')
+    expect(text(html(createElement(ObjectiveCardBack, {})))).toContain('Random objective — revealed when the game starts')
   })
 
   it('CrossroadsCard prints the title, the italic trigger, the story and two options', () => {
