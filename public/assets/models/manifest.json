@@ -34,9 +34,49 @@
   "heightIn": 1.2,
   "tris": 6155
  },
+ "brian-lee": {
+  "file": "brian-lee.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "buddy-davis": {
+  "file": "buddy-davis.glb",
+  "heightIn": 1.25,
+  "tris": 6155
+ },
+ "carla-thompson": {
+  "file": "carla-thompson.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "daniel-smith": {
+  "file": "daniel-smith.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "david-garcia": {
+  "file": "david-garcia.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "edward-white": {
+  "file": "edward-white.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
  "forest-plum": {
   "file": "forest-plum.glb",
   "heightIn": 1.15,
   "tris": 6155
+ },
+ "gabriel-diaz": {
+  "file": "gabriel-diaz.glb",
+  "heightIn": 1.25,
+  "tris": 6155
+ },
+ "gray-beard": {
+  "file": "gray-beard.glb",
+  "heightIn": 1.2,
+  "tris": 6156
  }
 }
