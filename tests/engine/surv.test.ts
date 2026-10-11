@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { patchLocation, patchSeat, patchSurvivor } from '../../src/engine/decks'
+import { runEffectNodes, type RunCtx } from '../../src/engine/effects'
 import type { GameEvent } from '../../src/engine/events'
 import {
   addHelpless, addSurvivor, applyChooseLeader, applyExiledPlacement, changeMorale, hasFreeSpace, isExiledPlacement, killHelpless, killSurvivor,
@@ -201,5 +202,33 @@ describe('survivors', () => {
     const twice = killSurvivor(once, id, 'wounds')
     expect(twice.events).toEqual([])
     expect(twice.state).toBe(once)
+  })
+
+  // One effect (a failed crisis wounding a whole location) can kill the leader and then more of the same seat's survivors: the newLeader
+  // decision minted for the first death must not offer the ones that died after it (seed 35, game 59, two seats).
+  const killAt = (s: GameState, loc: string) => runEffectNodes(s, [{ op: 'killSurvivor', scope: { who: 'atLocation', location: loc } }], { sourceId: 'cr.test', sourceKind: 'crisis', seat: 's1', point: 'colony.crisis' } as RunCtx)
+  it('SURV-017 a multi-kill that takes the leader and another survivor re-reads the newLeader options (auto-resolves when one is left)', () => {
+    let s = grow(base('surv-17'), 's1', 1) // three survivors: leader + two followers
+    const [a, b, c] = [leaderOf(s), ...s.seats['s1']!.survivors.filter((x) => x !== leaderOf(s))] as [string, string, string]
+    const loc = s.locationOrder[1]!
+    s = patchSurvivor(patchSurvivor(s, a, { location: loc }), b, { location: loc })
+    const r = killAt(s, loc)
+    expect(ofType(r.events, 'SurvivorKilled').map((e) => e.survivorId).sort()).toEqual([a, b].sort())
+    expect(r.pending).toBeUndefined()
+    expect(r.state.seats['s1']!.leaderId).toBe(c)
+    expect(ofType(r.events, 'DecisionAutoResolved')).toHaveLength(1)
+    expect(ofType(r.events, 'LeaderChosen').at(-1)).toMatchObject({ seat: 's1', survivorId: c })
+  })
+
+  it('SURV-018 a multi-kill that leaves two or more candidates offers exactly the survivors still alive, under the same decision id', () => {
+    let s = grow(base('surv-18'), 's1', 2) // leader + three followers
+    const [a, b, c, d] = [leaderOf(s), ...s.seats['s1']!.survivors.filter((x) => x !== leaderOf(s))] as [string, string, string, string]
+    const loc = s.locationOrder[1]!
+    s = patchSurvivor(patchSurvivor(s, a, { location: loc }), b, { location: loc })
+    const r = killAt(s, loc)
+    expect(r.pending).toMatchObject({ kind: 'newLeader', seat: 's1' })
+    expect(r.pending!.options!.map((o) => o.id).sort()).toEqual([`leader:${c}`, `leader:${d}`].sort())
+    expect(r.state.pending).toBe(r.pending)
+    for (const o of r.pending!.options!) expect(validateChooseLeader(r.state, 's1', (o.action as { survivorId: string }).survivorId)).toBeNull()
   })
 })

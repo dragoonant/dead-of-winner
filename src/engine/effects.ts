@@ -32,7 +32,7 @@ import { bundleFor } from './bundles'
 import { CODE_HOOKS, biteShield } from './code-hooks'
 import { checkCrossroads } from './crossroads'
 import { addWoundInto, isMoraleEndDeferred, rollExposureFor as realRollExposure, setServices, svc as exposureServices } from './exposure'
-import { addSurvivorFromDeck as realAddSurvivor, removeSurvivor as realRemoveSurvivor } from './survivors'
+import { addSurvivorFromDeck as realAddSurvivor, applyChooseLeader, leaderCandidates, leaderOptions, removeSurvivor as realRemoveSurvivor } from './survivors'
 import { addZombies as realAddZombies } from './zombies'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1574,6 +1574,34 @@ function execJob(acc: Acc, job: Job, jobs: Job[]): void {
   }
 }
 
+/**
+ * A `newLeader` decision is minted the moment a leader dies, but one effect can kill more of that seat's survivors afterwards (a crisis
+ * that wounds several of them, SURV-018). Re-read the options against the survivors still alive: fewer than two means the choice is
+ * gone (the lone survivor leads), none means the seat already got its last-survivor replacement. Returns true when the pending was dropped.
+ */
+function settleLeaderPending(acc: Acc): boolean {
+  const p = acc.pending
+  if (!p || p.kind !== 'newLeader' || p.seat === 'all') return false
+  const seat = p.seat
+  const alive = leaderCandidates(acc.state, seat)
+  const offered = (p.options ?? []).map((o) => (o.action as { survivorId?: string }).survivorId)
+  if (alive.length >= 2 && alive.length === offered.length && alive.every((id) => offered.includes(id))) return false // still accurate
+  if (alive.length >= 2) {
+    const pd: PendingDecision = { ...p, options: leaderOptions(acc.state, seat, p.id, alive) }
+    acc.pending = pd
+    acc.state = { ...acc.state, pending: pd }
+    return false
+  }
+  acc.pending = undefined
+  const leader = acc.state.seats[seat]!.leaderId
+  if (alive.length === 1 && leader !== alive[0]) {
+    const l = applyChooseLeader(acc.state, seat, alive[0]!, 'replacement')
+    acc.state = l.state
+    emit(acc, { type: 'DecisionAutoResolved', kind: 'newLeader', seat, optionId: `leader:${alive[0]}` }, ...l.events)
+  }
+  return true
+}
+
 /** Run jobs until they finish (null) or one needs an answer / a routine raised a decision (the pending, already in state). */
 export function runJobs(acc: Acc, jobs: Job[]): PendingDecision | null {
   let guard = 0
@@ -1583,6 +1611,7 @@ export function runJobs(acc: Acc, jobs: Job[]): PendingDecision | null {
       if (e instanceof NeedAnswer) return raise(acc, e.spec, jobs)
       throw e
     }
+    if (acc.pending) settleLeaderPending(acc)
     if (acc.pending) { acc.state = { ...acc.state, pending: acc.pending }; return acc.pending }
     if (acc.state.phase === 'ended') return acc.state.pending
   }
