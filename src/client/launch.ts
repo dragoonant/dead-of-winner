@@ -149,6 +149,7 @@ export function resolveObjective(hint: string, list: { id: string; name: string 
 /** The three M4 personas in seat order (ids and names mirror src/data/personas; a test keeps them in step). */
 export const DEFAULT_PERSONAS: { id: string; name: string }[] = [
   { id: 'ps.quartermaster', name: 'Vera Lindqvist' }, { id: 'ps.optimist', name: 'Teddy Marchbanks' }, { id: 'ps.hardcase', name: 'Ruth Castellano' },
+  { id: 'ps.kid', name: 'Jojo Pruitt' }, { id: 'ps.doctor', name: 'Dr. Anand Rao' }, { id: 'ps.drifter', name: 'Silas Crane' },
 ]
 
 export function buildSetup(req: Pick<LaunchRequest, 'seats' | 'tier' | 'bots'> & { variants?: GameVariants }, objective: string, variants: GameVariants | undefined = req.variants): GameSetup {

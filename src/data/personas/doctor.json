@@ -1,0 +1,381 @@
+{
+  "kind": "persona",
+  "id": "ps.doctor",
+  "name": "Dr. Anand Rao",
+  "blurb": "The Doctor: works the plan, keeps medicine for the wounded, speaks rarely and precisely.",
+  "scalars": {
+    "generosity": 0.5,
+    "risk": 0.25,
+    "paranoia": 1.0,
+    "trust": 0.6,
+    "chattiness": 0.3,
+    "bluffing": 0.1,
+    "voteThreshold": 0.65,
+    "callThreshold": 0.78
+  },
+  "voice": {
+    "libraryVoiceId": "tbd",
+    "direction": "Man in his sixties, soft baritone, measured, Indian-British, pauses before numbers."
+  },
+  "portrait": {
+    "file": "portraits/doctor.png",
+    "direction": "Silver hair, round glasses taped at one hinge, surgical mask around the neck, hospital fleece under a long coat."
+  },
+  "lines": {
+    "round.start": [
+      {
+        "text": "Round begins. {n} remain. Let us be deliberate.",
+        "voiced": false
+      },
+      {
+        "text": "Another round. First, who is injured?",
+        "voiced": false
+      }
+    ],
+    "crisis.revealed": [
+      {
+        "text": "{crisis}. The remedy is {symbol}. Please check your supplies.",
+        "voiced": false
+      },
+      {
+        "text": "{crisis}... we require {symbol}. I will assess the pile.",
+        "voiced": false
+      }
+    ],
+    "crisis.contributed": [
+      {
+        "text": "Contributing {n} {symbol}. Measured, not generous.",
+        "voiced": false
+      },
+      {
+        "text": "{n} {symbol}. That is my share.",
+        "voiced": false
+      }
+    ],
+    "crisis.prevented": [
+      {
+        "text": "Adequate. A small mercy.",
+        "voiced": false
+      },
+      {
+        "text": "Prevented, with {n}. The margin was thin.",
+        "voiced": false
+      }
+    ],
+    "crisis.bonus": [
+      {
+        "text": "A surplus. Unexpected. Welcome.",
+        "voiced": false
+      }
+    ],
+    "crisis.failed": [
+      {
+        "text": "Insufficient by {n}. Regrettable, and avoidable.",
+        "voiced": false
+      },
+      {
+        "text": "A failure. I would like to understand why.",
+        "voiced": false
+      },
+      {
+        "text": "We were short {n}. The cause may not be accidental.",
+        "voiced": false
+      }
+    ],
+    "crisis.shortfall": [
+      {
+        "text": "The pile was wrong, and {seat} contributed. Correlation only, for now.",
+        "voiced": false
+      },
+      {
+        "text": "I note {seat} in the data. Nothing more, yet.",
+        "voiced": false
+      }
+    ],
+    "vote.called.me": [
+      {
+        "text": "I am the subject, {seat}? Present your evidence.",
+        "voiced": false
+      },
+      {
+        "text": "A vote on me. Very well, {seat}. Be precise.",
+        "voiced": false
+      }
+    ],
+    "vote.called.other": [
+      {
+        "text": "{seat} is proposed. I will weigh the evidence.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.yes": [
+      {
+        "text": "The record supports exile for {seat}. Yes.",
+        "voiced": false
+      },
+      {
+        "text": "I regret it, but {seat}'s pattern is consistent. Yes.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.no": [
+      {
+        "text": "The data does not condemn {seat}. No.",
+        "voiced": false
+      },
+      {
+        "text": "Insufficient evidence on {seat}. No.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.silent": [
+      {
+        "text": "…",
+        "voiced": false
+      }
+    ],
+    "vote.passed": [
+      {
+        "text": "{seat} departs. I hope the diagnosis was correct.",
+        "voiced": false
+      }
+    ],
+    "vote.failed": [
+      {
+        "text": "{seat} remains. The evidence did not convince.",
+        "voiced": false
+      }
+    ],
+    "exiled.me": [
+      {
+        "text": "Outside, then. I will practise medicine wherever I stand.",
+        "voiced": false
+      },
+      {
+        "text": "I accept the decision. I do not agree with it.",
+        "voiced": false
+      }
+    ],
+    "exiled.other": [
+      {
+        "text": "{seat} is exiled. We must manage without them.",
+        "voiced": false
+      }
+    ],
+    "request.made": [
+      {
+        "text": "{seat}, may I ask for {symbol}? It is for a patient.",
+        "voiced": false
+      },
+      {
+        "text": "{seat}, I require {symbol}. I will return the favour.",
+        "voiced": false
+      }
+    ],
+    "request.give": [
+      {
+        "text": "Take this, {seat}. Use it carefully.",
+        "voiced": false
+      },
+      {
+        "text": "Of course, {seat}. I hope it helps.",
+        "voiced": false
+      }
+    ],
+    "request.decline": [
+      {
+        "text": "I cannot spare it, {seat}. Someone here needs it more.",
+        "voiced": false
+      },
+      {
+        "text": "Not now, {seat}. I have patients to consider.",
+        "voiced": false
+      },
+      {
+        "text": "I must decline, {seat}. Please do not take it personally.",
+        "voiced": false
+      }
+    ],
+    "request.refused.me": [
+      {
+        "text": "{seat} declined. I understand. It is noted.",
+        "voiced": false
+      }
+    ],
+    "search.found.weapon": [
+      {
+        "text": "A weapon at {location}. Someone steadier than I should hold it.",
+        "voiced": false
+      }
+    ],
+    "search.found.fuel": [
+      {
+        "text": "Fuel at {location}. Practical. Good.",
+        "voiced": false
+      }
+    ],
+    "search.found.education": [
+      {
+        "text": "A reference at {location}. Knowledge is a form of medicine.",
+        "voiced": false
+      }
+    ],
+    "search.found.food": [
+      {
+        "text": "Food at {location}. Nourishment is half of treatment.",
+        "voiced": false
+      }
+    ],
+    "search.found.medicine": [
+      {
+        "text": "Medicine at {location}. This, at least, I can use well.",
+        "voiced": false
+      }
+    ],
+    "search.found.tool": [
+      {
+        "text": "A tool at {location}. Plain, but precise.",
+        "voiced": false
+      }
+    ],
+    "search.found.survivor": [
+      {
+        "text": "Another person at {location}. Let me see whether they are hurt.",
+        "voiced": false
+      }
+    ],
+    "search.noise": [
+      {
+        "text": "Noise at {location}. A calculated risk, I hope.",
+        "voiced": false
+      }
+    ],
+    "move.out": [
+      {
+        "text": "{survivor} proceeds to {location}. A plan, not a whim.",
+        "voiced": false
+      }
+    ],
+    "zombie.killed": [
+      {
+        "text": "One fewer at {location}. I take no pleasure in it.",
+        "voiced": false
+      }
+    ],
+    "barricade.built": [
+      {
+        "text": "Entrance {entrance} is reinforced. Prevention before cure.",
+        "voiced": false
+      }
+    ],
+    "exposure.wound": [
+      {
+        "text": "{survivor} is wounded. Treatment is the priority.",
+        "voiced": false
+      }
+    ],
+    "exposure.bite": [
+      {
+        "text": "{survivor}... there was nothing to be done.",
+        "voiced": false
+      },
+      {
+        "text": "We lose {survivor}. I will remember the name.",
+        "voiced": false
+      }
+    ],
+    "bite.chain.kill": [
+      {
+        "text": "{survivor}. I chose, and the choice is mine to carry.",
+        "voiced": false
+      }
+    ],
+    "survivor.lost.other": [
+      {
+        "text": "{seat} has lost {survivor}. My condolences.",
+        "voiced": false
+      }
+    ],
+    "overrun": [
+      {
+        "text": "Entrance {entrance} has failed. Triage, please.",
+        "voiced": false
+      }
+    ],
+    "food.short": [
+      {
+        "text": "We are underfed by {n}. Morale suffers accordingly.",
+        "voiced": false
+      },
+      {
+        "text": "Hunger costs {n} morale. It is a medical fact.",
+        "voiced": false
+      }
+    ],
+    "morale.low": [
+      {
+        "text": "Morale is critical. Treat it as one would a fever.",
+        "voiced": false
+      }
+    ],
+    "objective.progress": [
+      {
+        "text": "The count is {n}. Steady progress, still insufficient.",
+        "voiced": false
+      }
+    ],
+    "crossroads.me": [
+      {
+        "text": "A decision in my care. I will be thorough.",
+        "voiced": false
+      }
+    ],
+    "accused.me": [
+      {
+        "text": "{seat}, that is a serious claim. Provide your reasoning.",
+        "voiced": false
+      },
+      {
+        "text": "I note the accusation, {seat}. I will not answer with heat.",
+        "voiced": false
+      },
+      {
+        "text": "Ask me anything, {seat}. My answers will be consistent.",
+        "voiced": false
+      }
+    ],
+    "accused.other": [
+      {
+        "text": "{seat} is accused. Let us hear the reasons first.",
+        "voiced": false
+      }
+    ],
+    "game.won": [
+      {
+        "text": "We have survived. Thank you, all.",
+        "voiced": false
+      }
+    ],
+    "game.lost": [
+      {
+        "text": "We did what we could. It was not enough.",
+        "voiced": false
+      }
+    ],
+    "idle": [
+      {
+        "text": "Anyone with a cough or a limp, tell me now.",
+        "voiced": false
+      }
+    ]
+  },
+  "sources": {
+    "scalars": "B H.7",
+    "lines": "B H.7"
+  },
+  "status": "draft",
+  "notes": "Original persona (41 §1). Lines written in our own words; text-only, no recordings yet.",
+  "tags": [
+    "original"
+  ]
+}

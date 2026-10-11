@@ -1,5 +1,5 @@
-// npm run bench:ai -- --games 40 --seed 1 --tier normal|random [--seats 4] [--objective samples|random|<id>]  (default samples, the spec 40 §13 reference objective) [--json]
-// Bots-only games on the default bundle with every seat on the same tier, through the same loop as `npm run sim` (invariants, leak
+// npm run bench:ai -- --games 40 --seed 1 --tier random|easy|normal|hard [--seats 4] [--objective samples|random|<id>]  (default samples, the spec 40 §13 reference objective) [--json]
+// Bots-only games on the default bundle (personas in sheet order: Vera, Teddy, Ruth, Jojo) with every seat on the same tier, through the same loop as `npm run sim` (invariants, leak
 // test, save/load and replay checks included). Prints the 40 §13 metrics that the slim AI reports: objective rate, rounds, endings,
 // betrayer presence and win rate, exiles (correct / innocent), decision time, rejected actions and stalls.
 import type { AiTier } from '../src/engine/index'

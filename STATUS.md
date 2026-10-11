@@ -73,65 +73,54 @@ Playable in the browser against Random bots: https://dragoonant.github.io/dead-o
   (forms exist; crossroadsOption, exilePlacement, searchKeepWhich and votes are covered since M7); placeholder 3D art; objective part labels are mapped
   to plain words only for the common tests; the "two words" table talk on Talia Jones is not modelled.
 
-## AI (M4)
-Slim AI colonists, one tier: `src/ai/normal.ts` (+ `src/ai/normal/{info,plan,options,suspicion}.ts`), entry `src/ai/index.ts`
-`createDecider(tier, persona, seed)`; `random` stays selectable. Bots default to Normal with distinct personas (Vera Lindqvist,
-Teddy Marchbanks, Ruth Castellano: `src/data/personas/*.json`, scalars plus 24 own-words lines each); the start screen has a persona and
-a difficulty select per bot; `?tier=random` forces Random. Table talk (`src/ai/talk.ts` `pickLine`, `src/client/bot/talk.ts`) lands in the
-event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
-- What it does: a decider only sees `view(state, seat)`, the pending decision and the legal list (plus the events its seat may see, fed
-  through `redactEvent`, for its suspicion ledger); it never rolls dice or reads GameState; seeded by `deriveSeed(seed, seat, decision id)`;
-  budget `AI_TIME_BUDGET_MS` (default 100, worst decision so far 2.6 ms). Turn: greedy re-plan after every action, each legal action scored in
-  morale points: colony defence from a board model (arrivals fill spaces, break barricades, then overrun; kills and barricades valued by the
-  overruns they prevent, kills charged the exposure roll with frostbite counted as nearly lethal), food played only when the pay is short,
-  waste cleaned near a multiple of 10, searches ranked by `query.searchOdds` weighted by the crisis' prevent symbols, the seat's secret
-  objective and food shortage, moves only when search gain beats the exposure cost (colony not stripped while threatened), survivor and item
-  abilities that kill without exposure, barricade, heal, feed or clean, never an attack on a survivor. Crisis: loyal seats contribute matching
-  cards up to the estimated shortfall and never cards their objective needs; the betrayer's sabotage is described under M4b below. Requests answered by generosity and suspicion of the asker. Suspicion: a Bayesian ledger over "seat j is the
-  betrayer" from crisis shortfalls split over the seats that put cards in, declined requests and attacks on others; vote yes only on the top
-  suspect above the persona threshold from round 2 (higher after a first exile), never self, the betrayer protects itself.
-- M4b balance pass: the engine gained the missing rule, **adding cards under the main objective** (`contributeObjective {cardId}`, event
-  `CardAddedToObjective`, additive, logged in 00 §16; no die, own turn, exiled seats included; only symbols the objective counts, starter-deck
-  cards refused where the card says "starting cards do not count" via `CardInstance.starter` + `excludeStarter`). The human gets an "Add to
-  objective" button in the turn prompt and a feed line; Normal loyal seats add counting cards first thing each turn (unless the crisis needs the
-  card or the seat's own secret objective counts it), a betrayer hoards them (one cover contribution a round once the table suspects it).
-  AI changes: weapons and kill-ability survivors are picked and valued for Samples (survivor picks, colony-bound kill abilities such as Thomas
-  Heart keep their owner home, equipped noExposure weapons), a fuel card is played before a move to skip its exposure roll, medicine is valued
-  higher, crisis contributions run a little over the estimate, spare food is spent on dice, Outsiders stay in hand. Betrayer: wrong cards and
-  withheld cards when the crisis is within two points of the line (more as rounds run out), colony help fades late, own survivors protected,
-  hoards what its card needs (weapons for Trigger Happy, Outsiders for Cult Leader and a thin Serial Killers), asks for weapons, refuses
-  requests for what it hoards, paces the collapse to its private goal.
-- Bench (`npm run bench:ai -- --games 40 --seed 1 --tier normal|random`, default objective We Need More Samples, 4 bots; before = M4, after = M4b):
+## AI (M4, complete 2026-10-11)
+Four tiers, six personas, a log-odds suspicion ledger and the 40 §8.4 vote rules. Entry `src/ai/index.ts` `createDecider(tier, persona, seed)` (`random | easy |
+normal | hard`; `AI_TIERS` is what the start screen reads); the planner is `src/ai/normal.ts` over `src/ai/normal/{plan,info,options,suspicion,votes}.ts`, the tier
+knobs are `src/ai/tiers.ts`, the table talk is `src/ai/talk.ts` plus `src/client/bot/talk.ts`. `docs/spec/40-ai.md` section 15 lists what is built against the spec.
+- Tiers. Easy: 15% score noise, ledger reads attacks only (votes yes only on that), never asks for cards, 1 food token a die, persona at half strength, naive
+  betrayer. Normal: full ledger and the cover-budget betrayer (margin 0.8). Hard: wound-aware risk pricing, "finishing" mode (once the counters are met, play only to
+  live through the colony phase that checks them), the seat-by-seat crisis-total distribution, thresholds 0.05 lower, a patient betrayer (margin 0.5) that may call
+  a deflecting vote. Normal runs the M4b constants (sampleKill 1.15, woundW 0.4); Hard the tuned set (sampleKill 1.3, woundW 1.0).
+- Personas (41 §1): Vera Lindqvist (Quartermaster), Teddy Marchbanks (Optimist), Ruth Castellano (Hard Case), Jojo Pruitt (Kid), Dr. Anand Rao (Doctor), Silas Crane
+  (Drifter): scalars from the sheet, 63-71 own-words lines each across the 41 keys. The original 24 lines of the first three keep their audio ids (key + position);
+  every new line is `voiced: false` and plays no clip (`tools/audio-build-manifest.ts` skips them, the client matches audio by exact line text).
+- Suspicion: crisis shortfalls split over contributors (a seat that put nothing in is cleared), declined requests, colony-hurting Crossroads picks, zombies attracted
+  onto others, hoarding, attacks, claims against the revealed pile (over an in-process talk bus), accusing votes; paranoia scales bad news, trust scales statements;
+  vote iff S passes the persona threshold and the colony can afford the dice (morale 3+, at most a third of the table's dice); a call needs the estimated yes votes to
+  reach a majority; an exiled first player breaks ties through `votes[tiebreakSeat]` and the bot answers for it. `suspicionTrajectory(seed?)` feeds the recap.
+- Betrayer: the card's own condition tree is parsed from the bundle (hand symbols, weapons carried, survivors, barricades, most survivors, survivors gone): it
+  hoards, searches, equips and paces the collapse to the card.
+- Found while balancing: the Samples win was blocked in about 19% of games by The Deputy's added victory condition (0 of 19 such games completed): the bots took the
+  deal. Options now price added victory conditions and Crossroads effect votes are read from the card's two outcomes. Also fixed in the engine: a `newLeader`
+  decision stale after a multi-kill (SURV-017/018), a Snowmobile overrun that dropped the leader decision (SURV-019), a negative objective `have` (OBJ-021).
+- Bench (`npm run bench:ai -- --games 200 --seed <21|22> --tier <t>`, We Need More Samples, 4 bots, personas Vera/Teddy/Ruth/Jojo; 400 games per tier, both seeds pooled):
 
-| 40 games, seed 1, Samples | random | normal before | normal after |
-|---|---|---|---|
-| colony objective completed | 0% (0/40) | 15% (6/40) | 30% (12/40) |
-| mean rounds | 2.83 | 4.43 | 4.65 |
-| ended by | moraleZero 40 | moraleZero 31, objective 6, roundsOut 3 | moraleZero 24, objective 12, roundsOut 4 |
-| morale lost per game (killed / crisis / waste) | 3.6 / 1.3 / 0.7 | 4.2 / 1.4 / 0.3 | 2.9 / 1.8 / 0.6 |
-| betrayer present / betrayer won | 13 / 0 | 13 / 0 | 13 / 3 (23%) |
-| exiles correct / innocent | 0 / 1 | 3 / 0 | 1 / 0 |
-| decision ms mean / p95 / max | 0.01 / 0.02 / 0.45 | 0.12 / 0.29 / 2.03 | 0.14 / 0.33 / 2.5 |
-| rejected / stalls / leaks | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+| tier | colony objective completed | betrayer won (present 180) | exiles correct / innocent | mean rounds | decision ms mean / p95 / max | rejected / stalls / leaks |
+|---|---|---|---|---|---|---|
+| random | 0% (0/400) | 2.8% (5/180) | 0 / 5 | 2.8 | 0.02 / 0.04 / 0.6 | 0 / 0 / 2 (Gambling card, see below) |
+| easy | 19.5% (78/400) | 8% (15/180) | 0 / 0 | 4.0 | 0.23 / 0.49 / 4.0 | 0 / 0 / 0 |
+| normal | 26.0% (104/400) | 9% (16/180) | 0 / 0 | 4.2 | 0.24 / 0.51 / 4.4 | 0 / 0 / 0 |
+| hard | 30.5% (122/400) | 11% (20/180) | 0 / 0 | 4.4 | 0.25 / 0.52 / 4.8 | 0 / 0 / 0 |
 
-  Larger pools (the 40-game rows swing by ±7 points): Samples, 300 games seed 90: normal 24% completed, 4.66 rounds, betrayer won 19%
-  (24/128), exiles 8 correct / 3 innocent; random 0/300, 2.82 rounds, betrayer 1/132. Samples seed 2 (40 games): normal 25%, 4.5 rounds,
-  betrayer 1/17. `--objective random` (all ten main objectives, 40 games): seed 1 normal 0% (random tier 0%), 4.45 rounds, betrayer 3/26;
-  seed 2 normal 5%, 4.85 rounds, betrayer 1/17. Per objective (30 games, M4b): Find a Cure about 30-37% (cards under the objective now count),
-  Too Many Mouths about 17%; Leave It All Behind and Stockpile collect about half their cards but still never finish (every survivor armed;
-  food, barricades and six cards), Winter Has Come ends at round 2-4 when no seat holds a fuel card for the colony-phase duty, Eight Weeks
-  of Darkness, Kill Them, Home Sweet Home and Raiding Party never complete. `npm run sim -- --games 20 --seed 5 --tier normal`: 0 violations,
-  0 leaks. The sim and bench print morale lost by reason and a `tally` of diagnostic counters (kills by cause and action, exposure rolls,
-  crisis points, objective cards).
-- Known weaknesses: Samples sits at 24-30% against a 35% target. The arithmetic is hard: 12 samples need about 24 kills, every kill that is
-  not an item or ability kill rolls the exposure die (1 in 12 bite, 1 in 6 frostbite, which ticks a wound a turn until healed), so a win needs
-  free kills and luck; parameter sweeps over 20 constants moved the rate by less than the bench noise, only the structural changes above
-  counted. Crises still fail 2.5 times in 4.4 (the table rarely holds four cards of the one symbol; trading cannot help because a requested
-  card is played at once). The betrayer reaches about 20% on pools of 130+ betrayer games (Cult Leader 33%, Trigger Happy 21%, Serial
-  Killers 16%) and is still found more often than an innocent is exiled; it never attacks survivors (every attack hunt tried lifted the exile
-  rate more than the win rate). Requests only ask for food, medicine or (Trigger Happy) weapons; no Easy/Hard tier; abilities are valued only
-  for kill, barricade, heal, food and waste. `AI_TUNE='{"death":2}'` overrides the tuning constants in `src/ai/normal/plan.ts` for bench
-  experiments.
+  Seeds 91+92 (1600 games each, run through the same code): normal 25.9%, hard 28.1%. Seed-to-seed spread is about 3 points per 200 games, so the ladder
+  random < easy < normal < hard holds but hard over normal is a 2 to 4 point edge (about 1.5 sigma).
+- Misses against the M4 targets (honest list): Normal completes 26-30%, target 35-50%. Hard 28-31%. Betrayer wins 8-11% of the games it is in, target 25-40%. Exiles are
+  almost never called (0 in 1600 bench games at spec weights): one wrong card in the pile cannot tell three contributors apart, so a rational ledger stays below every
+  persona's threshold; scaling the weights up (8 per wrong card and a clamp of 5 a round) exiled 48 innocents for 2 correct exiles in 800 games. Hence "real betrayer exiled more often than an innocent"
+  holds only vacuously (the ledger test AI-007 shows three wrong-card crises do lift the one seat that was always in the pile over the thresholds). Mean decision time and
+  rejected / stalls / unknown-code targets are met.
+- What the sweeps showed (about 12 iterations of 400-1600 games): the engine's exposure die is the whole game. With no bite face the Normal bot completes 55%; with no
+  frostbite 46%; with no exposure at all 82%; with no crisis fail effects 49%. Each morale point is worth about 8 points of completion, and a bot loses about 3.7
+  morale a game to survivor deaths (18-20 exposure rolls: 12 kills, 5 moves, 2 cards) and 1.8 to failed crises (only 45% are prevented: the table rarely holds 4 matching
+  cards). Parameter sweeps over 35 constants (kill value, death price, wound price, contributions, movement, search weights, survivor picks, outsiders, hoard size,
+  betrayer appetite) moved the rate by less than the noise except: sampleKill 0.85 to 1.3 (+3), contributing nearly everything that matches (inP 0.85 to 0.45, +3),
+  wound price 0.12 to 1.0 (+3), the Deputy/effect-vote fix (+2), finishing mode (+1 to 2). What did not help: lookahead 3 colony phases, hand-tracked crisis totals
+  (neutral), a per-survivor risk model, morale-scaled caution, more weapon hunting (monotonically worse), playing Outsiders.
+- Known gaps: the recap's `suspicionTrajectory` has one point per crisis; the client's tie-break ballot for an exiled bot first player is assembled in
+  `src/client/store/gameStore.ts` (`ballotAction`), which still answers "no" for the extra `tiebreakSeat` key (sim-core answers it from the bot); the sim's `random` tier
+  trips the hidden-id leak test in the Gambling Crossroads card (a continuation in the pending decision carries another seat's card id; task spawned, engine view fix).
+- Experiment knobs: `AI_TUNE='{"woundW":1}'` overrides `TUNE` (plan.ts) and the ledger weights (`wShort`, `wCleared`, `clamp`), `hHand`, `hHorizon`, `hTau`, `hFin` switch Hard's
+  features one at a time; nothing else reads the environment.
 
 ## Rules corrections and photo data (2026-10-10)
 - Engine now follows the official rulings in `docs/rulings-resolution.md` (CHANGES NEEDED): exiled survivors cannot move back to the
@@ -157,14 +146,14 @@ event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
 | 20 data schema, schemas/*.json | written, validator implemented |
 | 21 effects DSL | written, interpreter implemented (`effects.ts`) |
 | 30 art | written (tile layout follows the Long Night location photos, ruling L1) |
-| 40 AI, 41 personas | written; random tier and slim Normal tier implemented (M4), 3 of 6 personas |
+| 40 AI, 41 personas | written; four tiers, six personas, suspicion model and vote rules implemented (M4); balance targets partly missed, see AI (M4) |
 | 50 client | written; M3 vertical slice implemented (`src/client/`) |
 | 60 testing | written; sim, invariants and leak test implemented |
 | Card data (survivors, items, crisis, Crossroads, objectives) | M2 slice in `src/data/` (see Card data (M2)); verify pass against the physical cards still open |
 
 ## Next
-- Owner playtest gate (M4): play 3 games on Pages against the three personas: does the table feel alive, is the betrayer findable but not obvious.
-- M4 follow-ups if the playtest asks for them: Easy/Hard tiers, a betrayer that plays its own win condition, objective contribution actions in the engine.
+- Owner playtest gate (M4): play 3 games on Pages against the six personas at Normal and Hard: does the table feel alive, is the betrayer findable but not obvious.
+- AI follow-ups: a betrayer that is detectable from public play (it needs a trace other than wrong cards), a stronger Hard (the exposure die decides Samples; free kills from weapons are the lever), the client ballot for an exiled bot first player.
 - Remaining source gaps: 5 betrayal texts (censored in the VASSAL module).
 - Owner request: if you have a physical copy, check the conflict tables in `docs/spec/sources/*-sources.md` against it
   (the rows marked Fan-source and the location card space counts; the card numbers are now verified from the VASSAL scans), and skim the M1 rulings in `docs/needs-rules-check.md`.

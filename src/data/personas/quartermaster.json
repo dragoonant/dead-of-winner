@@ -3,61 +3,411 @@
   "id": "ps.quartermaster",
   "name": "Vera Lindqvist",
   "blurb": "The Quartermaster: counts every ration, guards the stores, gives only what the numbers allow.",
-  "scalars": { "generosity": 0.35, "risk": 0.3, "paranoia": 1.1, "trust": 0.5, "chattiness": 0.45, "bluffing": 0.15, "voteThreshold": 0.62, "callThreshold": 0.75 },
-  "voice": { "libraryVoiceId": "tbd", "direction": "Woman in her fifties, low and even, clipped sentences, no warmth wasted." },
-  "portrait": { "file": "portraits/quartermaster.png", "direction": "Grey-blonde braid under a wool cap, ledger and pencil stub, quilted parka, steady eyes." },
+  "scalars": {
+    "generosity": 0.35,
+    "risk": 0.3,
+    "paranoia": 1.1,
+    "trust": 0.5,
+    "chattiness": 0.45,
+    "bluffing": 0.15,
+    "voteThreshold": 0.62,
+    "callThreshold": 0.75
+  },
+  "voice": {
+    "libraryVoiceId": "tbd",
+    "direction": "Woman in her fifties, low and even, clipped sentences, no warmth wasted."
+  },
+  "portrait": {
+    "file": "portraits/quartermaster.png",
+    "direction": "Grey-blonde braid under a wool cap, ledger and pencil stub, quilted parka, steady eyes."
+  },
   "lines": {
     "turn.start": [
-      { "text": "Stores first. Then everything else." },
-      { "text": "I counted the pantry again. Let's not be wasteful." }
+      {
+        "text": "Stores first. Then everything else.",
+        "voiced": true
+      },
+      {
+        "text": "I counted the pantry again. Let's not be wasteful.",
+        "voiced": true
+      }
     ],
     "crisis.prevented": [
-      { "text": "Covered, and with nothing wasted. Good." },
-      { "text": "That's the shortfall closed. Write it down." }
+      {
+        "text": "Covered, and with nothing wasted. Good.",
+        "voiced": true
+      },
+      {
+        "text": "That's the shortfall closed. Write it down.",
+        "voiced": true
+      }
     ],
     "crisis.failed": [
-      { "text": "We came up short. Somebody's numbers were off." },
-      { "text": "That is a bad ledger. Remember it." }
+      {
+        "text": "We came up short. Somebody's numbers were off.",
+        "voiced": true
+      },
+      {
+        "text": "That is a bad ledger. Remember it.",
+        "voiced": true
+      },
+      {
+        "text": "Short by {n}. Somebody owes the stores an explanation.",
+        "voiced": false
+      }
     ],
     "vote.called": [
-      { "text": "A vote on {seat}. Fine. Let's see the figures." },
-      { "text": "Calling it on {seat}? Then it had better add up." }
+      {
+        "text": "A vote on {seat}. Fine. Let's see the figures.",
+        "voiced": true
+      },
+      {
+        "text": "Calling it on {seat}? Then it had better add up.",
+        "voiced": true
+      }
     ],
     "vote.lean.yes": [
-      { "text": "The sums keep pointing at {seat}. I'm voting yes." },
-      { "text": "{seat}'s account doesn't balance. Yes." }
+      {
+        "text": "The sums keep pointing at {seat}. I'm voting yes.",
+        "voiced": true
+      },
+      {
+        "text": "{seat}'s account doesn't balance. Yes.",
+        "voiced": true
+      }
     ],
     "vote.lean.no": [
-      { "text": "Not enough against {seat}. I vote no." },
-      { "text": "I can't make the case for {seat}. No." }
+      {
+        "text": "Not enough against {seat}. I vote no.",
+        "voiced": true
+      },
+      {
+        "text": "I can't make the case for {seat}. No.",
+        "voiced": true
+      }
     ],
     "request.give": [
-      { "text": "Here, {seat}. That comes out of my share." },
-      { "text": "Take it, {seat}. Use it well." }
+      {
+        "text": "Here, {seat}. That comes out of my share.",
+        "voiced": true
+      },
+      {
+        "text": "Take it, {seat}. Use it well.",
+        "voiced": true
+      }
     ],
     "request.decline": [
-      { "text": "Sorry {seat}, I can't spare it." },
-      { "text": "Not this time, {seat}. I need what I hold." }
+      {
+        "text": "Sorry {seat}, I can't spare it.",
+        "voiced": true
+      },
+      {
+        "text": "Not this time, {seat}. I need what I hold.",
+        "voiced": true
+      },
+      {
+        "text": "No, {seat}. My count says I need it.",
+        "voiced": false
+      }
     ],
     "exposure.bite": [
-      { "text": "{survivor} is gone. One less mouth, one more hole." },
-      { "text": "We lost {survivor}. Keep moving." }
+      {
+        "text": "{survivor} is gone. One less mouth, one more hole.",
+        "voiced": true
+      },
+      {
+        "text": "We lost {survivor}. Keep moving.",
+        "voiced": true
+      }
     ],
     "morale.low": [
-      { "text": "Morale is nearly out. Every decision counts now." },
-      { "text": "We are close to the edge. No more gambles." }
+      {
+        "text": "Morale is nearly out. Every decision counts now.",
+        "voiced": true
+      },
+      {
+        "text": "We are close to the edge. No more gambles.",
+        "voiced": true
+      }
     ],
     "game.won": [
-      { "text": "The books balance. We lived." },
-      { "text": "Well run, all of you." }
+      {
+        "text": "The books balance. We lived.",
+        "voiced": true
+      },
+      {
+        "text": "Well run, all of you.",
+        "voiced": true
+      }
     ],
     "game.lost": [
-      { "text": "We ran out of everything at once." },
-      { "text": "The ledger is closed. We lost." }
+      {
+        "text": "We ran out of everything at once.",
+        "voiced": true
+      },
+      {
+        "text": "The ledger is closed. We lost.",
+        "voiced": true
+      }
+    ],
+    "round.start": [
+      {
+        "text": "{n} rounds left. I'll count the pantry before anything else.",
+        "voiced": false
+      },
+      {
+        "text": "Round starts. Rations first, then the rest.",
+        "voiced": false
+      }
+    ],
+    "crisis.revealed": [
+      {
+        "text": "{crisis}. We need {symbol}. Pull it from your stores.",
+        "voiced": false
+      },
+      {
+        "text": "Written down: {crisis}. The cure is {symbol}.",
+        "voiced": false
+      }
+    ],
+    "crisis.contributed": [
+      {
+        "text": "In the pile: {n} {symbol}. No more, no less.",
+        "voiced": false
+      },
+      {
+        "text": "{n} {symbol} from me. I'll stand behind the sum.",
+        "voiced": false
+      }
+    ],
+    "crisis.bonus": [
+      {
+        "text": "Surplus. Log it before someone spends it.",
+        "voiced": false
+      }
+    ],
+    "crisis.shortfall": [
+      {
+        "text": "The pile came up short and {seat} was in it. Noted.",
+        "voiced": false
+      },
+      {
+        "text": "{seat}'s contribution doesn't reconcile. I'm watching.",
+        "voiced": false
+      }
+    ],
+    "vote.called.me": [
+      {
+        "text": "{seat} calls it on me. Bring the evidence, then.",
+        "voiced": false
+      },
+      {
+        "text": "A vote on me, {seat}? My entries are clean.",
+        "voiced": false
+      }
+    ],
+    "vote.called.other": [
+      {
+        "text": "A vote on {seat}. State your figures.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.silent": [
+      {
+        "text": "…",
+        "voiced": false
+      }
+    ],
+    "vote.passed": [
+      {
+        "text": "{seat} is out. Strike the name from the rota.",
+        "voiced": false
+      }
+    ],
+    "vote.failed": [
+      {
+        "text": "{seat} stays. The count was short.",
+        "voiced": false
+      }
+    ],
+    "exiled.me": [
+      {
+        "text": "Out, then. I kept good books. Remember that.",
+        "voiced": false
+      },
+      {
+        "text": "Fine. Count me outside. I eat less than you anyway.",
+        "voiced": false
+      }
+    ],
+    "exiled.other": [
+      {
+        "text": "{seat} is off the roster. Divide the work.",
+        "voiced": false
+      }
+    ],
+    "request.made": [
+      {
+        "text": "{seat}, I need {symbol}. Name a price or a no.",
+        "voiced": false
+      },
+      {
+        "text": "{seat}: any {symbol} spare? It goes in the ledger.",
+        "voiced": false
+      }
+    ],
+    "request.refused.me": [
+      {
+        "text": "Refused by {seat}. I'll remember the figure.",
+        "voiced": false
+      }
+    ],
+    "search.found.weapon": [
+      {
+        "text": "Weapon at {location}. Logged. It goes to whoever can use it.",
+        "voiced": false
+      }
+    ],
+    "search.found.fuel": [
+      {
+        "text": "Fuel from {location}. Good. That keeps the stove lit.",
+        "voiced": false
+      }
+    ],
+    "search.found.education": [
+      {
+        "text": "Paper from {location}. Of little use, but I'll keep it.",
+        "voiced": false
+      }
+    ],
+    "search.found.food": [
+      {
+        "text": "Food at {location}. Into the pantry it goes.",
+        "voiced": false
+      }
+    ],
+    "search.found.medicine": [
+      {
+        "text": "Medicine at {location}. Counted and kept dry.",
+        "voiced": false
+      }
+    ],
+    "search.found.tool": [
+      {
+        "text": "A tool from {location}. Plain, useful, cheap.",
+        "voiced": false
+      }
+    ],
+    "search.found.survivor": [
+      {
+        "text": "Another mouth at {location}. We'll make room.",
+        "voiced": false
+      }
+    ],
+    "search.noise": [
+      {
+        "text": "Noise at {location}. That bill comes due tonight.",
+        "voiced": false
+      }
+    ],
+    "move.out": [
+      {
+        "text": "{survivor} to {location}. A sure thing, or I'd not send them.",
+        "voiced": false
+      }
+    ],
+    "zombie.killed": [
+      {
+        "text": "One fewer at {location}. Mark it.",
+        "voiced": false
+      }
+    ],
+    "barricade.built": [
+      {
+        "text": "Entrance {entrance} sealed. Cheapest protection we own.",
+        "voiced": false
+      }
+    ],
+    "exposure.wound": [
+      {
+        "text": "{survivor} is hurt. That is a cost we log.",
+        "voiced": false
+      }
+    ],
+    "bite.chain.kill": [
+      {
+        "text": "I cut {survivor} loose. The sums demanded it.",
+        "voiced": false
+      }
+    ],
+    "survivor.lost.other": [
+      {
+        "text": "{seat} lost {survivor}. We share the loss.",
+        "voiced": false
+      }
+    ],
+    "overrun": [
+      {
+        "text": "Entrance {entrance} is breached. We were short of barricades.",
+        "voiced": false
+      }
+    ],
+    "food.short": [
+      {
+        "text": "The pantry's empty. That's {n} morale gone.",
+        "voiced": false
+      },
+      {
+        "text": "Short on rations by {n}. I did warn you.",
+        "voiced": false
+      }
+    ],
+    "objective.progress": [
+      {
+        "text": "The count stands at {n}. Keep the tally honest.",
+        "voiced": false
+      }
+    ],
+    "crossroads.me": [
+      {
+        "text": "My decision. I stand by the figures.",
+        "voiced": false
+      }
+    ],
+    "accused.me": [
+      {
+        "text": "{seat}, you're pointing at me. Show the pages.",
+        "voiced": false
+      },
+      {
+        "text": "I'll answer that, {seat}. The pile doesn't lie.",
+        "voiced": false
+      },
+      {
+        "text": "Accuse all you like, {seat}. My account balances.",
+        "voiced": false
+      }
+    ],
+    "accused.other": [
+      {
+        "text": "I'd look at {seat}'s numbers, if I were counting.",
+        "voiced": false
+      }
+    ],
+    "idle": [
+      {
+        "text": "Check the stores. Then check them again.",
+        "voiced": false
+      }
     ]
   },
-  "sources": { "scalars": "B H.7", "lines": "B H.7" },
+  "sources": {
+    "scalars": "B H.7",
+    "lines": "B H.7"
+  },
   "status": "draft",
-  "notes": "Original persona. Lines written in our own words for M4.",
-  "tags": ["original"]
+  "notes": "Original persona. The first 24 lines (voiced) are the M4 set; the rest are text-only until someone prices their recordings.",
+  "tags": [
+    "original"
+  ]
 }

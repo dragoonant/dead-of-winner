@@ -40,7 +40,7 @@ export const isBetrayer = (v: SeatView): boolean => (v.me.secretObjectiveId ?? '
 /** Which betrayal card the seat holds ('trigger-happy', 'cult-leader', 'serial-killers', ...), or '' for a loyal seat. */
 export const betrayalKind = (v: SeatView): string => (isBetrayer(v) ? (v.me.secretObjectiveId ?? '').replace('obj.betrayal.', '') : '')
 /** A betrayer's wish to bring the colony down: 0 early, rising as rounds run out and morale thins (the betrayal cards all need morale 0). */
-export function betrayerPush(v: SeatView): number {
+export function betrayerPush(v: SeatView, gate = 0): number {
   let p = v.roundsLeft <= 1 ? 0.9 : v.roundsLeft <= 2 ? 0.6 : v.roundsLeft <= 3 ? 0.3 : v.roundNumber >= 2 ? 0.1 : 0
   if (v.morale <= 3) p += 0.25
   if (v.morale <= 1) p += 0.2
@@ -48,25 +48,100 @@ export function betrayerPush(v: SeatView): number {
   // the colony must fall with the card's other condition already met: pace the collapse to the private goal
   const g = betrayalProgress(v)
   if (g >= 1) return Math.max(p, 0.8)
+  // gate: until the card is this close to met the betrayer keeps the colony alive (unless the game is about to end or morale is gone)
+  if (gate > 0 && g < gate && v.roundsLeft > 1 && v.morale > 3) return 0
   return v.roundsLeft <= 1 ? p : p * (0.4 + 0.6 * g)
 }
-/** 0..1: how close the held betrayal card's non-morale condition is (1 = met right now). */
+
+/** What a betrayal card asks of the seat besides the collapse (40 §7.1), read from the card's own condition tree in the public bundle. */
+export interface BetrayalNeeds {
+  hand: Partial<Record<ItemSymbol, number>> // cards of each symbol held in hand
+  excludeStarter: boolean // the cards the seat started with do not count
+  weapons: number // weapon cards carried by the seat's survivors, in all
+  weaponsEach: number // every survivor of the seat carries this many weapons
+  aliveMin: number
+  aliveMax: number
+  barricades: { n: number; places: number } | null // barricades at places outside the colony
+  most: number // survivors more than any other seat
+  removed: number // survivors gone from the game
+}
+const emptyNeeds = (): BetrayalNeeds => ({ hand: {}, excludeStarter: false, weapons: 0, weaponsEach: 0, aliveMin: 0, aliveMax: Infinity, barricades: null, most: 0, removed: 0 })
+const needsCache = new Map<string, BetrayalNeeds>()
+export function betrayalNeeds(v: SeatView): BetrayalNeeds | null {
+  const id = v.me.secretObjectiveId
+  if (!id || !id.startsWith('obj.betrayal.')) return null
+  const hit = needsCache.get(`${v.dataVersion}|${id}`)
+  if (hit) return hit
+  const out = emptyNeeds()
+  const walk = (node: unknown): void => {
+    if (!node || typeof node !== 'object') return
+    if (Array.isArray(node)) { node.forEach(walk); return }
+    const n = node as Rec
+    const p = (n['params'] ?? {}) as Rec
+    if (Array.isArray(n['all'])) { n['all'].forEach(walk); return }
+    switch (n['code']) {
+      case 'rule.hand.symbolsAtLeast':
+        for (const [sym, k] of Object.entries((p['symbols'] ?? {}) as Record<string, number>)) out.hand[sym as ItemSymbol] = Math.max(out.hand[sym as ItemSymbol] ?? 0, k)
+        out.excludeStarter = out.excludeStarter || !!p['excludeStarter']
+        break
+      case 'rule.seat-survivors.weaponsEquippedAtLeast': out.weapons = Math.max(out.weapons, Number(p['n'] ?? 1)); break
+      case 'rule.seat-survivors.eachEquippedSymbolAtLeast': if (p['symbol'] === 'weapon') out.weaponsEach = Math.max(out.weaponsEach, Number(p['n'] ?? 1)); break
+      case 'rule.locations.barricadedAtLeast': out.barricades = { n: Number(p['barricades'] ?? 1), places: Number(p['locations'] ?? 1) }; break
+      case 'rule.group-size.mostSurvivors': out.most = Math.max(out.most, Number(p['margin'] ?? 1)); break
+      case 'rule.survivors-removed.atLeast': out.removed = Math.max(out.removed, Number(p['n'] ?? 1)); break
+      default:
+        if (n['test'] === 'survivorsAtMost') out.aliveMax = Math.min(out.aliveMax, Number(n['value'] ?? 1))
+        else if (n['test'] === 'survivorsAtLeast') out.aliveMin = Math.max(out.aliveMin, Number(n['value'] ?? 1))
+    }
+  }
+  walk(recOf(v, id)?.['complete'])
+  needsCache.set(`${v.dataVersion}|${id}`, out)
+  return out
+}
+
+const aliveOwn = (v: SeatView): SurvivorId[] => (v.seats[v.seat]?.survivors ?? []).filter((id) => v.survivors[id]?.status === 'alive')
+/** Weapon cards on the seat's survivors. */
+export function weaponsCarried(v: SeatView): number {
+  return aliveOwn(v).reduce((n, id) => n + (v.survivors[id]?.equipped ?? []).filter((c) => symbolsOfCard(v, c).includes('weapon')).length, 0)
+}
+/** Hand cards that count toward the seat's betrayal card for `symbol` (the starting cards never do when the card says so). */
+export function countableForBetrayal(v: SeatView, symbol: ItemSymbol, needs: BetrayalNeeds): string[] {
+  return v.me.hand.filter((c) => symbolsOfCard(v, c).includes(symbol) && !(needs.excludeStarter && v.cards[c]?.starter))
+}
+/** Each of the card's non-collapse conditions as a fraction met, 0..1. */
+export function betrayalFractions(v: SeatView): number[] {
+  const needs = betrayalNeeds(v)
+  if (!needs) return []
+  const out: number[] = []
+  for (const [sym, k] of Object.entries(needs.hand) as [ItemSymbol, number][]) out.push(Math.min(1, countableForBetrayal(v, sym, needs).length / k))
+  const alive = aliveOwn(v)
+  if (needs.weapons > 0) out.push(Math.min(1, weaponsCarried(v) / needs.weapons))
+  if (needs.weaponsEach > 0) out.push(alive.length === 0 ? 0 : alive.filter((id) => (v.survivors[id]?.equipped ?? []).filter((c) => symbolsOfCard(v, c).includes('weapon')).length >= needs.weaponsEach).length / alive.length)
+  if (needs.aliveMin > 0) out.push(Math.min(1, alive.length / needs.aliveMin))
+  if (Number.isFinite(needs.aliveMax)) out.push(alive.length <= needs.aliveMax ? 1 : Math.max(0, needs.aliveMax / alive.length - 0.2))
+  if (needs.barricades) {
+    const best = Math.max(0, ...v.locationOrder.filter((l) => l !== 'colony').map((l) => v.locations[l]!.entrances.reduce((a, e) => a + e.barricades, 0)))
+    out.push(Math.min(1, best / needs.barricades.n))
+  }
+  if (needs.most > 0) {
+    const others = Math.max(0, ...v.seatOrder.filter((s) => s !== v.seat).map((s) => (v.seats[s]?.survivors ?? []).filter((id) => v.survivors[id]?.status === 'alive').length))
+    out.push(Math.max(0, Math.min(1, (alive.length - others + 2) / (needs.most + 2))))
+  }
+  if (needs.removed > 0) out.push(Math.min(1, Object.values(v.survivors).filter((s) => s.status !== 'alive').length / needs.removed))
+  return out
+}
+/** 0..1: how close the held betrayal card's non-morale conditions are (1 = met right now). */
 export function betrayalProgress(v: SeatView): number {
-  const kind = betrayalKind(v)
-  const mine = v.seats[v.seat]?.survivors.filter((id) => v.survivors[id]?.status === 'alive') ?? []
-  if (kind === 'trigger-happy') {
-    const eq = mine.reduce((n, id) => n + (v.survivors[id]?.equipped ?? []).filter((c) => symbolsOfCard(v, c).includes('weapon')).length, 0)
-    return Math.min(1, eq / 4)
-  }
-  if (kind === 'serial-killers') {
-    const gone = Object.values(v.survivors).filter((s) => s.status !== 'alive').length
-    return mine.length < 2 ? 0.2 : Math.min(1, gone / 5)
-  }
-  if (kind === 'cult-leader') {
-    const others = v.seatOrder.filter((s) => s !== v.seat).map((s) => v.seats[s]?.survivors.filter((id) => v.survivors[id]?.status === 'alive').length ?? 0)
-    return Math.max(0, Math.min(1, (mine.length - Math.max(0, ...others) + 2) / 4))
-  }
-  return 0.5
+  const f = betrayalFractions(v)
+  return f.length === 0 ? 0.5 : f.reduce((a, b) => a + b, 0) / f.length
+}
+/** Hand cards a betrayer keeps for its card: the first `need` countable cards of each symbol. */
+export function betrayalHoard(v: SeatView): Set<string> {
+  const needs = betrayalNeeds(v)
+  const out = new Set<string>()
+  if (!needs) return out
+  for (const [sym, k] of Object.entries(needs.hand) as [ItemSymbol, number][]) countableForBetrayal(v, sym, needs).slice(0, k).forEach((c) => out.add(c))
+  return out
 }
 
 // ---------- what the seat's own objective counts (hold-in-hand objectives only) ----------
@@ -97,7 +172,7 @@ export function objectiveNeeds(v: SeatView): ObjectiveNeeds {
 /** Hand cards the seat should not give away, play or put into the crisis: what its secret objective counts. */
 export function reservedCards(v: SeatView): Set<string> {
   const needs = objectiveNeeds(v)
-  const out = new Set<string>()
+  const out = isBetrayer(v) ? betrayalHoard(v) : new Set<string>()
   for (const [sym, n] of Object.entries(needs.symbols) as [ItemSymbol, number][]) {
     let left = n
     for (const c of v.me.hand) {
@@ -169,7 +244,7 @@ export function simulateArrivals(ent: Ent[], cap: number, n: number, start = 0):
   return { ent: e, overruns, broken }
 }
 export const OVERRUN_COST = 1.3 // morale-equivalents: a survivor dies and morale drops
-/** Expected cost of a location's board over the next two colony phases (the second discounted). */
+/** Expected cost of a location's board over the next `rounds` colony phases (each later one discounted: 0.55, then 0.3). */
 export function boardCost(ent: Ent[], cap: number, arrivals: number, rounds: number): number {
   if (arrivals <= 0) return 0
   const a = simulateArrivals(ent, cap, arrivals)
@@ -177,6 +252,10 @@ export function boardCost(ent: Ent[], cap: number, arrivals: number, rounds: num
   if (rounds > 1) {
     const b = simulateArrivals(a.ent, cap, arrivals)
     cost += 0.55 * (OVERRUN_COST * b.overruns + 0.05 * b.broken)
+    if (rounds > 2) {
+      const c = simulateArrivals(b.ent, cap, arrivals)
+      cost += 0.3 * (OVERRUN_COST * c.overruns + 0.05 * c.broken)
+    }
   }
   return cost
 }

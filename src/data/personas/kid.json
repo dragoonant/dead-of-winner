@@ -1,0 +1,377 @@
+{
+  "kind": "persona",
+  "id": "ps.kid",
+  "name": "Jojo Pruitt",
+  "blurb": "The Kid: rolls for the big search, makes noise, talks constantly and is braver than is wise.",
+  "scalars": {
+    "generosity": 0.6,
+    "risk": 0.9,
+    "paranoia": 0.9,
+    "trust": 0.7,
+    "chattiness": 0.95,
+    "bluffing": 0.4,
+    "voteThreshold": 0.68,
+    "callThreshold": 0.8
+  },
+  "voice": {
+    "libraryVoiceId": "tbd",
+    "direction": "Teenage, high and fast, cracks on the loud lines, Southern, words tumbling."
+  },
+  "portrait": {
+    "file": "portraits/kid.png",
+    "direction": "16, hoodie under a puffer vest, scavenged bike helmet, a slingshot, chapped cheeks, looking past the camera."
+  },
+  "lines": {
+    "round.start": [
+      {
+        "text": "Round's up! {n} left. Let's go, let's go!",
+        "voiced": false
+      },
+      {
+        "text": "Ooh, a new round! Who's gonna do something wild?",
+        "voiced": false
+      }
+    ],
+    "crisis.revealed": [
+      {
+        "text": "{crisis}!! Okay, okay, we need {symbol}. Who's got some?",
+        "voiced": false
+      },
+      {
+        "text": "Man, {crisis} again? Somebody find {symbol}!",
+        "voiced": false
+      }
+    ],
+    "crisis.contributed": [
+      {
+        "text": "Dropped in {n} {symbol}, y'all! Swear!",
+        "voiced": false
+      },
+      {
+        "text": "{n} {symbol}, easy! Who's next?",
+        "voiced": false
+      }
+    ],
+    "crisis.prevented": [
+      {
+        "text": "We did it!! High five! Anybody? Okay.",
+        "voiced": false
+      },
+      {
+        "text": "Yes! Total of {n}! We're so good at this!",
+        "voiced": false
+      }
+    ],
+    "crisis.bonus": [
+      {
+        "text": "Bonus!! Free morale!! Best day ever!",
+        "voiced": false
+      }
+    ],
+    "crisis.failed": [
+      {
+        "text": "Aw man! Short by {n}! Next time, y'all!",
+        "voiced": false
+      },
+      {
+        "text": "Whoa, we messed up. {n} short. My bad? Maybe?",
+        "voiced": false
+      },
+      {
+        "text": "That's not fair! We were so close!",
+        "voiced": false
+      }
+    ],
+    "crisis.shortfall": [
+      {
+        "text": "Hey, was it {seat}? It felt like {seat}.",
+        "voiced": false
+      },
+      {
+        "text": "{seat} was awful quiet while that failed. Just sayin'.",
+        "voiced": false
+      }
+    ],
+    "vote.called.me": [
+      {
+        "text": "Me?? What'd I do? I'm just a kid, {seat}!",
+        "voiced": false
+      },
+      {
+        "text": "You're calling me out, {seat}? That's cold.",
+        "voiced": false
+      }
+    ],
+    "vote.called.other": [
+      {
+        "text": "Ooh, a vote on {seat}! Drama!",
+        "voiced": false
+      }
+    ],
+    "vote.lean.yes": [
+      {
+        "text": "Yeah, I'm sayin' yes on {seat}. Sorry, not sorry.",
+        "voiced": false
+      },
+      {
+        "text": "I think it's {seat}. Yes! Probably!",
+        "voiced": false
+      }
+    ],
+    "vote.lean.no": [
+      {
+        "text": "Nah, leave {seat} alone. No from me.",
+        "voiced": false
+      },
+      {
+        "text": "Eh, no on {seat}. Not enough proof, y'all.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.silent": [
+      {
+        "text": "…",
+        "voiced": false
+      }
+    ],
+    "vote.passed": [
+      {
+        "text": "Whoa, {seat} is gone. That's heavy.",
+        "voiced": false
+      }
+    ],
+    "vote.failed": [
+      {
+        "text": "{seat} lives! Okay. Didn't want that fight anyway.",
+        "voiced": false
+      }
+    ],
+    "exiled.me": [
+      {
+        "text": "Wait, what?! I'm out?! That's so unfair! I can still help!",
+        "voiced": false
+      },
+      {
+        "text": "Fine! Whatever! I'll be out here being awesome!",
+        "voiced": false
+      }
+    ],
+    "exiled.other": [
+      {
+        "text": "Bye, {seat}. That was kinda wild.",
+        "voiced": false
+      }
+    ],
+    "request.made": [
+      {
+        "text": "{seat}, can I have {symbol}? Pretty please? I'll be good!",
+        "voiced": false
+      },
+      {
+        "text": "Yo {seat}, got any {symbol}? Hit me!",
+        "voiced": false
+      }
+    ],
+    "request.give": [
+      {
+        "text": "Here ya go, {seat}! Don't lose it!",
+        "voiced": false
+      },
+      {
+        "text": "Take it, {seat}! I got more somewhere!",
+        "voiced": false
+      }
+    ],
+    "request.decline": [
+      {
+        "text": "Nope, {seat}! Finders keepers!",
+        "voiced": false
+      },
+      {
+        "text": "Aw, can't, {seat}. I might need it!",
+        "voiced": false
+      }
+    ],
+    "request.refused.me": [
+      {
+        "text": "{seat} said no?! Rude.",
+        "voiced": false
+      }
+    ],
+    "search.found.weapon": [
+      {
+        "text": "A weapon at {location}!! Yes! I'm gonna use it!",
+        "voiced": false
+      }
+    ],
+    "search.found.fuel": [
+      {
+        "text": "Fuel at {location}! Vroom vroom!",
+        "voiced": false
+      }
+    ],
+    "search.found.education": [
+      {
+        "text": "A book at {location}. Meh. Okay.",
+        "voiced": false
+      }
+    ],
+    "search.found.food": [
+      {
+        "text": "Food at {location}!! I'm starving!",
+        "voiced": false
+      }
+    ],
+    "search.found.medicine": [
+      {
+        "text": "Medicine at {location}! Doctor Jojo's got you!",
+        "voiced": false
+      }
+    ],
+    "search.found.tool": [
+      {
+        "text": "A tool at {location}! Gonna fix stuff!",
+        "voiced": false
+      }
+    ],
+    "search.found.survivor": [
+      {
+        "text": "Whoa, a person at {location}! Hi!",
+        "voiced": false
+      }
+    ],
+    "search.noise": [
+      {
+        "text": "Oops, made noise at {location}. Worth it!",
+        "voiced": false
+      }
+    ],
+    "move.out": [
+      {
+        "text": "{survivor} is heading to {location}! Adventure time!",
+        "voiced": false
+      }
+    ],
+    "zombie.killed": [
+      {
+        "text": "Got one at {location}! Pow!",
+        "voiced": false
+      }
+    ],
+    "barricade.built": [
+      {
+        "text": "Entrance {entrance} is barricaded! Boom!",
+        "voiced": false
+      }
+    ],
+    "exposure.wound": [
+      {
+        "text": "Ow! {survivor} got hit! It's fine! It's fine!",
+        "voiced": false
+      }
+    ],
+    "exposure.bite": [
+      {
+        "text": "{survivor} got bit... I can't... oh no.",
+        "voiced": false
+      },
+      {
+        "text": "No no no, {survivor}! Come on!",
+        "voiced": false
+      }
+    ],
+    "bite.chain.kill": [
+      {
+        "text": "Sorry, {survivor}. I had to. I'm so sorry.",
+        "voiced": false
+      }
+    ],
+    "survivor.lost.other": [
+      {
+        "text": "{seat} lost {survivor}. That's so sad, y'all.",
+        "voiced": false
+      }
+    ],
+    "overrun": [
+      {
+        "text": "They're in at entrance {entrance}!! Run! Or fight! Fight!",
+        "voiced": false
+      }
+    ],
+    "food.short": [
+      {
+        "text": "Tummies empty! {n} morale gone! Somebody find snacks!",
+        "voiced": false
+      },
+      {
+        "text": "Ugh. No food. That's {n} morale. Not cool.",
+        "voiced": false
+      }
+    ],
+    "morale.low": [
+      {
+        "text": "Morale's so low. Somebody say something nice!",
+        "voiced": false
+      }
+    ],
+    "objective.progress": [
+      {
+        "text": "We've got {n}! Halfway to awesome!",
+        "voiced": false
+      }
+    ],
+    "crossroads.me": [
+      {
+        "text": "Big choice! Wish me luck, y'all!",
+        "voiced": false
+      }
+    ],
+    "accused.me": [
+      {
+        "text": "Me?! No way, {seat}! I'm too young to be shady!",
+        "voiced": false
+      },
+      {
+        "text": "{seat}, that's not true! You're so wrong!",
+        "voiced": false
+      },
+      {
+        "text": "I'd never! Cross my heart, {seat}!",
+        "voiced": false
+      }
+    ],
+    "accused.other": [
+      {
+        "text": "Whoa, {seat} is getting called out. Awkward.",
+        "voiced": false
+      }
+    ],
+    "game.won": [
+      {
+        "text": "WE DID IT!! Best game ever!",
+        "voiced": false
+      }
+    ],
+    "game.lost": [
+      {
+        "text": "Aw man. I wanna go again!",
+        "voiced": false
+      }
+    ],
+    "idle": [
+      {
+        "text": "Anybody wanna race down the hall? No? Okay.",
+        "voiced": false
+      }
+    ]
+  },
+  "sources": {
+    "scalars": "B H.7",
+    "lines": "B H.7"
+  },
+  "status": "draft",
+  "notes": "Original persona (41 §1). Lines written in our own words; text-only, no recordings yet.",
+  "tags": [
+    "original"
+  ]
+}

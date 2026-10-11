@@ -12,7 +12,7 @@ build next. Tick items off or reply inline.
 - [ ] Note anything confusing in the prompts, panels or camera. Blunt and specific is best ("this prompt doesn't say
       what it's for").
 - Tip: add `?seed=<any word>` to the URL to make a game repeatable, and include the seed in bug reports.
-- Tip: `?tier=random` plays against random bots, for comparison.
+- Tip: `?tier=easy|normal|hard|random` sets every bot's difficulty (the start screen has it per bot).
 
 ## 2. Card data
 
@@ -39,9 +39,12 @@ genuine gaps in the rulebook. Skim those and correct any your copy or table expe
       Chrome connected on this Windows PC (only the Mac's Chrome is connected right now). Start after the playtest?
 - [ ] **Audio.** ElevenLabs sound effects, narrator, persona voices, first 20 voiced Crossroads, music (confirm
       before more than about 5k credits on music). Start after art, or alongside?
-- [ ] **AI depth.** The bots are the slim version: one Normal tier, 3 personas with about 20 lines each. The full
-      spec adds Easy and Hard tiers, 6 personas with about 60 lines each, and a deeper suspicion model. Wanted
-      before art, after, or later?
+- [x] **AI depth.** Done (M4 complete): Easy, Normal, Hard and Random tiers, 6 personas with 63-71 own-words lines each (text-only, no
+      new recordings), a log-odds suspicion model and the vote rules. Open question for you: the balance targets are only partly met
+      (Normal ~26% against 35-50%, betrayer wins ~9% against 25-40%, bots almost never exile anyone; details in STATUS.md, AI). Do you
+      want me to keep pushing play strength, or is the current table good enough to playtest as it is?
+- [ ] **Voice lines for the new personas.** Jojo Pruitt, Dr. Anand Rao and Silas Crane (and the 47 new lines of the first three) have no
+      ElevenLabs recordings; the bubbles work without sound. About 330 short lines; confirm before spending credits.
 - [x] **Variants.** Resolved in M7: the start screen now has co-op, two-player, hardcore objective side, betrayer
       variant, player elimination and a mature-Crossroads toggle (default ON, as in the original), with validation.
       Please try each once and tell me if any combination should be blocked or worded differently.
@@ -49,7 +52,7 @@ genuine gaps in the rulebook. Skim those and correct any your copy or table expe
 
 ## 5. Known weaknesses I will fix without being asked
 
-- Bots win We Need More Samples about 24-30% of the time (target 35%), and about half of all crises still fail.
+- Bots win We Need More Samples about 26-30% of the time (target 35%), and about half of all crises still fail. The exposure die decides the game (STATUS.md, AI).
 - Leave It All Behind, Stockpile and Winter Has Come have never been completed by bots.
 - ~~Some prompts (Crossroads choice, exile placement, keep-which-card after a search) have not been exercised by the
   automated browser test yet.~~ Resolved in M7: the browser test now reaches the Crossroads choice and group vote,

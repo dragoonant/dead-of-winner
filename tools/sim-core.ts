@@ -226,6 +226,7 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
   const tier = o.tier ?? 'random'
   const deciders: Record<SeatId, AiDecider> = {}
   setup.seats.forEach((seat, i) => { deciders[seat.id] = createDecider(tier, PERSONA_IDS[i % PERSONA_IDS.length], seed) })
+  ;(globalThis as { __deciders?: Record<string, AiDecider> }).__deciders = deciders // diagnostics: tools/_dbg*.ts read the suspicion rows
   const decisionMs: number[] = []
   const exiles: { seat: SeatId; betrayer: boolean }[] = []
   let r: StepResult = createGame(setup, seed, bundle)
@@ -261,9 +262,11 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
     try {
       if (pending.seat === 'all' && pending.kind === 'votes') {
         // simultaneous votes: each eligible seat answers privately from its own view, then one ballot goes in (C.4)
-        const eligible = ((pending.context.data as { eligible?: SeatId[] } | undefined)?.eligible ?? state.seatOrder) as SeatId[]
+        const vdata = pending.context.data as { eligible?: SeatId[]; tiebreakSeat?: SeatId } | undefined
+        const eligible = (vdata?.eligible ?? state.seatOrder) as SeatId[]
         const votes: Record<SeatId, boolean> = {}
-        for (const s of eligible) { const pick = await deciders[s]!.decide(view(state, s), pending, legal); votes[s] = pick.type === 'castVotes' && pick.votes[s] === true }
+        // the first player breaks ties even when exiled (R p11): an exiled first player answers through the extra ballot key `tiebreakSeat`
+        for (const s of vdata?.tiebreakSeat ? [...eligible, vdata.tiebreakSeat] : eligible) { const pick = await deciders[s]!.decide(view(state, s), pending, legal); votes[s] = pick.type === 'castVotes' && pick.votes[s] === true }
         action = { type: 'castVotes', decisionId: pending.id, seat: 'all', votes }
       } else {
         const seatForView = pending.seat === 'all' ? state.seatOrder[0]! : pending.seat

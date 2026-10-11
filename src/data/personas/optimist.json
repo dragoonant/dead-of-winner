@@ -3,61 +3,411 @@
   "id": "ps.optimist",
   "name": "Teddy Marchbanks",
   "blurb": "The Optimist: gives freely, forgives fast, accuses only when the evidence shouts.",
-  "scalars": { "generosity": 0.85, "risk": 0.55, "paranoia": 0.6, "trust": 0.9, "chattiness": 0.9, "bluffing": 0.05, "voteThreshold": 0.78, "callThreshold": 0.9 },
-  "voice": { "libraryVoiceId": "tbd", "direction": "Man in his thirties, warm quick tenor, laughs on the exhale." },
-  "portrait": { "file": "portraits/optimist.png", "direction": "Round face, red beard, oversized thrift-store ski jacket, a thermos, a half-smile." },
+  "scalars": {
+    "generosity": 0.85,
+    "risk": 0.55,
+    "paranoia": 0.6,
+    "trust": 0.9,
+    "chattiness": 0.9,
+    "bluffing": 0.05,
+    "voteThreshold": 0.78,
+    "callThreshold": 0.9
+  },
+  "voice": {
+    "libraryVoiceId": "tbd",
+    "direction": "Man in his thirties, warm quick tenor, laughs on the exhale."
+  },
+  "portrait": {
+    "file": "portraits/optimist.png",
+    "direction": "Round face, red beard, oversized thrift-store ski jacket, a thermos, a half-smile."
+  },
   "lines": {
     "turn.start": [
-      { "text": "Okay team, deep breath. We've got this." },
-      { "text": "New turn, fresh luck. Let's go." }
+      {
+        "text": "Okay team, deep breath. We've got this.",
+        "voiced": true
+      },
+      {
+        "text": "New turn, fresh luck. Let's go.",
+        "voiced": true
+      }
     ],
     "crisis.prevented": [
-      { "text": "Ha! We did it! Look at us!" },
-      { "text": "Told you. Teamwork wins the winter." }
+      {
+        "text": "Ha! We did it! Look at us!",
+        "voiced": true
+      },
+      {
+        "text": "Told you. Teamwork wins the winter.",
+        "voiced": true
+      }
     ],
     "crisis.failed": [
-      { "text": "Ouch. Okay. We'll get the next one." },
-      { "text": "Short by {n}, but nobody panic." }
+      {
+        "text": "Ouch. Okay. We'll get the next one.",
+        "voiced": true
+      },
+      {
+        "text": "Short by {n}, but nobody panic.",
+        "voiced": true
+      },
+      {
+        "text": "Oof. That one stung, but we're still standing.",
+        "voiced": false
+      }
     ],
     "vote.called": [
-      { "text": "A vote on {seat}? Let's be gentle about it." },
-      { "text": "Oh. A vote on {seat}. Let's hear it out first." }
+      {
+        "text": "A vote on {seat}? Let's be gentle about it.",
+        "voiced": true
+      },
+      {
+        "text": "Oh. A vote on {seat}. Let's hear it out first.",
+        "voiced": true
+      }
     ],
     "vote.lean.yes": [
-      { "text": "I hate this, but it's yes on {seat}." },
-      { "text": "Sorry, {seat}. The signs are too loud. Yes." }
+      {
+        "text": "I hate this, but it's yes on {seat}.",
+        "voiced": true
+      },
+      {
+        "text": "Sorry, {seat}. The signs are too loud. Yes.",
+        "voiced": true
+      }
     ],
     "vote.lean.no": [
-      { "text": "No way, not {seat}. Give them a break." },
-      { "text": "I trust {seat}. That's a no from me." }
+      {
+        "text": "No way, not {seat}. Give them a break.",
+        "voiced": true
+      },
+      {
+        "text": "I trust {seat}. That's a no from me.",
+        "voiced": true
+      }
     ],
     "request.give": [
-      { "text": "Sure thing, {seat}! Take it." },
-      { "text": "Happy to help, {seat}. Pay it forward." }
+      {
+        "text": "Sure thing, {seat}! Take it.",
+        "voiced": true
+      },
+      {
+        "text": "Happy to help, {seat}. Pay it forward.",
+        "voiced": true
+      }
     ],
     "request.decline": [
-      { "text": "Oh {seat}, I really wish I could." },
-      { "text": "Ugh, sorry {seat}. I'm holding this one back." }
+      {
+        "text": "Oh {seat}, I really wish I could.",
+        "voiced": true
+      },
+      {
+        "text": "Ugh, sorry {seat}. I'm holding this one back.",
+        "voiced": true
+      },
+      {
+        "text": "Aw, {seat}, I'd love to, but not this time.",
+        "voiced": false
+      }
     ],
     "exposure.bite": [
-      { "text": "No... not {survivor}. They deserved better." },
-      { "text": "Rest easy, {survivor}. We'll keep going." }
+      {
+        "text": "No... not {survivor}. They deserved better.",
+        "voiced": true
+      },
+      {
+        "text": "Rest easy, {survivor}. We'll keep going.",
+        "voiced": true
+      }
     ],
     "morale.low": [
-      { "text": "Still hanging on! We just need one good round." },
-      { "text": "Hearts up, everyone. It's not over." }
+      {
+        "text": "Still hanging on! We just need one good round.",
+        "voiced": true
+      },
+      {
+        "text": "Hearts up, everyone. It's not over.",
+        "voiced": true
+      }
     ],
     "game.won": [
-      { "text": "We survived! Group hug, everybody!" },
-      { "text": "I knew it! What a crew." }
+      {
+        "text": "We survived! Group hug, everybody!",
+        "voiced": true
+      },
+      {
+        "text": "I knew it! What a crew.",
+        "voiced": true
+      }
     ],
     "game.lost": [
-      { "text": "Well. That didn't go how I hoped." },
-      { "text": "I'm sorry, everyone. We gave it all." }
+      {
+        "text": "Well. That didn't go how I hoped.",
+        "voiced": true
+      },
+      {
+        "text": "I'm sorry, everyone. We gave it all.",
+        "voiced": true
+      }
+    ],
+    "round.start": [
+      {
+        "text": "{n} rounds to go! Plenty of time to be heroes.",
+        "voiced": false
+      },
+      {
+        "text": "New round, new luck! Everybody ready?",
+        "voiced": false
+      }
+    ],
+    "crisis.revealed": [
+      {
+        "text": "{crisis}? We've faced worse. Anybody holding {symbol}?",
+        "voiced": false
+      },
+      {
+        "text": "Okay, {crisis}. We just need some {symbol}!",
+        "voiced": false
+      }
+    ],
+    "crisis.contributed": [
+      {
+        "text": "Putting in {n} {symbol}. Fingers crossed, friends!",
+        "voiced": false
+      },
+      {
+        "text": "{n} {symbol} from me! Happy to chip in.",
+        "voiced": false
+      }
+    ],
+    "crisis.bonus": [
+      {
+        "text": "Bonus! Told you the universe likes us!",
+        "voiced": false
+      }
+    ],
+    "crisis.shortfall": [
+      {
+        "text": "Hm. {seat} might know why that came up short. Gently, I mean.",
+        "voiced": false
+      },
+      {
+        "text": "I'm sure it's nothing, {seat}. But the numbers were odd.",
+        "voiced": false
+      }
+    ],
+    "vote.called.me": [
+      {
+        "text": "Me?! Okay, okay. Let's talk it through, {seat}.",
+        "voiced": false
+      },
+      {
+        "text": "I'm hurt, {seat}, but I'll hear you out.",
+        "voiced": false
+      }
+    ],
+    "vote.called.other": [
+      {
+        "text": "Are we sure about {seat}? Let's not rush.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.silent": [
+      {
+        "text": "…",
+        "voiced": false
+      }
+    ],
+    "vote.passed": [
+      {
+        "text": "{seat} is out. I really hoped it wouldn't come to this.",
+        "voiced": false
+      }
+    ],
+    "vote.failed": [
+      {
+        "text": "{seat} stays. Good, honestly. Let's move on together.",
+        "voiced": false
+      }
+    ],
+    "exiled.me": [
+      {
+        "text": "Oh. I... okay. I'll make the best of it out here!",
+        "voiced": false
+      },
+      {
+        "text": "Out in the cold, huh? I'll still root for you.",
+        "voiced": false
+      }
+    ],
+    "exiled.other": [
+      {
+        "text": "Take care out there, {seat}. We'll miss you.",
+        "voiced": false
+      }
+    ],
+    "request.made": [
+      {
+        "text": "Hey {seat}, any {symbol} to spare? Pretty please!",
+        "voiced": false
+      },
+      {
+        "text": "{seat}, could you spare some {symbol}? I'll owe you big.",
+        "voiced": false
+      }
+    ],
+    "request.refused.me": [
+      {
+        "text": "No worries, {seat}. I get it. Truly.",
+        "voiced": false
+      }
+    ],
+    "search.found.weapon": [
+      {
+        "text": "A weapon at {location}! Now we're talking!",
+        "voiced": false
+      }
+    ],
+    "search.found.fuel": [
+      {
+        "text": "Fuel at {location}! Warmth and wheels, folks!",
+        "voiced": false
+      }
+    ],
+    "search.found.education": [
+      {
+        "text": "Books at {location}. Nerdy luck is still luck!",
+        "voiced": false
+      }
+    ],
+    "search.found.food": [
+      {
+        "text": "Food at {location}! Dinner is saved!",
+        "voiced": false
+      }
+    ],
+    "search.found.medicine": [
+      {
+        "text": "Medicine from {location}! Somebody's going to be so happy.",
+        "voiced": false
+      }
+    ],
+    "search.found.tool": [
+      {
+        "text": "A good tool from {location}. Every bit helps!",
+        "voiced": false
+      }
+    ],
+    "search.found.survivor": [
+      {
+        "text": "A new face at {location}! Welcome aboard!",
+        "voiced": false
+      }
+    ],
+    "search.noise": [
+      {
+        "text": "Oops, that was loud at {location}. Sorry, everyone!",
+        "voiced": false
+      }
+    ],
+    "move.out": [
+      {
+        "text": "Off goes {survivor} to {location}. Be safe out there!",
+        "voiced": false
+      }
+    ],
+    "zombie.killed": [
+      {
+        "text": "Got one at {location}! One less to worry about!",
+        "voiced": false
+      }
+    ],
+    "barricade.built": [
+      {
+        "text": "Entrance {entrance} is boarded up. Cozy and safe!",
+        "voiced": false
+      }
+    ],
+    "exposure.wound": [
+      {
+        "text": "Ow, {survivor} took a hit. Tough as nails, though!",
+        "voiced": false
+      }
+    ],
+    "bite.chain.kill": [
+      {
+        "text": "Goodbye, {survivor}. I'm so sorry. It had to be done.",
+        "voiced": false
+      }
+    ],
+    "survivor.lost.other": [
+      {
+        "text": "I'm so sorry, {seat}. {survivor} was one of the good ones.",
+        "voiced": false
+      }
+    ],
+    "overrun": [
+      {
+        "text": "They broke in at entrance {entrance}! Okay, we can handle this!",
+        "voiced": false
+      }
+    ],
+    "food.short": [
+      {
+        "text": "Empty bellies... that costs us {n} morale. We'll find food!",
+        "voiced": false
+      },
+      {
+        "text": "Hungry, hungry. {n} morale lost. Chin up, everyone.",
+        "voiced": false
+      }
+    ],
+    "objective.progress": [
+      {
+        "text": "That's {n} so far! We're getting there!",
+        "voiced": false
+      }
+    ],
+    "crossroads.me": [
+      {
+        "text": "Big decision, my turn. Trust the gut!",
+        "voiced": false
+      }
+    ],
+    "accused.me": [
+      {
+        "text": "Me? Oh no, no, {seat}. I'd never. Let's sort it out.",
+        "voiced": false
+      },
+      {
+        "text": "{seat}, I'm just a guy with a thermos. Truly.",
+        "voiced": false
+      },
+      {
+        "text": "That hurts, {seat}, but I'll forgive you for it.",
+        "voiced": false
+      }
+    ],
+    "accused.other": [
+      {
+        "text": "Easy on {seat}, folks. I'm sure there's an explanation.",
+        "voiced": false
+      }
+    ],
+    "idle": [
+      {
+        "text": "Anyone want coffee? The thermos is still warm.",
+        "voiced": false
+      }
     ]
   },
-  "sources": { "scalars": "B H.7", "lines": "B H.7" },
+  "sources": {
+    "scalars": "B H.7",
+    "lines": "B H.7"
+  },
   "status": "draft",
-  "notes": "Original persona. Lines written in our own words for M4.",
-  "tags": ["original"]
+  "notes": "Original persona. The first 24 lines (voiced) are the M4 set; the rest are text-only until someone prices their recordings.",
+  "tags": [
+    "original"
+  ]
 }

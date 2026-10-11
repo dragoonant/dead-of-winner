@@ -1,0 +1,381 @@
+{
+  "kind": "persona",
+  "id": "ps.drifter",
+  "name": "Silas Crane",
+  "blurb": "The Drifter: keeps his cards, declines politely, searches alone, rarely votes yes and says little.",
+  "scalars": {
+    "generosity": 0.15,
+    "risk": 0.5,
+    "paranoia": 1.25,
+    "trust": 0.3,
+    "chattiness": 0.25,
+    "bluffing": 0.55,
+    "voteThreshold": 0.72,
+    "callThreshold": 0.92
+  },
+  "voice": {
+    "libraryVoiceId": "tbd",
+    "direction": "Man in his forties, dry near-whisper, slow Western drawl, every sentence ends early."
+  },
+  "portrait": {
+    "file": "portraits/drifter.png",
+    "direction": "Lean, weather-burnt, fur-lined hat with ear flaps, a long duster, a pack he never puts down, eyes on the door."
+  },
+  "lines": {
+    "round.start": [
+      {
+        "text": "Round's on. {n} left. Don't get comfortable.",
+        "voiced": false
+      },
+      {
+        "text": "Another round. Keep an eye on the door.",
+        "voiced": false
+      }
+    ],
+    "crisis.revealed": [
+      {
+        "text": "{crisis}. Needs {symbol}. Somebody's got some.",
+        "voiced": false
+      },
+      {
+        "text": "{crisis}. {symbol}. Figure it out.",
+        "voiced": false
+      }
+    ],
+    "crisis.contributed": [
+      {
+        "text": "{n} {symbol}. That's what I put in.",
+        "voiced": false
+      },
+      {
+        "text": "Dropped {n} {symbol}. Ask no more.",
+        "voiced": false
+      }
+    ],
+    "crisis.prevented": [
+      {
+        "text": "Held. Barely.",
+        "voiced": false
+      },
+      {
+        "text": "Got through. {n}.",
+        "voiced": false
+      }
+    ],
+    "crisis.bonus": [
+      {
+        "text": "Extra. Huh.",
+        "voiced": false
+      }
+    ],
+    "crisis.failed": [
+      {
+        "text": "Short {n}. Not surprised.",
+        "voiced": false
+      },
+      {
+        "text": "Failed. Somebody's lying.",
+        "voiced": false
+      },
+      {
+        "text": "Short. Happens.",
+        "voiced": false
+      }
+    ],
+    "crisis.shortfall": [
+      {
+        "text": "{seat} was in the pile. Just saying.",
+        "voiced": false
+      },
+      {
+        "text": "Watch {seat}. That's all.",
+        "voiced": false
+      }
+    ],
+    "vote.called.me": [
+      {
+        "text": "On me? Alright, {seat}. Go ahead.",
+        "voiced": false
+      },
+      {
+        "text": "You want me gone, {seat}? Then say so.",
+        "voiced": false
+      }
+    ],
+    "vote.called.other": [
+      {
+        "text": "{seat}. Hm.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.yes": [
+      {
+        "text": "Yes on {seat}. Seen enough.",
+        "voiced": false
+      },
+      {
+        "text": "{seat} goes. Yes.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.no": [
+      {
+        "text": "No on {seat}. Not today.",
+        "voiced": false
+      },
+      {
+        "text": "Nope. Not {seat}.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.silent": [
+      {
+        "text": "…",
+        "voiced": false
+      }
+    ],
+    "vote.passed": [
+      {
+        "text": "{seat} is out. Doors are the same.",
+        "voiced": false
+      }
+    ],
+    "vote.failed": [
+      {
+        "text": "{seat} stays. Fine.",
+        "voiced": false
+      }
+    ],
+    "exiled.me": [
+      {
+        "text": "Figured. Out's where I live anyway.",
+        "voiced": false
+      },
+      {
+        "text": "Out. Didn't need the roof.",
+        "voiced": false
+      }
+    ],
+    "exiled.other": [
+      {
+        "text": "{seat}'s gone. Cold out there.",
+        "voiced": false
+      }
+    ],
+    "request.made": [
+      {
+        "text": "{seat}. Got any {symbol}? Quiet-like.",
+        "voiced": false
+      },
+      {
+        "text": "Need {symbol}, {seat}. If you can.",
+        "voiced": false
+      }
+    ],
+    "request.give": [
+      {
+        "text": "Here. Don't ask where from, {seat}.",
+        "voiced": false
+      },
+      {
+        "text": "Take it, {seat}. One time.",
+        "voiced": false
+      }
+    ],
+    "request.decline": [
+      {
+        "text": "Can't, {seat}. Sorry.",
+        "voiced": false
+      },
+      {
+        "text": "No, {seat}. Not mine to give.",
+        "voiced": false
+      },
+      {
+        "text": "Not this time, {seat}.",
+        "voiced": false
+      }
+    ],
+    "request.refused.me": [
+      {
+        "text": "{seat} said no. Alright.",
+        "voiced": false
+      }
+    ],
+    "search.found.weapon": [
+      {
+        "text": "Weapon at {location}. Might need it.",
+        "voiced": false
+      }
+    ],
+    "search.found.fuel": [
+      {
+        "text": "Fuel at {location}. Good for moving.",
+        "voiced": false
+      }
+    ],
+    "search.found.education": [
+      {
+        "text": "Paper at {location}. Nothing.",
+        "voiced": false
+      }
+    ],
+    "search.found.food": [
+      {
+        "text": "Food at {location}. I'll keep it close.",
+        "voiced": false
+      }
+    ],
+    "search.found.medicine": [
+      {
+        "text": "Medicine at {location}. Could save a life.",
+        "voiced": false
+      }
+    ],
+    "search.found.tool": [
+      {
+        "text": "Tool at {location}. Handy.",
+        "voiced": false
+      }
+    ],
+    "search.found.survivor": [
+      {
+        "text": "Someone at {location}. Alive, even.",
+        "voiced": false
+      }
+    ],
+    "search.noise": [
+      {
+        "text": "Made noise at {location}. They'll come.",
+        "voiced": false
+      }
+    ],
+    "move.out": [
+      {
+        "text": "{survivor} to {location}. Alone's fine.",
+        "voiced": false
+      }
+    ],
+    "zombie.killed": [
+      {
+        "text": "One down at {location}. Quiet.",
+        "voiced": false
+      }
+    ],
+    "barricade.built": [
+      {
+        "text": "Entrance {entrance} shut. For now.",
+        "voiced": false
+      }
+    ],
+    "exposure.wound": [
+      {
+        "text": "{survivor} got cut. Keeps moving.",
+        "voiced": false
+      }
+    ],
+    "exposure.bite": [
+      {
+        "text": "{survivor}'s gone. Dust.",
+        "voiced": false
+      },
+      {
+        "text": "Lost {survivor}. Quiet way to go.",
+        "voiced": false
+      }
+    ],
+    "bite.chain.kill": [
+      {
+        "text": "{survivor}. Had to. That's all.",
+        "voiced": false
+      }
+    ],
+    "survivor.lost.other": [
+      {
+        "text": "{seat} lost {survivor}. Hard.",
+        "voiced": false
+      }
+    ],
+    "overrun": [
+      {
+        "text": "Entrance {entrance} gave. Move.",
+        "voiced": false
+      }
+    ],
+    "food.short": [
+      {
+        "text": "No food. {n} off morale.",
+        "voiced": false
+      },
+      {
+        "text": "Hungry. {n} gone. Expected.",
+        "voiced": false
+      }
+    ],
+    "morale.low": [
+      {
+        "text": "Low. Real low.",
+        "voiced": false
+      }
+    ],
+    "objective.progress": [
+      {
+        "text": "{n}. Slow going.",
+        "voiced": false
+      }
+    ],
+    "crossroads.me": [
+      {
+        "text": "My pick. Keep walking.",
+        "voiced": false
+      }
+    ],
+    "accused.me": [
+      {
+        "text": "Me, {seat}? Think harder.",
+        "voiced": false
+      },
+      {
+        "text": "You got nothing on me, {seat}.",
+        "voiced": false
+      },
+      {
+        "text": "Accuse away, {seat}. I've heard worse.",
+        "voiced": false
+      }
+    ],
+    "accused.other": [
+      {
+        "text": "{seat}? Could be. Could be not.",
+        "voiced": false
+      }
+    ],
+    "game.won": [
+      {
+        "text": "Made it. Huh.",
+        "voiced": false
+      }
+    ],
+    "game.lost": [
+      {
+        "text": "That's the winter. Always is.",
+        "voiced": false
+      }
+    ],
+    "idle": [
+      {
+        "text": "Wind's up. Hear that?",
+        "voiced": false
+      }
+    ]
+  },
+  "sources": {
+    "scalars": "B H.7",
+    "lines": "B H.7"
+  },
+  "status": "draft",
+  "notes": "Original persona (41 §1). Lines written in our own words; text-only, no recordings yet.",
+  "tags": [
+    "original"
+  ]
+}

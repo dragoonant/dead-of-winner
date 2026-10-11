@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Ledger } from '../../src/ai/normal/suspicion'
+import { Ledger, postClaim } from '../../src/ai/normal/suspicion'
 import { OVERRUN_COST, boardCost, simulateArrivals } from '../../src/ai/normal/info'
 import { createDecider, type AiDecider } from '../../src/ai/index'
 import { createGame, legalActions, redactEvent, step, view, type Action, type GameEvent, type GameState } from '../../src/engine/index'
@@ -103,41 +103,92 @@ describe('AI-006 colony board model', () => {
 })
 
 describe('AI-007 suspicion ledger', () => {
-  const seatsView = (me: string, survivors: Record<string, unknown> = {}) => ({
-    seat: me, seatOrder: SEATS, survivors,
-    seats: Object.fromEntries(SEATS.map((s) => [s, { seat: { exiled: false, eliminated: false } }])),
+  const seatsView = (me: string, survivors: Record<string, unknown> = {}, hands = 4) => ({
+    seat: me, seatOrder: SEATS, survivors, roundNumber: 2, setup: { seats: SEATS.map((id) => ({ id })) }, locations: {},
+    seats: Object.fromEntries(SEATS.map((s) => [s, { seat: { exiled: false, eliminated: false }, handCount: hands }])),
   }) as never
+  const opts = (over: Partial<ConstructorParameters<typeof Ledger>[0]> = {}) => ({ me: 's1', paranoia: 1, trust: 0.6, selfCandidate: false, ...over })
+  const round = { type: 'RoundStarted' } as unknown as GameEvent
   const contributed = (seat: string): GameEvent => ({ type: 'CardContributed', seat, cardId: '', from: 'hand' })
   const resolved = (cards: number, total: number): GameEvent => ({ type: 'CrisisResolved', cardId: 'cr.x', total, needed: 3, prevented: total >= 3, bonus: false, cards })
 
-  it('shortfalls point at the seats that are in the pile whenever a card is wrong', () => {
-    const l = new Ledger({ me: 's1', paranoia: 1, selfCandidate: false })
+  it('a wrong card in the pile points at the seats that put cards in; the seat that sat out does not rise', () => {
+    const l = new Ledger(opts(), 'g1')
     const v = seatsView('s1')
-    l.observe([contributed('s2'), contributed('s4'), resolved(2, 0)], v)
-    l.observe([contributed('s2'), contributed('s4'), resolved(2, 0)], v)
-    l.observe([contributed('s2'), contributed('s3'), contributed('s4'), resolved(3, 1)], v)
-    expect(l.score('s3')).toBeLessThan(0.1) // s3 sat out two of the three bad rounds
-    expect(l.score('s2')).toBeGreaterThan(0.4)
+    l.observe([round, contributed('s2'), contributed('s4'), resolved(2, 0)], v)
+    l.observe([round, contributed('s2'), contributed('s4'), resolved(2, 0)], v)
+    l.observe([round, contributed('s2'), contributed('s3'), contributed('s4'), resolved(3, 1)], v)
+    expect(l.score('s3')).toBeLessThan(l.score('s2'))
+    expect(l.score('s2')).toBeGreaterThan(0.2)
     expect(['s2', 's4']).toContain(l.top()?.seat)
+    expect(l.rows['crisis.shortfall']).toBeGreaterThan(0)
   })
 
-  it('clean crises keep everyone below any vote threshold, and an own wrong card is not blamed on others', () => {
-    const l = new Ledger({ me: 's1', paranoia: 1, selfCandidate: false })
+  it('the prior is one betrayal card in 2n+1 and clean crises keep everyone below any vote threshold; an own wrong card is not blamed on others', () => {
+    const l = new Ledger(opts(), 'g2')
     const v = seatsView('s1')
-    for (let i = 0; i < 4; i++) l.observe([contributed('s2'), contributed('s3'), contributed('s4'), resolved(3, 3)], v)
-    for (const s of ['s2', 's3', 's4']) expect(l.score(s)).toBeLessThan(0.2)
-    const m = new Ledger({ me: 's1', paranoia: 1, selfCandidate: false })
+    expect(l.score('s2')).toBeCloseTo(1 / 9, 2)
+    for (let i = 0; i < 4; i++) l.observe([round, contributed('s2'), contributed('s3'), contributed('s4'), resolved(3, 3)], v)
+    for (const s of ['s2', 's3', 's4']) expect(l.score(s)).toBeLessThan(0.11)
+    const m = new Ledger(opts(), 'g3')
     m.noteOwnWrong(1)
-    m.observe([contributed('s1'), contributed('s2'), resolved(2, 0)], v)
-    expect(m.score('s2')).toBeLessThan(0.2)
+    m.observe([round, contributed('s1'), contributed('s2'), resolved(2, 0)], v)
+    expect(m.score('s2')).toBeLessThan(0.12)
   })
 
-  it('an attack on another seat survivor is strong evidence against the attacker', () => {
-    const l = new Ledger({ me: 's1', paranoia: 1, selfCandidate: false })
+  it('an attack on another seat survivor is strong evidence against the attacker, and Easy reads nothing else', () => {
     const v = seatsView('s1', { a: { owner: 's2' }, b: { owner: 's3' } })
-    l.observe([{ type: 'SurvivorAttacked', attackerId: 'a', targetId: 'b', rollId: 'r:1', roll: 2, targetAttack: 3, hit: true }], v)
+    const attack: GameEvent = { type: 'SurvivorAttacked', attackerId: 'a', targetId: 'b', rollId: 'r:1', roll: 2, targetAttack: 3, hit: true }
+    const l = new Ledger(opts(), 'g4')
+    l.observe([round, attack], v)
     expect(l.top()?.seat).toBe('s2')
-    expect(l.score('s2')).toBeGreaterThan(0.6)
+    expect(l.score('s2')).toBeGreaterThan(0.25)
+    const easy = new Ledger(opts({ attacksOnly: true }), 'g5')
+    easy.observe([round, contributed('s2'), contributed('s3'), resolved(2, 0), attack], v)
+    expect(easy.rows['crisis.shortfall']).toBeUndefined()
+    expect(easy.rows['attack.survivor']).toBeGreaterThan(0)
+  })
+
+  it('paranoia multiplies bad news and trust multiplies statements; a net move in one round is clamped to 1.5', () => {
+    const v = seatsView('s1')
+    const bad = [round, contributed('s2'), resolved(1, -1)]
+    const calm = new Ledger(opts({ paranoia: 0.6 }), 'g6')
+    const sharp = new Ledger(opts({ paranoia: 1.5 }), 'g7')
+    calm.observe(bad, v); sharp.observe(bad, v)
+    expect(sharp.score('s2')).toBeGreaterThan(calm.score('s2'))
+    // claims: s2 says it put in 3 matching cards but the pile held one
+    postClaim('g8', { seat: 's2', round: 2, n: 3 })
+    postClaim('g9', { seat: 's2', round: 2, n: 3 })
+    const gullible = new Ledger(opts({ trust: 1 }), 'g8')
+    const sceptic = new Ledger(opts({ trust: 0.1 }), 'g9')
+    const ev = [round, contributed('s2'), resolved(1, 1)]
+    gullible.observe(ev, v); sceptic.observe(ev, v)
+    expect(gullible.rows['claim.broken']).toBeGreaterThan(sceptic.rows['claim.broken']!)
+    const wild = new Ledger(opts({ paranoia: 1.6 }), 'g10')
+    wild.observe([round, ...Array.from({ length: 6 }, () => contributed('s2')), resolved(6, -6)], v)
+    expect(wild.logit('s2') - Math.log((1 / 9) / (8 / 9))).toBeLessThanOrEqual(1.5 + 1e-9)
+  })
+
+  it('three wrong-card crises with one seat always in the pile and the others in and out lift that seat over every vote threshold, and only that seat', () => {
+    const l = new Ledger(opts(), 'g12')
+    const v = seatsView('s1')
+    l.observe([round, contributed('s2'), contributed('s3'), resolved(2, 0)], v)
+    l.observe([round, contributed('s3'), contributed('s4'), resolved(2, 0)], v)
+    l.observe([round, contributed('s3'), resolved(1, -1)], v)
+    expect(l.top()?.seat).toBe('s3')
+    expect(l.score('s3')).toBeGreaterThan(0.78) // above the highest persona threshold at the table
+    expect(l.score('s2')).toBeLessThan(0.35)
+    expect(l.score('s4')).toBeLessThan(0.35)
+  })
+
+  it('a refusal reads worse from a seat with a full hand, and a claim that fits the pile helps the claimant', () => {
+    const l = new Ledger(opts(), 'g11')
+    const v = seatsView('s1', {}, 5)
+    l.observe([round, { type: 'RequestAnswered', from: 's1', to: 's2', cardId: null }], v)
+    expect(l.rows['request.declined']).toBeGreaterThan(0)
+    postClaim('g11', { seat: 's3', round: 2, n: 1 })
+    l.observe([round, contributed('s3'), resolved(1, 1)], v)
+    expect(l.rows['claim.consistent']).toBeLessThan(0)
   })
 })
 

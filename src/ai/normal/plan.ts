@@ -9,11 +9,13 @@ import { query } from '../../engine/index'
 import type { Action, ExposureOdds, ItemSymbol, LocationId, SeatId, SurvivorId } from '../../engine/index'
 import type { SeatView } from '../../engine/view'
 import type { PersonaScalars } from '../personas'
+import type { TierParams } from '../tiers'
 import {
-  OVERRUN_COST, betrayalKind, betrayerPush, boardCost, countableInHand, crisisPrevent, defOfCard, foodOf, isEquipCard, mainObjectiveNeeds, matchesCrisis, missingObjectiveSymbols, recOf,
+  OVERRUN_COST, betrayalFractions, betrayalKind, betrayalNeeds, betrayerPush, boardCost, countableForBetrayal, weaponsCarried, countableInHand, crisisPrevent, defOfCard, foodOf, isEquipCard, mainObjectiveNeeds, matchesCrisis, missingObjectiveSymbols, recOf,
   reservedCards, statsOf, symbolsOfCard, woundsOn, type Ent, type ObjNeed, type Rec,
 } from './info'
 import type { Ledger } from './suspicion'
+import { afford, estimateYes } from './votes'
 
 export interface PlanMemory { requestTurn: number; voteRound: number; calledAt: number; objRound: number; fuelWho: SurvivorId | null }
 export interface PlanEnv {
@@ -27,18 +29,26 @@ export interface PlanEnv {
   mem: PlanMemory
   rand: () => number
   expired: () => boolean
+  tier: TierParams
+  /** the other half of the betrayer's picture: how many log-odds of cover it has left before the table would vote it out (Infinity for a loyal seat) */
+  cover: () => number
 }
 
 /** Tuning constants (morale-equivalent points). `AI_TUNE='{"death":2}'` overrides them for bench experiments; nothing else reads the environment. */
-function envTune(): Record<string, number> {
+export function envTune(): Record<string, number> {
   try { return JSON.parse(((globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.['AI_TUNE']) ?? '{}') as Record<string, number> } catch { return {} }
 }
-export const TUNE = {
-  death: 2, moveNow: 1.0, moveLater: 1.4, moveCostMult: 1.3, searchScale: 1.0, barricadeBase: 0.07, homeDefend: 0.4, homeDanger: 0.8, killBase: 0.015, sampleKill: 0.85, killThem: 0.1, barricadeOut: 0.25, needMatch: 0.65, frost: 1, maxOut: 9, objWeight: 0.5, foodKeep: 1, haveMatchW: 0.15, boostMin: 0.15, outsider: -5, thReq: 0.9, pickKill: 0.8, stayRounds: 1.5, fuelCost: 0.15, betLazy: 0.15, gunSample: 0.3, wpnSample: 0.4, medW: 0.12, medBase: 0.25, inP: 0.85, laterP: 0.65, cExtra: 0.7, objBarr: 0.25, foodTokenCost: 0.12, coverAt: 0.45, objBase: 1.5, pushScale: 1, betProtect: 1.4, sabBase: 0.2, hoard: 3,
-  ...envTune(),
+const BASE_TUNE = {
+  death: 2, moveNow: 1.0, moveLater: 1.4, moveCostMult: 1.3, searchScale: 1.0, barricadeBase: 0.07, homeDefend: 0.4, homeDanger: 0.8, killBase: 0.015, sampleKill: 1.3, killThem: 0.1, barricadeOut: 0.25, needMatch: 0.65, frost: 1, maxOut: 9, objWeight: 0.5, foodKeep: 1, haveMatchW: 0.15, boostMin: 0.15, outsider: -5, thReq: 0.9, pickKill: 0.8, stayRounds: 1.5, fuelCost: 0.15, betLazy: 0.15, gunSample: 0.3, wpnSample: 0.4, medW: 0.12, medBase: 0.25, inP: 0.45, laterP: 0.25, cExtra: 0.7, objBarr: 0.25, foodTokenCost: 0.12, coverAt: 0.45, objBase: 1.5, pushScale: 1, betProtect: 1.4, sabBase: 0.2, hoard: 3, woundW: 1.0, pickInf: 25, pickAtk: 0.3, pickSea: 0.45, moraleFear: 0, riskModel: 0, pushGate: 0,
+}
+/** The live constants of the decision being made (see `useTune`). */
+export const TUNE: typeof BASE_TUNE & Record<string, number> = { ...BASE_TUNE }
+/** Load a tier's constants (and the bench override) for the decision about to be made. decide() is synchronous, so one decider never sees another's. */
+export function useTune(over: Record<string, number> = {}): void {
+  Object.assign(TUNE, BASE_TUNE, over, envTune())
 }
 /** One exposure roll in morale points: a bite kills; a frostbite token adds a wound every turn until healed, so it is nearly as deadly (R p11). */
-const expCost = (o: ExposureOdds): number => (o.pDeath + TUNE.frost * o.frostbite + 0.12 * o.wound) * TUNE.death
+const expCost = (o: ExposureOdds): number => (o.pDeath + TUNE.frost * o.frostbite + TUNE.woundW * o.wound) * TUNE.death
 export interface Patch { entrance: number; z?: number; b?: number }
 const ALL_SYMBOLS: ItemSymbol[] = ['weapon', 'fuel', 'education', 'food', 'medicine', 'tool', 'survivor']
 
@@ -60,8 +70,20 @@ export class PlanCache {
   food(): ReturnType<typeof query.foodNeeded> { return (this._food ??= query.foodNeeded(this.v)) }
   zombies(): ReturnType<typeof query.zombiesToAdd> { return (this._zombies ??= query.zombiesToAdd(this.v)) }
   objNeeds(): ObjNeed[] { return (this._objNeeds ??= mainObjectiveNeeds(this.v)) }
+  /** The main objective's counters are all met and only the colony-phase check is left: now the colony must simply live through the round. */
+  finishing(): boolean {
+    if (this._fin !== undefined) return this._fin
+    let f = false
+    if (!this.env.tier.finishing) return (this._fin = false)
+    try {
+      const r = query.objectiveProgress(this.v)
+      f = !this.v.objective.complete && r.parts.length > 0 && r.parts.every((p) => Number.isFinite(p.need) && p.have >= p.need)
+    } catch { f = false }
+    return (this._fin = f)
+  }
+  private _fin?: boolean
   /** A betrayer's wish to bring the colony down: 0 early, up to 1 when the game is nearly out of rounds or morale is already thin. */
-  push(): number { return this.env.betrayer ? Math.min(1, betrayerPush(this.v) * TUNE.pushScale) : 0 }
+  push(): number { return this.env.betrayer ? Math.min(1, betrayerPush(this.v, TUNE.pushGate) * TUNE.pushScale) : 0 }
   reserved(): Set<string> { return (this._reserved ??= reservedCards(this.v)) }
   exposure(id: SurvivorId, reason: 'zombieKill' | 'move' = 'zombieKill'): ExposureOdds {
     const k = `${id}|${reason}`
@@ -72,8 +94,24 @@ export class PlanCache {
   /** Cost of one exposure roll in morale points: death (and the bite chain it may start), plus the wounds that make the next roll deadlier. */
   exposureCost(id: SurvivorId, reason: 'zombieKill' | 'move' = 'zombieKill'): number {
     const o = this.exposure(id, reason)
-    const raw = expCost(o)
-    return raw * (1 - 0.35 * this.env.scalars.risk) * this.protect()
+    const raw = this.rawCost(id, o)
+    return raw * (1 - 0.35 * this.env.scalars.risk) * this.protect() * (1 + TUNE.moraleFear * Math.max(0, 5 - this.v.morale))
+  }
+  /**
+   * One roll's price in morale. Normal: the odds of death, frostbite and wounds weighted by constants. Hard (riskModel): what each face leads to for
+   * THIS survivor: a frostbite token ticks a wound every turn until healed (deadly without a medicine card to hand), a wound is cheap on a
+   * healthy survivor and expensive on one that already carries one, and the same face on a survivor at two wounds is already counted as a death.
+   */
+  rawCost(id: SurvivorId, o: ExposureOdds): number {
+    if (!TUNE.riskModel) return expCost(o)
+    const sv = this.v.survivors[id]
+    const w = sv?.wounds ?? 0
+    const f = sv?.frostbite ?? 0
+    if (w + f >= 2) return o.pDeath * TUNE.death
+    const healer = this.v.me.hand.some((c) => symbolsOfCard(this.v, c).includes('medicine')) ? 1 : 0
+    const dFrost = Math.min(1, (healer ? 0.35 : 0.8) + 0.15 * (w + f))
+    const dWound = (w + f === 0 ? 0.1 : 0.45) * (healer ? 0.6 : 1)
+    return (o.pDeath + o.frostbite * dFrost + o.wound * dWound) * TUNE.death
   }
   /** A betrayer keeps its own survivors out of harm: its cards need them standing when the colony falls (serial killers wants two). */
   protect(): number { return this.env.betrayer ? (betrayalKind(this.v) === 'serial-killers' ? TUNE.betProtect * 2 : TUNE.betProtect) : 1 }
@@ -109,10 +147,16 @@ export class PlanCache {
     for (const s of crisisPrevent(v)) w[s] += haveMatch >= 1 ? TUNE.haveMatchW : TUNE.needMatch
     for (const s of missingObjectiveSymbols(v)) w[s] += 0.55
     if (this.env.betrayer) {
-      const kind = betrayalKind(v)
-      if (kind === 'trigger-happy') w.weapon += TUNE.hoard * 2
-      if (kind === 'cult-leader') w.survivor += TUNE.hoard
-      if (kind === 'serial-killers' && this.alive() < 3) w.survivor += TUNE.hoard * 0.5
+      // hoard what the betrayal card asks for until it has it (the starting cards do not count): the bigger the gap, the more a search for it is worth
+      const needs = betrayalNeeds(v)
+      if (needs) {
+        for (const [sym, k] of Object.entries(needs.hand) as [ItemSymbol, number][]) {
+          const have = countableForBetrayal(v, sym, needs).length
+          if (have < k) w[sym] += TUNE.hoard * (0.5 + 0.5 * (k - have) / k)
+        }
+        if (needs.weapons > weaponsCarried(v) + v.me.hand.filter((c) => symbolsOfCard(v, c).includes('weapon')).length) w.weapon += TUNE.hoard * 1.2
+        if (needs.aliveMin > this.alive() || needs.most > 0) w.survivor += TUNE.hoard * 0.5
+      }
       for (const n of this.objNeeds()) w[n.symbol] += 0.15 // hoard what the objective needs
     } else for (const n of this.objNeeds()) if (countableInHand(v, n).length < n.remaining) w[n.symbol] += TUNE.objWeight
     const wounds = (v.seats[this.env.me]?.survivors ?? []).reduce((n, id) => n + woundsOn(v, id), 0)
@@ -172,7 +216,7 @@ export class PlanCache {
   }
   cost(loc: LocationId, patch?: Patch | Patch[], extraSurvivors = 0): number {
     const { ent, cap } = this.board(loc, patch)
-    const rounds = Math.min(2, Math.max(1, this.v.roundsLeft))
+    const rounds = Math.min(this.env.tier.horizon, Math.max(1, this.v.roundsLeft))
     return boardCost(ent, cap, this.arrivals(loc, extraSurvivors), rounds)
   }
 }
@@ -192,7 +236,7 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
       const loc = a.target.location
       const gain = c.cost(loc) - c.cost(loc, { entrance: a.target.entrance, z: -1 })
       const d = dieOf(v, me, a.dieId)
-      const objBonus = v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleKill : v.objective.id === 'obj.main.kill-them' && loc !== 'colony' ? TUNE.killThem : 0
+      const objBonus = c.finishing() ? 0 : v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleKill : v.objective.id === 'obj.main.kill-them' && loc !== 'colony' ? TUNE.killThem : 0
       const baseline = loc === 'colony' ? TUNE.killBase * (v.locations['colony']!.entrances.reduce((n, e) => n + e.zombies, 0)) : 0
       return (gain + objBonus + baseline) * c.help() - c.exposureCost(a.survivorId) - 0.02 * (d?.value ?? 3)
     }
@@ -224,14 +268,14 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
     case 'contributeObjective': return scoreObjective(c, a)
     case 'move': return scoreMove(c, a.survivorId, a.to)
     case 'request': {
-      if (v.turnCount === c.env.mem.requestTurn) return -1
+      if (!c.env.tier.requests || v.turnCount === c.env.mem.requestTurn) return -1
       const f = c.food()
       const hand = v.me.hand
       const reserved = c.reserved()
       const have = (sym: ItemSymbol) => hand.some((x) => !reserved.has(x) && symbolsOfCard(v, x).includes(sym))
       let base = -1
       if (a.symbol === 'food' && f.shortfall > 0 && !hand.some((x) => foodOf(v, x) > 0)) base = 0.3 + 0.2 * f.shortfall
-      else if (c.env.betrayer && betrayalKind(v) === 'trigger-happy' && a.symbol === 'weapon' && v.me.hand.filter((x) => symbolsOfCard(v, x).includes('weapon')).length < 3) base = TUNE.thReq
+      else if (c.env.betrayer && betrayalWants(v, a.symbol)) base = TUNE.thReq
       else if (a.symbol === 'medicine' && !have('medicine') && (v.seats[me]?.survivors ?? []).some((s) => woundsOn(v, s) >= 2)) base = 0.2
       if (base < 0) return -1
       const to = a.to
@@ -239,15 +283,7 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
       if (!target || target.seat.exiled || target.handCount === 0) return -1
       return base * (0.6 + 0.4 * scalars.generosity) - 0.3 * c.env.ledger.score(to) + 0.02 * Math.min(5, target.handCount)
     }
-    case 'callVote': {
-      if (v.roundNumber < 2 || v.turn?.voteCalled) return -1
-      if (c.env.mem.voteRound === v.roundNumber) return -1
-      const top = c.env.ledger.top()
-      if (!top || top.seat !== a.target) return -1
-      const thr = scalars.callThreshold * (exiledCount(v) > 0 ? 1.15 : 1)
-      if (c.env.betrayer) return -1
-      return top.score >= thr ? 2 : -1
-    }
+    case 'callVote': return scoreCallVote(c, a)
     case 'spendFood': return scoreSpendFood(c, a)
     case 'useAbility': return scoreAbility(c, a)
     case 'attract': return -5
@@ -257,7 +293,34 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
   }
 }
 
+/** Does the betrayal card still want `symbol` in this seat's hand (or on its survivors, for weapons)? */
+function betrayalWants(v: SeatView, symbol: ItemSymbol | undefined): boolean {
+  const nd = betrayalNeeds(v)
+  if (!nd || !symbol) return false
+  if (symbol === 'weapon') return nd.weapons > weaponsCarried(v) + v.me.hand.filter((c) => symbolsOfCard(v, c).includes('weapon')).length
+  const k = nd.hand[symbol]
+  return !!k && countableForBetrayal(v, symbol, nd).length < k
+}
 const exiledCount = (v: SeatView): number => v.seatOrder.filter((s) => v.seats[s]!.seat.exiled).length
+
+/** Calling a vote (40 §8.4): the target must be the seat this bot suspects most, above the call threshold, affordable, and the estimated yes votes must reach a majority. */
+function scoreCallVote(c: PlanCache, a: Extract<Action, { type: 'callVote' }>): number {
+  const { v, me, scalars, tier } = c.env
+  if (v.roundNumber < 2 || v.turn?.voteCalled || a.target === me) return -1
+  if (c.env.mem.voteRound === v.roundNumber) return -1
+  if (tier.ledger !== 'full') return -1
+  const top = c.env.ledger.top()
+  if (!top || top.seat !== a.target) return -1
+  const thetaCall = Math.min(0.97, scalars.callThreshold + tier.callShift) * (exiledCount(v) > 0 ? 1.1 : 1)
+  if (top.score < Math.min(0.97, thetaCall)) return -1
+  if (!afford(v, a.target)) return -1
+  const { yes, needed } = estimateYes(v, me, a.target, top.score, tier.callEstimate)
+  if (c.env.betrayer) {
+    // only the patient betrayer deflects with a vote, and only while it has cover to spare (the table must be about to agree anyway)
+    return tier.betrayer === 'patient' && yes >= needed && c.env.cover() > 1 ? 0.8 : -1
+  }
+  return yes >= needed ? 2 : -1
+}
 
 /** The ability record named `abilityId` on the survivor or on an item it carries (the same lookup the engine's rawAbility does). */
 function abilityRecord(v: SeatView, survivorId: SurvivorId, abilityId: string): Rec | undefined {
@@ -377,6 +440,7 @@ function bestBoost(c: PlanCache, tokens: number): { net: number; tokens: number 
 /** Food tokens on a die, only from a real surplus, and only when the boosted die unlocks a kill at the colony or a search the die could not make. */
 function scoreSpendFood(c: PlanCache, a: Extract<Action, { type: 'spendFood' }>): number {
   const { v, me } = c.env
+  if (a.tokens > c.env.tier.foodBoostMax) return -1
   const f = c.food()
   const spare = v.food - f.needed - TUNE.foodKeep
   if (spare < a.tokens || f.shortfall > 0) return -1
@@ -469,7 +533,7 @@ function scorePlay(c: PlanCache, a: Extract<Action, { type: 'playCard' }>): numb
   if (syms.includes('survivor')) {
     // an Outsider joins the seat at the colony: one more body and die; the later ones also bring helpless mouths
     const helpless = (defOfCard(v, a.cardId)?.['play']?.['effect'] as Rec[] | undefined)?.filter((n) => n['op'] === 'addHelpless').reduce((n, x) => n + (typeof x['count'] === 'number' ? (x['count'] as number) : 1), 0) ?? 0
-    if (c.env.betrayer) return betrayalKind(v) === 'cult-leader' || (betrayalKind(v) === 'serial-killers' && c.alive() < 3) ? 1.5 : -1
+    if (c.env.betrayer) { const nd = betrayalNeeds(v); return nd && (nd.most > 0 || nd.aliveMin > c.alive()) ? 1.5 : -1 }
     if (v.roundsLeft <= 1 || c.food().shortfall > 0) return -1
     return TUNE.outsider - 0.15 * helpless // Normal leaves them in hand: the extra mouths cost more than the die brings (bench)
   }
@@ -486,7 +550,8 @@ function scorePlay(c: PlanCache, a: Extract<Action, { type: 'playCard' }>): numb
     if (reserved.has(a.cardId) || (matchesCrisis(v, a.cardId) && haveMatch <= 1)) return -1
     const st = statsOf(v, a.equipTo)
     const at = v.survivors[a.equipTo]?.location === 'colony' ? 0.02 : 0
-    const trig = c.env.betrayer && betrayalKind(v) === 'trigger-happy' && syms.includes('weapon') ? 0.7 : 0
+    const nd = c.env.betrayer ? betrayalNeeds(v) : null
+    const trig = nd && syms.includes('weapon') && (nd.weapons > weaponsCarried(v) || nd.weaponsEach > 0) ? 0.7 : 0
     const samplesGun = !c.env.betrayer && v.objective.id === 'obj.main.we-need-more-samples' && equipValue(v, a.cardId) >= 0.5 ? TUNE.gunSample * Math.min(3, v.roundsLeft) : 0
     const arm = !c.env.betrayer && v.objective.id === 'obj.main.leave-it-all-behind' && syms.includes('weapon') ? 0.6 : 0
     return equipValue(v, a.cardId) + 0.01 * (6 - st.attack) + at + trig + arm + samplesGun
@@ -497,7 +562,7 @@ function scorePlay(c: PlanCache, a: Extract<Action, { type: 'playCard' }>): numb
 /** The exposure price of a move, as scoreMove charges it (a fuel card played first wipes it out). */
 function moveExpo(c: PlanCache, survivorId: SurvivorId, to: LocationId): number {
   const o = c.moveTargets(survivorId).find((t) => t.location === to)?.exposure
-  return (o ? expCost(o) * (1 - 0.35 * c.env.scalars.risk) : 0.25) * c.protect()
+  return (o ? c.rawCost(survivorId, o) * (1 - 0.35 * c.env.scalars.risk) : 0.25) * c.protect()
 }
 /** What a survivor's colony-only kill ability is worth over the rounds left, lost the moment it leaves (Thomas Heart, Edward White). */
 export function stayValue(c: PlanCache, survivorId: SurvivorId): number {
@@ -562,7 +627,9 @@ export function planTurn(c: PlanCache, legal: Action[]): Action {
   for (const a of legal) {
     if (a.type === 'contributeCrisis' || a.type === 'attract' || a.type === 'handOff') continue
     if ((n++ & 15) === 15 && c.env.expired()) break
-    const s = scoreTurnAction(c, a) + 0.002 * c.env.rand()
+    let s = scoreTurnAction(c, a)
+    if (c.env.tier.noise > 0 && s > -5) s *= 1 + c.env.tier.noise * (c.env.rand() + c.env.rand() + c.env.rand() - 1.5) * 2
+    s += 0.002 * c.env.rand()
     if (s > bestScore) { bestScore = s; best = a }
   }
   // a fuel card played before the move spares that survivor the exposure roll: play it first when the move is the plan

@@ -30,11 +30,12 @@ describe('audio manifest', () => {
     for (const id of ids) if (!/^(nar-obj-|vo-xr-)$/.test(id) && !id.endsWith('-')) expect(AUDIO_BY_ID[id], id).toBeDefined()
   })
 
-  it('voices every line of every persona bank', () => {
+  it('voices every line flagged voiced in every persona bank (the rest are text-only until someone prices them)', () => {
     expect(PERSONAS.length).toBeGreaterThanOrEqual(3)
     for (const p of PERSONAS) {
       for (const [key, bank] of Object.entries(p.lines)) {
         for (const l of bank) {
+          if (!l.voiced) continue
           const filled = l.text.replace(/\{seat\}/g, 'Wren').replace(/\{survivor\}/g, 'Sparky').replace(/\{n\}/g, '3')
           expect(personaLineId(p.id, key, filled), `${p.id} ${key} ${l.text}`).not.toBeNull()
         }

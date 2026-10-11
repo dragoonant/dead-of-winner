@@ -7,7 +7,7 @@ import { speakPersonaLine } from '../audio/personaVoice'
 import { createTalker, type Fills, type Talker, type TalkKey } from '../../ai/talk'
 import { getPersona } from '../../ai/personas'
 import type { GameEvent, GameState, SeatId } from '../../engine/index'
-import { nameOf, seatNameOf } from '../data'
+import { itemSymbols, locName, nameOf, seatNameOf } from '../data'
 import { FEED_LIMIT, usePresentedStore } from '../presentation/presentedStore'
 import { useGameStore } from '../store/gameStore'
 
@@ -63,11 +63,12 @@ export function say(seat: SeatId, key: TalkKey, fills: Fills, opts?: { force?: b
   return true
 }
 
-/** A bot states its lean right before the simultaneous vote (always speaks). */
+/** A bot states its lean right before the simultaneous vote (always speaks; a quiet persona says it as a silent beat), and the seat it names answers. */
 export function sayLean(seat: SeatId, target: SeatId, yes: boolean): void {
   const st = useGameStore.getState().state
   if (!st) return
-  say(seat, yes ? 'vote.lean.yes' : 'vote.lean.no', { seat: seatNameOf(st.setup, target) }, { force: true })
+  say(seat, yes ? 'vote.lean.yes' : 'vote.lean.no', { seat: seatNameOf(st.setup, target) }, { force: true }) // the talker turns a quiet persona's lean into a silent beat
+  if (yes) say(target, 'accused.me', { seat: seatNameOf(st.setup, seat) }, { force: true })
 }
 
 const botSeats = (st: GameState): SeatId[] => st.seatOrder.filter((s) => st.seats[s]?.seat.kind === 'bot' && !st.seats[s]!.seat.eliminated)
@@ -81,22 +82,64 @@ function chorus(st: GameState, key: TalkKey, fills: Fills, max: number, skip: Se
   for (let i = 0; i < bots.length && spoke < max; i++) if (say(bots[(start + i) % bots.length]!, key, fills)) spoke++
 }
 
+const ownerOf = (st: GameState, survivorId: string | undefined): SeatId | null => (survivorId ? st.survivors[survivorId]?.owner ?? null : null)
+const SYMBOLS = ['weapon', 'fuel', 'education', 'food', 'medicine', 'tool', 'survivor'] as const
+
 function react(ev: GameEvent, st: GameState): void {
   switch (ev.type) {
-    case 'TurnStarted': say(ev.seat, 'turn.start', {}); break
+    case 'RoundStarted': chorus(st, 'round.start', { n: ev.roundsLeft }, 1); break
+    case 'TurnStarted': say(ev.seat, 'turn.start', { n: st.roundsLeft }); break
+    case 'CrisisRevealed': chorus(st, 'crisis.revealed', { crisis: nameOf(ev.cardId), symbol: ev.prevent[0] ?? 'food' }, 1); break
     case 'CrisisResolved': {
-      if (ev.prevented) chorus(st, 'crisis.prevented', { n: ev.total }, 1)
-      else chorus(st, 'crisis.failed', { n: Math.max(1, ev.needed - ev.total) }, 1)
+      if (ev.prevented) {
+        chorus(st, 'crisis.prevented', { n: ev.total }, 1)
+        if (ev.bonus) chorus(st, 'crisis.bonus', {}, 1)
+      } else chorus(st, 'crisis.failed', { n: Math.max(1, ev.needed - ev.total) }, 1)
       break
     }
-    case 'VoteCalled': chorus(st, 'vote.called', { seat: seatNameOf(st.setup, ev.target) }, 1, [ev.caller]); break
-    case 'RequestAnswered': say(ev.to, ev.cardId ? 'request.give' : 'request.decline', { seat: seatNameOf(st.setup, ev.from) }, { force: true }); break
+    case 'VoteCalled': {
+      const caller = seatNameOf(st.setup, ev.caller)
+      say(ev.target, 'vote.called.me', { seat: caller }, { force: true })
+      chorus(st, 'vote.called.other', { seat: seatNameOf(st.setup, ev.target) }, 1, [ev.caller, ev.target])
+      break
+    }
+    case 'VoteResult': chorus(st, ev.exiled ? 'vote.passed' : 'vote.failed', { seat: seatNameOf(st.setup, ev.target) }, 1, [ev.target]); break
+    case 'SeatExiled': {
+      say(ev.seat, 'exiled.me', {}, { force: true })
+      chorus(st, 'exiled.other', { seat: seatNameOf(st.setup, ev.seat) }, 1, [ev.seat])
+      break
+    }
+    case 'RequestMade': say(ev.from, 'request.made', { seat: seatNameOf(st.setup, ev.to), symbol: ev.symbol ?? 'food' }); break
+    case 'RequestAnswered':
+      say(ev.to, ev.cardId ? 'request.give' : 'request.decline', { seat: seatNameOf(st.setup, ev.from) }, { force: true })
+      if (!ev.cardId) say(ev.from, 'request.refused.me', { seat: seatNameOf(st.setup, ev.to) })
+      break
+    case 'SearchKept': {
+      const sym = SYMBOLS.find((x) => itemSymbols(st.cards[ev.cardId]?.defId).includes(x))
+      if (sym) say(ev.seat, `search.found.${sym}`, { location: locName(ev.location) })
+      break
+    }
+    case 'NoiseAdded': if (ev.by === 'search') { const who = st.search?.seat ?? st.activeSeat; if (who) say(who, 'search.noise', { location: locName(ev.location) }) } break
+    case 'SurvivorMoved': {
+      const o = ownerOf(st, ev.survivorId)
+      if (o && ev.kind === 'action' && ev.from === 'colony') say(o, 'move.out', { survivor: nameOf(ev.survivorId), location: locName(ev.to) })
+      break
+    }
+    case 'ZombieKilled': { const o = ownerOf(st, String(ev.by)); if (o) say(o, 'zombie.killed', { location: locName(ev.location) }); break }
+    case 'BarricadeAdded': { const o = ownerOf(st, String(ev.by)); if (o) say(o, 'barricade.built', { entrance: ev.entrance }); break }
+    case 'WoundTaken': { const o = ownerOf(st, ev.survivorId); if (o && ev.source === 'exposure') say(o, 'exposure.wound', { survivor: nameOf(ev.survivorId) }); break }
+    case 'BiteChoiceMade': if (ev.choice === 'kill') say(ev.seat, 'bite.chain.kill', { survivor: nameOf(ev.survivorId) }, { force: true }); break
     case 'SurvivorKilled':
       if (ev.cause === 'bite' && ev.owner) say(ev.owner, 'exposure.bite', { survivor: nameOf(ev.survivorId) }, { force: true })
+      else if (ev.owner) chorus(st, 'survivor.lost.other', { seat: seatNameOf(st.setup, ev.owner), survivor: nameOf(ev.survivorId) }, 1, [ev.owner])
       break
+    case 'EntranceOverrun': if (ev.location === 'colony') chorus(st, 'overrun', { entrance: ev.entrance }, 1); break
+    case 'Starvation': if (ev.moraleLoss > 0) chorus(st, 'food.short', { n: ev.moraleLoss }, 1); break
     case 'MoraleChanged':
-      if (ev.delta < 0 && ev.after <= 2 && !moraleSpoken) { moraleSpoken = true; chorus(st, 'morale.low', {}, 1) }
+      if (ev.delta < 0 && ev.after <= 2 && !moraleSpoken) { moraleSpoken = true; chorus(st, 'morale.low', { n: ev.after }, 1) }
       break
+    case 'ObjectiveProgress': if (ev.seat === null && ev.delta > 0) chorus(st, 'objective.progress', { n: ev.after }, 1); break
+    case 'CrossroadsResolved': say(ev.forSeat, 'crossroads.me', {}); break
     case 'GameEnded': {
       const bots = botSeats(st)
       let won = 0

@@ -3,61 +3,411 @@
   "id": "ps.hardcase",
   "name": "Ruth Castellano",
   "blurb": "The Hard Case: kills first, trusts last, calls a vote early and means it.",
-  "scalars": { "generosity": 0.3, "risk": 0.65, "paranoia": 1.45, "trust": 0.35, "chattiness": 0.6, "bluffing": 0.3, "voteThreshold": 0.48, "callThreshold": 0.58 },
-  "voice": { "libraryVoiceId": "tbd", "direction": "Woman in her forties, gravel alto, flat and blunt, short words." },
-  "portrait": { "file": "portraits/hardcase.png", "direction": "Cropped dark hair, scar through one eyebrow, surplus army coat, tire iron across her knees." },
+  "scalars": {
+    "generosity": 0.3,
+    "risk": 0.65,
+    "paranoia": 1.45,
+    "trust": 0.35,
+    "chattiness": 0.6,
+    "bluffing": 0.3,
+    "voteThreshold": 0.48,
+    "callThreshold": 0.58
+  },
+  "voice": {
+    "libraryVoiceId": "tbd",
+    "direction": "Woman in her forties, gravel alto, flat and blunt, short words."
+  },
+  "portrait": {
+    "file": "portraits/hardcase.png",
+    "direction": "Cropped dark hair, scar through one eyebrow, surplus army coat, tire iron across her knees."
+  },
   "lines": {
     "turn.start": [
-      { "text": "My turn. Stay out of the way." },
-      { "text": "Gate first. Talk later." }
+      {
+        "text": "My turn. Stay out of the way.",
+        "voiced": true
+      },
+      {
+        "text": "Gate first. Talk later.",
+        "voiced": true
+      }
     ],
     "crisis.prevented": [
-      { "text": "Good. Don't make me count on you twice." },
-      { "text": "Held. Barely. Moving on." }
+      {
+        "text": "Good. Don't make me count on you twice.",
+        "voiced": true
+      },
+      {
+        "text": "Held. Barely. Moving on.",
+        "voiced": true
+      }
     ],
     "crisis.failed": [
-      { "text": "Short. Someone is playing us." },
-      { "text": "That's not bad luck. That's a hand on the scale." }
+      {
+        "text": "Short. Someone is playing us.",
+        "voiced": true
+      },
+      {
+        "text": "That's not bad luck. That's a hand on the scale.",
+        "voiced": true
+      },
+      {
+        "text": "Short {n}. Somebody held back.",
+        "voiced": false
+      }
     ],
     "vote.called": [
-      { "text": "About time someone put {seat} up." },
-      { "text": "{seat} on the block. I'm listening." }
+      {
+        "text": "About time someone put {seat} up.",
+        "voiced": true
+      },
+      {
+        "text": "{seat} on the block. I'm listening.",
+        "voiced": true
+      }
     ],
     "vote.lean.yes": [
-      { "text": "{seat} goes out. Yes." },
-      { "text": "I've seen enough of {seat}. Yes." }
+      {
+        "text": "{seat} goes out. Yes.",
+        "voiced": true
+      },
+      {
+        "text": "I've seen enough of {seat}. Yes.",
+        "voiced": true
+      }
     ],
     "vote.lean.no": [
-      { "text": "No. {seat} hasn't earned the boot yet." },
-      { "text": "Not {seat}. Not on this. No." }
+      {
+        "text": "No. {seat} hasn't earned the boot yet.",
+        "voiced": true
+      },
+      {
+        "text": "Not {seat}. Not on this. No.",
+        "voiced": true
+      }
     ],
     "request.give": [
-      { "text": "Take it, {seat}. Don't waste it." },
-      { "text": "One time, {seat}. Make it count." }
+      {
+        "text": "Take it, {seat}. Don't waste it.",
+        "voiced": true
+      },
+      {
+        "text": "One time, {seat}. Make it count.",
+        "voiced": true
+      }
     ],
     "request.decline": [
-      { "text": "No, {seat}." },
-      { "text": "Find it elsewhere, {seat}." }
+      {
+        "text": "No, {seat}.",
+        "voiced": true
+      },
+      {
+        "text": "Find it elsewhere, {seat}.",
+        "voiced": true
+      },
+      {
+        "text": "No. Ask someone softer, {seat}.",
+        "voiced": false
+      }
     ],
     "exposure.bite": [
-      { "text": "{survivor} is down. Keep the line tight." },
-      { "text": "Lost {survivor}. Nobody cry, work." }
+      {
+        "text": "{survivor} is down. Keep the line tight.",
+        "voiced": true
+      },
+      {
+        "text": "Lost {survivor}. Nobody cry, work.",
+        "voiced": true
+      }
     ],
     "morale.low": [
-      { "text": "We're nearly dead. Act like it matters." },
-      { "text": "One more bad round and it's over. Think." }
+      {
+        "text": "We're nearly dead. Act like it matters.",
+        "voiced": true
+      },
+      {
+        "text": "One more bad round and it's over. Think.",
+        "voiced": true
+      }
     ],
     "game.won": [
-      { "text": "Still breathing. Good enough." },
-      { "text": "We lived. Don't get soft." }
+      {
+        "text": "Still breathing. Good enough.",
+        "voiced": true
+      },
+      {
+        "text": "We lived. Don't get soft.",
+        "voiced": true
+      }
     ],
     "game.lost": [
-      { "text": "Should have voted sooner." },
-      { "text": "That's the winter. It always wins eventually." }
+      {
+        "text": "Should have voted sooner.",
+        "voiced": true
+      },
+      {
+        "text": "That's the winter. It always wins eventually.",
+        "voiced": true
+      }
+    ],
+    "round.start": [
+      {
+        "text": "{n} rounds. Make them count.",
+        "voiced": false
+      },
+      {
+        "text": "Round starts. Gate first.",
+        "voiced": false
+      }
+    ],
+    "crisis.revealed": [
+      {
+        "text": "{crisis}. We need {symbol}. Hand it over.",
+        "voiced": false
+      },
+      {
+        "text": "{crisis}. {symbol} or we bleed.",
+        "voiced": false
+      }
+    ],
+    "crisis.contributed": [
+      {
+        "text": "{n} {symbol}. In.",
+        "voiced": false
+      },
+      {
+        "text": "Putting {n} {symbol} on the pile. Match me.",
+        "voiced": false
+      }
+    ],
+    "crisis.bonus": [
+      {
+        "text": "Spare. Don't get comfortable.",
+        "voiced": false
+      }
+    ],
+    "crisis.shortfall": [
+      {
+        "text": "{seat}. The pile was bad and you were in it.",
+        "voiced": false
+      },
+      {
+        "text": "Look at {seat}. That shortfall has a name.",
+        "voiced": false
+      }
+    ],
+    "vote.called.me": [
+      {
+        "text": "Try it, {seat}. I'll still be standing at the gate.",
+        "voiced": false
+      },
+      {
+        "text": "You called me out, {seat}? Say why.",
+        "voiced": false
+      }
+    ],
+    "vote.called.other": [
+      {
+        "text": "{seat} on the block. About time.",
+        "voiced": false
+      }
+    ],
+    "vote.lean.silent": [
+      {
+        "text": "…",
+        "voiced": false
+      }
+    ],
+    "vote.passed": [
+      {
+        "text": "{seat} is gone. Good.",
+        "voiced": false
+      }
+    ],
+    "vote.failed": [
+      {
+        "text": "{seat} stays. For now. Keep watching.",
+        "voiced": false
+      }
+    ],
+    "exiled.me": [
+      {
+        "text": "Out. Fine. Don't expect me to be gentle with the dead. Or you.",
+        "voiced": false
+      },
+      {
+        "text": "You voted me out. Remember that when the gate falls.",
+        "voiced": false
+      }
+    ],
+    "exiled.other": [
+      {
+        "text": "{seat} is out. Move on.",
+        "voiced": false
+      }
+    ],
+    "request.made": [
+      {
+        "text": "{seat}. I need {symbol}. Now.",
+        "voiced": false
+      },
+      {
+        "text": "{seat}, give me {symbol}. Don't make me ask twice.",
+        "voiced": false
+      }
+    ],
+    "request.refused.me": [
+      {
+        "text": "{seat} said no. Noted.",
+        "voiced": false
+      }
+    ],
+    "search.found.weapon": [
+      {
+        "text": "Weapon at {location}. Finally something useful.",
+        "voiced": false
+      }
+    ],
+    "search.found.fuel": [
+      {
+        "text": "Fuel from {location}. Keeps engines and fires going.",
+        "voiced": false
+      }
+    ],
+    "search.found.education": [
+      {
+        "text": "Paper at {location}. Useless. Fine.",
+        "voiced": false
+      }
+    ],
+    "search.found.food": [
+      {
+        "text": "Food at {location}. Eat it or share it. Don't hoard.",
+        "voiced": false
+      }
+    ],
+    "search.found.medicine": [
+      {
+        "text": "Medicine at {location}. Somebody's bleeding soon.",
+        "voiced": false
+      }
+    ],
+    "search.found.tool": [
+      {
+        "text": "A tool from {location}. It'll do.",
+        "voiced": false
+      }
+    ],
+    "search.found.survivor": [
+      {
+        "text": "Another body at {location}. Hope it can fight.",
+        "voiced": false
+      }
+    ],
+    "search.noise": [
+      {
+        "text": "Noise at {location}. They're coming. Fine.",
+        "voiced": false
+      }
+    ],
+    "move.out": [
+      {
+        "text": "{survivor} to {location}. Go, and come back.",
+        "voiced": false
+      }
+    ],
+    "zombie.killed": [
+      {
+        "text": "One down at {location}. Next.",
+        "voiced": false
+      }
+    ],
+    "barricade.built": [
+      {
+        "text": "Entrance {entrance} sealed. Test it, I dare you.",
+        "voiced": false
+      }
+    ],
+    "exposure.wound": [
+      {
+        "text": "{survivor} is bleeding. Walk it off.",
+        "voiced": false
+      }
+    ],
+    "bite.chain.kill": [
+      {
+        "text": "{survivor}. Done. Don't look away.",
+        "voiced": false
+      }
+    ],
+    "survivor.lost.other": [
+      {
+        "text": "{seat} lost {survivor}. Tighten up.",
+        "voiced": false
+      }
+    ],
+    "overrun": [
+      {
+        "text": "Entrance {entrance} broke. Plug it. Now.",
+        "voiced": false
+      }
+    ],
+    "food.short": [
+      {
+        "text": "No food. {n} morale gone. I told you to count.",
+        "voiced": false
+      },
+      {
+        "text": "Hungry. That's {n} lost. Stop wasting it.",
+        "voiced": false
+      }
+    ],
+    "objective.progress": [
+      {
+        "text": "{n} so far. Not enough. Faster.",
+        "voiced": false
+      }
+    ],
+    "crossroads.me": [
+      {
+        "text": "My call. I made it. Live with it.",
+        "voiced": false
+      }
+    ],
+    "accused.me": [
+      {
+        "text": "Say that again, {seat}. Slower.",
+        "voiced": false
+      },
+      {
+        "text": "I don't flinch at accusations, {seat}. Bring facts.",
+        "voiced": false
+      },
+      {
+        "text": "You want a fight, {seat}? I've got time.",
+        "voiced": false
+      }
+    ],
+    "accused.other": [
+      {
+        "text": "{seat} is getting looked at. Good.",
+        "voiced": false
+      }
+    ],
+    "idle": [
+      {
+        "text": "Quiet. Too quiet. Watch the doors.",
+        "voiced": false
+      }
     ]
   },
-  "sources": { "scalars": "B H.7", "lines": "B H.7" },
+  "sources": {
+    "scalars": "B H.7",
+    "lines": "B H.7"
+  },
   "status": "draft",
-  "notes": "Original persona. Lines written in our own words for M4.",
-  "tags": ["original"]
+  "notes": "Original persona. The first 24 lines (voiced) are the M4 set; the rest are text-only until someone prices their recordings.",
+  "tags": [
+    "original"
+  ]
 }

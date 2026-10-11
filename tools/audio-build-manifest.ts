@@ -43,13 +43,13 @@ for (const f of (await readdir(join(root, 'src', 'data', 'crossroads'))).filter(
   add({ id: `vo-xr-${card.id.replace(/^xr\./, '')}`, kind: 'voice', group: 'crossroads', voice: 'narrator', card: card.id, text: vignette })
 }
 
-// Personas: every line in every bank, keyed by persona, event key and bank position.
+// Personas: every line in every bank, keyed by persona, event key and bank position. Lines marked `voiced: false` are text-only until someone prices their recordings (they keep their position, so ids never shift).
 for (const f of (await readdir(join(root, 'src', 'data', 'personas'))).filter((x) => x.endsWith('.json')).sort()) {
-  const p = JSON.parse(await readFile(join(root, 'src', 'data', 'personas', f), 'utf8')) as { id: string; name: string; lines: Record<string, { text: string }[]> }
+  const p = JSON.parse(await readFile(join(root, 'src', 'data', 'personas', f), 'utf8')) as { id: string; name: string; lines: Record<string, { text: string; voiced?: boolean }[]> }
   const short = p.id.replace(/^ps\./, '')
   if (!VOICES[short]) { console.warn(`[audio-build-manifest] no voice profile for persona ${p.id}; its lines stay unvoiced`); continue }
   for (const [key, bank] of Object.entries(p.lines)) {
-    bank.forEach((line, i) => add({
+    bank.forEach((line, i) => line.voiced === false ? undefined : add({
       id: `pv-${short}-${key.replace(/\./g, '-')}-${i}`, kind: 'voice', group: `persona: ${p.name}`, voice: short, persona: short, key,
       template: line.text, text: spokenLine(line.text, key),
     }))
