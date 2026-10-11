@@ -31,13 +31,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
+    "prevent": "PHOTO bing https://www.meoplesmagazine.com/2014/02/14/meople-news-forsaken-tickets/",
+    "fail": "PHOTO bing https://www.meoplesmagazine.com/2014/02/14/meople-news-forsaken-tickets/",
     "bonus": "R p12"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 10 (name ours); single source; barricades removed before the zombies are added",
+  "status": "verified",
+  "notes": "Name and effect read from an English card photo (bing, meoplesmagazine): Fuel, remove all colony barricades, add 10 zombies at the colony. Earlier fan record matched. Barricades removed before the zombies are added.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

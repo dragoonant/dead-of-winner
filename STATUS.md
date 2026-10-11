@@ -44,6 +44,7 @@
 - 14 new code hooks in `src/engine/code-hooks.ts` (crises, Crossroads, objectives), with golden checks in `tests/engine/m2-hooks.test.ts`.
 - Gates: typecheck clean, `npm test` green, `validate-data` 0 errors (2 count warnings), `npm run sim -- --games 30 --seed 2 --seats 4`:
   30/30 end, 0 violations, 0 leaks.
+- Update 2026-10-11 (card photos): only Hoarder and Neat Freak remain names-only; 11 objectives added, 4 of them draft from the pt-br fan sheet; 5 more crisis names are official.
 - Known gaps: 18 names-only objectives excluded (11 standard secret, 7 betrayal); 17 of the 20 crisis names are ours (`name-ours` tag);
   hooks choose for the player where the card says "of its choice" (rulings in `docs/needs-rules-check.md` section M2).
 

@@ -33,11 +33,12 @@
   "sources": {
     "prevent": "BGG ludopedia-51114 (verify)",
     "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12"
+    "bonus": "R p12",
+    "name": "PHOTO bing https://www.pinterest.com/pin/boardgame--329959110211992844/"
   },
   "status": "draft",
-  "notes": "src: crises-sources.md row 6 (name ours); NEEDS HOOK crisis.hailstorm.frostbiteRolls: a per-seat d6 (4 or less) then a frostbite on one survivor of that seat chosen by its player; the DSL has no per-seat iteration with a die. Barricade removal is plain DSL. Single source",
+  "notes": "src: crises-sources.md row 6 (name ours); NEEDS HOOK crisis.hailstorm.frostbiteRolls: a per-seat d6 (4 or less) then a frostbite on one survivor of that seat chosen by its player; the DSL has no per-seat iteration with a die. Barricade removal is plain DSL. Single source; official name Hailstorm confirmed by an English card photo (bing, pinterest), whose effect text is blurred, so the mechanics stay from the fan sheet",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

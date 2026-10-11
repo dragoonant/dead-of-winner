@@ -17,42 +17,17 @@ build next. Tick items off or reply inline.
 ## 2. Card photos (only if you have the physical game)
 
 Lay cards in a grid of about 9 per photo and drop them in `docs/sources/photos/` (gitignored, never published).
-Everything below is still unknown; the rest of the cards were resolved from the eBay photos and Spanish scans.
+Most cards are now resolved from English photos found online. Still unknown:
 
-**Standard secret objectives with no known text (8)**
-- [ ] Experienced
-- [ ] Hoarder
-- [ ] Hope
-- [ ] Justice
-- [ ] Neat Freak
-- [ ] Protected
-- [ ] Repopulate
-- [ ] Safety
-
-**Betrayal objectives with no known text (5)**
-- [ ] Accept Your Fate
-- [ ] All for One
-- [ ] Mad Scientist
-- [ ] Runaway
-- [ ] Take Over
-
-These 13 are left out of the deck until their text is known. The game deals from the 16 standard and 5 betrayal
-objectives we have (Junkie, Hypochondriac, Gluttony and Obsessed were added from the photos).
-
-**Crisis cards (official English names for 14)**
-- [ ] The remaining crisis cards use our own names: Despair, Empty Pantry, Endless Hordes, Hailstorm, Killer
-      Instinct, Legions of Death, March of the Dead, No Waste, Reorganization, Sickness, Spoiled Food (a photo hints
-      at "Food Spoilage"), Strength of the Dead, We Are Being Watched, Zombie Wave. Blizzard, Fuel Shortage, Horror in
-      the Night, Raiders, Overpopulation and Exhaustion are confirmed.
-- [ ] Zombie Wave: is it 6 or 8 zombies at the colony? No Waste: which way do the Food cards move?
-
-**Main objectives**
-- [ ] Leave It All Behind (normal rounds 5 or 6; hardcore zombies 2 or 3; weapon per survivor or per player?)
-- [ ] Stockpile (normal: 2 or 3 food tokens per player?)
-- [ ] Find a Cure numbers (the photo is blurred: setup morale, rounds, zombies and Medicine cards per player)
-
-**One value to confirm**
-- [ ] Thomas Heart's die requirement: the Spanish scan reads "(5-)", we implemented 5+ as you specified.
+- [ ] **Hoarder and Neat Freak** (standard secret objectives): no readable text. Both stay out of the deck.
+- [ ] **Leave It All Behind**: the hidden part of the victory text (the weapon rule is kept from the earlier fan
+      record) and its hardcore side.
+- [ ] **Crisis names**: nine cards still use our own names: Despair, Empty Pantry, Endless Hordes, Killer Instinct,
+      Legions of Death, No Waste, Reorganization, Sickness and We Are Being Watched (a photo shows a title ending
+      "...hing Us"). Hailstorm and Food Spoilage have official names but blurred effect text. No Waste: which way do
+      the Food cards move?
+- [ ] **4 fan-sheet objectives** to confirm against a real card: Hope, Justice, All for One, Runaway.
+- [ ] **Thomas Heart's die requirement**: the Spanish scan reads "(5-)", we implemented 5+ as you specified.
 
 ## 3. Rules rulings to skim (optional, one sitting)
 

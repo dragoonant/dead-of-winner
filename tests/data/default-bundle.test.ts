@@ -12,14 +12,14 @@ describe('default bundle (src/data)', () => {
   it('DATA-M2-002 names-only objective stubs (status unknown / text null) are never loaded', () => {
     const { raw } = assembleBundleFromDir(DEFAULT_DATA_DIR)
     const loaded = raw.records.secretObjectives as unknown as { status?: string; text: unknown }[]
-    expect(loaded.length).toBe(31) // 26 in M2 + All I Need Is My Books (owner photo, M3) + Junkie, Hypochondriac, Gluttony, Obsessed (eBay photos)
+    expect(loaded.length).toBe(42) // 31 before the card photos (26 in M2 + All I Need Is My Books (owner photo, M3) + Junkie, Hypochondriac, Gluttony, Obsessed (eBay photos); +11 from the bing card photos and the pt-br sheet, only Hoarder and Neat Freak remain stubs
     expect(loaded.every((o) => o.status !== 'unknown' && o.text != null)).toBe(true)
   })
 
   it('DATA-M2-003 loadDefaultBundle builds an engine bundle', () => {
     const b = loadDefaultBundle()
     expect(b.records.survivors.length).toBe(30)
-    expect(b.records.secretObjectives.filter((o) => o.type === 'betrayal').length).toBe(5)
+    expect(b.records.secretObjectives.filter((o) => o.type === 'betrayal').length).toBe(10)
   })
 
   it('DATA-M2-004 the photo objectives load with working goal parts (Gluttony, Obsessed, Junkie, Hypochondriac)', () => {

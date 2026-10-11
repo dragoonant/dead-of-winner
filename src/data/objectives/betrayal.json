@@ -43,12 +43,44 @@
     "name": "Runaway",
     "type": "betrayal",
     "code": "S12",
-    "text": null,
-    "status": "unknown",
-    "sources": {
-      "name": "BGG etwest-names"
+    "requiresMain": false,
+    "ai": {
+      "lever": "hoard:fuel"
     },
-    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "code": "rule.seat-survivors.weaponsEquippedAtLeast",
+          "params": {
+            "n": 1
+          }
+        },
+        {
+          "code": "rule.hand.symbolsAtLeast",
+          "params": {
+            "symbols": {
+              "fuel": 2,
+              "food": 2
+            },
+            "excludeStarter": true
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while one of your survivors carries a weapon and your hand holds at least two fuel and two food cards; the cards you started with do not count."
+    },
+    "sources": {
+      "complete": "FAN pt-br sheet https://pt.scribd.com/document/879701707/dead-of-winter-um-j-cartas-de-objetivos-secretos-35330",
+      "requiresMain": "R p3"
+    },
+    "status": "draft",
+    "notes": "Translated from the Brazilian Portuguese fan sheet (Fugitivo); no English card seen. Rulebook section S12."
   },
   {
     "kind": "secretObjective",
@@ -56,12 +88,51 @@
     "name": "Take Over",
     "type": "betrayal",
     "code": "S13",
-    "text": null,
-    "status": "unknown",
-    "sources": {
-      "name": "BGG etwest-names"
+    "requiresMain": false,
+    "ai": {
+      "lever": "hoard:fuel"
     },
-    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "code": "rule.locations.barricadedAtLeast",
+          "params": {
+            "barricades": 4,
+            "locations": 1,
+            "excludeColony": true
+          }
+        },
+        {
+          "code": "rule.seat-survivors.weaponsEquippedAtLeast",
+          "params": {
+            "n": 1
+          }
+        },
+        {
+          "code": "rule.hand.symbolsAtLeast",
+          "params": {
+            "symbols": {
+              "fuel": 2
+            },
+            "excludeStarter": true
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while some location outside the colony carries at least four barricades, one of your survivors carries a weapon, and your hand holds at least two fuel cards; the cards you started with do not count."
+    },
+    "sources": {
+      "complete": "PHOTO bing https://www.theboardgamefamily.com/2016/10/dead-of-winter-board-game-review/",
+      "requiresMain": "R p3"
+    },
+    "status": "verified",
+    "notes": "Card text from an English card photo (bing, via theboardgamefamily review), reworded. Rulebook section S13, page 18. The printed 'one survivor equipped with a weapon' is read as at least one weapon on your survivors."
   },
   {
     "kind": "secretObjective",
@@ -69,12 +140,52 @@
     "name": "All for One",
     "type": "betrayal",
     "code": "S14",
-    "text": null,
-    "status": "unknown",
-    "sources": {
-      "name": "BGG etwest-names"
+    "requiresMain": false,
+    "ai": {
+      "lever": "hoard:weapon"
     },
-    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "test": "survivorsAtMost",
+          "subject": "holder",
+          "value": 1
+        },
+        {
+          "code": "rule.seat-survivors.eachEquippedSymbolAtLeast",
+          "params": {
+            "symbol": "weapon",
+            "n": 1
+          }
+        },
+        {
+          "code": "rule.hand.symbolsAtLeast",
+          "params": {
+            "symbols": {
+              "food": 1,
+              "fuel": 1,
+              "medicine": 1,
+              "tool": 1
+            },
+            "excludeStarter": true
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while you control a single survivor who carries a weapon and your hand holds one food, one fuel, one medicine and one tool card; the cards you started with do not count."
+    },
+    "sources": {
+      "complete": "FAN pt-br sheet https://pt.scribd.com/document/879701707/dead-of-winter-um-j-cartas-de-objetivos-secretos-35330",
+      "requiresMain": "R p3"
+    },
+    "status": "draft",
+    "notes": "Translated from the Brazilian Portuguese fan sheet (Todos por um); no English card seen. Rulebook section S14."
   },
   {
     "kind": "secretObjective",
@@ -82,12 +193,43 @@
     "name": "Accept Your Fate",
     "type": "betrayal",
     "code": "S15",
-    "text": null,
-    "status": "unknown",
-    "sources": {
-      "name": "BGG etwest-names"
+    "requiresMain": false,
+    "ai": {
+      "lever": "hoard:medicine"
     },
-    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "code": "rule.seat-survivors.weaponsEquippedAtLeast",
+          "params": {
+            "n": 2
+          }
+        },
+        {
+          "code": "rule.hand.symbolsAtLeast",
+          "params": {
+            "symbols": {
+              "medicine": 3
+            },
+            "excludeStarter": true
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while your survivors carry at least two weapon cards and you hold at least three medicine cards in your hand; the cards you started with do not count."
+    },
+    "sources": {
+      "complete": "PHOTO bing https://arstechnica.com/gaming/2016/04/zombies-frostbite-and-betrayal-dead-of-winter-review/",
+      "requiresMain": "R p3"
+    },
+    "status": "verified",
+    "notes": "Card text from an English card photo (bing, via arstechnica review), reworded. Rulebook section S15, page 18. The Portuguese sheet agrees."
   },
   {
     "kind": "secretObjective",
@@ -205,12 +347,43 @@
     "name": "Mad Scientist",
     "type": "betrayal",
     "code": "S19",
-    "text": null,
-    "status": "unknown",
-    "sources": {
-      "name": "BGG etwest-names"
+    "requiresMain": false,
+    "ai": {
+      "lever": "hoard:medicine"
     },
-    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "test": "survivorsAtLeast",
+          "subject": "holder",
+          "value": 2
+        },
+        {
+          "code": "rule.hand.symbolsAtLeast",
+          "params": {
+            "symbols": {
+              "medicine": 2,
+              "tool": 2
+            },
+            "excludeStarter": true
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while at least two survivors follow you and your hand holds at least two medicine and two tool cards; the cards you started with do not count."
+    },
+    "sources": {
+      "complete": "PHOTO bing https://zombieparentsguide.blogspot.com/2015/11/game-review-dead-of-winter-by-plaid-hat.html",
+      "requiresMain": "R p3"
+    },
+    "status": "verified",
+    "notes": "Card text from an English card photo (bing, via zombieparentsguide review), reworded. Rulebook section S19, page 19."
   },
   {
     "kind": "secretObjective",

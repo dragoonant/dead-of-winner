@@ -104,7 +104,7 @@ Each per-card file ends in a conflict table with a status per row.
   provisional P ability; Annaleigh Chan follows P (Colony, one other player's card).
 - `items-sources.md`: I1 to I10. School holds a Megaphone, not Football Pads; Microphone is read as the FAQ's name for
   Megaphone; Walkie Talkie once per round and Scissors location take P over BC.
-- `crises-sources.md`: C1 to C8. Fuel Shortage loses 2 morale; Zombie Wave puts 6 zombies at the colony; No Waste keeps the
+- `crises-sources.md`: C1 to C8. Fuel Shortage loses 2 morale; Zombie Wave (official name Zombie Surge) puts 6 zombies at the colony, confirmed by an English card photo; No Waste keeps the
   printed direction (flagged).
 - `objectives-sources.md`: O1 to O14 (main) and D1 to D4 (exiled). New Friends follows the Spanish scan; We Need More Samples
   hardcore keeps 3 tokens per player (rulebook over two fan sources); six hardcore or stockpile values take P over BT.

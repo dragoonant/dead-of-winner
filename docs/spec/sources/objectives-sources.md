@@ -45,15 +45,15 @@ ends at the Check Main Objective step (BO).
 | M01 | Ten Weeks of Darkness | hardcore | 6 | 10 | 1 helpless survivor per player at the colony; 3 zombies at each other location | survive 10 rounds and have at least 6 food tokens in the supply at the end | Long | Ph,BT,P |
 | M02 | Kill Them | normal | 7 | 7 | 3 zombies at each other location. Exile change: an exiled player and every survivor they control are removed from the game at once instead of the usual exile rules | at most 3 zombies in total across all other locations | Medium | ES,BT,P |
 | M02 | Kill Them | hardcore | 5 | 5 | as normal and also 12 zombies at the colony; same exile change | at most 1 zombie in total across all other locations and at least 1 barricade at every other location | Medium | BT,P |
-| M03 | Find a Cure | normal | 5 | 6 | none | each player who started the game places 2 Medicine cards under the objective (starter Medicine does not count) | Short | BT,P |
+| M03 | Find a Cure | normal | 5 | 6 | none | each player who started the game places 2 Medicine cards under the objective (starter Medicine does not count) | Short | BT,P; PHOTO bing 2026-10-11 confirms every value, no change |
 | M03 | Find a Cure | hardcore | 5 | 6 | Instead of the standard setup: 12 zombies at the colony and 2 at each other location | as normal but 2 Medicine per starting player (O1: the BGG thread says 3) | Medium | BT,P; conflict O1 |
 | M04 | Home Sweet Home | normal | 6 | 6 | 12 zombies at the colony and 1 at each other location | at least 10 barricades at the colony and at least 1 at each other location | Medium | ES,BT,P |
 | M04 | Home Sweet Home | hardcore | 5 | 5 | 18 zombies at the colony and 2 at each other location | at least 14 barricades at the colony and at least 1 at each other location | Medium | BT,P; conflict O5 |
 | M05 | Raiding Party | normal | 5 | 6 | 2 zombies at every location, the colony included as printed | the item decks of 2 other locations are empty | Short | ES,BT,P |
 | M05 | Raiding Party | hardcore | 5 | 6 | Instead of the standard setup: 12 zombies at the colony and 3 at each other location | 2 or 3 players: empty the item decks of 2 other locations; 4 or 5 players: of 3 other locations | Short | BT,P |
-| M06 | Leave It All Behind | normal | 6 | 5 | 12 zombies at the colony and 2 at each other location | every non-exiled player has 1 Weapon card equipped for each survivor they control, and each player who started places 2 Food cards under the objective (starter Food does not count) | Short | BT,P; conflicts O2, O4 |
-| M06 | Leave It All Behind | hardcore | 5 | 5 | 12 zombies at the colony and 2 at each other location (BT says 3) | the same weapon condition and 3 Food cards per starting player | Short | BT,P; conflicts O3, O4 |
-| M07 | Stockpile | normal | 6 | 6 | 18 zombies at the colony | the food supply holds at least 3 tokens for each non-exiled player (BT says 2); at least 1 barricade at every colony entrance; 2 Medicine, 2 Tool and 2 Fuel cards under the objective (starter cards do not count; Tool means any Tool-symbol card) | Medium | BT,P; conflict O6 |
+| M06 | Leave It All Behind | normal | 6 | 5 | 12 zombies at the colony and 2 at each other location | every non-exiled player has 1 Weapon card equipped for each survivor they control, and each player who started places 2 FUEL cards under the objective (starter Fuel does not count; PHOTO bing 2026-10-11 corrected Food to Fuel; morale 6, 5 rounds and the zombie line confirmed) | Short | BT,P; PHOTO bing; conflicts O2, O4 |
+| M06 | Leave It All Behind | hardcore | 5 | 5 | 12 zombies at the colony and 2 at each other location (BT says 3) | the same weapon condition and 3 Fuel cards per starting player (moved from Food with the normal side; the hardcore face is unseen) | Short | BT,P; conflicts O3, O4 |
+| M07 | Stockpile | normal | 6 | 6 | 18 zombies at the colony | the food supply holds at least 2 tokens for each non-exiled player (corrected from 3 by PHOTO bing 2026-10-11, which also confirms morale 6, 6 rounds, 18 colony zombies, entrance barricades, 2 Medicine, 2 Tool, 2 Fuel); at least 1 barricade at every colony entrance; 2 Medicine, 2 Tool and 2 Fuel cards under the objective (starter cards do not count; Tool means any Tool-symbol card) | Medium | BT,P; PHOTO bing; conflict O6 |
 | M07 | Stockpile | hardcore | 5 | 8 | 18 zombies at the colony | the same, with 3 food tokens per non-exiled player | Medium | BT,P |
 | M08 | Winter Has Come | normal | 8 | 8 | 10 zombies at the colony and 1 at each other location | at the start of each Colony phase one player must put a Fuel card under the objective, or the game ends and the objective fails; with 8 Fuel cards under it at the Check Main Objective step of round 8 it is complete | Long | BT,P |
 | M08 | Winter Has Come | hardcore | 7 | 10 | 12 zombies at the colony and 2 at each other location | the same with 10 Fuel cards at round 10 | Long | BT,P |
@@ -106,28 +106,27 @@ research notes and not read here). Texts are our one-line summaries.
 | 3 | Burn it all down | Quemalo todo | at least 4 barricades at the colony and at least 1 Fuel card in hand | ES,N |
 | 4 | Collector | Coleccionista | at least 4 item cards of any kind in hand | ES,J,N |
 | 5 | Desire to live | Ganas de vivir | at least 1 each of Weapon, Food, Fuel and Medicine in hand | ES,N |
-| 6 | Experienced | n/a | (text unknown) | N |
+| 6 | Experienced | n/a | main objective complete and every survivor you control has an item card equipped (PHOTO bing 2026-10-11) | PHOTO,N |
 | 7 | Germ-a-phobe | Germofobia | none of the survivors you control has any wound token | ES,N |
 | 8 | Historian | Historiador | at least 2 Education cards in hand | ES,N |
 | 9 | Hoarder | n/a | (text unknown) | N |
-| 10 | Hope | n/a | (text unknown) | N |
+| 10 | Hope | n/a | at least 2 helpless survivor tokens in play (FAN pt-br sheet, draft; no English card seen) | FAN,N |
 | 11 | Hunger | n/a | at least 3 Food-symbol cards in hand | Ph,N |
 | 12 | Hypochondriac | Farmaceutico | main objective complete and your hand holds only Medicine cards, at least 1 (verified 2026-10-10 per owner brief; same condition as the ES Farmaceutico scan) | ES,N,PHOTO ebay 313087713029 |
 | 13 | Junkie | n/a | main objective complete and at least 3 Medicine cards in hand (verified, PHOTO ebay 146752101002) | PHOTO,N |
-| 14 | Justice | n/a | (text unknown) | N |
+| 14 | Justice | n/a | if there are traitors, all of them are exiled (FAN pt-br sheet, draft) | FAN,N |
 | 15 | Leader | Lider | your group has more survivors than any other player's group | ES,N |
 | 16 | Loner | Solitario | you control exactly one survivor | ES,N |
 | 17 | Masochist | n/a | one survivor you control has at least 2 wound tokens of any kind | J,N |
-| 18 | Neat freak | n/a | (text unknown) | N |
-| 19 | Protected | n/a | (text unknown) | N |
-| 20 | Repopulate | n/a | (text unknown) | N |
+| 18 | Neat freak | n/a | (text unknown; title seen on a real card, goal 2 hidden under the next card in the photo) | N |
+| 19 | Protected | n/a | at least 2 Weapon cards equipped to survivors you control (PHOTO bing 2026-10-11) | PHOTO,N |
+| 20 | Repopulate | n/a | at least 12 survivors on the board, helpless tokens included (PHOTO bing 2026-10-11) | PHOTO,N |
 | 21 | Revenge | Venganza | at least 3 survivors have been removed from the game (helpless survivors do not count) | ES,N |
-| 22 | Safety | n/a | (text unknown) | N |
+| 22 | Safety | n/a | at least 4 barricades at the colony (PHOTO bing 2026-10-11) | PHOTO,N |
 | 23 | The way back home | El camino de vuelta a casa | at least 2 Fuel, 1 Food and 1 Weapon card in hand | ES,N |
 | 24 | Zombie killing robot! | Un robot asesino de zombis | at least 1 Weapon and 2 Tool cards in hand | ES,N |
 
-Counts (S): 24 names; 16 texts known; 8 unknown (Experienced, Hoarder, Hope, Justice, Neat freak, Protected,
-Repopulate, Safety). Junkie and Hypochondriac resolved 2026-10-10 (eBay photos); the ES Farmaceutico card maps to Hypochondriac.
+Counts (S): 24 names; 22 texts known (4 from English photos 2026-10-11: Experienced, Protected, Repopulate, Safety; 2 from the pt-br fan sheet, draft: Hope, Justice); 2 unknown (Hoarder, Neat freak). Junkie and Hypochondriac resolved 2026-10-10 (eBay photos); the ES Farmaceutico card maps to Hypochondriac.
 
 Secret objective rules (R p6, BO): each player gets 2 standard and, with the betrayer rule, the setup adds 1 betrayal
 card to the pool dealt (R setup step 4); cards may be hidden; the same card can count for several objectives.
@@ -143,18 +142,17 @@ objective: they need morale at 0 plus a private condition. The other seven are u
 | Story id | Name (N, R) | Condition (all required) | Tags |
 |---|---|---|---|
 | S11 | Gluttony | morale is 0 and you hold at least 6 Food cards in hand (starter item cards do not count) | PHOTO ebay 313087713029,N,R |
-| S12 | Runaway | (text unknown) | N,R |
-| S13 | Take Over | (text unknown) | N,R |
-| S14 | All for One | (text unknown) | N,R |
-| S15 | Accept Your Fate | (text unknown) | N,R |
+| S12 | Runaway | morale 0; a Weapon equipped on a survivor you control; at least 2 Fuel and 2 Food in hand, starter cards excluded (FAN pt-br sheet, draft) | FAN,N,R |
+| S13 | Take Over | morale 0; at least 4 barricades at a single non-colony location; you control a survivor with a Weapon equipped; at least 2 Fuel in hand, starter cards excluded (PHOTO bing 2026-10-11) | PHOTO,N,R |
+| S14 | All for One | morale 0; you control only 1 survivor; a Weapon equipped on each survivor you control; 1 Food, 1 Fuel, 1 Medicine and 1 Tool in hand, starter cards excluded (FAN pt-br sheet, draft) | FAN,N,R |
+| S15 | Accept Your Fate | morale 0; at least 2 Weapons equipped on survivors you control; at least 3 Medicine in hand, starter cards excluded (PHOTO bing 2026-10-11; the pt-br sheet agrees) | PHOTO,N,R |
 | S16 | Trigger Happy | morale is 0 and the survivors you control carry at least 4 Weapon cards between them | ES,N,R (a secondary review agrees, per the research notes) |
 | S17 | Cult Leader | morale is 0 and you control at least 2 more survivors than any other player | ES,N,R (the same review agrees) |
 | S18 | Serial Killers | morale is 0, at least 5 survivors have been removed from the game (helpless survivors do not count) and you control at least 2 survivors | ES,N,R |
-| S19 | Mad Scientist | (text unknown) | N,R |
+| S19 | Mad Scientist | morale 0; at least 2 survivors in your following; at least 2 Medicine and 2 Tool in hand, starter cards excluded (PHOTO bing 2026-10-11) | PHOTO,N,R |
 | S20 | Obsessed | morale is 0, only 1 survivor in your following, at least 1 Weapon equipped to each survivor you control, at least 1 Fuel, 1 Medicine and 1 Food card in hand (starter cards do not count) | PHOTO ebay 146752101002,N,R |
 
-Counts (S): 10 names, 5 texts known (Gluttony and Obsessed added 2026-10-10), 5 unknown (Accept your fate, All for one,
-Mad scientist, Runaway, Take over).
+Counts (S): 10 names, 10 texts known (Gluttony and Obsessed added 2026-10-10; Accept Your Fate, Mad Scientist, Take Over from English photos 2026-10-11; All for One and Runaway from the pt-br fan sheet, draft).
 
 ---
 
@@ -197,7 +195,16 @@ Counts (S): 10 cards; 10 values from P, 4 cross-checked by ES, 1 by a real photo
 
 ## Still missing for objectives
 
-- Texts for 8 standard secret objectives (Experienced, Hoarder, Hope, Justice, Neat freak, Protected, Repopulate, Safety).
-- Texts for 5 betrayal objectives (Accept your fate, All for one, Mad scientist, Runaway, Take over).
+- Texts for 2 standard secret objectives (Hoarder, Neat freak); both stay names-only stubs and out of the deck.
+- An English card to confirm the 4 fan-sheet objectives (Hope, Justice, All for One, Runaway).
+- The hidden part of Leave It All Behind's victory text (kept from the earlier fan record) and its hardcore face.
 - A real English photo for the hardcore faces still resting on P over BT (Find a Cure, Leave It All Behind, Home
   Sweet Home, Stockpile) and for the We Need More Samples hardcore token count.
+
+## Changes from the bing card photos (2026-10-11)
+
+| Card | Earlier fan value | English photo value | Effect |
+|---|---|---|---|
+| Find a Cure (normal) | morale 5, 6 rounds, 2 Medicine per player | the same, no zombie line | none; sources upgraded |
+| Stockpile (normal) | 3 food tokens per non-exiled player | 2 food tokens per non-exiled player | data changed; rest matched |
+| Leave It All Behind (normal) | 2 Food cards per starting player | 2 Fuel cards per starting player | data changed (counter and contribution symbol Food to Fuel); morale 6, 5 rounds, 12 and 2 zombies matched; hardcore also moved to Fuel at 3 |

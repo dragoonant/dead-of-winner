@@ -34,11 +34,13 @@
   "sources": {
     "prevent": "PHOTO es-nos-estan-observando; BGG ludopedia-51114",
     "fail": "PHOTO es-nos-estan-observando; BGG ludopedia-51114",
-    "bonus": "R p12"
+    "bonus": "R p12",
+    "name": "PHOTO bing https://www.pinterest.com/pin/boardgame--329959110211992844/"
   },
   "status": "draft",
-  "notes": "src: crises-sources.md row 1 (name ours); two-symbol card (either scores); ES calls the store the Supermarket (C7)",
+  "notes": "src: crises-sources.md row 1 (name ours); two-symbol card (either scores); ES calls the store the Supermarket (C7); an English card photo (bing, pinterest) shows a title ending '...hing Us' with zombies sent to the library and grocery store and a Tool/Medicine-style symbol, which fits this card (likely Watching Us); the start of the title is cut off, so our name stays",
   "tags": [
-    "name-ours"
+    "name-ours",
+    "name-partial-photo"
   ]
 }

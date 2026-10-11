@@ -249,9 +249,9 @@
       }
     },
     "sourceCite": {
-      "description": "'<TAG>[ ref](; <TAG>[ ref])*[ (verify)]'; tags: R rulebook (R* = column inferred), F FAQ, W fandom wiki, T TV Tropes, O Order of Gamers, C/S self-consistency, B brief, BGG, PHOTO",
+      "description": "'<TAG>[ ref](; <TAG>[ ref])*[ (verify)]'; tags: R rulebook (R* = column inferred), F FAQ, W fandom wiki, T TV Tropes, O Order of Gamers, C/S self-consistency, B brief, BGG, PHOTO, FAN fan translation sheet",
       "type": "string",
-      "pattern": "^(R\\*?|F|W|T|O|C|S|B|BGG|PHOTO)( [^;()]+)?(; (R\\*?|F|W|T|O|C|S|B|BGG|PHOTO)( [^;()]+)?)*( \\(verify\\))?$"
+      "pattern": "^(R\\*?|F|W|T|O|C|S|B|BGG|PHOTO|FAN)( [^;()]+)?(; (R\\*?|F|W|T|O|C|S|B|BGG|PHOTO|FAN)( [^;()]+)?)*( \\(verify\\))?$"
     },
     "sources": {
       "description": "field path (dot path into this record) -> citation",

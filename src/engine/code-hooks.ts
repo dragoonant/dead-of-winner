@@ -296,10 +296,11 @@ const objectives: Record<string, CodeObjectiveHook> = {
   /** New Friends (betrayer): locations outside the colony whose item deck is empty. */
   'rule.location-deck.emptyAtLeast': (state, _seat, params) =>
     report('emptied item decks', state.locationOrder.filter((l) => l !== 'colony' && state.locations[l]!.deck.length === 0).length, num(params, 'n', 1)),
-  /** Shelter: at least `locations` locations (the colony counts) each carrying `barricades` or more barricades. */
+  /** Shelter / Take Over: at least `locations` locations (the colony counts unless `excludeColony`) each carrying `barricades` or more barricades. */
   'rule.locations.barricadedAtLeast': (state, _seat, params) => {
     const need = num(params, 'barricades', 2)
-    return report(`locations with ${need}+ barricades`, state.locationOrder.filter((l) => barricadesAt(state, l) >= need).length, num(params, 'locations', 3))
+    const from = params?.['excludeColony'] === true ? state.locationOrder.filter((l) => l !== 'colony') : state.locationOrder
+    return report(`locations with ${need}+ barricades`, from.filter((l) => barricadesAt(state, l) >= need).length, num(params, 'locations', 3))
   },
   /** Shelter (betrayer): more equipped weapons than any other seat. */
   'rule.seat.mostEquippedWeapons': (state, seat) =>
@@ -362,6 +363,24 @@ const objectives: Record<string, CodeObjectiveHook> = {
   'rule.colony.everyEntranceBarricaded': (state) => {
     const es = state.locations['colony']?.entrances ?? []
     return report('colony entrances barricaded', es.filter((e) => e.barricades > 0).length, es.length)
+  },
+  /** Experienced: the seat controls at least one survivor and every one of them carries an equipped item card. */
+  'rule.seat-survivors.allEquipped': (state, seat) => {
+    const mine = aliveOf(state, seat)
+    const armed = mine.filter((s) => s.equipped.length > 0).length
+    return { complete: mine.length > 0 && armed === mine.length, parts: [{ label: 'survivors carrying an item', have: armed, need: Math.max(1, mine.length) }] }
+  },
+  /** Repopulate: survivors of every seat plus helpless tokens on the whole board. */
+  'rule.board.survivorsAtLeast': (state, _seat, params) =>
+    report('survivors on the board', Object.values(state.survivors).filter((s) => s.status === 'alive').length + state.locationOrder.reduce((n, l) => n + state.locations[l]!.helpless, 0), num(params, 'n', 12)),
+  /** Hope: helpless survivor tokens on the whole board. */
+  'rule.board.helplessAtLeast': (state, _seat, params) =>
+    report('helpless survivor tokens', state.locationOrder.reduce((n, l) => n + state.locations[l]!.helpless, 0), num(params, 'n', 2)),
+  /** Justice: every seat holding a betrayal card is exiled (true when the table has no traitor). */
+  'rule.traitors.allExiled': (state) => {
+    const traitors = state.seatOrder.filter((s) => (state.seats[s]!.secretObjectiveId ?? '').startsWith('obj.betrayal.'))
+    const out = traitors.filter((s) => state.seats[s]!.seat.exiled).length
+    return { complete: out === traitors.length, parts: [{ label: 'traitors exiled', have: out, need: traitors.length }] }
   },
   /** Masochist: one of the seat's survivors carries at least `n` wound tokens (frostbite counts as a wound). */
   'rule.seat-survivors.anyWoundsAtLeast': (state, seat, params) =>

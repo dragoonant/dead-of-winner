@@ -286,7 +286,7 @@
     "text": {
       "normal": {
         "setup": "Morale 5 and six rounds, nothing extra on the board.",
-        "victory": "Every player who started the game adds two medicine cards to the objective. Medicine from the starting hand does not count."
+        "victory": "Players stack two medicine cards under the objective for every player who started the game; starting medicine does not count. Medicine can be added to the objective at any moment of a player's own turn."
       },
       "hardcore": {
         "setup": "Morale 5 and six rounds. Twelve zombies wait at the colony and two at each other location.",
@@ -294,12 +294,12 @@
       }
     },
     "sources": {
-      "sides.normal": "BGG 2054328; BGG ludopedia-51113",
+      "sides.normal": "PHOTO bing https://www.spritesanddice.com/reviews/dead-winter-review-making-survival-matter/",
       "sides.hardcore": "BGG 2054328; BGG ludopedia-51113 (verify)",
       "code": "R p16",
       "time": "BGG ludopedia-51113"
     },
-    "notes": "src: objectives-sources.md A row M03 (O1: BGG thread says 3 per player on hardcore, the Portuguese sheet 2; 2 used). Hardcore is rated medium on the card. The starter-card exclusion is table honesty only: the data cannot tell a starting card from a found one.",
+    "notes": "Normal side checked against an English card photo (bing, spritesanddice): morale 5, six rounds, no zombie line, two Medicine per starting player, rated short. Every value matched the earlier fan figures, so nothing changed. Hardcore side is still from the fan sources. Starter-card exclusion is table honesty only: the data cannot tell a starting card from a found one.",
     "status": "draft"
   },
   {
@@ -588,15 +588,15 @@
           }
         ],
         "counters": {
-          "food": {
+          "fuel": {
             "need": "perSeat",
             "perSeatMultiplier": 2
           }
         },
         "contributions": [
           {
-            "symbol": "food",
-            "counter": "food",
+            "symbol": "fuel",
+            "counter": "fuel",
             "exiledMayContribute": true,
             "excludeStarter": true
           }
@@ -608,7 +608,7 @@
             },
             {
               "test": "objectiveCounterAtLeast",
-              "value": "food"
+              "value": "fuel"
             }
           ]
         }
@@ -633,15 +633,15 @@
           }
         ],
         "counters": {
-          "food": {
+          "fuel": {
             "need": "perSeat",
             "perSeatMultiplier": 3
           }
         },
         "contributions": [
           {
-            "symbol": "food",
-            "counter": "food",
+            "symbol": "fuel",
+            "counter": "fuel",
             "exiledMayContribute": true,
             "excludeStarter": true
           }
@@ -653,7 +653,7 @@
             },
             {
               "test": "objectiveCounterAtLeast",
-              "value": "food"
+              "value": "fuel"
             }
           ]
         }
@@ -662,20 +662,20 @@
     "text": {
       "normal": {
         "setup": "Morale 6 and five rounds. Twelve zombies at the colony and two at each other location.",
-        "victory": "Every player still in the colony carries one equipped weapon for each survivor they control, and each player who started adds two food cards to the objective. Food from the starting hand does not count."
+        "victory": "Every player still in the colony carries one equipped weapon for each survivor they control, and the objective holds two fuel cards for each player who started. Starting fuel does not count; fuel can be added at any moment of a player's own turn."
       },
       "hardcore": {
         "setup": "Morale 5 and five rounds. The same zombies as the normal side.",
-        "victory": "The same arming rule, with three food cards per player who started."
+        "victory": "The same arming rule, with three fuel cards per player who started."
       }
     },
     "sources": {
-      "sides.normal": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "sides.normal": "PHOTO bing https://boardgamegeek.com/thread/2054328/main-objective-cards",
       "sides.hardcore": "BGG 2054328; BGG ludopedia-51113 (verify)",
       "code": "R p16",
       "time": "BGG ludopedia-51113"
     },
-    "notes": "src: objectives-sources.md A row M06 (O2: normal rounds 5 over the thread 6; O3: hardcore zombies 2 over the thread 3; O4: weapon per survivor). Starter-card exclusion is table honesty only.",
+    "notes": "Normal side set from an English card photo (bing, BGG spread): morale 6, five rounds, 12 colony zombies, 2 per other location, and the cost is 2 FUEL per starting player (the earlier fan figure said Food). The victory line is partly hidden under an overlapping card, so the arming rule (one equipped weapon per survivor of every non-exiled player) stays from the earlier fan record; time rating not readable, kept short. Hardcore side moved to Fuel as well, other numbers unverified. Starter-card exclusion is table honesty only.",
     "status": "draft"
   },
   {
@@ -733,7 +733,7 @@
             {
               "code": "rule.food.perNonExiledSeatAtLeast",
               "params": {
-                "perSeat": 3
+                "perSeat": 2
               }
             },
             {
@@ -827,7 +827,7 @@
     "text": {
       "normal": {
         "setup": "Morale 6 and six rounds. Eighteen zombies at the colony.",
-        "victory": "The food supply holds at least three tokens for every player still in the colony, every colony entrance has a barricade, and the objective holds two medicine, two tool and two fuel cards. Starting cards do not count."
+        "victory": "The food supply holds at least two tokens for every player still in the colony, every colony entrance has a barricade, and the objective holds two medicine, two tool and two fuel cards. Starting cards do not count; the cards can be added at any moment of a player's own turn."
       },
       "hardcore": {
         "setup": "Morale 5 and eight rounds. Eighteen zombies at the colony.",
@@ -835,12 +835,12 @@
       }
     },
     "sources": {
-      "sides.normal": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "sides.normal": "PHOTO bing https://www.theboardgamefamily.com/2016/10/dead-of-winter-board-game-review/",
       "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
       "code": "R p16",
       "time": "BGG ludopedia-51113"
     },
-    "notes": "src: objectives-sources.md A row M07 (O6: 3 food per non-exiled player on both sides; O10: any Tool-symbol card). Food is counted over the live non-exiled players, not the starting count, so it is a code condition (spec 11 O2.10). Starter-card exclusion is table honesty only.",
+    "notes": "Normal side corrected to an English card photo (bing, theboardgamefamily): food per non-exiled player is 2, not 3 (earlier fan figure O6). Morale 6, six rounds, 18 colony zombies, entrance barricades and 2 Medicine, 2 Tool, 2 Fuel already matched; rated medium. The hardcore side keeps the fan figures (3 food, unverified). Food is counted over the live non-exiled players, so it is a code condition. Starter-card exclusion is table honesty only.",
     "status": "draft"
   },
   {

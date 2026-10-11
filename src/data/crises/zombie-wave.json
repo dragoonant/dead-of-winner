@@ -1,7 +1,7 @@
 {
   "kind": "crisis",
   "id": "cr.zombie-wave",
-  "name": "Zombie Wave",
+  "name": "Zombie Surge",
   "prevent": [
     "tool"
   ],
@@ -29,17 +29,17 @@
     ]
   },
   "text": {
-    "fail": "A wave of the dead hits: six at the colony and one at every other location. No morale is lost.",
+    "fail": "A surge of the dead hits: six at the colony and one at every other location. No morale is lost.",
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO es-oleada-de-zombis; BGG ludopedia-51114",
-    "fail": "PHOTO es-oleada-de-zombis",
+    "prevent": "PHOTO bing https://www.pinterest.com/pin/boardgame--329959110211992844/",
+    "fail": "PHOTO bing https://www.pinterest.com/pin/boardgame--329959110211992844/",
     "bonus": "R p12"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 7 (name ours); conflict C2: ES prints 6 at the colony, P prints 8; ES taken",
+  "status": "verified",
+  "notes": "Official name Zombie Surge (was our Zombie Wave). English card photo (bing, pinterest) prints Tool and 6 zombies at the colony plus 1 at every other location, settling conflict C2 (the 8 on the fan sheet was a copy slip). Id kept for saves.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

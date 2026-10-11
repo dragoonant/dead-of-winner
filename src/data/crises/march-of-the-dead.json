@@ -1,7 +1,7 @@
 {
   "kind": "crisis",
   "id": "cr.march-of-the-dead",
-  "name": "March of the Dead",
+  "name": "Dead Man's March",
   "prevent": [
     "tool",
     "fuel"
@@ -32,13 +32,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
+    "prevent": "PHOTO bing https://tabletop-thailand.blogspot.com/2015/01/dead-of-winter-crossroads.html",
+    "fail": "PHOTO bing https://tabletop-thailand.blogspot.com/2015/01/dead-of-winter-crossroads.html",
     "bonus": "R p12"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 2 (name ours); two-symbol card; single source",
+  "status": "verified",
+  "notes": "Official name Dead Man's March (was our March of the Dead). English card photo (bing, tabletop-thailand): Tool or Fuel, 3 zombies at the school and 3 at the police station. Id kept for saves.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

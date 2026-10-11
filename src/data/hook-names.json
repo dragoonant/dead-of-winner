@@ -40,6 +40,10 @@
     "rule.colony.everyEntranceBarricaded",
     "rule.hand.symbolsAtLeast",
     "rule.hand.onlySymbol",
-    "rule.seat-survivors.eachEquippedSymbolAtLeast"
+    "rule.seat-survivors.eachEquippedSymbolAtLeast",
+    "rule.seat-survivors.allEquipped",
+    "rule.board.survivorsAtLeast",
+    "rule.board.helplessAtLeast",
+    "rule.traitors.allExiled"
   ]
 }
