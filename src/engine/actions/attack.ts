@@ -4,6 +4,7 @@ import type { Action, AttackAction } from '../actions'
 import {
   addWoundInto, aliveAt, deathThreshold, exposureInto, exposureOddsFor, fireInto, grantFor, halted, isOver, startOut, statsOf, svc, type Out,
 } from '../exposure'
+import { attackExposureSkip } from '../code-hooks'
 import { rollDie, roll } from '../rng'
 import type { ExposureOdds, GameState, Rejection, SeatId, SurvivorId } from '../types'
 import { entranceAt, killZombieInto } from '../zombies'
@@ -65,7 +66,9 @@ export function applyAttack(state: GameState, a: AttackAction) {
       const second = ents.find((e) => e.index === entrance && e.zombies > 0) ?? ents.find((e) => e.zombies > 0)
       if (second) killZombieInto(acc, location, second.index, a.survivorId)
     }
-    exposureInto(acc, a.survivorId, 'zombieKill')
+    const walkway = halted(acc) ? null : attackExposureSkip(acc.state, a.survivorId, location, entrance) // Ashley Ross' walkways, Gray Beard, Welcome Home
+    if (walkway) { acc.state = walkway.state; acc.events.push({ type: 'ExposureSkipped', survivorId: a.survivorId, reason: 'zombieKill', sourceId: walkway.sourceId }) }
+    else exposureInto(acc, a.survivorId, 'zombieKill')
   } else {
     const targetId = a.target.survivorId
     const target = state.survivors[targetId]!

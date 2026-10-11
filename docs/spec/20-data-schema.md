@@ -99,10 +99,14 @@ array already means "any of these". No separate pair field exists.
 
 ### 3.6 Crossroads (`crossroads.json`)
 
-`{survivor?, mature, coop?, trigger: {point, when}, options: [a, b], text: {vignette, trigger?, options:
-{<id>: prose}}, voice?}`. `point` is an `action.*` window (FAQ 2.1.1); each option is `{id, effect[], requires?,
-vote?}`; an option whose `requires` is false is impossible and the other is forced (R p12). The vignette is a new
-scene of ours that lands on the same two choices.
+`{survivor?, decider?, mature, coop?, trigger: {point, when}, options: [a, b] (or [a, b, c]), text: {vignette,
+trigger?, options: {<id>: prose}}, voice?}`. `point` is an `action.*` window (FAQ 2.1.1), or `action.any` for a card
+that waits for a state of the table (checked after every action window, M8); each option is `{id, effect[], requires?,
+vote?}`; an option whose `requires` is false is impossible and the other is forced (R p12). Three cards print a third
+option (Army, Riot, Thomas Heart), so up to three options are allowed. `decider` (a survivor id) hands the choice to the
+controller of that survivor (Dynamite, Thomas Heart: "the choice belongs to the player who controls ..."). A vote card
+carries the same table vote under both thumbs; the engine offers it once (`up` = yes). The vignette is a new scene of
+ours that lands on the same choices.
 
 ### 3.7 Main objective (`main-objective.json`)
 
@@ -181,7 +185,7 @@ checks. `warn` rows print and pass; `error` rows fail the build.
 | V-06 | `colony` exists with 6 entrances and no deck; exactly 6 other locations numbered 1–6 once each | error |
 | V-07 | base survivors: 30 records, influence values distinct | error (warn while the set is incomplete) |
 | V-08 | survivor `ability.location` naming a location id resolves | error |
-| V-09 | Crossroads: 2 options with distinct ids; `text.options` keys = option ids; `vote: true` ⇒ first effect is `vote`; `trigger.point` is `action.*`; a `survivor` reference ⇒ the trigger tests `survivorIs` or `atLocation` of that survivor (warn) | error / warn |
+| V-09 | Crossroads: 2 or 3 options with distinct ids; `text.options` keys = option ids; `vote: true` ⇒ first effect is `vote`; `trigger.point` is `action.*`; a `survivor` reference ⇒ the trigger tests `survivorIs`, `atLocation` or `crossroads.rule.survivor` for that survivor (warn) | error / warn |
 | V-10 | effect-tree rules of `21 §10` (op vs point, durations, counters, code names, `chosen` chooser, `killZombies`/`moveSurvivor` `value` words); a betrayal objective without `ai.lever` (the enum itself is schema-checked) | per row / warn |
 | V-11 | `objectiveCounter`/`objectiveCounterAtLeast` counters declared on that objective side | error |
 | V-12 | main objectives: both sides; `code` unique; `time` set | error |

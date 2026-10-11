@@ -1,0 +1,87 @@
+{
+  "kind": "crossroads",
+  "id": "xr.buddy-davis",
+  "name": "Buddy Davis",
+  "survivor": "sv.buddy-davis",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.buddy-davis",
+        "rel": "controlled",
+        "notExiled": true,
+        "at": "colony",
+        "startedTurnThere": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "run-the-workouts",
+      "effect": [
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "name": "workouts",
+            "global": [
+              {
+                "id": "workout",
+                "kind": "triggered",
+                "trigger": "dice.rolled",
+                "optional": true,
+                "when": {
+                  "test": "handHasSymbol",
+                  "subject": "seat",
+                  "symbol": "food"
+                },
+                "effect": [
+                  {
+                    "op": "discard",
+                    "count": 1,
+                    "value": "chosen",
+                    "symbol": "food",
+                    "scope": {
+                      "who": "seat"
+                    }
+                  },
+                  {
+                    "op": "addDie",
+                    "value": "d6",
+                    "scope": {
+                      "who": "seat"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "take-the-joke",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Buddy Davis, who began the turn at the colony.",
+    "vignette": "Buddy flexes in front of the morning crowd and announces mandatory exercise at first light. Someone at the back lobs a spoon at his head and the whole hall roars with laughter. He can press his regimen on everyone or take the joke.",
+    "options": {
+      "run-the-workouts": "Run the workouts: for the rest of the game, at the start of a round any player may put a Food card from their hand on the waste pile (no effect) to roll one extra action die that round.",
+      "take-the-joke": "Laugh it off: morale rises by 1."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 61",
+    "options": "BGG crossroads-v1.1 card 61"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #61; \"Starts the turn at the colony\" is read as: at the colony and has not moved this turn."
+}

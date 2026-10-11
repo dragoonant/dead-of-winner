@@ -1,0 +1,48 @@
+{
+  "kind": "crossroads",
+  "id": "xr.voyeur",
+  "name": "Voyeur",
+  "mature": true,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.pair"
+    }
+  },
+  "options": [
+    {
+      "id": "blackmail-them",
+      "effect": [
+        {
+          "code": "crossroads.voyeur.peek"
+        },
+        {
+          "code": "crossroads.voyeur.take"
+        }
+      ]
+    },
+    {
+      "id": "tell-everyone",
+      "effect": [
+        {
+          "code": "crossroads.voyeur.expose"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls a survivor who is alone with exactly one survivor of another player at a location.",
+    "vignette": "You are crouched behind a snowdrift watching two figures talk, and the contents of their packs lie in plain sight on the ground. What you do with that sight might say more about you than about them.",
+    "options": {
+      "blackmail-them": "Look at the other player's hand, then take one card of your choice from it. Neither of you may discuss that card, and it cannot be played before next round.",
+      "tell-everyone": "Look at the other player's hand, then show it to every other player."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 73",
+    "options": "BGG crossroads-v1.1 card 73",
+    "mature": "BGG crossroads-v1.1 card 73 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #73; Mature by our reading (voyeurism and blackmail). The shown hand is announced by card type, not by card id."
+}

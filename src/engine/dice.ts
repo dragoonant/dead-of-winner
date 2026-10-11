@@ -2,6 +2,7 @@
 // Every d6 goes through rng.roll so rollSeq/state.rng stay the single seeded stream (00 §11).
 import type { SpendFoodAction } from './actions'
 import type { ActionDiceRolled, DieAdded, DieBoosted, DieSpent, FoodChanged, GameEvent } from './events'
+import { extraDiceFor } from './code-hooks'
 import { roll } from './rng'
 import type { DieId, DiePurpose, GameState, Die, Rejection, SeatId, SurvivorId } from './types'
 import { patchSeat, reject, type Out } from './decks'
@@ -16,7 +17,7 @@ export function rollActionDice(state: GameState): Out {
     const seat = s.seats[seatId]!
     if (seat.seat.eliminated) continue
     const alive = seat.survivors.filter((id) => s.survivors[id]?.status === 'alive').length
-    const rolled = roll(s, { count: 1 + alive, purpose: 'actionDice', seat: seatId })
+    const rolled = roll(s, { count: Math.max(1, 1 + alive + extraDiceFor(s, seatId)), purpose: 'actionDice', seat: seatId }) // Music, Dynamite: extraDie grants
     s = rolled.state
     const dice: Die[] = rolled.event.dice.map((value, i) => ({ id: `${seatId}:d${i + 1}`, value, used: false }))
     s = patchSeat(s, seatId, { dice, abilityUses: {} }) // survivor ability uses reset with the dice (R5.5)

@@ -1,0 +1,66 @@
+{
+  "kind": "crossroads",
+  "id": "xr.wavering-loyalties",
+  "name": "Wavering Loyalties",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.outranks"
+    }
+  },
+  "options": [
+    {
+      "id": "let-them-go",
+      "effect": [
+        {
+          "code": "crossroads.wavering.give"
+        }
+      ]
+    },
+    {
+      "id": "threaten-them",
+      "effect": [
+        {
+          "code": "crossroads.rule.rollThen",
+          "params": {
+            "ranges": [
+              {
+                "atMost": 3,
+                "then": [
+                  {
+                    "op": "morale",
+                    "value": -1
+                  }
+                ]
+              },
+              {
+                "atLeast": 4,
+                "then": [
+                  {
+                    "op": "morale",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls more survivors than at least one other player.",
+    "vignette": "One of your people sits you down and says plainly that they cannot keep doing what is asked of them, and you can see what the admission costs. You can let them go quietly, or you can remind them how much you know.",
+    "options": {
+      "let-them-go": "Release a survivor from your following to a player who has fewer survivors than you.",
+      "threaten-them": "Roll a die. On a 3 or lower the secret gets out and morale falls by 1."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 2",
+    "options": "BGG crossroads-v1.1 card 2"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #2"
+}

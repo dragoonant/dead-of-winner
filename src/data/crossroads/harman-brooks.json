@@ -1,0 +1,62 @@
+{
+  "kind": "crossroads",
+  "id": "xr.harman-brooks",
+  "name": "Harman Brooks",
+  "survivor": "sv.harman-brooks",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.harman-brooks",
+        "rel": "inPlay",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "set-a-snare",
+      "effect": [
+        {
+          "op": "food",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "gather-herbs",
+      "effect": [
+        {
+          "op": "heal",
+          "count": 1,
+          "scope": {
+            "who": "chosen",
+            "count": 3,
+            "chooser": "activeSeat",
+            "filter": {
+              "test": "woundsAtLeast",
+              "subject": "survivor",
+              "value": 1
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Harman Brooks is in play and his player is not exiled.",
+    "vignette": "Harman has had enough of shovelling and hammering and says so to anyone who will stand still. He wants to get out into the trees and do what he does best, and the only question is what he should bring home.",
+    "options": {
+      "set-a-snare": "He lies in wait over a snare: 3 food is added to the supply.",
+      "gather-herbs": "He hunts for plants to make a salve: remove 1 wound from each of up to 3 survivors (you choose)."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 80",
+    "options": "BGG crossroads-v1.1 card 80"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #80"
+}

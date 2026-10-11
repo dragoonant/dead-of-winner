@@ -1,0 +1,121 @@
+{
+  "kind": "crossroads",
+  "id": "xr.missing-child",
+  "name": "Missing Child",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "helplessAtLeast",
+      "subject": "location",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Search for her",
+              "effect": [
+                {
+                  "code": "crossroads.missing-child.watch"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Give up the hunt",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": -1
+                },
+                {
+                  "op": "removeHelpless",
+                  "count": 1,
+                  "location": "colony",
+                  "value": "noMorale"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Search for her",
+              "effect": [
+                {
+                  "code": "crossroads.missing-child.watch"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Give up the hunt",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": -1
+                },
+                {
+                  "op": "removeHelpless",
+                  "count": 1,
+                  "location": "colony",
+                  "value": "noMorale"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "The colony holds at least one helpless survivor.",
+    "vignette": "A mother is combing the yard calling a name, and nobody can say where her daughter went. All anyone knows is that the south wall is low and the land past it is full of the dead.",
+    "options": {
+      "up": "Thumbs up: send people out. If a search is made at every location outside the colony between now and the end of next round, morale rises by 1; otherwise morale falls by 1 and a helpless survivor leaves the colony.",
+      "down": "Thumbs down: give up. Morale falls by 1 and a helpless survivor leaves the colony."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 53",
+    "options": "BGG crossroads-v1.1 card 53"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #53; The search count runs from this moment to the end of next round (colony.roundTick of the following round)."
+}

@@ -71,10 +71,12 @@ export interface EngineServices {
   grant(state: GameState, what: GrantWhat, q: GrantQuery): { sourceId: Id } | null
   forbidden(state: GameState, what: ForbidWhat, q: GrantQuery): boolean
   /** hooks/windows: card and objective triggers keyed by window id. Default: nothing fires. */
-  fire(state: GameState, point: WindowId, ctx: { seat?: SeatId; survivorId?: SurvivorId; targetId?: SurvivorId; location?: LocationId; face?: ExposureFace }): Out
+  fire(state: GameState, point: WindowId, ctx: { seat?: SeatId; survivorId?: SurvivorId; targetId?: SurvivorId; location?: LocationId; face?: ExposureFace; params?: Record<string, unknown> }): Out
   searchBonus(state: GameState, survivorId: SurvivorId, location: LocationId): { look: number; keep: number }
   /** attack/search value reductions from grants (`attackValueMinus`, `searchValueMinus`). */
   valueMinus(state: GameState, survivorId: SurvivorId, which: 'attack' | 'search'): number
+  /** Olivia Brown (M8): a round-long shield that turns a bitten result into a blank by discarding a Medicine card; null = no shield or no Medicine. */
+  biteShield?(state: GameState, survivorId: SurvivorId): { state: GameState; events: GameEvent[]; sourceId: Id } | null
   /** The decision to raise when an action resolved and the turn goes on (normally a `turnAction` for the active seat). */
   afterAction(state: GameState, window: WindowId): Omit<PendingDecision, 'id'> | null
 }
@@ -240,6 +242,7 @@ export function exposureInto(acc: Out, survivorId: SurvivorId, reason: ExposureR
   const change = (to: ExposureFace, sourceId: Id) => { acc.events.push({ type: 'ExposureFaceChanged', survivorId, from: face, to, sourceId }); face = to }
   if (face === 'bite') { const g = grantFor(acc.state, 'biteIsWound', survivorId, opts.grantAt); if (g) change('wound', g.sourceId) }
   else if (face === 'frostbite') { const g = grantFor(acc.state, 'frostbiteIsWound', survivorId, opts.grantAt); if (g) change('wound', g.sourceId) }
+  if (face === 'bite') { const sh = services.biteShield?.(acc.state, survivorId); if (sh) { acc.state = sh.state; acc.events.push(...sh.events); change('blank', sh.sourceId) } }
   if (face === 'wound' || face === 'frostbite') { const g = grantFor(acc.state, 'nonBiteIsBlank', survivorId, opts.grantAt); if (g) change('blank', g.sourceId) }
   fireInto(acc, 'exposure.rolled', { survivorId, seat: sv.owner ?? undefined, location: sv.location, face })
   if (halted(acc)) return

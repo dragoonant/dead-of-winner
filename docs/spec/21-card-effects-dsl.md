@@ -659,4 +659,44 @@ fuel counts and weapon does not.
 - RULING: Sparky and the bite chain | a spreading bite skips him (code hook) while the FAQ fixes only bite→wound | Fan-source (W)
 - RULING: John Price copies only away from the colony | `location: nonColony` on the grant | Fan-source (W; F 1.1.1 silent)
 - RULING: `onRoll` semantics | a d6 gate on the host op; on `exposure` a severity branch | Unsourced (engine convention)
+- RULING: hooks pick for the player only where the card says "of your choice" and the DSL has no scope for it; otherwise the hook asks (`io.ask`) | M8: Daniel Smith's culprit, Mike Cho's location, Rod's two companions, James's cards, Voyeur's card, Gambling's antes, Radio Signal's dice and the like are decisions of the seat the card names | Unsourced (engine convention)
+- RULING: collective payments ("the players may place 3 fuel cards in the waste pile") | taken from the hands in table order starting with the active player, never asked; the option is impossible when the hands hold too few | Unsourced
+- RULING: Sleep's trigger is a player yawning | stand-in: the active player has spent 4 or more actions this turn | Unsourced (a program cannot hear a yawn)
+- RULING: Flier has a trigger and a story but no option text in the BGG sheet | a flavour card: both options do nothing | Fan-source (BGG sheet)
+- RULING: "starts the turn at the colony" (Buddy Davis) | at the colony and has not moved this turn | Unsourced
 - RULING: Lighter is an attack | `countsAs: attack` charges the attack die and reaches `action.attack`; the fuel card is a cost with no effect | Confirmed (R p10)
+
+## 15. M8 additions (the 60 added Crossroads cards)
+
+All additive (logged in `00` §16).
+
+- **Trigger point `action.any`** (Crossroads only): the held card is checked after every `action.*` window. The window also carries
+  what the action did: `action.move` brings `params.reason: 'move'`, `params.from` (where the move began) and `face` (the exposure
+  face rolled); a Medicine play sets `targetId` to the survivor it healed; a card that added survivors or helpless tokens sets
+  `params.addedSurvivors` / `params.addedHelpless`; an ability use sets `params.fromAbility` and `cardId`; `action.spendFood` brings
+  `params.tokens`. Every die action (move, search, attack, barricade, clean waste, attract) now reaches the held card; before M8 only
+  card plays, abilities, hand-offs, requests, votes and food spending did.
+- **Grant `extraDie`** (`value` plus or minus n dice at the next roll-dice step; Music +1, Dynamite -1). **`removeHelpless value: 'noMorale'`**:
+  the token leaves the game without the death morale loss (the card names any loss itself).
+- **Card fields**: `decider`, up to three options (`20` §3.6). A vote card offers its vote once; the first player breaks every
+  tie, even an exiled one (the `votes` decision carries `tiebreakSeat`, as in the exile vote).
+- **Hooks that ask and delegate**: `CodeEffectHook(ctx, params, io?)` may call `io.ask(seat, options)` (the interpreter re-runs the hook
+  with the answer, so it must be deterministic up to the ask) and may return `then: EffectNode[]` (run next, so exposure, wounds, kills
+  and the rest keep their normal routines and decisions) and `pending`. Option ids that name cards other seats must not learn use
+  `<seat>|<definition>`, never a card id.
+- **Lasting effects that carry rules** (`crossroads.rule.attach`): `data.ability` = an ability record given to a survivor (Andrew Evans'
+  greenhouse, Janet Taylor's clinic with `forEvery`, Olivia's experiments, the addicted survivor's craving); `data.global` = ability
+  records every live seat carries (Buddy Davis, Missing Child, Sleep, Talia Jones); `data.upkeep`, `data.wasteStep`, `data.attackSkip`,
+  `data.snowmobile`, `data.sewer`, `data.condition` (an extra main-objective victory condition), `boundSurvivor` (a forbid that lasts
+  only while that survivor lives and its owner is the effect's seat). Nodes a hook adds through `then` get fractional node indexes so
+  two `forbid`s of one card never merge into one lasting rule.
+- **Generic Crossroads hooks** (`src/engine/crossroads-hooks.ts`): conditions `crossroads.rule.survivor` (`rel` inPlay | controlled | inDeck,
+  `notExiled`, `at`, `startedTurnThere`), `fuelMove`, `abilityUse`, `playHealed`, `handsHave`, `removedHas`, `hunger`, `mugging`, `prophet`,
+  `pair`, `outranks`, `seatAt`, `yawn`; effects `spendDice`, `place`, `lockMove`, `attach`, `ifAlive`, `ifInPlay`, `pick` / `eachSeatPick`
+  (the seat picks; `$pick` and `$pickLoc` in `then` become the pick), `rollEach`, `rollThen`, `recoverRemoved`, `searchDeck`, `recruit`,
+  `removeFromDeck`, `woundByInfluence`, `collectiveDiscard`, `wasteCard`, `removeFromHand`, `unequip`, `purgeHelpless`; card hooks
+  `crossroads.airplane.fly`, `dynamite.blast`, `spoiled.spoil`, `radio-signal.answer`, `gambling.ante`, `james-meyers.audit` /
+  `readObjective`, `voyeur.peek` / `take` / `expose`, `mugging.hand` / `fight`, `prophet.convert`, `wavering.give`, `rod-miller.carry`,
+  `sewer-passage.dig`, `mike-cho.where`, `missing-child.watch` / `note` / `settle`, `talia-jones.foresee`, `olivia-brown.shield`,
+  `thomas-heart.rage` / `medics`. Engine seams they feed: `moveBlockedTo`, `sewerRoute`, `snowmobileTrail`, `attackExposureSkip`,
+  `extraFoodUpkeep`, `wasteStep`, `extraDiceFor`, `biteShield`, `cardLocked`, `extraVictory` (exported by `code-hooks.ts`).

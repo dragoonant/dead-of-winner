@@ -1,0 +1,68 @@
+{
+  "kind": "crossroads",
+  "id": "xr.the-arctic-king",
+  "name": "The Arctic King",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "test": "locationIs",
+      "subject": "location",
+      "value": "loc.gas-station"
+    }
+  },
+  "options": [
+    {
+      "id": "take-the-snowmobile",
+      "effect": [
+        {
+          "op": "grant",
+          "what": "noExposureOnMove",
+          "scope": {
+            "who": "survivor"
+          },
+          "duration": "game"
+        },
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "survivor": "ctx",
+            "name": "snowmobile",
+            "snowmobile": {
+              "wounds": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "siphon-the-tank",
+      "effect": [
+        {
+          "code": "crossroads.rule.searchDeck",
+          "params": {
+            "location": "loc.gas-station",
+            "count": 2,
+            "symbol": "fuel",
+            "mode": "first",
+            "to": "hand"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player searches at the Gas Station.",
+    "vignette": "A garage door at the back of the gas station finally gives to the right key. A snowmobile waits in the dark under a skin of dust, with a half-full jerrycan beside it.",
+    "options": {
+      "take-the-snowmobile": "Ride it: this card goes on the searching survivor, who never rolls exposure when moving but leaves a noise token at both ends of each move (a zombie at the colony instead of noise). Each move puts a wound on the snowmobile; at 4 it is removed from the game.",
+      "siphon-the-tank": "Siphon it: search the Gas Station deck for 2 Fuel cards and add them to your hand."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 74",
+    "options": "BGG crossroads-v1.1 card 74"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #74"
+}

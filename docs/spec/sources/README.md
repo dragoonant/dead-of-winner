@@ -2,7 +2,7 @@
 
 Where every card value in the specs came from, and what is still missing. The per-card tables live in
 `survivors-sources.md`, `items-sources.md`, `crises-sources.md`, `objectives-sources.md` and `locations-sources.md`
-(the Crossroads cards have no table here yet); this file is the source list and the shopping list. Updated 2026-10-10.
+(the Crossroads cards are tabled in `crossroads-sources.md`); this file is the source list and the shopping list. Updated 2026-10-10.
 
 This is an unofficial fan project, not affiliated with Plaid Hat Games, Fantasy Flight Games or Asmodee.
 Mechanics and numbers are used 1:1; names may match the real cards; every sentence of prose in the repo is ours.
@@ -54,7 +54,7 @@ Unsourced or Fan-source.
 | 12 | Taiwanese unboxing photos | a fan or seller unboxing set (non-English edition; the research notes label the edition J and show Japanese titles) | read 2026-10-10 | none in the repo; values are in the research notes | secret objective texts for Collector and Masochist, and the Exhaustion crisis symbol | medium: photos of a translated edition; the edition label is inconsistent between the brief and the notes |
 | 13 | GitHub etwest/deadofwinter_site, files `obj_nonbetray.txt` and `obj_betray.txt` | https://github.com/etwest/deadofwinter_site | read 2026-10-10 | none in the repo; the names are in `objectives-sources.md` | the 24 standard and 10 betrayal secret objective names | medium (names only) |
 | 14 | BoardGameGeek Card Spread sheet, `Dead_of_Winter_Card_Spread.xlsx` | BGG files for thing 150376 | downloaded by the owner, in `docs/sources/bgg/` as of 2026-10-10 | `docs/sources/bgg/Dead_of_Winter_Card_Spread.xlsx` and `.txt` | all item decks, counts by symbol in print order, class and effect of every item | medium-high |
-| 15 | BoardGameGeek Crossroads sheet, `Crossroad_cards_v1.1.xlsx` (filepage 160324) | BGG files for thing 150376 | downloaded by the owner, in `docs/sources/bgg/` as of 2026-10-10 | `docs/sources/bgg/Crossroad_cards_v1.1.xlsx` and `.txt` | all 80 Crossroads cards (not tabled here yet) | medium |
+| 15 | BoardGameGeek Crossroads sheet, `Crossroad_cards_v1.1.xlsx` (filepage 160324) | BGG files for thing 150376 | downloaded by the owner, in `docs/sources/bgg/` as of 2026-10-10 | `docs/sources/bgg/Crossroad_cards_v1.1.xlsx` and `.txt` | all 80 Crossroads cards (tabled in `crossroads-sources.md`, entered as data in M8) | medium |
 | 16 | Plaid Hat official rulings digest, `Dead_of_Winter_Official_Rulings.pdf` | BGG files for thing 150376 | downloaded by the owner, in `docs/sources/bgg/` as of 2026-10-10 | `docs/sources/bgg/Dead_of_Winter_Official_Rulings.pdf` and `official-rulings.txt` | rulings on objectives, crises, exile, items and survivors | official |
 
 BGG is unreachable from this machine (the owner downloads the files). Row 6 (thread 1303776) was never read by an agent
@@ -65,7 +65,7 @@ in this project; the exposure die faces rest on the research notes. Whoever uses
 | Content | Needed | Have | Where |
 |---|---|---|---|
 | Base survivors (stats, ability location, ability line) | 30 | 30 (Thomas Heart's ability is provisional, single fan source) | `survivors-sources.md` |
-| Survivor Crossroads cards named after a survivor | 30 | 30 named (text of none here) | `survivors-sources.md` |
+| Survivor Crossroads cards named after a survivor | 30 | 30 named and entered, each linked to its survivor | `crossroads-sources.md` |
 | Starting items | 25 | 25 with class and effect | `items-sources.md` |
 | Location decks | 6 x 20 = 120 | 120 with class and effect (three wording points flagged) | `items-sources.md` |
 | Crisis cards | 20 | 20 with symbols, fail and bonus; 3 official English names | `crises-sources.md` |
@@ -75,7 +75,7 @@ in this project; the exposure die faces rest on the research notes. Whoever uses
 | Exiled secret objectives | 10 | 10 texts (P, 4 cross-checked by ES, Barter by a photo) | `objectives-sources.md` |
 | Colony board | entrances, spaces, tracks | 6 entrances x 3 spaces, 24 occupant spaces, tracks 0 to 10 | `locations-sources.md` |
 | Location cards | 6 | 6 with survivor spaces, entrance spaces, 4 noise, symbol order | `locations-sources.md` |
-| Crossroads cards | 80 | 80 in the BGG sheet (row 15), not tabled here | `docs/sources/bgg/Crossroad_cards_v1.1.xlsx.txt` |
+| Crossroads cards | 80 | 80 entered with original vignettes (BGG sheet, row 15, for triggers and effects) | `crossroads-sources.md` |
 
 ## Still missing
 

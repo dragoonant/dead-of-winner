@@ -1,0 +1,175 @@
+{
+  "kind": "crossroads",
+  "id": "xr.army",
+  "name": "Army",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Pay their tribute",
+              "effect": [
+                {
+                  "code": "crossroads.rule.attach",
+                  "params": {
+                    "name": "victory",
+                    "condition": {
+                      "test": "foodAtLeast",
+                      "value": 5
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Fight them off",
+              "effect": [
+                {
+                  "code": "crossroads.rule.rollEach",
+                  "params": {
+                    "where": "colony",
+                    "atMost": 3,
+                    "then": [
+                      {
+                        "op": "wound",
+                        "count": 1,
+                        "scope": {
+                          "who": "allSurvivors",
+                          "filter": {
+                            "test": "survivorIs",
+                            "subject": "survivor",
+                            "value": "$pick"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Pay their tribute",
+              "effect": [
+                {
+                  "code": "crossroads.rule.attach",
+                  "params": {
+                    "name": "victory",
+                    "condition": {
+                      "test": "foodAtLeast",
+                      "value": 5
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Fight them off",
+              "effect": [
+                {
+                  "code": "crossroads.rule.rollEach",
+                  "params": {
+                    "where": "colony",
+                    "atMost": 3,
+                    "then": [
+                      {
+                        "op": "wound",
+                        "count": 1,
+                        "scope": {
+                          "who": "allSurvivors",
+                          "filter": {
+                            "test": "survivorIs",
+                            "subject": "survivor",
+                            "value": "$pick"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "call-the-bluff",
+      "requires": {
+        "code": "crossroads.rule.survivor",
+        "params": {
+          "id": "sv.thomas-heart",
+          "rel": "inPlay",
+          "at": "colony"
+        }
+      },
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony.",
+    "vignette": "A truck of men in mismatched army surplus rolls up to the gate and announces a standing tribute of food, collected on their next visit and not a day later. The colony has until then to decide whether to pay or to make that visit unpleasant.",
+    "options": {
+      "up": "Thumbs up: add a victory condition to the current main objective, on top of the ones already printed: have 5 food in the supply.",
+      "down": "Thumbs down: an ambush. Every survivor at the colony gets its own die roll; on a 3 or lower that survivor takes 1 wound.",
+      "call-the-bluff": "Offered only with Thomas Heart at the colony: he spots the fake rank at the gate and the visitors slink off. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 43",
+    "options": "BGG crossroads-v1.1 card 43"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #43; Three options: the third needs Thomas Heart at the colony."
+}

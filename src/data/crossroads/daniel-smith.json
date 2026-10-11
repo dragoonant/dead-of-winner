@@ -1,0 +1,153 @@
+{
+  "kind": "crossroads",
+  "id": "xr.daniel-smith",
+  "name": "Daniel Smith",
+  "survivor": "sv.daniel-smith",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.daniel-smith",
+            "rel": "controlled"
+          }
+        },
+        {
+          "test": "helplessAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 1
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "open-an-investigation",
+      "requires": {
+        "test": "hasUnusedDie",
+        "subject": "seat"
+      },
+      "effect": [
+        {
+          "op": "removeHelpless",
+          "count": 1,
+          "location": "colony",
+          "value": "noMorale"
+        },
+        {
+          "code": "crossroads.rule.spendDice",
+          "params": {
+            "count": 1,
+            "who": "active"
+          }
+        },
+        {
+          "code": "crossroads.rule.pick",
+          "params": {
+            "who": "any",
+            "then": [
+              {
+                "code": "crossroads.rule.place",
+                "params": {
+                  "survivor": "$pick",
+                  "location": "loc.police-station"
+                }
+              },
+              {
+                "code": "crossroads.rule.unequip",
+                "params": {
+                  "survivor": "$pick"
+                }
+              },
+              {
+                "op": "forbid",
+                "what": "move",
+                "scope": {
+                  "who": "allSurvivors",
+                  "filter": {
+                    "test": "survivorIs",
+                    "subject": "survivor",
+                    "value": "$pick"
+                  }
+                },
+                "duration": "game"
+              },
+              {
+                "op": "forbid",
+                "what": "search",
+                "scope": {
+                  "who": "allSurvivors",
+                  "filter": {
+                    "test": "survivorIs",
+                    "subject": "survivor",
+                    "value": "$pick"
+                  }
+                },
+                "duration": "game"
+              },
+              {
+                "op": "forbid",
+                "what": "attack",
+                "scope": {
+                  "who": "allSurvivors",
+                  "filter": {
+                    "test": "survivorIs",
+                    "subject": "survivor",
+                    "value": "$pick"
+                  }
+                },
+                "duration": "game"
+              },
+              {
+                "op": "forbid",
+                "what": "useAbility",
+                "scope": {
+                  "who": "allSurvivors",
+                  "filter": {
+                    "test": "survivorIs",
+                    "subject": "survivor",
+                    "value": "$pick"
+                  }
+                },
+                "duration": "game"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "look-away",
+      "effect": [
+        {
+          "op": "removeHelpless",
+          "count": 1,
+          "location": "colony",
+          "value": "noMorale"
+        },
+        {
+          "op": "morale",
+          "value": -1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Daniel Smith and the colony holds at least one helpless survivor.",
+    "vignette": "One of the helpless is found dead before morning with a ration tin missing from his coat. Daniel, who wore a badge in another life, looks around the hall and weighs whether anyone here still believes in an investigation.",
+    "options": {
+      "open-an-investigation": "One helpless survivor leaves the game. Spend an unused action die and name any survivor as the culprit: they are placed at the Police Station (not a move), their equipped cards return to their controller's hand, and they can never move, search, attack or use an ability again.",
+      "look-away": "One helpless survivor leaves the game. Daniel shrugs and the colony sees it: morale falls by 1."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 27",
+    "options": "BGG crossroads-v1.1 card 27"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #27; The setup removal of one helpless survivor (no morale loss) happens in both options. The investigation option needs an unused die, otherwise the second option is forced."
+}

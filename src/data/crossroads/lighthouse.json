@@ -1,0 +1,91 @@
+{
+  "kind": "crossroads",
+  "id": "xr.lighthouse",
+  "name": "Lighthouse",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "light-the-lamp",
+      "requires": {
+        "test": "hasUnusedDie",
+        "subject": "seat"
+      },
+      "effect": [
+        {
+          "code": "crossroads.rule.spendDice",
+          "params": {
+            "count": 1,
+            "who": "active"
+          }
+        },
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "colony"
+        },
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "loc.police-station"
+        },
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "loc.grocery-store"
+        },
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "loc.school"
+        },
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "loc.library"
+        },
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "loc.hospital"
+        },
+        {
+          "op": "killZombies",
+          "count": 1,
+          "location": "loc.gas-station"
+        }
+      ]
+    },
+    {
+      "id": "leave-it-dark",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony.",
+    "vignette": "From the roof someone points out the old lighthouse on the headland, dark for years. If its beam were lit, the dead might drift toward it and away from your doors.",
+    "options": {
+      "light-the-lamp": "Move one of your unused action dice to used: 1 zombie is removed from every location (the colony included).",
+      "leave-it-dark": "Leave it dark. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 46",
+    "options": "BGG crossroads-v1.1 card 46"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #46"
+}

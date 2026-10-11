@@ -200,6 +200,8 @@ Rejections name the `RejectionCode` the engine must return (00 §14) and never c
 | XRD-012 | Bev Russell's card option 1: Bev counts as a survivor for the school's zombie step; on an overrun there she cannot be the victim, the next-lowest influence dies | F 2.2.1 |
 | XRD-013 | The held card fires at most once per resolved action; two actions in a turn that both match → it fires on the first and is gone | R p12, 00 §9 |
 | XRD-014 | The seat to the right of an exiled or eliminated active seat still draws; a 2-seat game: each seat draws for the other | R p12 (unsourced for eliminated) |
+| XRD-M8-001..005 | Every die action reaches the held card; `action.any`; an effect vote tie goes to the exiled first player; a decider seat is asked; the new hooks are registered (`tests/engine/xrd-m8.test.ts`) | R p12, F 2.1.1, digest General |
+| XRD-M8-100..102 | The Crossroads prose shares no 8 consecutive words with the BGG sheet (`tools/check-copied-text.ts`, local) | IP rule |
 | XRD-015 | Both options impossible (option 1 adds a survivor to a full colony, option 2 needs a survivor the seat lacks) → `CrossroadsTriggered`, no `crossroadsOption` decision, `CrossroadsResolved {forced:true, optionId:''}` with no effect events, the card in `removed`, log `triggered:true` (unsourced: R20.10) | R p12, R p14 |
 
 ## CRIS (crisis contributions and resolution)

@@ -49,6 +49,27 @@ export function returnCrossroads(state: GameState): { state: GameState; events: 
 
 const addsPopulation = (nodes: unknown): boolean => /"op":"(addSurvivor|addHelpless)"/.test(JSON.stringify(nodes ?? null))
 
+/** What the action just did, read from the events of this step (M8): the survivor a Medicine healed, the survivors and helpless tokens an effect added. */
+function enrich(acc: Acc, point: WindowId, ctx: WindowCtx): WindowCtx {
+  const params: Record<string, unknown> = { ...(ctx.params ?? {}) }
+  let targetId = ctx.targetId
+  if (point === 'action.playCard' && !targetId) {
+    const healed = [...acc.events].reverse().find((e) => e.type === 'WoundHealed')
+    if (healed && healed.type === 'WoundHealed') targetId = healed.survivorId
+  }
+  const added = acc.events.flatMap((e) => (e.type === 'SurvivorAdded' ? [e.survivorId] : []))
+  if (added.length) params['addedSurvivors'] = added
+  const helpless = acc.events.reduce((n, e) => n + (e.type === 'HelplessAdded' ? e.count : 0), 0)
+  if (helpless) params['addedHelpless'] = helpless
+  return { ...ctx, ...(targetId ? { targetId } : {}), params }
+}
+
+/** The seat that makes the choice: the controller of the survivor the card names as its decider (Dynamite, Thomas Heart), else the active seat. */
+function deciderSeat(state: GameState, desc: CrossroadsDescriptor, active: SeatId): SeatId {
+  const sv = desc.decider ? state.survivors[desc.decider] : undefined
+  return sv?.status === 'alive' && sv.owner && !state.seats[sv.owner]?.seat.eliminated ? sv.owner : active
+}
+
 function ctxFor(state: GameState, held: { forSeat: SeatId; holder: SeatId }, point: WindowId, ctx: WindowCtx): EvalCtx {
   return {
     state, point, seat: held.forSeat, ownerSeat: undefined, survivorId: ctx.survivorId, targetId: ctx.targetId, location: ctx.location,
@@ -66,7 +87,7 @@ function runOption(acc: Acc, desc: CrossroadsDescriptor, optionId: string, force
   const cx = acc.state.crossroads
   acc.state = { ...acc.state, crossroads: { ...cx, active: null, log: cx.log.map((l, i) => (i === cx.log.length - 1 && l.cardId === desc.id ? { ...l, optionId } : l)) } }
   const rc: RunCtx = {
-    sourceId: desc.id, sourceKind: 'crossroads', seat: forSeat, point, subjectId: ctx.survivorId, targetId: ctx.targetId, location: ctx.location,
+    sourceId: desc.id, sourceKind: 'crossroads', seat: deciderSeat(acc.state, desc, forSeat), point, subjectId: ctx.survivorId, targetId: ctx.targetId, location: ctx.location,
     cardId: ctx.cardId, dieId: ctx.dieId, face: ctx.face, params: ctx.params, duration: 'instant',
   }
   const nodes: EffectNode[] = opt?.effect ?? []
@@ -77,17 +98,22 @@ function runOption(acc: Acc, desc: CrossroadsDescriptor, optionId: string, force
  * Evaluate the held card after `point` resolved. A trigger makes the card face up and either resolves it at once
  * (one option possible, or none: R12.6) or raises `crossroadsOption` for the active seat. Called by the job runner.
  */
-export function checkCrossroads(acc: Acc, point: WindowId, ctx: WindowCtx, jobs: Job[]): void {
+export function checkCrossroads(acc: Acc, point: WindowId, ctx0: WindowCtx, jobs: Job[]): void {
   const cx = acc.state.crossroads
   const held = cx.held
   if (!held || cx.active || acc.state.phase === 'ended') return
   const desc = crossroadsDescriptor(acc.state, held.cardId)
-  if (!desc || desc.point !== point) return
+  // `action.any` (M8): a card that waits for a state of the table rather than one action is checked after every action window
+  if (!desc || !(desc.point === point || (desc.point === 'action.any' && point.startsWith('action.')))) return
+  const ctx = enrich(acc, point, ctx0)
   const ev = ctxFor(acc.state, held, point, ctx)
   if (!evaluateCondition(ev, desc.when)) return
   // R11.3 / R20.20: a card with an option that adds a survivor or helpless token does not trigger while the colony is full.
   if (addsPopulation(desc.options.map((o) => o.effect)) && !hasSpace(acc.state, 'colony')) return
-  const possible = desc.options.filter((o) => evaluateCondition(ev, o.requires))
+  // vote cards carry the same table vote under both thumbs (Old Divisions, Outbreak ...): offer it once, and run it at once when it is all that is left
+  let possible = desc.options.filter((o) => evaluateCondition(ev, o.requires))
+  const firstVote = possible.find((o) => o.vote)
+  if (firstVote) possible = possible.filter((o) => !o.vote || o === firstVote)
   acc.events.push({ type: 'CrossroadsTriggered', cardId: held.cardId, holder: held.holder, forSeat: held.forSeat, window: point })
   acc.state = {
     ...acc.state,
@@ -101,15 +127,16 @@ export function checkCrossroads(acc: Acc, point: WindowId, ctx: WindowCtx, jobs:
     acc.state = { ...acc.state, crossroads: { ...acc.state.crossroads, active: null } }
     return
   }
+  const decider = deciderSeat(acc.state, desc, held.forSeat)
   if (possible.length === 1) { runOption(acc, desc, possible[0]!.id, true, held.forSeat, point, ctx, jobs); return }
   const seq = acc.state.decisionSeq + 1
   const id = `d:${seq}`
   const options: DecisionOption[] = possible.map((o) => ({
     id: o.id, label: optionLabel(acc.state, held.cardId, o.id),
-    action: { type: 'chooseCrossroadsOption', decisionId: id, seat: held.forSeat, optionId: o.id },
+    action: { type: 'chooseCrossroadsOption', decisionId: id, seat: decider, optionId: o.id },
   }))
   const pending: PendingDecision = {
-    id, seat: held.forSeat, kind: 'crossroadsOption', window: point,
+    id, seat: decider, kind: 'crossroadsOption', window: point,
     context: { cardId: held.cardId, seatId: held.holder, data: { code: 'crossroads', ctx } }, options, canPass: false,
   }
   acc.state = { ...acc.state, decisionSeq: seq, pending }

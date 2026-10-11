@@ -1,0 +1,74 @@
+{
+  "kind": "crossroads",
+  "id": "xr.alexis-grey",
+  "name": "Alexis Grey",
+  "survivor": "sv.alexis-grey",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.alexis-grey",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "stay-and-read",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.alexis-grey",
+            "location": "loc.library"
+          }
+        },
+        {
+          "code": "crossroads.rule.lockMove",
+          "params": {
+            "survivor": "sv.alexis-grey",
+            "mode": "stay",
+            "location": "loc.library"
+          }
+        }
+      ]
+    },
+    {
+      "id": "walk-away",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.alexis-grey",
+            "location": "colony"
+          }
+        },
+        {
+          "code": "crossroads.rule.lockMove",
+          "params": {
+            "survivor": "sv.alexis-grey",
+            "mode": "neverTo",
+            "location": "loc.library"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Alexis Grey and is not exiled.",
+    "vignette": "Alexis finds herself among the library shelves again, running a finger down spines nobody has touched in months. Part of her wants to curl up there with a stack of manuals and never leave; another part cannot stand to watch the building slowly rot.",
+    "options": {
+      "stay-and-read": "Alexis is placed at the Library (not a move) and can never move away from it again.",
+      "walk-away": "Alexis is placed in the colony (not a move) and can never move to the Library again."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 34",
+    "options": "BGG crossroads-v1.1 card 34"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #34; The printed \"place at the Library, if able\" happens first in the source; here the stay option places her (if there is room) and the walk-away option puts her straight in the colony."
+}

@@ -5,7 +5,7 @@ import type { GameEvent } from './events'
 import type { ConditionNode, HookContext } from './hooks'
 import type { ObjectiveProgressReport } from './index'
 import { bundleFor } from './bundles'
-import { CODE_HOOKS } from './code-hooks'
+import { CODE_HOOKS, extraVictory } from './code-hooks'
 import { defOf, evaluateCondition, objectiveNeed, recOf, setRoutines, symbolsOf, type Rec } from './effects'
 import { isCoop } from './setup'
 import type {
@@ -97,7 +97,9 @@ export function partsOf(state: GameState, seat: SeatId, node: ConditionNode | un
 // ---------- the main objective ----------
 export function mainObjectiveNode(state: GameState): ConditionNode | undefined {
   const side = (recOf(state, state.objective.id) as Rec | undefined)?.sides?.[state.objective.side]
-  return side?.complete as ConditionNode | undefined
+  const base = side?.complete as ConditionNode | undefined
+  const extra = extraVictory(state) as ConditionNode[]
+  return base && extra.length ? { all: [base, ...extra] } : base // Army, The Deputy: victory conditions added to the printed one
 }
 /** The seat whose context the main objective is read in (conditions that name "the seat" read the active one). */
 const readerSeat = (state: GameState): SeatId => state.activeSeat ?? state.firstSeat

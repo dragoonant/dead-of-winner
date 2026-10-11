@@ -1,0 +1,129 @@
+{
+  "kind": "crossroads",
+  "id": "xr.addiction",
+  "name": "Addiction",
+  "mature": true,
+  "trigger": {
+    "point": "action.playCard",
+    "when": {
+      "all": [
+        {
+          "test": "symbolDrawn",
+          "subject": "card",
+          "symbol": "medicine"
+        },
+        {
+          "code": "crossroads.rule.playHealed"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "swallow-the-rest",
+      "effect": [
+        {
+          "op": "grant",
+          "what": "noMoraleOnDeath",
+          "scope": {
+            "who": "target"
+          },
+          "duration": "turn"
+        },
+        {
+          "op": "killSurvivor",
+          "scope": {
+            "who": "target"
+          }
+        }
+      ]
+    },
+    {
+      "id": "keep-the-habit",
+      "effect": [
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "survivor": "target",
+            "name": "addicted",
+            "ability": {
+              "id": "craving",
+              "kind": "triggered",
+              "trigger": "turn.start",
+              "when": {
+                "test": "isActiveSeat",
+                "subject": "seat"
+              },
+              "effect": [
+                {
+                  "op": "choose",
+                  "scope": {
+                    "who": "seat",
+                    "chooser": "owner"
+                  },
+                  "options": [
+                    {
+                      "id": "take-a-dose",
+                      "label": "Take a Medicine card and heal this survivor",
+                      "requires": {
+                        "test": "handHasSymbol",
+                        "subject": "seat",
+                        "symbol": "medicine"
+                      },
+                      "effect": [
+                        {
+                          "op": "discard",
+                          "count": 1,
+                          "value": "chosen",
+                          "symbol": "medicine",
+                          "scope": {
+                            "who": "seat"
+                          }
+                        },
+                        {
+                          "op": "heal",
+                          "count": 1,
+                          "scope": {
+                            "who": "self"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "go-without",
+                      "label": "Go without: spend an unused action die",
+                      "effect": [
+                        {
+                          "code": "crossroads.rule.spendDice",
+                          "params": {
+                            "count": 1,
+                            "who": "active"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player plays a Medicine card that heals a survivor.",
+    "vignette": "The tablets in your hand are cleaner than anything scavenged so far, and for the first time in weeks the shaking stops. In the quiet that follows, a very small voice asks for another.",
+    "options": {
+      "swallow-the-rest": "Take the whole bottle: the survivor who was healed dies, and the colony loses no morale for it.",
+      "keep-the-habit": "Keep the supply coming: this card goes under the healed survivor. Each turn that you control them, you may spend a Medicine card on them as the turn opens; skip it and one of your unused action dice is spent instead."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 4",
+    "options": "BGG crossroads-v1.1 card 4",
+    "mature": "BGG crossroads-v1.1 card 4 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #4; Mature by our reading (drug use). The \"placed under the survivor\" clause is a lasting ability attached to the survivor (crossroads.rule.attach); the kill uses noMoraleOnDeath for the turn."
+}

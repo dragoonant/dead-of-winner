@@ -26,7 +26,7 @@
       "enum": [
         "setup.done", "round.start", "crisis.revealed", "dice.rolled", "turn.start", "turn.end",
         "action.attack", "action.search", "action.barricade", "action.cleanWaste", "action.attract", "action.ability",
-        "action.playCard", "action.contribute", "action.move", "action.request", "action.handOff", "action.vote", "action.spendFood",
+        "action.playCard", "action.contribute", "action.move", "action.request", "action.handOff", "action.vote", "action.spendFood", "action.any",
         "exposure.rolled", "wound.taken", "survivor.killed", "survivor.added", "zombie.killed", "zombie.added", "entrance.overrun",
         "noise.added", "search.drawn", "search.kept", "card.played", "card.equipped",
         "colony.payFood", "colony.waste", "colony.crisis", "colony.zombies", "colony.objective", "colony.roundTick",
@@ -100,7 +100,7 @@
       "enum": [
         "noExposureOnMove", "noExposureOnKill", "noExposureOnAbility", "biteIsWound", "frostbiteIsWound", "nonBiteIsBlank",
         "extraSearchKeep", "extraSearchLook", "extraMove", "killTwoPerAttack", "fourWoundsToDie", "copyAbilitiesAtLocation",
-        "attackValueMinus", "searchValueMinus", "freeBarricade", "moveRollWound", "noMoraleOnDeath"
+        "attackValueMinus", "searchValueMinus", "freeBarricade", "moveRollWound", "noMoraleOnDeath", "extraDie"
       ]
     },
     "scopeWho": {

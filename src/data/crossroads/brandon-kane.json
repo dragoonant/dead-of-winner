@@ -1,0 +1,90 @@
+{
+  "kind": "crossroads",
+  "id": "xr.brandon-kane",
+  "name": "Brandon Kane",
+  "survivor": "sv.brandon-kane",
+  "mature": true,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.brandon-kane",
+        "rel": "inPlay",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "make-him-clean-up",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.brandon-kane",
+            "location": "loc.grocery-store"
+          }
+        },
+        {
+          "op": "wound",
+          "count": 1,
+          "scope": {
+            "who": "allSurvivors",
+            "filter": {
+              "test": "survivorIs",
+              "subject": "survivor",
+              "value": "sv.brandon-kane"
+            }
+          }
+        },
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.brandon-kane",
+            "location": "colony"
+          }
+        }
+      ]
+    },
+    {
+      "id": "bury-the-mess",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.brandon-kane",
+            "location": "loc.grocery-store"
+          }
+        },
+        {
+          "code": "crossroads.rule.recoverRemoved",
+          "params": {
+            "count": 10,
+            "last": true,
+            "exclude": [
+              "event",
+              "survivor"
+            ],
+            "to": "waste"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Brandon Kane is in play and his player is not exiled.",
+    "vignette": "A box of keepsakes turns up under the floor of the storeroom where Brandon works: locks of hair, bracelets, scraps of cloth with names written on them. He insists there is an innocent explanation, and the colony is in no mood to hear it.",
+    "options": {
+      "make-him-clean-up": "Brandon is placed at the Grocery Store and then dragged home: he takes 1 wound and is placed in the colony (neither counts as a move).",
+      "bury-the-mess": "Brandon is placed at the Grocery Store (not a move) and the evidence goes in the waste pit: the last 10 item cards that left the game (survivor and event cards excepted) are added to the waste pile."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 24",
+    "options": "BGG crossroads-v1.1 card 24",
+    "mature": "BGG crossroads-v1.1 card 24 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #24; Mature by our reading (a stalker with trophies). \"The last 10 non-survivor, non-event cards\" is read as the 10 most recently removed item cards that are not Outsiders or event-class cards."
+}

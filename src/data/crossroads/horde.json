@@ -1,0 +1,64 @@
+{
+  "kind": "crossroads",
+  "id": "xr.horde",
+  "name": "Horde",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "code": "crossroads.rule.fuelMove",
+      "params": {
+        "used": false
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "push-through",
+      "effect": [
+        {
+          "op": "exposure",
+          "count": 3,
+          "value": "card",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    },
+    {
+      "id": "turn-back",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "ctx",
+            "location": "from"
+          }
+        },
+        {
+          "op": "forbid",
+          "what": "move",
+          "scope": {
+            "who": "survivor"
+          },
+          "duration": "turn"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player moves a survivor without burning a Fuel card.",
+    "vignette": "The blizzard thickens until the road is a blur, and shapes drift in it, then more shapes, all walking the way you are. There is no clean exit, only a gamble on slipping through or backing up.",
+    "options": {
+      "push-through": "Slip through: the moved survivor rolls exposure 3 more times.",
+      "turn-back": "Back away: the moved survivor returns to where the move began (not a move) and cannot be moved again this turn."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 3",
+    "options": "BGG crossroads-v1.1 card 3"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #3"
+}

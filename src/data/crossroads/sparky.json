@@ -1,0 +1,53 @@
+{
+  "kind": "crossroads",
+  "id": "xr.sparky",
+  "name": "Sparky",
+  "survivor": "sv.sparky",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.sparky",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "pull-the-string",
+      "effect": [
+        {
+          "op": "killZombies",
+          "count": 8,
+          "location": "colony"
+        }
+      ]
+    },
+    {
+      "id": "show-him-off",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Sparky and is not exiled.",
+    "vignette": "Sparky's old trainer kept a barn full of props: pulleys, harnesses, and a gun made for a very patient dog. With a little tinkering, the whole thing might do something no dog has ever done.",
+    "options": {
+      "pull-the-string": "Sparky takes out 8 zombies at the colony; nobody rolls exposure.",
+      "show-him-off": "Everyone gets a laugh out of the rigged-up dog: morale rises by 1."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 7",
+    "options": "BGG crossroads-v1.1 card 7"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #7"
+}

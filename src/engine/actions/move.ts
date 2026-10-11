@@ -1,9 +1,9 @@
 // move (R7.4): once per survivor per turn, to a different location with a free survivor space (never the colony for an exiled seat); exposure follows,
 // and a bite spreads among the survivors at the DESTINATION.
 import type { Action, MoveAction } from '../actions'
-import { woundOnMoveInto } from '../code-hooks'
+import { moveBlockedTo, sewerRoute, snowmobileTrail, woundOnMoveInto } from '../code-hooks'
 import { addWoundInto, deathCheckAllAt, exposureInto, exposureOddsFor, fireInto, halted, patchSurvivor, startOut, svc } from '../exposure'
-import type { ExposureOdds, GameState, LocationId, Rejection, SurvivorId } from '../types'
+import type { ExposureFace, ExposureOdds, GameState, LocationId, Rejection, SurvivorId } from '../types'
 import { freeSurvivorSpaces, zombiesAt } from '../zombies'
 import { checkActor, checkDecision, finish, rej, rejected, turnContext } from './die-common'
 
@@ -16,6 +16,7 @@ export function validateMove(state: GameState, a: MoveAction): Rejection | null 
   if (a.to === 'colony' && state.seats[a.seat]?.seat.exiled) return rej('E_TARGET_INVALID', 'exiled survivors cannot move back to the colony') // digest, Exile
   if (sv.movedThisTurn && sv.extraMoves <= 0) return rej('E_ALREADY_MOVED', 'this survivor has already moved this turn')
   if (svc().forbidden(state, 'move', { survivorId: a.survivorId, seat: a.seat, location: sv.location })) return rej('E_FORBIDDEN', 'moving is forbidden right now')
+  if (moveBlockedTo(state, a.survivorId, a.to)) return rej('E_FORBIDDEN', 'this survivor can never go there again')
   if (freeSurvivorSpaces(state, a.to) <= 0) return rej('E_NO_SPACE', 'no free survivor space there')
   return null
 }
@@ -29,10 +30,14 @@ export function applyMove(state: GameState, a: MoveAction) {
   acc.state = patchSurvivor(acc.state, a.survivorId, sv.movedThisTurn ? { location: a.to, extraMoves: sv.extraMoves - 1 } : { location: a.to, movedThisTurn: true })
   acc.events.push({ type: 'SurvivorMoved', survivorId: a.survivorId, from, to: a.to, kind: 'action' })
   deathCheckAllAt(acc, [from, a.to]) // leaving Buddy Davis can end a 3-wound survivor's protection (F 1.1.5)
-  exposureInto(acc, a.survivorId, 'move', { grantAt: from })
+  if (sewerRoute(acc.state, from, a.to)) acc.events.push({ type: 'ExposureSkipped', survivorId: a.survivorId, reason: 'move', sourceId: 'xr.sewer-passage' }) // Sewer Passage
+  else exposureInto(acc, a.survivorId, 'move', { grantAt: from })
+  if (!halted(acc) && acc.state.survivors[a.survivorId]?.status === 'alive') snowmobileTrail(acc, a.survivorId, from, a.to) // The Arctic King
   if (!halted(acc) && acc.state.survivors[a.survivorId]?.status === 'alive' && woundOnMoveInto(acc.state, a.to)) addWoundInto(acc, a.survivorId, 'wound', 'crossroads') // Bev Russel's School
   // the action.move window opens only if the mover is still alive and nothing is waiting on a decision (F 2.1.1)
-  if (!halted(acc) && acc.state.survivors[a.survivorId]?.status === 'alive') fireInto(acc, 'action.move', { seat: a.seat, survivorId: a.survivorId, location: a.to })
+  // the window carries where the move began and the exposure face it rolled, for the Crossroads cards that read them (Hunted, Horde)
+  const face = acc.events.reduce<ExposureFace | undefined>((f, e) => ((e.type === 'ExposureRolled' || e.type === 'ExposureFaceChanged') && e.survivorId === a.survivorId ? (e.type === 'ExposureRolled' ? e.face : e.to) : f), undefined)
+  if (!halted(acc) && acc.state.survivors[a.survivorId]?.status === 'alive') fireInto(acc, 'action.move', { seat: a.seat, survivorId: a.survivorId, location: a.to, params: { reason: 'move', from }, ...(face ? { face } : {}) })
   return finish(acc, 'action.move')
 }
 

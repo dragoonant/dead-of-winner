@@ -6,7 +6,7 @@ describe('default bundle (src/data)', () => {
   it('DATA-M2-001 validates with 0 errors and the M2 card counts', async () => {
     const run = await validateDir(DEFAULT_DATA_DIR)
     expect(run.issues.filter((i) => i.severity === 'error')).toEqual([])
-    expect(run.counts).toMatchObject({ survivors: 30, crises: 20, crossroads: 20, mainObjectives: 10 })
+    expect(run.counts).toMatchObject({ survivors: 30, crises: 20, crossroads: 80, mainObjectives: 10 })
   })
 
   it('DATA-M2-002 names-only objective stubs (status unknown / text null) are never loaded', () => {

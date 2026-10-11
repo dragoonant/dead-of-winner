@@ -10,6 +10,7 @@ import { roll } from './rng'
 import { addWoundInto } from './exposure'
 import { applyExiledPlacement, applyChooseLeader, isExiledPlacement, killSurvivor } from './survivors'
 import { aliveOf as aliveIdsOf } from './decks'
+import { XR_CONDITIONS, XR_EFFECTS } from './crossroads-hooks'
 
 const hasCode = (nodes: unknown, code: string): boolean => JSON.stringify(nodes ?? null).includes(`"${code}"`)
 
@@ -81,6 +82,9 @@ export function overrunImmuneSurvivor(state: GameState, survivorId: SurvivorId, 
 }
 
 const noop = (ctx: HookContext): HookResult => ({ state: ctx.state, events: [] })
+
+// M8: the hooks of the 60 added Crossroads cards live in crossroads-hooks.ts; the seams below are read by move, attack, the colony phase, dice, exposure, play and objectives.
+export { attackExposureSkip, biteShield, cardLocked, extraDiceFor, extraFoodUpkeep, extraVictory, moveBlockedTo, sewerRoute, snowmobileTrail, wasteStep } from './crossroads-hooks'
 
 /** Private peek: EffectApplied carries `ownerSeat`, so redactEvent keeps the card ids inside that seat's feed (events.ts has no peek event). */
 function peek(ctx: HookContext, seat: SeatId, ids: string[], name: string, state: GameState): HookResult {
@@ -389,6 +393,9 @@ const objectives: Record<string, CodeObjectiveHook> = {
   'rule.seat-survivors.anyWoundsAtLeast': (state, seat, params) =>
     report('wounds on the most wounded survivor', Math.max(0, ...aliveOf(state, seat).map((s) => s.wounds + s.frostbite)), num(params, 'n', 2)),
 }
+
+Object.assign(effects, XR_EFFECTS)
+Object.assign(conditions, XR_CONDITIONS)
 
 export const CODE_HOOKS: CodeHookRegistry = { conditions, effects, objectives }
 

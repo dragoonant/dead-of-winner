@@ -1,0 +1,54 @@
+{
+  "kind": "crossroads",
+  "id": "xr.music",
+  "name": "Music",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "not": {
+        "test": "seatIsExiled",
+        "subject": "seat"
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "play-for-the-evening",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "play-at-dawn",
+      "effect": [
+        {
+          "op": "grant",
+          "what": "extraDie",
+          "value": 1,
+          "scope": {
+            "who": "allSeats"
+          },
+          "duration": "nextRound"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player searches with a survivor who is not exiled.",
+    "vignette": "Behind a collapsed shelf, a guitar case still holds a guitar with all six strings. You carry it home, tune it by ear, and wonder whether to play it for the quiet hour or for the morning rush.",
+    "options": {
+      "play-for-the-evening": "A quiet song at dusk steadies the colony: morale rises by 1.",
+      "play-at-dawn": "A hopeful song over breakfast: every player rolls one extra action die at the start of next round."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 30",
+    "options": "BGG crossroads-v1.1 card 30"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #30"
+}

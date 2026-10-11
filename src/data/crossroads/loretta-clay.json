@@ -1,0 +1,100 @@
+{
+  "kind": "crossroads",
+  "id": "xr.loretta-clay",
+  "name": "Loretta Clay",
+  "survivor": "sv.loretta-clay",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.loretta-clay",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "cook-it-anyway",
+      "effect": [
+        {
+          "code": "crossroads.rule.rollThen",
+          "params": {
+            "ranges": [
+              {
+                "atLeast": 5,
+                "then": [
+                  {
+                    "op": "morale",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "atLeast": 3,
+                "atMost": 4,
+                "then": [
+                  {
+                    "op": "morale",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "atMost": 2,
+                "then": [
+                  {
+                    "code": "crossroads.rule.rollEach",
+                    "params": {
+                      "where": "colony",
+                      "atMost": 2,
+                      "then": [
+                        {
+                          "op": "wound",
+                          "count": 1,
+                          "scope": {
+                            "who": "allSurvivors",
+                            "filter": {
+                              "test": "survivorIs",
+                              "subject": "survivor",
+                              "value": "$pick"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "throw-it-out",
+      "effect": [
+        {
+          "op": "food",
+          "value": -1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Loretta Clay and is not exiled.",
+    "vignette": "Loretta empties a crate of canned goods onto the table and holds one up: the label has long since faded and the lid is starting to bulge. If she serves it, the colony eats; if she throws it out, the colony goes without.",
+    "options": {
+      "cook-it-anyway": "Roll a die. 5 or 6: a superb meal and morale rises by 1. 3 or 4: nothing happens. 1 or 2: food poisoning: every survivor at the colony rolls a die and takes 1 wound on a 1 or 2.",
+      "throw-it-out": "She flings the cans in the pit. Remove 1 food from the supply."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 78",
+    "options": "BGG crossroads-v1.1 card 78"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #78"
+}

@@ -240,3 +240,24 @@ RULING: Leave It All Behind cost symbol | the objective counts FOOD cards (the c
 RULING: Hoarder tie | the seat must hold strictly more cards in hand than every other live seat, so a tie fails | the card says more cards than any other player | Confirmed (VASSAL v1.1 Secret_Objectives_Hoarder.jpg)
 RULING: main objective time rating per face | Find a Cure and Too Many Mouths are Short on the normal face and Medium on the hardcore face; the record keeps one card-level rating (normal) | the clean scans print both ratings | Confirmed (VASSAL v1.1 Objective_Find_A_Cure_Front.jpg; VASSAL v1.1 Objective_Too_Many_Mouths_Front.jpg)
 RULING: betrayal objective conditions | no change; the VASSAL module blurs every betrayal condition, leaving only "morale is at 0", the line count and the rulebook section | line counts and S11 to S20 match our records; Runaway, All for One, Trigger Happy, Cult Leader and Serial Killers stay unverified against a real card | Fan-source (unchanged)
+
+## M8 Crossroads (2026-10-11)
+
+RULING: Crossroads cards fire after every die action | the move, search, attack, barricade, clean-waste and attract windows now let the held card look (FAQ 2.1.1: after the action fully resolved); before this the check ran only after card plays, abilities, hand-offs, requests, votes and food spending | the engine did not honour the rule; bench numbers moved because Crossroads now happen | Corrected
+RULING: `action.any` | a card whose printed trigger is a state of the table ("a survivor you control is at the colony", "Daniel is in play") is checked after every action, so it fires as soon as the state holds | R p12 says the card is checked after an action; which actions is not stated | Unsourced
+RULING: a vote card is offered once | both thumbs carry the same table vote (yes = thumbs up); the active player is not asked to pick a thumb first | R p15: every voter picks | Unsourced (engine convention)
+RULING: a choice that belongs to another player (Dynamite, Thomas Heart) | the controller of the named survivor answers; the effects run for that seat | the cards say so | Confirmed (BGG sheet)
+RULING: hooks ask the player where the card says "of your choice" (Daniel Smith's culprit, Rod Miller's companions, Mike Cho's location, James Meyers's cards, Voyeur's card, Gambling's antes, Radio Signal's dice) and decide only where the card leaves no choice | see spec 21 section 14 | Unsourced (engine convention)
+RULING: collective payments take the cards from the hands in turn order from the active player | Creature Comforts, Airplane, Thomas Heart's medics; the option is impossible when the hands hold too few | the cards say "the players may collectively" without saying who pays | Unsourced
+RULING: Sleep's trigger | a player yawning cannot be seen by a program; stand-in: the active player has spent 4 or more actions this turn | BGG sheet | Unsourced
+RULING: Flier | the sheet gives a trigger and a story but no option text; both options do nothing | BGG sheet | Fan-source
+RULING: removing a helpless survivor "from the game" costs no morale unless the card says so (Daniel Smith, Helpless, Missing Child, The Sunshine State); "kill" does (Riot) | R10.2 | Unsourced
+RULING: a taken-back card (Fuel Tanker, Edward White, Brandon Kane, Toxic Waste) is read from the cards that left the game, most recent first for "the last 10"; "non-survivor and non-event" excludes Outsiders and event-class cards | BGG sheet | Unsourced
+RULING: Prophet may not take the last survivor of a player; Wavering Loyalties gives to a seat with fewer survivors than the giver | keeps every seat alive and led | Unsourced
+RULING: Olivia Brown's bite shield discards a Medicine card automatically (the rolling seat's first) whenever one exists; the experiment is optional | the printed text lets "any player" decide | Unsourced
+RULING: Talia Jones's foreseen crisis | the card is removed (kept in the crisis history as a crisis that never happened) and nobody may add cards to a crisis that round | the printed text skips the crisis step | Unsourced
+RULING: Supply Drop | the 5 food and the Annaleigh Chan morale bonus both need the chosen survivor to live | the printed order | Unsourced
+RULING: Gambling | every player may ante up to one card per survivor at the colony; the highest single die wins the pot; tied players roll again | BGG sheet | Unsourced
+RULING: Buddy Davis starts the turn at the colony | at the colony and has not moved this turn | BGG sheet | Unsourced
+RULING: Mugging "if you have a weapon" | a weapon card in hand or equipped to one of your survivors | BGG sheet | Unsourced
+RULING: Ashley Ross' walkways | no exposure for any survivor that attacks zombies at colony entrance 1 | the card names no attacker | Unsourced

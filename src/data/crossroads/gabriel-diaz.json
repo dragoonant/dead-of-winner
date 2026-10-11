@@ -1,0 +1,74 @@
+{
+  "kind": "crossroads",
+  "id": "xr.gabriel-diaz",
+  "name": "Gabriel Diaz",
+  "survivor": "sv.gabriel-diaz",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.seatAt",
+          "params": {
+            "notExiled": true
+          }
+        },
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.gabriel-diaz",
+            "rel": "inDeck"
+          }
+        },
+        {
+          "test": "emptySurvivorSpace",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "show-them-the-way",
+      "effect": [
+        {
+          "code": "crossroads.rule.recruit",
+          "params": {
+            "survivor": "sv.gabriel-diaz"
+          }
+        },
+        {
+          "op": "addHelpless",
+          "count": 3,
+          "location": "colony"
+        }
+      ]
+    },
+    {
+      "id": "repay-them",
+      "effect": [
+        {
+          "code": "crossroads.rule.removeFromHand",
+          "params": {
+            "count": 1
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a non-exiled survivor outside the colony, Gabriel Diaz is in the survivor deck, and the colony has room for a survivor.",
+    "vignette": "Smoke fills the little room faster than you expected, and the window will not budge. When you come to, strangers are carrying you outside: a broad man, his wife, and three small children watching you with enormous eyes.",
+    "options": {
+      "show-them-the-way": "Tell them about the colony: Gabriel Diaz leaves the survivor deck and joins your following, and 3 helpless survivors are added at the colony.",
+      "repay-them": "Thank them with a gift and part ways: choose 1 card from your hand and remove it from the game."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 63",
+    "options": "BGG crossroads-v1.1 card 63"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #63"
+}

@@ -1,0 +1,73 @@
+{
+  "kind": "crossroads",
+  "id": "xr.sophie-robinson",
+  "name": "Sophie Robinson",
+  "survivor": "sv.sophie-robinson",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.sophie-robinson",
+            "rel": "inDeck"
+          }
+        },
+        {
+          "test": "emptySurvivorSpace",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "pull-her-free",
+      "effect": [
+        {
+          "code": "crossroads.rule.recruit",
+          "params": {
+            "survivor": "sv.sophie-robinson",
+            "wounds": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "strip-the-wreck",
+      "effect": [
+        {
+          "code": "crossroads.rule.searchDeck",
+          "params": {
+            "location": "choose",
+            "count": 2,
+            "mode": "top",
+            "to": "hand"
+          }
+        },
+        {
+          "code": "crossroads.rule.removeFromDeck",
+          "params": {
+            "survivor": "sv.sophie-robinson"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player moves a survivor while Sophie Robinson is in the survivor deck and the colony has room.",
+    "vignette": "A small plane comes down hard behind the tree line trailing smoke, and you push through brush toward the wreck. The pilot is alive and shouting from the cockpit, and every second counts.",
+    "options": {
+      "pull-her-free": "Haul her out before it blows: Sophie Robinson leaves the survivor deck and joins your following with 2 wounds.",
+      "strip-the-wreck": "Take what you can carry: choose an item deck and take its top 2 cards into your hand. Sophie Robinson is removed from the game."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 19",
+    "options": "BGG crossroads-v1.1 card 19"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #19"
+}

@@ -4,7 +4,7 @@
 // types; `{ "code": "<hook>" }` is the escape hatch, registered in src/engine/code-hooks.ts.
 import type { GameEvent } from './events'
 import type {
-  CardId, DieId, EffectDuration, ExposureFace, GameState, Id, ItemSymbol, LocationId, SeatId, SurvivorId, WindowId, WoundKind,
+  CardId, DieId, EffectDuration, ExposureFace, GameState, Id, ItemSymbol, LocationId, PendingDecision, SeatId, SurvivorId, WindowId, WoundKind,
 } from './types'
 import { WINDOW_IDS } from './types'
 
@@ -56,7 +56,7 @@ export type ForbidWhat =
 export type GrantWhat =
   | 'noExposureOnMove' | 'noExposureOnKill' | 'noExposureOnAbility' | 'biteIsWound' | 'frostbiteIsWound' | 'nonBiteIsBlank'
   | 'extraSearchKeep' | 'extraSearchLook' | 'extraMove' | 'killTwoPerAttack' | 'fourWoundsToDie' | 'copyAbilitiesAtLocation'
-  | 'attackValueMinus' | 'searchValueMinus' | 'freeBarricade' | 'moveRollWound' | 'noMoraleOnDeath'
+  | 'attackValueMinus' | 'searchValueMinus' | 'freeBarricade' | 'moveRollWound' | 'noMoraleOnDeath' | 'extraDie'
 export type ScopeWho =
   | 'self' | 'survivor' | 'target' | 'seatSurvivors' | 'allSurvivors' | 'atLocation' | 'lowestInfluenceAtLocation'
   | 'highestInfluenceAtLocation' | 'seat' | 'activeSeat' | 'allSeats' | 'otherSeats' | 'nonExiledSeats' | 'location'
@@ -120,6 +120,8 @@ export interface CardEffectDescriptor {
 export interface CrossroadsOptionDescriptor { id: string; effect: EffectNode[]; requires?: ConditionNode; vote?: boolean }
 export interface CrossroadsDescriptor {
   id: Id
+  /** The seat that controls this survivor makes the choice instead of the active seat (Dynamite, Thomas Heart: "the choice belongs to the player who controls ..."). Additive, M8. */
+  decider?: Id
   point: HookPoint
   when: ConditionNode
   options: CrossroadsOptionDescriptor[] // ≥1; `CrossroadsResolved.forced` = only one option was possible (the others failed `requires`, or the card has one)
@@ -176,11 +178,14 @@ export interface HookContext {
   face?: ExposureFace
   params?: Record<string, unknown>
 }
-export interface HookResult { state: GameState; events: GameEvent[] }
+/** `pending` = a decision a routine raised inside the hook (a bite chain, a new leader); `then` = effect nodes to run right after the hook (additive, M8: lets a hook decide what happens and let the interpreter do it). */
+export interface HookResult { state: GameState; events: GameEvent[]; pending?: PendingDecision; then?: EffectNode[] }
 
 /** Code escape hatch ({code, params}); implementations live in src/engine/code-hooks.ts. */
 export type CodeConditionHook = (ctx: HookContext, params: Record<string, unknown>) => boolean
-export type CodeEffectHook = (ctx: HookContext, params: Record<string, unknown>) => HookResult
+/** What a code hook may do to ask a seat a question (additive, M8): the interpreter re-runs the hook from the same state once the answer is in, so a hook that asks must be deterministic up to the ask. `null` = no option to offer. */
+export interface HookIO { ask(seat: SeatId, options: { id: string; label: string }[]): string | null }
+export type CodeEffectHook = (ctx: HookContext, params: Record<string, unknown>, io?: HookIO) => HookResult
 /** `params` (additive, M1) = the `{code, params}` node's params, so one hook serves every card that names it with a different number. */
 export type CodeObjectiveHook = (state: GameState, seat: SeatId | null, params?: Record<string, unknown>) => { complete: boolean; parts: { label: string; have: number; need: number }[] }
 export interface CodeHookRegistry {

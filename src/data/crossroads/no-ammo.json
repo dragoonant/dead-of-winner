@@ -1,0 +1,57 @@
+{
+  "kind": "crossroads",
+  "id": "xr.no-ammo",
+  "name": "No Ammo",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.abilityUse"
+        },
+        {
+          "test": "symbolDrawn",
+          "subject": "card",
+          "symbol": "weapon"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "bin-the-weapon",
+      "effect": [
+        {
+          "code": "crossroads.rule.wasteCard"
+        }
+      ]
+    },
+    {
+      "id": "hunt-for-ammunition",
+      "effect": [
+        {
+          "code": "crossroads.rule.spendDice",
+          "params": {
+            "count": "all",
+            "who": "active"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has just used the ability of a weapon item card.",
+    "vignette": "The shot lands and the zombie drops, and you reach for the next clip only to find your pocket empty. For a long moment you stare at the barrel and think of everything the gun cannot do now.",
+    "options": {
+      "bin-the-weapon": "Throw the empty weapon away: the weapon whose ability was just used goes to the waste pile.",
+      "hunt-for-ammunition": "Scour for more rounds: move all your unused action dice to used."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 25",
+    "options": "BGG crossroads-v1.1 card 25"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #25"
+}

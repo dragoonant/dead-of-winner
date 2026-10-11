@@ -1,0 +1,70 @@
+{
+  "kind": "crossroads",
+  "id": "xr.welcome-home",
+  "name": "Welcome Home",
+  "mature": true,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "test": "actionWas",
+      "value": "move"
+    }
+  },
+  "options": [
+    {
+      "id": "take-the-gun",
+      "effect": [
+        {
+          "op": "exposure",
+          "count": 1,
+          "value": "card",
+          "scope": {
+            "who": "survivor"
+          }
+        },
+        {
+          "code": "crossroads.rule.ifAlive",
+          "params": {
+            "survivor": "ctx",
+            "then": [
+              {
+                "code": "crossroads.rule.attach",
+                "params": {
+                  "survivor": "ctx",
+                  "name": "steadyAim",
+                  "attackSkip": {
+                    "oncePerRound": true
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "run",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player moves a survivor.",
+    "vignette": "Halfway to your destination you realise you are on your old street, and your feet carry you to your parents' door before the rest of you can argue. The house is quiet in the wrong way, and something is shuffling upstairs.",
+    "options": {
+      "take-the-gun": "Face what is on the stairs: the moved survivor rolls exposure once. If they live, this card goes on them: once per round, when they attack, they roll no exposure.",
+      "run": "Run out and do not look back. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 68",
+    "options": "BGG crossroads-v1.1 card 68",
+    "mature": "BGG crossroads-v1.1 card 68 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #68; Mature by our reading (a suicide in the family)."
+}

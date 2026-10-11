@@ -1,0 +1,70 @@
+{
+  "kind": "crossroads",
+  "id": "xr.dynamite",
+  "name": "Dynamite",
+  "decider": "sv.edward-white",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.edward-white",
+            "rel": "inPlay"
+          }
+        },
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.john-price",
+            "rel": "inPlay"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "light-the-fuse",
+      "effect": [
+        {
+          "code": "crossroads.dynamite.blast"
+        }
+      ]
+    },
+    {
+      "id": "brew-a-batch",
+      "effect": [
+        {
+          "op": "grant",
+          "what": "extraDie",
+          "value": -1,
+          "scope": {
+            "who": "allSeats"
+          },
+          "duration": "nextRound"
+        },
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Edward White and John Price are both in play. The player who controls Edward White makes the choice.",
+    "vignette": "Edward has two jars of cloudy liquid on the workbench and a grin that worries everyone in the room. John wants to throw in whatever is under the sink, and Edward is rapidly running out of patience.",
+    "options": {
+      "light-the-fuse": "Roll a die. On a 1, Edward White and John Price both die. Otherwise roll another die: that many zombies are removed from the colony and each is replaced by a barricade of rubble.",
+      "brew-a-batch": "A safer use for the chemistry. Next round every player rolls one action die fewer, and morale rises by 1."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 62",
+    "options": "BGG crossroads-v1.1 card 62"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #62; The choice belongs to the controller of Edward White (decider). Rubble barricades equal the zombies actually removed."
+}

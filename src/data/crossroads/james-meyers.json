@@ -1,0 +1,50 @@
+{
+  "kind": "crossroads",
+  "id": "xr.james-meyers",
+  "name": "James Meyers",
+  "survivor": "sv.james-meyers",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.james-meyers",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "audit-the-medicine",
+      "effect": [
+        {
+          "code": "crossroads.james-meyers.audit"
+        }
+      ]
+    },
+    {
+      "id": "read-a-secret",
+      "effect": [
+        {
+          "code": "crossroads.james-meyers.readObjective"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls James Meyers and is not exiled.",
+    "vignette": "James has been quietly watching how everyone copes, and he offers to put his training to use. He could audit the medicine stores or sit down with someone and find out what they are really playing for.",
+    "options": {
+      "audit-the-medicine": "Look at all the hands. If they hold 3 or more Medicine cards between them, you pick 3 of them to leave the game and morale rises by 1.",
+      "read-a-secret": "Pick another player and read their secret objective; you are free to talk about it."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 35",
+    "options": "BGG crossroads-v1.1 card 35"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #35"
+}

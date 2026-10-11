@@ -1,0 +1,51 @@
+{
+  "kind": "crossroads",
+  "id": "xr.spoiled",
+  "name": "Spoiled",
+  "mature": false,
+  "trigger": {
+    "point": "action.spendFood",
+    "when": {
+      "test": "actionWas",
+      "value": "spendFood"
+    }
+  },
+  "options": [
+    {
+      "id": "eat-it-anyway",
+      "effect": [
+        {
+          "op": "wound",
+          "count": 1,
+          "scope": {
+            "who": "seatSurvivors",
+            "count": 1,
+            "chooser": "owner"
+          }
+        }
+      ]
+    },
+    {
+      "id": "throw-it-away",
+      "effect": [
+        {
+          "code": "crossroads.spoiled.spoil"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player spends food to raise an action die.",
+    "vignette": "The label is peeling and the lid bulges just enough to be a rumour, but you are hungry in a way that makes doubt feel like a luxury. You take your thumb off the seal and think about it.",
+    "options": {
+      "eat-it-anyway": "Risk it: choose one of your survivors; they take 1 wound. The die rises as normal.",
+      "throw-it-away": "Bin it: the food is still spent but the die does not rise."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 5",
+    "options": "BGG crossroads-v1.1 card 5"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #5; Fires after the die was raised, so the spoiled option takes that raise back."
+}

@@ -311,7 +311,7 @@ function spendFoodPart(state: GameState, a: SpendFoodAction): Part {
   if (bad) return { state, events: [], rejection: bad }
   const acc = startOut(state)
   mergeInto(acc, applySpendFood(state, a))
-  mergeInto(acc, afterAction(acc.state, 'action.spendFood', { seat: a.seat, dieId: a.dieId }))
+  mergeInto(acc, afterAction(acc.state, 'action.spendFood', { seat: a.seat, dieId: a.dieId, params: { tokens: a.tokens } }))
   return acc
 }
 

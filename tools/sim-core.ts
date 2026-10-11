@@ -193,7 +193,7 @@ export function leakCheck(s: GameState, events: GameEvent[]): string[] {
     const v = view(s, seat)
     if ((s.phase === 'ended') !== (v.recap !== undefined)) out.push(`${seat}: recap present=${v.recap !== undefined} while phase is ${s.phase}`)
     const text = serializeView(v)
-    for (const n of needles) if (text.includes(`"${n}"`)) out.push(`${seat} view contains ${n}`)
+    for (const n of needles) if (text.includes(`"${n}"`)) { const at = text.indexOf(`"${n}"`); out.push(`${seat} view contains ${n} (…${text.slice(Math.max(0, at - 90), at + 30)}…)`) }
     for (const ev of events) {
       const red = redactEvent(ev, seat)
       if (!red) continue
@@ -301,7 +301,9 @@ export async function runGame(bundle: DataBundle, seed: string, index: number, o
       viol('invariant', m)
       violations[violations.length - 1]!.detail = `action ${JSON.stringify(action)}\n    events ${next.events.map((e) => (/^(Crossroads|Crisis|Card|Deck)/.test(e.type) ? JSON.stringify(e) : e.type)).join('\n      ')}\n    crossroads ${JSON.stringify({ deck: next.state.crossroads.deck.length, held: next.state.crossroads.held, active: next.state.crossroads.active, log: next.state.crossroads.log.slice(-3) })}\n    crisis ${JSON.stringify({ deck: next.state.crisisDeck.length, cardId: next.state.crisis.cardId, result: !!next.state.crisis.result, history: next.state.crisis.history.length })}`
     }
-    for (const m of leakCheck(next.state, next.events)) leaks.push({ seed, index, decision, kind: 'leak', message: m })
+    for (const m of leakCheck(next.state, next.events)) leaks.push({ seed, index, decision, kind: 'leak', message: m, detail: `action ${JSON.stringify(action)}
+    pending ${next.pending.kind} ${JSON.stringify(next.pending.context?.data ?? {}).slice(0, 200)}
+    events ${next.events.map((e) => e.type).join(',')}` })
     if (next.state.log.length !== state.log.length + 1) viol('log', `log grew by ${next.state.log.length - state.log.length}`)
     const sig = progressSignature(next.state)
     if (sig === lastSig) { if (++stalled >= o.stall) { viol('stall', `${o.stall} decisions without progress; last actions: ${recent.map((a) => a.type).join(' ')}`); r = next; break } }

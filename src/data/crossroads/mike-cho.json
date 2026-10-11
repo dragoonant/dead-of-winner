@@ -1,0 +1,100 @@
+{
+  "kind": "crossroads",
+  "id": "xr.mike-cho",
+  "name": "Mike Cho",
+  "survivor": "sv.mike-cho",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.seatAt",
+          "params": {
+            "zombies": true
+          }
+        },
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.mike-cho",
+            "rel": "inDeck"
+          }
+        },
+        {
+          "test": "emptySurvivorSpace",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "fight-beside-him",
+      "effect": [
+        {
+          "code": "crossroads.rule.recruit",
+          "params": {
+            "survivor": "sv.mike-cho",
+            "wounds": 1
+          }
+        },
+        {
+          "code": "crossroads.mike-cho.where",
+          "params": {
+            "then": [
+              {
+                "op": "wound",
+                "count": 1,
+                "scope": {
+                  "who": "allSurvivors",
+                  "filter": {
+                    "test": "survivorIs",
+                    "subject": "survivor",
+                    "value": "$pick"
+                  }
+                }
+              },
+              {
+                "op": "killZombies",
+                "count": "all",
+                "location": "$pickLoc"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "slip-away",
+      "effect": [
+        {
+          "code": "crossroads.mike-cho.where",
+          "params": {
+            "then": [
+              {
+                "op": "killZombies",
+                "count": "all",
+                "location": "$pickLoc"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor outside the colony at a location holding zombies, Mike Cho is in the survivor deck, and the colony has room.",
+    "vignette": "Your back is to the wall and there is nothing left but to close your eyes, when a flash of steel cuts through the nearest corpses and a stranger in dark clothes wades into the room. He does not speak, only swings, and the noise starts to fall away.",
+    "options": {
+      "fight-beside-him": "Fight beside him: Mike Cho leaves the survivor deck and joins your following with 1 wound, one of your survivors outside the colony (your pick) takes 1 wound too, and every zombie at that location is removed.",
+      "slip-away": "Use the confusion to escape: every zombie is removed from one location outside the colony where you have a survivor (your pick)."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 55",
+    "options": "BGG crossroads-v1.1 card 55"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #55"
+}

@@ -1,0 +1,85 @@
+{
+  "kind": "crossroads",
+  "id": "xr.maria-lopez",
+  "name": "Maria Lopez",
+  "survivor": "sv.maria-lopez",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.maria-lopez",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "bring-them-food",
+      "requires": {
+        "test": "foodAtLeast",
+        "value": 3
+      },
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.maria-lopez",
+            "location": "loc.school"
+          }
+        },
+        {
+          "op": "food",
+          "value": -3
+        },
+        {
+          "code": "crossroads.rule.searchDeck",
+          "params": {
+            "location": "loc.school",
+            "count": 3,
+            "mode": "pick",
+            "to": "hand"
+          }
+        }
+      ]
+    },
+    {
+      "id": "open-the-pantry",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.maria-lopez",
+            "location": "loc.school"
+          }
+        },
+        {
+          "code": "crossroads.rule.searchDeck",
+          "params": {
+            "location": "loc.school",
+            "count": "all",
+            "symbol": "food",
+            "mode": "all",
+            "to": "removed"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Maria Lopez and is not exiled.",
+    "vignette": "The school hallways are silent when Maria steps in, but the silence turns out to be hiding a room of hungry children who have been fending for themselves. She can bring them something now or empty the pantry for them and leave.",
+    "options": {
+      "bring-them-food": "Maria is placed at the School (not a move). Remove 3 food from the supply and search the School deck for any 3 cards, adding them to your hand.",
+      "open-the-pantry": "Maria is placed at the School (not a move). Search the School deck for every Food card and remove them all from the game."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 8",
+    "options": "BGG crossroads-v1.1 card 8"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #8; The first option needs 3 food in the supply, otherwise the second is forced."
+}

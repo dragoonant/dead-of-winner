@@ -60,7 +60,9 @@ const PREFIX_BY_KIND: Record<RecordKind, RegExp> = {
   mainObjective: /^obj\.main\./, secretObjective: /^obj\.(secret|betrayal|exiled)\./, persona: /^ps\./,
 }
 const SELF_SCOPED_OPS = new Set(['forbid', 'grant', 'treatFaceAs'])
-const NON_LOCATION_WORDS = new Set(['here', 'chosen', 'anywhere', 'nonColony'])
+/** Words a `location` field may carry besides a location id: `from` / `choose` are hook parameters (Crossroads M8); `$pickLoc` style templates are filled in by a hook at run time. */
+const NON_LOCATION_WORDS = new Set(['here', 'chosen', 'anywhere', 'nonColony', 'from', 'choose'])
+const isTemplate = (v: unknown): boolean => typeof v === 'string' && v.startsWith('$')
 
 // ---------- helpers ----------
 function* deepObjects(x: unknown, path = ''): Generator<{ node: Record<string, unknown>; path: string }> {
@@ -156,8 +158,8 @@ export function validateBundle(rawIn: unknown, opts: ValidateOptions = {}): Data
   for (const { rec } of recs) {
     for (const { node, path } of deepObjects(rec)) {
       const loc = node.location
-      if (typeof loc === 'string' && !NON_LOCATION_WORDS.has(loc) && !has(loc, 'location')) push('V-03', 'error', `${rec.id}.${path}`, `location '${loc}' not found`)
-      if (node.test === 'survivorIs' && !has(node.value, 'survivor')) push('V-03', 'error', `${rec.id}.${path}`, `survivor '${String(node.value)}' not found`)
+      if (typeof loc === 'string' && !NON_LOCATION_WORDS.has(loc) && !isTemplate(loc) && !has(loc, 'location')) push('V-03', 'error', `${rec.id}.${path}`, `location '${loc}' not found`)
+      if (node.test === 'survivorIs' && !isTemplate(node.value) && !has(node.value, 'survivor')) push('V-03', 'error', `${rec.id}.${path}`, `survivor '${String(node.value)}' not found`)
     }
   }
   for (const [name, ids] of Object.entries(raw.slices ?? {})) for (const id of ids) {
@@ -211,9 +213,9 @@ export function validateBundle(rawIn: unknown, opts: ValidateOptions = {}): Data
   // V-09 Crossroads
   for (const x of raw.records.crossroads) {
     const ids = x.options.map((o) => o.id)
-    if (ids[0] === ids[1]) push('V-09', 'error', x.id, 'options need distinct ids')
+    if (new Set(ids).size !== ids.length) push('V-09', 'error', x.id, 'options need distinct ids')
     const textKeys = Object.keys(x.text.options)
-    if (textKeys.length !== 2 || ids.some((i) => !textKeys.includes(i))) push('V-09', 'error', x.id, `text.options keys [${textKeys}] != option ids [${ids}]`)
+    if (textKeys.length !== ids.length || ids.some((i) => !textKeys.includes(i))) push('V-09', 'error', x.id, `text.options keys [${textKeys}] != option ids [${ids}]`)
     for (const o of x.options) if (o.vote) {
       const first = o.effect[0] as { op?: string } | undefined
       if (first?.op !== 'vote') push('V-09', 'error', `${x.id}.${o.id}`, 'vote:true needs the first effect to be op vote')
@@ -221,7 +223,7 @@ export function validateBundle(rawIn: unknown, opts: ValidateOptions = {}): Data
     if (!x.trigger.point.startsWith('action.')) push('V-09', 'error', x.id, `trigger.point '${x.trigger.point}' is not an action.* window`)
     if (x.survivor) {
       const t = JSON.stringify(x.trigger.when)
-      if (!(t.includes('"survivorIs"') || t.includes('"atLocation"'))) push('V-09', 'warn', x.id, 'survivor-named card whose trigger tests neither survivorIs nor atLocation')
+      if (!(t.includes('"survivorIs"') || t.includes('"atLocation"') || t.includes('"crossroads.rule.survivor"'))) push('V-09', 'warn', x.id, 'survivor-named card whose trigger tests neither survivorIs nor atLocation')
     }
   }
 

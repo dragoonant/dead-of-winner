@@ -1,0 +1,85 @@
+{
+  "kind": "crossroads",
+  "id": "xr.gray-beard",
+  "name": "Gray Beard",
+  "survivor": "sv.gray-beard",
+  "mature": false,
+  "coop": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.gray-beard",
+            "rel": "inDeck"
+          }
+        },
+        {
+          "test": "emptySurvivorSpace",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "hand-over-a-card",
+      "effect": [
+        {
+          "op": "removeCard",
+          "value": "hand",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "follow-his-rules",
+      "effect": [
+        {
+          "code": "crossroads.rule.recruit",
+          "params": {
+            "survivor": "sv.gray-beard",
+            "leader": true
+          }
+        },
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "survivor": "sv.gray-beard",
+            "name": "steadyHand",
+            "attackSkip": {
+              "oncePerRound": true
+            }
+          }
+        },
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "name": "noContributions",
+            "forbid": [
+              "contribute"
+            ],
+            "seatOnly": true,
+            "boundSurvivor": "sv.gray-beard"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player moves a survivor while Gray Beard is in the survivor deck and the colony has room.",
+    "vignette": "On the edge of the colony a gaunt man with a long grey beard is feeding rounds into a rifle and he does not look pleased to see you. He does not say whether he is a threat or an offer, only that if you want his help it will be on his terms.",
+    "options": {
+      "hand-over-a-card": "Give him something and back away: a card chosen at random from your hand is removed from the game.",
+      "follow-his-rules": "Take him on: Gray Beard leaves the survivor deck, joins your following as your leader, and this card goes under him. Once a round his attack costs no exposure roll. While he is yours, you may not put cards toward a crisis."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 18",
+    "options": "BGG crossroads-v1.1 card 18"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #18; Not used in the co-op variant. The crisis ban ends when Gray Beard dies or changes hands (bound to the survivor)."
+}

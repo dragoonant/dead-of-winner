@@ -1,0 +1,163 @@
+{
+  "kind": "crossroads",
+  "id": "xr.collapsing-barriers",
+  "name": "Collapsing Barriers",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "barricadesAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "zombiesAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 1
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Send out a clearing team",
+              "effect": [
+                {
+                  "code": "crossroads.rule.eachSeatPick",
+                  "params": {
+                    "where": "colony",
+                    "then": [
+                      {
+                        "op": "exposure",
+                        "count": 1,
+                        "value": "card",
+                        "scope": {
+                          "who": "allSurvivors",
+                          "filter": {
+                            "test": "survivorIs",
+                            "subject": "survivor",
+                            "value": "$pick"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Let the barricades go",
+              "effect": [
+                {
+                  "op": "removeBarricade",
+                  "count": "all",
+                  "location": "colony"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Send out a clearing team",
+              "effect": [
+                {
+                  "code": "crossroads.rule.eachSeatPick",
+                  "params": {
+                    "where": "colony",
+                    "then": [
+                      {
+                        "op": "exposure",
+                        "count": 1,
+                        "value": "card",
+                        "scope": {
+                          "who": "allSurvivors",
+                          "filter": {
+                            "test": "survivorIs",
+                            "subject": "survivor",
+                            "value": "$pick"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Let the barricades go",
+              "effect": [
+                {
+                  "op": "removeBarricade",
+                  "count": "all",
+                  "location": "colony"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony, and the colony holds at least 1 barricade and at least 1 zombie.",
+    "vignette": "The dead lean on the colony barricades until the planks bow outward and every crack is somebody's fingers. Clearing them means stepping into the gap; leaving them means the boards will give way on their own.",
+    "options": {
+      "up": "Thumbs up: every player with a survivor at the colony picks one of them to go out; each of those survivors rolls for exposure.",
+      "down": "Thumbs down: pull the barricades down. Every barricade at the colony is removed."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 31",
+    "options": "BGG crossroads-v1.1 card 31"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #31"
+}

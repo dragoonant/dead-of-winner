@@ -1,0 +1,46 @@
+{
+  "kind": "crossroads",
+  "id": "xr.prophet",
+  "name": "Prophet",
+  "mature": false,
+  "coop": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.prophet"
+    }
+  },
+  "options": [
+    {
+      "id": "win-them-over",
+      "effect": [
+        {
+          "code": "crossroads.prophet.convert"
+        }
+      ]
+    },
+    {
+      "id": "leave-a-warning",
+      "effect": [
+        {
+          "op": "morale",
+          "value": -1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "An exiled player controls a survivor who stands at the same location as a non-exiled survivor.",
+    "vignette": "You are alone on a quiet corner with a message to deliver when a stray from the colony wanders into view, unaware of how close you are. You have a speech ready, and a brick to hand if the speech does not take.",
+    "options": {
+      "win-them-over": "Speak to them gently: recruit a non-exiled survivor who stands where one of yours does (never the last survivor of its player).",
+      "leave-a-warning": "Make your point harder and leave it where the colony will see: the colony loses 1 morale."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 29",
+    "options": "BGG crossroads-v1.1 card 29"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #29; Needs an exiled player, so it is left out of the co-op variant. A survivor cannot be taken from a player's last survivor."
+}

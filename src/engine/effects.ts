@@ -19,7 +19,7 @@ import type {
 import type { GameEvent } from './events'
 import { WINDOW_IDS } from './types'
 import type {
-  CardEffectDescriptor, CodeConditionHook, ConditionNode, CrisisDescriptor, CrossroadsDescriptor, EffectNode, HookContext, HookPoint,
+  CardEffectDescriptor, CodeConditionHook, ConditionNode, CrisisDescriptor, CrossroadsDescriptor, EffectNode, HookContext, HookIO, HookPoint,
   HookResult, ScopeNode,
 } from './hooks'
 import { nextFloat, roll, shuffle } from './rng'
@@ -29,7 +29,7 @@ import type {
   SurvivorState, WindowId, WoundKind, ZombieSource,
 } from './types'
 import { bundleFor } from './bundles'
-import { CODE_HOOKS } from './code-hooks'
+import { CODE_HOOKS, biteShield } from './code-hooks'
 import { checkCrossroads } from './crossroads'
 import { addWoundInto, isMoraleEndDeferred, rollExposureFor as realRollExposure, setServices, svc as exposureServices } from './exposure'
 import { addSurvivorFromDeck as realAddSurvivor, removeSurvivor as realRemoveSurvivor } from './survivors'
@@ -228,6 +228,29 @@ function survivorOwnDescriptors(state: GameState, sv: SurvivorState): CardEffect
       out.push(abilityDescriptor(a, { sourceId: def.id, source: 'item', ownerSeat: sv.owner!, survivorId: sv.id, cardInstanceId: cardId }))
     }
   }
+  // Crossroads cards "placed under" a survivor (M8, 00 §16): a lasting effect whose data.ability is an ability record. `forEvery` = every
+  // seat may use it through its first survivor that stands where the ability works (Janet Taylor's clinic).
+  for (const e of state.effects) {
+    const ab = e.data?.ability as Rec | undefined
+    if (!ab) continue
+    const mine = !!e.survivorIds?.includes(sv.id)
+    const shared = e.data?.forEvery === true && state.seats[sv.owner ?? '']?.survivors.find((id) => { const o = state.survivors[id]; return o?.status === 'alive' && locationOk(o, ab.location ?? 'anywhere') }) === sv.id
+    if (mine || shared) out.push(abilityDescriptor(ab, { sourceId: e.sourceId, source: 'survivor', ownerSeat: sv.owner!, survivorId: sv.id }))
+  }
+  return out
+}
+
+/** Crossroads rules that every seat carries (M8): a lasting effect whose data.global lists ability records; one descriptor per live seat, owned by that seat. */
+function globalDescriptors(state: GameState): CardEffectDescriptor[] {
+  const out: CardEffectDescriptor[] = []
+  for (const e of state.effects) {
+    const list = e.data?.global as Rec[] | undefined
+    if (!list) continue
+    for (const seat of state.seatOrder) {
+      if (state.seats[seat]?.seat.eliminated) continue
+      for (const def of list) out.push(abilityDescriptor(def, { sourceId: e.sourceId, source: 'crossroads', ownerSeat: seat }))
+    }
+  }
   return out
 }
 const copiesAbilities = (d: CardEffectDescriptor): boolean =>
@@ -282,6 +305,7 @@ export function collectTriggers(state: GameState, point: HookPoint, subject?: { 
   const start = state.activeSeat ? Math.max(0, state.seatOrder.indexOf(state.activeSeat)) : 0
   const order = state.seatOrder.map((_, i) => state.seatOrder[(start + i) % state.seatOrder.length]!)
   const out: CardEffectDescriptor[] = objectiveDescriptors(state).filter((d) => d.point === point)
+  out.push(...globalDescriptors(state).filter((d) => d.point === point))
   for (const seat of order) {
     const st = state.seats[seat]
     if (!st) continue
@@ -320,7 +344,7 @@ export function crossroadsDescriptor(state: GameState, id: Id): CrossroadsDescri
   const rec = recOf(state, id)
   if (!rec) return null
   return {
-    id, point: rec.trigger?.point, when: rec.trigger?.when,
+    id, point: rec.trigger?.point, when: rec.trigger?.when, ...(rec.decider ? { decider: rec.decider } : {}),
     options: (rec.options ?? []).map((o: Rec) => ({ id: o.id, effect: o.effect, requires: o.requires, vote: o.vote })),
     mature: rec.mature,
   }
@@ -530,12 +554,19 @@ function effectCovers(e: EffectInstance, st: GameState, o: { survivorId?: Surviv
   if (e.locations && (!loc || !e.locations.includes(loc))) return false
   return true
 }
+/** An effect tied to a survivor (`data.boundSurvivor`, Gray Beard's crisis ban) holds only while that survivor is alive and its owner is one of the effect's seats. */
+function boundHolds(state: GameState, e: EffectInstance): boolean {
+  const b = e.data?.boundSurvivor as string | undefined
+  if (!b) return true
+  const sv = state.survivors[b]
+  return !!sv && sv.status === 'alive' && !!sv.owner && (!e.seats || e.seats.includes(sv.owner))
+}
 /** Is `what` forbidden for this seat / survivor now (Blizzard, exile)? */
 export function isForbidden(state: GameState, what: string, o: { survivorId?: SurvivorId; seat?: SeatId; location?: LocationId }): boolean {
   const seat = state.seats[o.seat ?? state.survivors[o.survivorId ?? '']?.owner ?? '']
   const exiled = !!seat?.seat.exiled
   if (what === 'move' && exiled) return false // an exiled seat is not stopped by Blizzard (MOVE-009)
-  if (state.effects.some((e) => e.forbid?.includes(what) && effectCovers(e, state, o))) return true
+  if (state.effects.some((e) => e.forbid?.includes(what) && effectCovers(e, state, o) && boundHolds(state, e))) return true
   return exiled && ['contribute', 'spendFood', 'vote', 'addHelpless'].includes(what) // R15.3
 
 }
@@ -857,8 +888,12 @@ function execNode(q: Q, w: Work, work: Work[], rc: RunCtx, later: Job[]): void {
   if ('code' in node) {
     const fn = CODE_HOOKS.effects[node.code]
     if (fn) {
-      const r = fn({ ...evalCtxOf(acc.state, rc), seat: rc.seat, point: rc.point }, node.params ?? {})
+      const io: HookIO = { ask: (seat, options) => ask(q, { seat, code: codeFor(rc.sourceId, rc.abilityId), point: rc.point, options }) }
+      const r = fn({ ...evalCtxOf(acc.state, rc), seat: rc.seat, point: rc.point }, node.params ?? {}, io)
       acc.state = r.state; emit(acc, ...r.events)
+      if (r.pending) acc.pending = r.pending
+      // a lasting rule is named after its node index: nodes a hook adds get their own fractional index so two forbids/grants never merge into one
+      if (r.then?.length) work.unshift(...r.then.map((n, i) => ({ node: n, idx: w.idx + (i + 1) / 100, answers: [] as string[] })))
     }
     return
   }
@@ -1089,8 +1124,9 @@ function applyOp(q: Q, node: OpNode, w: Work, rc: RunCtx, later: Job[]): EffectN
         const n = Math.min(countOf(node, 1), l.helpless)
         if (n <= 0) return
         setLoc(acc, loc, { helpless: l.helpless - n })
-        emit(acc, { type: 'HelplessKilled', location: loc, count: n, after: l.helpless - n, cause: killCauseOf(rc.sourceKind), moraleLoss: true })
-        changeMorale(acc, -n, 'helplessKilled', rc.sourceId)
+        const noMorale = node.value === 'noMorale' // "remove from the game" (the card names any morale loss itself) instead of a death (R10.2)
+        emit(acc, { type: 'HelplessKilled', location: loc, count: n, after: l.helpless - n, cause: killCauseOf(rc.sourceKind), moraleLoss: !noMorale })
+        if (!noMorale) changeMorale(acc, -n, 'helplessKilled', rc.sourceId)
       }
       return
     }
@@ -1374,9 +1410,7 @@ function applyOp(q: Q, node: OpNode, w: Work, rc: RunCtx, later: Job[]): EffectN
       let tiebreakBy: SeatId | null = null
       let passed = yes > no
       if (yes === no) {
-        const order = st().seatOrder
-        const start = order.indexOf(st().firstSeat)
-        tiebreakBy = order.map((_, i) => order[(start + i) % order.length]!).find((s) => eligible.includes(s)) ?? null
+        tiebreakBy = voteTiebreaker(st(), eligible)
         passed = !!tiebreakBy && !!raw[tiebreakBy]
       }
       emit(acc, { type: 'VotesCast', target: rc.seat, votes: raw }, { type: 'VoteResult', target: rc.seat, yes, no, exiled: false, tiebreakBy })
@@ -1402,9 +1436,20 @@ function applyOp(q: Q, node: OpNode, w: Work, rc: RunCtx, later: Job[]): EffectN
   }
 }
 
+/** The first player breaks every tie, even an exiled one who cannot vote (digest General, R p4, R p11); only an eliminated first seat passes it to the next eligible seat clockwise. */
+function voteTiebreaker(st: GameState, eligible: SeatId[]): SeatId | null {
+  const first = st.seats[st.firstSeat]
+  if (first && !first.seat.eliminated) return st.firstSeat
+  const order = st.seatOrder
+  const start = Math.max(0, order.indexOf(st.firstSeat))
+  return order.map((_, i) => order[(start + i) % order.length]!).find((s) => eligible.includes(s)) ?? null
+}
 function askVotes(q: Q, rc: RunCtx, eligible: SeatId[]): Record<SeatId, boolean> {
   if (q.cursor < q.answers.length) return JSON.parse(q.answers[q.cursor++]!) as Record<SeatId, boolean>
-  throw new NeedAnswer({ seat: 'all' as SeatId, kind: 'votes', code: 'effectVote', point: rc.point, options: [], context: { data: { eligible } } })
+  const tie = voteTiebreaker(q.acc.state, eligible)
+  // an exiled first player answers a tie through the extra ballot key `votes[tiebreakSeat]` (same shape as an exile vote)
+  const data = { eligible, ...(tie && !eligible.includes(tie) ? { tiebreakSeat: tie } : {}) }
+  throw new NeedAnswer({ seat: 'all' as SeatId, kind: 'votes', code: 'effectVote', point: rc.point, options: [], context: { data } })
 }
 
 // ---------- the job runner ----------
@@ -1615,7 +1660,7 @@ export function activateDescriptor(state: GameState, d: CardEffectDescriptor, ct
   if (bad) return { state, events: [], rejection: bad }
   const rc = rcFor(state, d, { ...ctx, seat, location: ctx.location ?? sv?.location }, 'action')
   const point: WindowId = d.countsAs ? (`action.${d.countsAs}` as WindowId) : 'action.ability'
-  const wctx: WindowCtx = { seat, survivorId: d.survivorId, location: rc.location, dieId: ctx.dieId }
+  const wctx: WindowCtx = { seat, survivorId: d.survivorId, location: rc.location, dieId: ctx.dieId, params: { fromAbility: true }, ...(d.cardInstanceId ? { cardId: d.cardInstanceId } : {}) }
   return runToResult(state, [{ t: 'fire', desc: d, rc, answers: [], activated: true }, ...afterActionJobs(point, wctx)])
 }
 
@@ -1684,8 +1729,10 @@ export function effectServices() {
       return hit ? { sourceId: hit.sourceId } : null
     },
     forbidden: (state: GameState, what: string, q: { survivorId?: SurvivorId; seat?: SeatId; location?: LocationId }): boolean => isForbidden(state, what, q),
+    biteShield,
     fire: (state: GameState, point: WindowId, ctx: WindowCtx = {}) => {
-      const r = fireWindow(state, point, ctx)
+      // an action window also lets the held Crossroads card look (FAQ 2.1.1); other windows only fire their triggers
+      const r = point.startsWith('action.') ? afterAction(state, point, ctx) : fireWindow(state, point, ctx)
       return { state: r.state, events: r.events, ...(r.pending ? { pending: r.pending } : {}) }
     },
     searchBonus: (state: GameState, survivorId: SurvivorId): { look: number; keep: number } => ({

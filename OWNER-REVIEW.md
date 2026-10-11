@@ -35,8 +35,6 @@ genuine gaps in the rulebook. Skim those and correct any your copy or table expe
 
 ## 4. Decisions for the next push
 
-- [ ] **Remaining 60 Crossroads cards.** All are transcribed; each needs an original vignette and some need new
-      engine hooks. Estimate 300-500k tokens with one Sonnet agent. Do now, or batch with playtest fixes?
 - [ ] **Art (3D figures).** 30 survivors plus zombies through the Gemini + Hunyuan pipeline. This needs Claude in
       Chrome connected on this Windows PC (only the Mac's Chrome is connected right now). Start after the playtest?
 - [ ] **Audio.** ElevenLabs sound effects, narrator, persona voices, first 20 voiced Crossroads, music (confirm

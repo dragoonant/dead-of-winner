@@ -1,0 +1,71 @@
+{
+  "kind": "crossroads",
+  "id": "xr.talia-jones",
+  "name": "Talia Jones",
+  "survivor": "sv.talia-jones",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.talia-jones",
+        "rel": "controlled"
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "find-the-cache",
+      "effect": [
+        {
+          "code": "crossroads.rule.searchDeck",
+          "params": {
+            "location": "choose",
+            "count": 4,
+            "mode": "pick",
+            "to": "hand",
+            "shuffle": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "foresee-the-crisis",
+      "effect": [
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "name": "foresee",
+            "global": [
+              {
+                "id": "foresee",
+                "kind": "triggered",
+                "trigger": "crisis.revealed",
+                "effect": [
+                  {
+                    "code": "crossroads.talia-jones.foresee"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Talia Jones.",
+    "vignette": "Talia reads small habits the way other people read headlines, and the pattern in tonight's mess is hard to ignore. Either it points to a stash of supplies, or to a day on which the colony will not survive the crisis.",
+    "options": {
+      "find-the-cache": "Pick an item deck, hunt through it for any 4 cards you like, keep them in your hand, and shuffle the deck afterwards.",
+      "foresee-the-crisis": "When the next crisis card is flipped, it leaves the game and that round's crisis step is skipped."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 16",
+    "options": "BGG crossroads-v1.1 card 16"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #16; Skipping the crisis step also clears the round's face-up crisis, the same way Old Divisions does."
+}

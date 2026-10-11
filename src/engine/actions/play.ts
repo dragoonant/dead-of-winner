@@ -1,6 +1,7 @@
 // playCard (R7.1): from hand on the own turn; Waste Pile -> waste, Equip -> attached to a survivor, Event -> removed;
 // an exiled seat sends every played card to removed (R p14). Effects come from the item's `play` block.
 import type { PlayCardAction } from '../actions'
+import { cardLocked } from '../code-hooks'
 import type { EffectNode } from '../hooks'
 import {
   type Acc, type ActionResult, type Job, type RunCtx, afterActionJobs, checkDecision, defOf, detachCard, emitEvent, evalContext, evaluateCondition, hasSpace, isForbidden,
@@ -18,6 +19,7 @@ export function playPrecheck(state: GameState, seat: SeatId, cardId: CardId, equ
   if (opts.requireHand && !st.hand.includes(cardId)) return rejection('E_NOT_IN_HAND', 'that card is not in your hand')
   const def = defOf(state, cardId)
   if (!def) return rejection('E_NOT_IN_HAND', 'unknown card')
+  if (cardLocked(state, cardId)) return rejection('E_CARD_NOT_PLAYABLE', 'that card cannot be played before next round') // Voyeur
   if (def.class === 'none' || (!def.play && def.class !== 'equip')) return rejection('E_CARD_NOT_PLAYABLE', 'that card has nothing to play')
   const exiled = st.seat.exiled
   if (def.class === 'equip' && !exiled && opts.requireHand) {

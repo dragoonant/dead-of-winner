@@ -1,0 +1,110 @@
+{
+  "kind": "crossroads",
+  "id": "xr.airplane",
+  "name": "Airplane",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.sophie-robinson",
+        "rel": "inPlay"
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Let her fly",
+              "effect": [
+                {
+                  "code": "crossroads.airplane.fly"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Keep her on the ground",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Let her fly",
+              "effect": [
+                {
+                  "code": "crossroads.airplane.fly"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Keep her on the ground",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player moves a survivor while Sophie Robinson is in play.",
+    "vignette": "A crop duster sits rusting in a field beside the road, its tail held together with wire and its propeller still turning in the wind. Sophie circles it twice, kicks a tyre, and says she can have it in the air by dawn if the colony hands over some tools and fuel.",
+    "options": {
+      "up": "Thumbs up: the players give up one Tool card and one Fuel card from their hands (the game takes them in turn order from the active player) and Sophie flies off to scout. Both cards and Sophie leave the game, and morale rises by 1. If the cards are not there, nothing happens.",
+      "down": "Thumbs down: nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 52",
+    "options": "BGG crossroads-v1.1 card 52"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #52; The collective payment takes a Tool and a Fuel card from the hands, the active player first, then clockwise."
+}

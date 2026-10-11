@@ -1,0 +1,140 @@
+{
+  "kind": "crossroads",
+  "id": "xr.abandoned",
+  "name": "Abandoned",
+  "mature": true,
+  "trigger": {
+    "point": "action.cleanWaste",
+    "when": {
+      "test": "helplessAtLeast",
+      "subject": "location",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Keep the baby and the mother",
+              "effect": [
+                {
+                  "op": "addHelpless",
+                  "count": 1,
+                  "location": "colony"
+                },
+                {
+                  "op": "addZombies",
+                  "value": 5,
+                  "location": "colony"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Keep the baby, send the mother away",
+              "effect": [
+                {
+                  "op": "addZombies",
+                  "value": 5,
+                  "location": "colony"
+                },
+                {
+                  "code": "crossroads.rule.spendDice",
+                  "params": {
+                    "count": 1,
+                    "who": "all"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Keep the baby and the mother",
+              "effect": [
+                {
+                  "op": "addHelpless",
+                  "count": 1,
+                  "location": "colony"
+                },
+                {
+                  "op": "addZombies",
+                  "value": 5,
+                  "location": "colony"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Keep the baby, send the mother away",
+              "effect": [
+                {
+                  "op": "addZombies",
+                  "value": 5,
+                  "location": "colony"
+                },
+                {
+                  "code": "crossroads.rule.spendDice",
+                  "params": {
+                    "count": 1,
+                    "who": "all"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player cleans waste while at least one helpless survivor is at the colony.",
+    "vignette": "You are hauling a sack of rubbish to the pit behind the storehouse when a thin wail comes from between two stacked crates. A frightened girl from the colony is crouched there beside a bundle she has kept hidden for days, and the yard is quickly full of people who want a say in what happens to the two of them.",
+    "options": {
+      "up": "Thumbs up: the child stays and the colony takes in one more helpless survivor, but the crying draws the dead. 5 zombies are added at the colony.",
+      "down": "Thumbs down: the mother is turned out. The crying still draws 5 zombies to the colony, and the search for formula costs every player one unused action die."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 54",
+    "options": "BGG crossroads-v1.1 card 54",
+    "mature": "BGG crossroads-v1.1 card 54 (verify)"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #54; Mature by our reading (an abandoned infant). Each player \"who is able\" loses its lowest unused die (the hook picks for the player)."
+}

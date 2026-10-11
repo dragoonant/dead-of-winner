@@ -1,0 +1,71 @@
+{
+  "kind": "crossroads",
+  "id": "xr.riot",
+  "name": "Riot",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "code": "crossroads.riot.helplessOutnumber"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "empty-the-pantry",
+      "effect": [
+        {
+          "op": "food",
+          "value": -99
+        }
+      ]
+    },
+    {
+      "id": "let-it-turn-ugly",
+      "effect": [
+        {
+          "op": "wound",
+          "count": 1,
+          "scope": {
+            "who": "atLocation",
+            "location": "colony"
+          }
+        }
+      ]
+    },
+    {
+      "id": "make-an-example",
+      "effect": [
+        {
+          "op": "removeHelpless",
+          "count": 1,
+          "location": "colony"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony and helpless survivors outnumber the other survivors there.",
+    "vignette": "The pantry is locked and the crowd outside it grows louder, since there are more of them than there are in charge. Someone has found a crowbar and no one is willing to stand in front of it.",
+    "options": {
+      "empty-the-pantry": "Let them take it all: every food token is removed from the supply.",
+      "let-it-turn-ugly": "Brawl in the hall: each survivor at the colony (helpless tokens excepted) takes 1 wound.",
+      "make-an-example": "Make an example of one rioter: a helpless survivor dies (morale falls by 1)."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 49",
+    "options": "BGG crossroads-v1.1 card 49"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #49; Three options. Helpless tokens are not survivors: the wound goes on the survivors standing at the colony."
+}

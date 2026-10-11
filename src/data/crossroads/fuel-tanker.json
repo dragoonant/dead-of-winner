@@ -1,0 +1,58 @@
+{
+  "kind": "crossroads",
+  "id": "xr.fuel-tanker",
+  "name": "Fuel Tanker",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "not": {
+        "test": "seatIsExiled",
+        "subject": "seat"
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "drive-it-home",
+      "effect": [
+        {
+          "op": "addZombies",
+          "value": 6,
+          "location": "colony"
+        },
+        {
+          "code": "crossroads.rule.recoverRemoved",
+          "params": {
+            "symbol": "fuel",
+            "count": 4,
+            "to": "hand"
+          }
+        }
+      ]
+    },
+    {
+      "id": "leave-it",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player moves a survivor who is not exiled.",
+    "vignette": "A tanker truck sits crooked on the shoulder with its cab door swinging, and the tank slops audibly when you thump the steel. The engine would start; it would also be heard for miles.",
+    "options": {
+      "drive-it-home": "Drive it to the colony with the dead in tow: 6 zombies are added at the colony and you take up to 4 Fuel cards that have left the game into your hand.",
+      "leave-it": "Switch the engine off and walk away. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 79",
+    "options": "BGG crossroads-v1.1 card 79"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #79"
+}

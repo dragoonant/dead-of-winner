@@ -15,6 +15,7 @@
     "sim": "tsx tools/sim.ts",
     "bench:ai": "tsx tools/ai-bench.ts",
     "validate:data": "tsx tools/validate-data.ts",
+    "check:copied": "tsx tools/check-copied-text.ts",
     "textures": "python tools/textures/gen_textures.py",
     "models:optimize": "node tools/models/optimize.mjs"
   },

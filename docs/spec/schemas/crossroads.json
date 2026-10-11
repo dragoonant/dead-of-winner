@@ -20,10 +20,11 @@
       },
       "additionalProperties": false
     },
+    "decider": { "$ref": "common.json#/$defs/survivorId", "description": "the controller of this survivor makes the choice instead of the active player (Dynamite, Thomas Heart)" },
     "options": {
       "type": "array",
       "minItems": 2,
-      "maxItems": 2,
+      "maxItems": 3,
       "items": {
         "type": "object",
         "required": ["id", "effect"],
@@ -42,7 +43,7 @@
       "properties": {
         "vignette": { "type": "string", "minLength": 1, "maxLength": 900, "description": "our own scene that leads to the same two options (Part F)" },
         "trigger": { "$ref": "common.json#/$defs/prose", "description": "the trigger in words, shown in the recap" },
-        "options": { "type": "object", "minProperties": 2, "maxProperties": 2, "additionalProperties": { "$ref": "common.json#/$defs/prose" } }
+        "options": { "type": "object", "minProperties": 2, "maxProperties": 3, "additionalProperties": { "$ref": "common.json#/$defs/prose" } }
       },
       "additionalProperties": false
     },

@@ -1,0 +1,90 @@
+{
+  "kind": "crossroads",
+  "id": "xr.supply-drop",
+  "name": "Supply Drop",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "chase-the-parachute",
+      "effect": [
+        {
+          "code": "crossroads.rule.pick",
+          "params": {
+            "who": "own",
+            "then": [
+              {
+                "op": "exposure",
+                "count": 3,
+                "value": "card",
+                "scope": {
+                  "who": "allSurvivors",
+                  "filter": {
+                    "test": "survivorIs",
+                    "subject": "survivor",
+                    "value": "$pick"
+                  }
+                }
+              },
+              {
+                "code": "crossroads.rule.ifAlive",
+                "params": {
+                  "survivor": "$pick",
+                  "then": [
+                    {
+                      "op": "food",
+                      "value": 5
+                    },
+                    {
+                      "code": "crossroads.rule.ifInPlay",
+                      "params": {
+                        "survivor": "sv.annaleigh-chan",
+                        "then": [
+                          {
+                            "op": "morale",
+                            "value": 1
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "let-it-drift",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony.",
+    "vignette": "A plane roars over the colony at rooftop height and something falls behind it, a pale parachute drifting away across the fields. If it holds food it is worth walking out for; if it holds a trap it is worth nothing at all.",
+    "options": {
+      "chase-the-parachute": "Choose one of your survivors; they roll exposure 3 times. If they survive, 5 food is added to the supply, and if Annaleigh Chan is in play she can read the crate's markings: morale rises by 1.",
+      "let-it-drift": "Let it go. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 42",
+    "options": "BGG crossroads-v1.1 card 42"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #42; The morale gain needs Annaleigh Chan in play and is read as part of the success branch."
+}

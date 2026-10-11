@@ -1,0 +1,109 @@
+{
+  "kind": "crossroads",
+  "id": "xr.radio-signal",
+  "name": "Radio Signal",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Answer the call",
+              "effect": [
+                {
+                  "code": "crossroads.radio-signal.answer"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Switch it off",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": -1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Answer the call",
+              "effect": [
+                {
+                  "code": "crossroads.radio-signal.answer"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Switch it off",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": -1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony.",
+    "vignette": "A scrap of static on an old CB radio resolves into a voice, thin and far away, saying the same few words again and again. Someone needs help, or wants everyone to think so.",
+    "options": {
+      "up": "Thumbs up: the players may move 3 unused action dice between them to used (each player says how many, active player first). If they do, a helpless survivor is added at the colony and morale rises by 1; if they do not, no one arrives and morale falls by 1.",
+      "down": "Thumbs down: morale falls by 1."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 32",
+    "options": "BGG crossroads-v1.1 card 32"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #32"
+}

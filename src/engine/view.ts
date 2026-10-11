@@ -293,5 +293,7 @@ export function hiddenIdsFor(state: GameState, seatId: SeatId): string[] {
       if (Array.isArray(a['keep'])) ids.push(...(a['keep'] as string[]))
     }
   }
-  return ids
+  // a card the whole table saw (a revealed crisis contribution) keeps its identity even when a Crossroads card later moves it into a hand (Fuel Tanker, Edward White)
+  const known = new Set(state.crisis.history.flatMap((h) => h.result.revealed.map((r) => r.cardId)))
+  return known.size ? ids.filter((i) => !known.has(i)) : ids
 }

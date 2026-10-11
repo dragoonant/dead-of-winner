@@ -1,0 +1,57 @@
+{
+  "kind": "crossroads",
+  "id": "xr.rod-miller",
+  "name": "Rod Miller",
+  "survivor": "sv.rod-miller",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.rod-miller",
+        "rel": "inPlay"
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "carry-him-to-the-hospital",
+      "effect": [
+        {
+          "code": "crossroads.rod-miller.carry"
+        }
+      ]
+    },
+    {
+      "id": "let-him-go",
+      "effect": [
+        {
+          "op": "killSurvivor",
+          "scope": {
+            "who": "allSurvivors",
+            "filter": {
+              "test": "survivorIs",
+              "subject": "survivor",
+              "value": "sv.rod-miller"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Rod Miller is in play.",
+    "vignette": "Rod clutches his chest and sits down heavily in the middle of the road, grey in the face. Someone remembers that the hospital has a machine for exactly this, and someone else remembers how far away the hospital is.",
+    "options": {
+      "carry-him-to-the-hospital": "Rod and 2 survivors you control (your pick) are placed at the Hospital (not a move), then each of the three rolls exposure twice. If the Hospital lacks room, you may send survivors already there back to the colony.",
+      "let-him-go": "Rod dies."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 41",
+    "options": "BGG crossroads-v1.1 card 41"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #41"
+}

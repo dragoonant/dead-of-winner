@@ -1,0 +1,60 @@
+{
+  "kind": "crossroads",
+  "id": "xr.wounded-survivor",
+  "name": "Wounded Survivor",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        },
+        {
+          "test": "emptySurvivorSpace",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "take-them-in",
+      "effect": [
+        {
+          "code": "crossroads.rule.recruit",
+          "params": {
+            "survivor": "random",
+            "exposure": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "wish-them-luck",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player searches with a survivor who is not exiled and the colony has room.",
+    "vignette": "A stranger waves from a doorway, one hand wrapped in a rag that is more brown than white, and asks whether your group has room for one more. They insist it was only broken glass, but they do not meet your eyes as they say it.",
+    "options": {
+      "take-them-in": "Tell them about the colony: draw a survivor card from the survivor deck into your following at the colony, then roll exposure twice for that survivor.",
+      "wish-them-luck": "Send them on their way. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 20",
+    "options": "BGG crossroads-v1.1 card 20"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #20"
+}

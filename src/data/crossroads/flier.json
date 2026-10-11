@@ -1,0 +1,49 @@
+{
+  "kind": "crossroads",
+  "id": "xr.flier",
+  "name": "Flier",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "read-it",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "tear-it-up",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony.",
+    "vignette": "A gust at dawn drops leaflets across the yard, each one printed on the same sun-faded orange paper and carrying the same bleak headline. Nobody argues; nobody reads further. You fold yours in half and tuck it into a pocket with everything else you cannot do anything about.",
+    "options": {
+      "read-it": "Read it through. Nothing happens.",
+      "tear-it-up": "Tear it up. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 51",
+    "options": "BGG crossroads-v1.1 card 51"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #51; The BGG sheet gives this card a trigger and a story but no option text, so it is a flavour card: both options do nothing."
+}

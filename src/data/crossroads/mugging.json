@@ -1,0 +1,45 @@
+{
+  "kind": "crossroads",
+  "id": "xr.mugging",
+  "name": "Mugging",
+  "mature": false,
+  "coop": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.mugging"
+    }
+  },
+  "options": [
+    {
+      "id": "hand-it-over",
+      "effect": [
+        {
+          "code": "crossroads.mugging.hand"
+        }
+      ]
+    },
+    {
+      "id": "fight-back",
+      "effect": [
+        {
+          "code": "crossroads.mugging.fight"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls a survivor who is not exiled and stands at the same location as an exiled survivor.",
+    "vignette": "A hard hand shoves you into a doorframe and a low voice by your ear says all it wants is your gear, and that a corpse is just as easy to rob. The voice sounds like someone who used to share a fire with you.",
+    "options": {
+      "hand-it-over": "Pay up: hand over your whole hand except 1 card of your choice to whoever controls the exiled survivor.",
+      "fight-back": "Fight back: one of your survivors there takes 2 wounds; but with a weapon at hand you can kill the exiled attacker and take just 1 wound."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 11",
+    "options": "BGG crossroads-v1.1 card 11"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #11; Needs an exiled player, so it is left out of the co-op variant. \"If you have a weapon\" counts a weapon card in your hand or equipped to one of your survivors."
+}

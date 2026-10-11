@@ -41,6 +41,7 @@ export const WINDOW_IDS = [
   'turn.start', 'turn.end',
   'action.attack', 'action.search', 'action.barricade', 'action.cleanWaste', 'action.attract', 'action.ability',
   'action.playCard', 'action.contribute', 'action.move', 'action.request', 'action.handOff', 'action.vote', 'action.spendFood',
+  'action.any', // Crossroads trigger point only: the card is checked after every action window (M8, 00 §16)
   'exposure.rolled', 'wound.taken', 'survivor.killed', 'survivor.added', 'zombie.killed', 'zombie.added', 'entrance.overrun',
   'noise.added', 'search.drawn', 'search.kept', 'card.played', 'card.equipped',
   'colony.payFood', 'colony.waste', 'colony.crisis', 'colony.zombies', 'colony.objective', 'colony.roundTick',

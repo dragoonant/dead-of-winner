@@ -1,0 +1,74 @@
+{
+  "kind": "crossroads",
+  "id": "xr.car-crash",
+  "name": "Car Crash",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.fuelMove",
+          "params": {
+            "used": true
+          }
+        },
+        {
+          "not": {
+            "test": "seatIsExiled",
+            "subject": "seat"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "wait-for-rescue",
+      "effect": [
+        {
+          "op": "wound",
+          "count": 1,
+          "kind": "frostbite",
+          "scope": {
+            "who": "survivor"
+          }
+        },
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "ctx",
+            "location": "colony"
+          }
+        }
+      ]
+    },
+    {
+      "id": "press-on",
+      "effect": [
+        {
+          "op": "exposure",
+          "count": 3,
+          "value": "card",
+          "scope": {
+            "who": "survivor"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player burns a Fuel card to move a survivor who is not exiled.",
+    "vignette": "The heater is ticking and the road is white, then something small steps into the headlights and the wheel is yanked out of your hands. The car ends up nose-down in a drift with the engine ticking, and it is a long cold walk in either direction.",
+    "options": {
+      "wait-for-rescue": "Wait by the wreck for the colony to find you: the moved survivor takes a frostbite wound and is placed in the colony (not a move).",
+      "press-on": "Stagger on to where you were going: the moved survivor stays at the destination and rolls exposure 3 times."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 1",
+    "options": "BGG crossroads-v1.1 card 1"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #1"
+}

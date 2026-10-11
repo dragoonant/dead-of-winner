@@ -1,0 +1,77 @@
+{
+  "kind": "crossroads",
+  "id": "xr.john-price",
+  "name": "John Price",
+  "survivor": "sv.john-price",
+  "mature": false,
+  "trigger": {
+    "point": "action.search",
+    "when": {
+      "all": [
+        {
+          "test": "locationIs",
+          "subject": "location",
+          "value": "loc.school"
+        },
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.john-price",
+            "rel": "inDeck"
+          }
+        },
+        {
+          "test": "emptySurvivorSpace",
+          "location": "colony"
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "open-the-door",
+      "effect": [
+        {
+          "code": "crossroads.rule.recruit",
+          "params": {
+            "survivor": "sv.john-price"
+          }
+        },
+        {
+          "op": "addZombies",
+          "value": 2,
+          "location": "loc.school"
+        }
+      ]
+    },
+    {
+      "id": "raid-the-cafeteria",
+      "effect": [
+        {
+          "op": "food",
+          "value": 2
+        },
+        {
+          "code": "crossroads.rule.removeFromDeck",
+          "params": {
+            "survivor": "sv.john-price"
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player searches at the School while John Price is in the survivor deck and the colony has room.",
+    "vignette": "From the long school corridor come thumps and a muffled shout; a boy is hammering on the cafeteria door while the dead shuffle up behind him. You hold the key and have about three seconds.",
+    "options": {
+      "open-the-door": "Let him out: John Price leaves the survivor deck and joins your following, but he leaves you to the 2 zombies that are added at the School.",
+      "raid-the-cafeteria": "Hesitate and take what the distraction gives you: 2 food is added to the supply and John Price is removed from the game."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 56",
+    "options": "BGG crossroads-v1.1 card 56"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #56"
+}

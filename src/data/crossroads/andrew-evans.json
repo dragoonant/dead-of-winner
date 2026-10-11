@@ -1,0 +1,84 @@
+{
+  "kind": "crossroads",
+  "id": "xr.andrew-evans",
+  "name": "Andrew Evans",
+  "survivor": "sv.andrew-evans",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.andrew-evans",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "build-a-greenhouse",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.andrew-evans",
+            "location": "loc.grocery-store"
+          }
+        },
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "survivor": "sv.andrew-evans",
+            "name": "greenhouse",
+            "ability": {
+              "id": "greenhouse",
+              "kind": "action",
+              "location": "colony",
+              "cost": {
+                "die": 1
+              },
+              "limit": "oncePerRound",
+              "effect": [
+                {
+                  "op": "food",
+                  "value": 2
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "insulate-the-colony",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.andrew-evans",
+            "location": "loc.grocery-store"
+          }
+        },
+        {
+          "op": "morale",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Andrew Evans and is not exiled.",
+    "vignette": "In the aisles of the ruined grocery Andrew ignores the empty shelves and fills his arms with plastic sheeting and lengths of pipe. He has two ideas about what to do with them, and either one is a lot of work.",
+    "options": {
+      "build-a-greenhouse": "Andrew is placed at the Grocery Store (not a move) and gains a colony ability: (1+) once per round, add 2 food to the supply.",
+      "insulate-the-colony": "Andrew is placed at the Grocery Store (not a move) and the work makes everyone warmer: morale rises by 1."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 64",
+    "options": "BGG crossroads-v1.1 card 64"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #64"
+}

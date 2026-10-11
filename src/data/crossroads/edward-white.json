@@ -1,0 +1,108 @@
+{
+  "kind": "crossroads",
+  "id": "xr.edward-white",
+  "name": "Edward White",
+  "survivor": "sv.edward-white",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.edward-white",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "culture-the-penicillin",
+      "requires": {
+        "all": [
+          {
+            "test": "foodAtLeast",
+            "value": 1
+          },
+          {
+            "code": "crossroads.rule.removedHas",
+            "params": {
+              "symbol": "medicine",
+              "count": 1
+            }
+          }
+        ]
+      },
+      "effect": [
+        {
+          "op": "food",
+          "value": -1
+        },
+        {
+          "code": "crossroads.rule.recoverRemoved",
+          "params": {
+            "symbol": "medicine",
+            "count": 1,
+            "to": "hand"
+          }
+        },
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "survivor": "sv.edward-white",
+            "name": "penicillin",
+            "duration": "turn",
+            "ability": {
+              "id": "penicillin",
+              "kind": "action",
+              "location": "anywhere",
+              "cost": {
+                "food": 1
+              },
+              "when": {
+                "code": "crossroads.rule.removedHas",
+                "params": {
+                  "symbol": "medicine",
+                  "count": 1
+                }
+              },
+              "effect": [
+                {
+                  "code": "crossroads.rule.recoverRemoved",
+                  "params": {
+                    "symbol": "medicine",
+                    "count": 1,
+                    "to": "hand"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "leave-the-bread",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Edward White and is not exiled.",
+    "vignette": "Edward rubs a heel of mouldy bread between his fingers and remembers an old story about a lucky accident in a laboratory. He needs the colony to give up bread to grow it, and the colony has precious little to give.",
+    "options": {
+      "culture-the-penicillin": "Spend 1 food from the supply; in return a Medicine card that left the game earlier comes back to your hand. Until this turn ends Edward may repeat the swap as often as you like, while the supply can pay.",
+      "leave-the-bread": "Leave the food alone. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 58",
+    "options": "BGG crossroads-v1.1 card 58"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #58; Needs 1 food and a Medicine card out of the game, otherwise the second option is forced. \"Any number of times this turn\" is an action ability on Edward for this turn: free, costs 1 food."
+}

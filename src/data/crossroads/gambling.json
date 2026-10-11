@@ -1,0 +1,109 @@
+{
+  "kind": "crossroads",
+  "id": "xr.gambling",
+  "name": "Gambling",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Deal the cards",
+              "effect": [
+                {
+                  "code": "crossroads.gambling.ante"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Pack the cards away",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Deal the cards",
+              "effect": [
+                {
+                  "code": "crossroads.gambling.ante"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Pack the cards away",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony.",
+    "vignette": "Somebody has dug a deck of cards out of a drawer and is shuffling like a person who has done it too often. A crowd forms around an upturned crate and an old argument about stakes.",
+    "options": {
+      "up": "Thumbs up: starting with the active player, each player may put one item card from their hand in the pot for every survivor they control at the colony, rolling a die per card. The highest die takes the whole pot (ties roll again).",
+      "down": "Thumbs down: nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 44",
+    "options": "BGG crossroads-v1.1 card 44"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #44; Each player antes up to one card per colony survivor, chosen by that player; the highest single die wins the pot and ties are rolled again by the tied players."
+}

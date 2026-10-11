@@ -1,0 +1,77 @@
+{
+  "kind": "crossroads",
+  "id": "xr.thin-ice",
+  "name": "Thin Ice",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "test": "actionWas",
+      "value": "move"
+    }
+  },
+  "options": [
+    {
+      "id": "cross-the-ice",
+      "effect": [
+        {
+          "code": "crossroads.rule.rollThen",
+          "params": {
+            "ranges": [
+              {
+                "atMost": 3,
+                "then": [
+                  {
+                    "op": "wound",
+                    "count": 1,
+                    "kind": "frostbite",
+                    "scope": {
+                      "who": "survivor"
+                    }
+                  }
+                ]
+              },
+              {
+                "atLeast": 4,
+                "then": [
+                  {
+                    "code": "crossroads.rule.searchDeck",
+                    "params": {
+                      "location": "choose",
+                      "count": 1,
+                      "mode": "pick",
+                      "to": "hand"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "go-around",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player moves a survivor.",
+    "vignette": "A frozen pond glitters between you and the nearest cluster of buildings, a straight line where the road curves away. It would save hours, and you have heard what the ice says under a heavy boot.",
+    "options": {
+      "cross-the-ice": "Roll a die. 1 to 3: the moved survivor takes a frostbite wound. 4 to 6: choose an item deck and search it for one card of your choice for your hand.",
+      "go-around": "Take the long way. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 13",
+    "options": "BGG crossroads-v1.1 card 13"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #13"
+}

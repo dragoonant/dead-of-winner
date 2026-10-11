@@ -5,6 +5,7 @@
 // The progress of a step that can be interrupted (the zombie sections, whether a window already fired) lives in ONE rule effect
 // named `colony#cursor`, so the pure state is the only place a half-finished phase is kept (00 §2).
 import type { PhaseChanged } from './events'
+import { extraFoodUpkeep, wasteStep } from './code-hooks'
 import { drawCrossroads } from './crossroads'
 import { rollActionDice } from './dice'
 import { expireEffects, recOf } from './effects'
@@ -92,7 +93,7 @@ export const colonyInProgress = (s: GameState): boolean => s.phase === 'colony' 
 function payFood(acc: Out): void {
   const s = acc.state
   const mouths = aliveAt(s, 'colony').length + s.locations['colony']!.helpless
-  const needed = Math.ceil(mouths / 2)
+  const needed = Math.ceil(mouths / 2) + extraFoodUpkeep(s) // Horse: one more food for each rider
   if (s.food >= needed) {
     const after = s.food - needed
     acc.state = { ...s, food: after }
@@ -109,7 +110,7 @@ function payFood(acc: Out): void {
 // ---------- step 2: check waste (R4.9) ----------
 function checkWaste(acc: Out): void {
   const cards = acc.state.waste.length
-  const moraleLoss = Math.floor(cards / 10)
+  const moraleLoss = Math.floor(cards / wasteStep(acc.state)) // Ashley Ross' waste store: 15 instead of 10
   acc.events.push({ type: 'WasteChecked', cards, moraleLoss })
   if (moraleLoss > 0) loseMoraleInto(acc, moraleLoss, 'waste')
 }

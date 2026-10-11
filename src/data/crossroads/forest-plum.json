@@ -1,0 +1,63 @@
+{
+  "kind": "crossroads",
+  "id": "xr.forest-plum",
+  "name": "Forest Plum",
+  "survivor": "sv.forest-plum",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.forest-plum",
+        "rel": "inPlay"
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "give-him-the-bottle",
+      "effect": [
+        {
+          "code": "crossroads.rule.place",
+          "params": {
+            "survivor": "sv.forest-plum",
+            "location": "loc.grocery-store"
+          }
+        },
+        {
+          "op": "addNoise",
+          "count": 4,
+          "location": "loc.grocery-store"
+        }
+      ]
+    },
+    {
+      "id": "tell-him-no",
+      "effect": [
+        {
+          "code": "crossroads.rule.woundByInfluence",
+          "params": {
+            "mode": "lowest",
+            "exclude": "sv.forest-plum",
+            "count": 1
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Forest Plum is in play.",
+    "vignette": "Forest corners you at the supply shelf with a hopeful grin and an outstretched hand, because he knows about the bottle you found. He has been a thorn in everybody's side for weeks, but the red suit does make the children laugh.",
+    "options": {
+      "give-him-the-bottle": "Forest takes the bottle and stumbles off to ring a bell outside the Grocery Store: he is placed there (not a move) and 4 noise tokens are added at the Grocery Store.",
+      "tell-him-no": "Forest lashes out at someone weaker: the survivor with the lowest influence (not counting Forest) takes 1 wound."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 26",
+    "options": "BGG crossroads-v1.1 card 26"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #26"
+}

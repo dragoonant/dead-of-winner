@@ -1,0 +1,189 @@
+{
+  "kind": "crossroads",
+  "id": "xr.olivia-brown",
+  "name": "Olivia Brown",
+  "survivor": "sv.olivia-brown",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.olivia-brown",
+        "rel": "inPlay"
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Allow the experiments",
+              "effect": [
+                {
+                  "code": "crossroads.rule.place",
+                  "params": {
+                    "survivor": "sv.olivia-brown",
+                    "location": "colony"
+                  }
+                },
+                {
+                  "code": "crossroads.rule.attach",
+                  "params": {
+                    "survivor": "sv.olivia-brown",
+                    "name": "experiments",
+                    "ability": {
+                      "id": "experiment",
+                      "kind": "triggered",
+                      "trigger": "dice.rolled",
+                      "location": "colony",
+                      "optional": true,
+                      "effect": [
+                        {
+                          "op": "exposure",
+                          "count": 1,
+                          "value": "card",
+                          "scope": {
+                            "who": "self"
+                          },
+                          "onRoll": {
+                            "atMost": 0,
+                            "then": [
+                              {
+                                "code": "crossroads.olivia-brown.shield"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Refuse the experiments",
+              "effect": [
+                {
+                  "code": "crossroads.rule.place",
+                  "params": {
+                    "survivor": "sv.olivia-brown",
+                    "location": "colony"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Allow the experiments",
+              "effect": [
+                {
+                  "code": "crossroads.rule.place",
+                  "params": {
+                    "survivor": "sv.olivia-brown",
+                    "location": "colony"
+                  }
+                },
+                {
+                  "code": "crossroads.rule.attach",
+                  "params": {
+                    "survivor": "sv.olivia-brown",
+                    "name": "experiments",
+                    "ability": {
+                      "id": "experiment",
+                      "kind": "triggered",
+                      "trigger": "dice.rolled",
+                      "location": "colony",
+                      "optional": true,
+                      "effect": [
+                        {
+                          "op": "exposure",
+                          "count": 1,
+                          "value": "card",
+                          "scope": {
+                            "who": "self"
+                          },
+                          "onRoll": {
+                            "atMost": 0,
+                            "then": [
+                              {
+                                "code": "crossroads.olivia-brown.shield"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Refuse the experiments",
+              "effect": [
+                {
+                  "code": "crossroads.rule.place",
+                  "params": {
+                    "survivor": "sv.olivia-brown",
+                    "location": "colony"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "Olivia Brown is in play.",
+    "vignette": "Olivia wants a captured zombie in a locked cell so she can study it, and the colony is exactly as warm to the idea as you would expect. She says it is the only way to learn what the virus does, and a vote is called.",
+    "options": {
+      "up": "Thumbs up: Olivia is placed in the colony (not a move) and this card goes under her. At the start of each round, while she is at the colony, she may experiment on herself: roll for exposure. A blank shields the colony for that round: whenever a bite is rolled, a player may discard a Medicine card to ignore it.",
+      "down": "Thumbs down: Olivia is placed in the colony (not a move) and nothing else happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 23",
+    "options": "BGG crossroads-v1.1 card 23"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #23; The Medicine discard to ignore a bite is automatic: the rolling seat's first, then the others, whenever a Medicine card exists."
+}

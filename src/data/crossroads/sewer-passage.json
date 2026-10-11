@@ -1,0 +1,48 @@
+{
+  "kind": "crossroads",
+  "id": "xr.sewer-passage",
+  "name": "Sewer Passage",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "loc.library",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "clear-the-tunnel",
+      "effect": [
+        {
+          "code": "crossroads.sewer-passage.dig"
+        }
+      ]
+    },
+    {
+      "id": "drop-the-idea",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the Library.",
+    "vignette": "In a dusty drawer of city plans you find an old sewer map, and the line on it runs from the colony's back fence straight to the hospital. Not a soul in camp wants to crawl through it, and someone must test it first.",
+    "options": {
+      "clear-the-tunnel": "Pick one of your survivors at the Library and roll a die; that survivor rolls exposure that many times. If they live, nobody rolls exposure when moving between the colony and the Hospital for the rest of the game.",
+      "drop-the-idea": "Forget the idea. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 38",
+    "options": "BGG crossroads-v1.1 card 38"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #38"
+}

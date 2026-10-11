@@ -1,0 +1,65 @@
+{
+  "kind": "crossroads",
+  "id": "xr.sacrament",
+  "name": "Sacrament",
+  "mature": false,
+  "trigger": {
+    "point": "action.move",
+    "when": {
+      "not": {
+        "test": "seatIsExiled",
+        "subject": "seat"
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "enter-the-cathedral",
+      "effect": [
+        {
+          "op": "exposure",
+          "count": 2,
+          "value": "card",
+          "scope": {
+            "who": "survivor"
+          }
+        },
+        {
+          "code": "crossroads.rule.ifAlive",
+          "params": {
+            "survivor": "ctx",
+            "then": [
+              {
+                "op": "morale",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "keep-walking",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player moves a survivor who is not exiled.",
+    "vignette": "The cathedral door has been shut since the day the colony formed, but you once saw a light in one of its windows. You could slip in for whatever the clergy kept in the cellar, or you could keep on walking.",
+    "options": {
+      "enter-the-cathedral": "Go in: the moved survivor rolls exposure twice. If they survive, morale rises by 1.",
+      "keep-walking": "Not worth the risk. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 47",
+    "options": "BGG crossroads-v1.1 card 47"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #47"
+}

@@ -10,7 +10,7 @@
         {
           "test": "locationIs",
           "subject": "location",
-          "location": "loc.grocery-store"
+          "value": "loc.grocery-store"
         },
         {
           "not": {

@@ -1,0 +1,79 @@
+{
+  "kind": "crossroads",
+  "id": "xr.thomas-heart",
+  "name": "Thomas Heart",
+  "survivor": "sv.thomas-heart",
+  "decider": "sv.thomas-heart",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "code": "crossroads.rule.abilityUse"
+        },
+        {
+          "test": "symbolDrawn",
+          "subject": "card",
+          "symbol": "weapon"
+        },
+        {
+          "code": "crossroads.rule.survivor",
+          "params": {
+            "id": "sv.thomas-heart",
+            "rel": "inPlay"
+          }
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "lash-out",
+      "effect": [
+        {
+          "code": "crossroads.thomas-heart.rage"
+        }
+      ]
+    },
+    {
+      "id": "send-for-medics",
+      "effect": [
+        {
+          "code": "crossroads.thomas-heart.medics"
+        }
+      ]
+    },
+    {
+      "id": "end-it",
+      "effect": [
+        {
+          "op": "killSurvivor",
+          "scope": {
+            "who": "allSurvivors",
+            "filter": {
+              "test": "survivorIs",
+              "subject": "survivor",
+              "value": "sv.thomas-heart"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player uses the ability of a weapon item card while Thomas Heart is in play. The player who controls Thomas Heart makes the choice.",
+    "vignette": "The echo of the shot rolls back off the alley wall and something in Thomas shifts, as if a fuse at the back of his skull has finally burned through. He starts to shout and does not stop.",
+    "options": {
+      "lash-out": "Thomas deals out 4 wounds among the other survivors at his location, one at a time (his controller picks). If nobody else is there, nothing happens.",
+      "send-for-medics": "The players together remove 2 Medicine cards from their hands from the game. If they cannot, the first option happens instead.",
+      "end-it": "Thomas dies."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 40",
+    "options": "BGG crossroads-v1.1 card 40"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #40; Three options. The choice belongs to the controller of Thomas Heart (decider)."
+}

@@ -1,0 +1,71 @@
+{
+  "kind": "crossroads",
+  "id": "xr.hunger",
+  "name": "Hunger",
+  "mature": false,
+  "trigger": {
+    "point": "action.playCard",
+    "when": {
+      "code": "crossroads.rule.hunger",
+      "params": {
+        "male": [
+          "sv.andrew-evans",
+          "sv.arthur-thurston",
+          "sv.brandon-kane",
+          "sv.brian-lee",
+          "sv.buddy-davis",
+          "sv.daniel-smith",
+          "sv.david-garcia",
+          "sv.edward-white",
+          "sv.forest-plum",
+          "sv.gabriel-diaz",
+          "sv.gray-beard",
+          "sv.harman-brooks",
+          "sv.james-meyers",
+          "sv.john-price",
+          "sv.mike-cho",
+          "sv.rod-miller",
+          "sv.thomas-heart"
+        ]
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "let-him-eat",
+      "effect": [
+        {
+          "op": "food",
+          "value": -99
+        }
+      ]
+    },
+    {
+      "id": "share-the-strange-meat",
+      "effect": [
+        {
+          "op": "food",
+          "value": 5
+        },
+        {
+          "op": "morale",
+          "value": -1
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "One card brings a man and a helpless survivor to the colony together (an Outsiders card).",
+    "vignette": "The newcomer would like to join, but he comes with a heavy companion who eats like three people and is plainly the reason his pack is so light. He explains in a low voice that he promised to look after him, then names what he is willing to trade.",
+    "options": {
+      "let-him-eat": "The big man empties the stores: all the food in the supply is removed.",
+      "share-the-strange-meat": "Accept the stranger's offering of unnamed meat: 5 food is added to the supply and morale falls by 1."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 12",
+    "options": "BGG crossroads-v1.1 card 12"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #12; Male survivors: every named survivor of the roster except Alexis, Annaleigh, Ashley, Bev, Carla, Janet, Jenny, Loretta, Maria, Olivia, Sophie, Sparky, Talia. Fires after a card (the Outsiders) adds a survivor and a helpless token."
+}

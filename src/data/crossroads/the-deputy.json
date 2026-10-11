@@ -1,0 +1,91 @@
+{
+  "kind": "crossroads",
+  "id": "xr.the-deputy",
+  "name": "The Deputy",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.seatAt",
+      "params": {
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "take-the-deal",
+      "effect": [
+        {
+          "op": "revealDeck",
+          "value": 8,
+          "location": "loc.police-station"
+        },
+        {
+          "op": "draw",
+          "value": "revealed",
+          "symbol": "weapon",
+          "count": 8,
+          "scope": {
+            "who": "seat"
+          }
+        },
+        {
+          "op": "shuffleDeck",
+          "location": "loc.police-station"
+        },
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "name": "victory",
+            "condition": {
+              "all": [
+                {
+                  "test": "zombiesAtMost",
+                  "subject": "location",
+                  "location": "loc.gas-station",
+                  "value": 0
+                },
+                {
+                  "test": "zombiesAtMost",
+                  "subject": "location",
+                  "location": "loc.hospital",
+                  "value": 0
+                },
+                {
+                  "test": "zombiesAtMost",
+                  "subject": "location",
+                  "location": "loc.police-station",
+                  "value": 0
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "keep-your-guns",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a non-exiled survivor outside the colony.",
+    "vignette": "Four deputies in grey coats appear on the doorstep and inform you politely that the county is still in session. They hold a key to the armoury and a request: keep three particular places clear of the dead, and the weapons are yours.",
+    "options": {
+      "take-the-deal": "Turn up the first 8 cards of the Police Station deck, take every weapon among them into your hand and shuffle the rest back. Add a victory condition to the current main objective: no zombies at the Gas Station, the Hospital and the Police Station.",
+      "keep-your-guns": "Tell them to keep their guns. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 37",
+    "options": "BGG crossroads-v1.1 card 37"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #37"
+}

@@ -37,7 +37,7 @@
 
 ## Card data (M2)
 - `src/data/` is the default bundle for the engine, `npm run sim` and the data tests (`tools/default-bundle.ts`: `loadDefaultBundle()`);
-  `tests/fixtures/bundle/` stays for unit tests. Counts: 30 survivors, 39 items, 7 decks, 7 locations, 20 crises, 20 Crossroads,
+  `tests/fixtures/bundle/` stays for unit tests. Counts: 30 survivors, 39 items, 7 decks, 7 locations, 20 crises, 80 Crossroads,
   10 main objectives (normal + hardcore), 27 playable secret-type objectives (14 standard, 3 betrayal, 10 exiled).
 - Objectives live as arrays in `src/data/objectives/{main,secret,betrayal,exiled}.json`; names-only stubs (`status: "unknown"`,
   text null) are skipped by the loader.
@@ -169,3 +169,26 @@ event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
 - Remaining source gaps: 5 betrayal texts (censored in the VASSAL module).
 - Owner request: if you have a physical copy, check the conflict tables in `docs/spec/sources/*-sources.md` against it
   (the rows marked Fan-source and the location card space counts; the card numbers are now verified from the VASSAL scans), and skim the M1 rulings in `docs/needs-rules-check.md`.
+
+## Crossroads (M8, 2026-10-11)
+- Content: all **80** base-game Crossroads cards are in `src/data/crossroads/` (20 earlier + 60 new). Triggers and option effects follow the
+  BGG sheet; every vignette, trigger line and option text is ours (`npm run check:copied`: 0 runs of 8+ words shared with the sheet).
+  9 cards carry the mature mark (the sheet has none: Abandoned, Addiction, Brandon Kane, Voyeur, Welcome Home, Annaleigh Chan, Arthur
+  Thurston, Bev Russell, Lover's Quarrel); Gray Beard, Mugging and Prophet leave the co-op deck; 30 of 30 survivors have their card, linked
+  through `survivor`. Army, Riot and Thomas Heart print three options. Table: `docs/spec/sources/crossroads-sources.md`.
+- Hooks: `src/engine/crossroads-hooks.ts` (about 60 hooks, registered in `code-hooks.ts`, vocabulary in `docs/spec/21-card-effects-dsl.md` section 15);
+  `tests/engine/xrd-m8.test.ts` (66 tests: every card's trigger and both options, plus the engine seams) and `xrd-copied.test.ts`.
+- Engine fixes found on the way (all in `docs/spec/00-architecture.md` section 16): the die actions (move, search, attack, barricade, clean
+  waste, attract) never let the held Crossroads card look, so in play almost no card fired (1 choice per 30 sim games before, about 3 per
+  game now); effect votes now send an exiled first player's tie answer through `votes[tiebreakSeat]`; `hiddenIdsFor` keeps revealed crisis
+  cards public; Maude's trigger used `locationIs` with `location`, which tested the card's own place (now `value`).
+- Gates: `npx tsx tools/validate-data.ts src/data` 0 errors, 0 warnings, 80 Crossroads; typecheck and `npm test` green (458 tests);
+  `npm run sim -- --games 30 --seed 12 --tier normal` 0 violations, 0 leaks (and 660 more games over 2 to 5 seats: 0 leaks, 1 rejected
+  `chooseLeader` that is a crisis multi-kill bug outside this work, task spawned).
+- Bench (`npm run bench:ai -- --games 100 --seed 11 --tier normal`, We Need More Samples, 4 bots): colony objective completed **24%** (24/100;
+  M4b figure 29%), mean 4.75 rounds, ended by moraleZero 66 / objective 24 / roundsOut 10, betrayer won **2%** (1/49; was 10%), exiles 4 correct
+  / 2 innocent, 0 rejected, 0 stalls, 0 leaks. The drop is mostly real Crossroads now happening (about 3.1 choices a game, 0.09 morale a game lost to them), not
+  the new cards alone. The bots value hook-based options at 0 and answer optional prompts "no", so they play the new cards blind; teaching
+  `src/ai/normal/options.ts` the hook names is the next AI step.
+- Known gaps: the client labels an injected ability (greenhouse, clinic, craving) with the survivor's own ability text; an attached
+  survivor ability is not drawn on the card.

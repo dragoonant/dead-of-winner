@@ -1,0 +1,85 @@
+{
+  "kind": "crossroads",
+  "id": "xr.sleep",
+  "name": "Sleep",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.yawn"
+    }
+  },
+  "options": [
+    {
+      "id": "turn-in-early",
+      "effect": [
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "name": "rest",
+            "duration": "round",
+            "global": [
+              {
+                "id": "rest",
+                "kind": "triggered",
+                "trigger": "turn.start",
+                "optional": true,
+                "when": {
+                  "all": [
+                    {
+                      "test": "isActiveSeat",
+                      "subject": "seat"
+                    },
+                    {
+                      "test": "hasUnusedDie",
+                      "subject": "seat"
+                    }
+                  ]
+                },
+                "effect": [
+                  {
+                    "code": "crossroads.rule.spendDice",
+                    "params": {
+                      "count": "all",
+                      "who": "active"
+                    }
+                  },
+                  {
+                    "op": "heal",
+                    "count": 1,
+                    "scope": {
+                      "who": "seatSurvivors"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "stay-up",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A long turn drags on: the active player has spent four or more actions (the printed trigger is a player yawning at the table).",
+    "vignette": "Exhaustion hangs over the table like smoke; eyes close in the middle of sentences and the lamp keeps sputtering. A few people mutter that it would not hurt to call it a night.",
+    "options": {
+      "turn-in-early": "For the rest of this round, whoever's turn is opening may bed down: all their unused dice become used, and every survivor they control loses 1 wound.",
+      "stay-up": "Push through the night. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 60",
+    "options": "BGG crossroads-v1.1 card 60"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #60; The printed trigger is a real-world yawn, which a program cannot see. Stand-in: the active player has spent four or more actions this turn."
+}

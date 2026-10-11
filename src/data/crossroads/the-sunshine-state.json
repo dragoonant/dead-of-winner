@@ -1,0 +1,65 @@
+{
+  "kind": "crossroads",
+  "id": "xr.the-sunshine-state",
+  "name": "The Sunshine State",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "all": [
+        {
+          "test": "survivorsAtLeast",
+          "subject": "seat",
+          "location": "colony",
+          "value": 1
+        },
+        {
+          "test": "helplessAtLeast",
+          "subject": "location",
+          "location": "colony",
+          "value": 2
+        }
+      ]
+    }
+  },
+  "options": [
+    {
+      "id": "open-the-gates",
+      "effect": [
+        {
+          "op": "removeHelpless",
+          "count": 2,
+          "location": "colony",
+          "value": "noMorale"
+        },
+        {
+          "op": "morale",
+          "value": -1
+        }
+      ]
+    },
+    {
+      "id": "tell-them-to-stay",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony and the colony holds at least 2 helpless survivors.",
+    "vignette": "An old couple wave a postcard of a beach and announce they are heading south, tonight, on foot. They have no map and no plan, only the calm of two people who have decided.",
+    "options": {
+      "open-the-gates": "Let them go: 2 helpless survivors leave the game, and the sight of them at the gate next morning costs 1 morale.",
+      "tell-them-to-stay": "Talk them out of it. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 50",
+    "options": "BGG crossroads-v1.1 card 50"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #50"
+}

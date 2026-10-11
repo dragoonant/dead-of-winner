@@ -1,0 +1,87 @@
+{
+  "kind": "crossroads",
+  "id": "xr.ashley-ross",
+  "name": "Ashley Ross",
+  "survivor": "sv.ashley-ross",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.ashley-ross",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "raise-walkways",
+      "effect": [
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "name": "walkways",
+            "attackSkip": {
+              "location": "colony",
+              "entrance": 1
+            }
+          }
+        },
+        {
+          "op": "exposure",
+          "count": 2,
+          "value": "card",
+          "scope": {
+            "who": "allSurvivors",
+            "filter": {
+              "test": "survivorIs",
+              "subject": "survivor",
+              "value": "sv.ashley-ross"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "dig-a-waste-pit",
+      "effect": [
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "name": "wastePit",
+            "wasteStep": 15
+          }
+        },
+        {
+          "op": "exposure",
+          "count": 1,
+          "value": "card",
+          "scope": {
+            "who": "allSurvivors",
+            "filter": {
+              "test": "survivorIs",
+              "subject": "survivor",
+              "value": "sv.ashley-ross"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Ashley Ross and is not exiled.",
+    "vignette": "Ashley paces the colony wall with a notebook, sketching improvements nobody asked for. Two projects look possible with the materials at hand, and both will leave her cold and exposed for hours.",
+    "options": {
+      "raise-walkways": "Build raised walkways: from now on, no survivor rolls exposure after attacking zombies at colony entrance 1. Ashley Ross rolls exposure twice for the work.",
+      "dig-a-waste-pit": "Dig a bigger waste pit: from now on the waste check costs 1 morale for each full 15 cards on the pile, no longer each full 10. Ashley Ross rolls exposure once."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 57",
+    "options": "BGG crossroads-v1.1 card 57"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #57; The walkways skip exposure for any survivor that attacks at colony entrance 1 (the printed text does not name Ashley as the attacker)."
+}

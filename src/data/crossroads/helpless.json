@@ -1,0 +1,109 @@
+{
+  "kind": "crossroads",
+  "id": "xr.helpless",
+  "name": "Helpless",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "up",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Send them out",
+              "effect": [
+                {
+                  "code": "crossroads.rule.purgeHelpless"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Let them stay",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "down",
+      "vote": true,
+      "effect": [
+        {
+          "op": "vote",
+          "scope": {
+            "who": "allSeats",
+            "filter": {
+              "test": "survivorsAtLeast",
+              "subject": "seat",
+              "location": "colony",
+              "value": 1
+            }
+          },
+          "options": [
+            {
+              "id": "yes",
+              "label": "Send them out",
+              "effect": [
+                {
+                  "code": "crossroads.rule.purgeHelpless"
+                }
+              ]
+            },
+            {
+              "id": "no",
+              "label": "Let them stay",
+              "effect": [
+                {
+                  "op": "morale",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony.",
+    "vignette": "Under a bare bulb a low argument starts about the ones who cannot work, cannot fight, and cannot stop eating. Nobody likes how reasonable it sounds.",
+    "options": {
+      "up": "Thumbs up: every helpless survivor token at the colony leaves the game. Morale falls by 1 for every 2 tokens removed (rounded up).",
+      "down": "Thumbs down: nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 14",
+    "options": "BGG crossroads-v1.1 card 14"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #14"
+}

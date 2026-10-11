@@ -1,0 +1,116 @@
+{
+  "kind": "crossroads",
+  "id": "xr.janet-taylor",
+  "name": "Janet Taylor",
+  "survivor": "sv.janet-taylor",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "code": "crossroads.rule.survivor",
+      "params": {
+        "id": "sv.janet-taylor",
+        "rel": "controlled",
+        "notExiled": true
+      }
+    }
+  },
+  "options": [
+    {
+      "id": "open-the-clinic",
+      "effect": [
+        {
+          "code": "crossroads.rule.attach",
+          "params": {
+            "survivor": "sv.janet-taylor",
+            "name": "clinic",
+            "forEvery": true,
+            "ability": {
+              "id": "clinic",
+              "kind": "action",
+              "location": "colony",
+              "when": {
+                "all": [
+                  {
+                    "code": "crossroads.rule.survivor",
+                    "params": {
+                      "id": "sv.janet-taylor",
+                      "rel": "inPlay",
+                      "at": "colony"
+                    }
+                  },
+                  {
+                    "test": "handAtLeast",
+                    "subject": "seat",
+                    "value": 1
+                  }
+                ]
+              },
+              "effect": [
+                {
+                  "op": "discard",
+                  "count": 1,
+                  "value": "chosen",
+                  "scope": {
+                    "who": "seat"
+                  }
+                },
+                {
+                  "op": "heal",
+                  "count": 1,
+                  "scope": {
+                    "who": "chosen",
+                    "count": 1,
+                    "chooser": "owner",
+                    "filter": {
+                      "all": [
+                        {
+                          "test": "survivorOwnedBy",
+                          "subject": "survivor",
+                          "value": "holder"
+                        },
+                        {
+                          "test": "atLocation",
+                          "subject": "survivor",
+                          "location": "colony"
+                        },
+                        {
+                          "test": "woundsAtLeast",
+                          "subject": "survivor",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "skip-the-clinic",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player controls Janet Taylor and is not exiled.",
+    "vignette": "Janet lines up bandages on a folding table and sorts what the colony owns into piles by urgency. She will run a clinic, she says, if everyone will leave supplies where she can reach them.",
+    "options": {
+      "open-the-clinic": "From now on, while Janet is at the colony, each player may bin one unused card from their hand, sending it to the waste pile, to heal 1 wound on one of their survivors at the colony.",
+      "skip-the-clinic": "Do nothing. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 71",
+    "options": "BGG crossroads-v1.1 card 71"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #71; The clinic is an action ability every seat can use through one of its survivors at the colony while Janet stands there."
+}

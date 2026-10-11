@@ -1,0 +1,65 @@
+{
+  "kind": "crossroads",
+  "id": "xr.creature-comforts",
+  "name": "Creature Comforts",
+  "mature": false,
+  "trigger": {
+    "point": "action.any",
+    "when": {
+      "test": "survivorsAtLeast",
+      "subject": "seat",
+      "location": "colony",
+      "value": 1
+    }
+  },
+  "options": [
+    {
+      "id": "burn-the-fuel",
+      "requires": {
+        "code": "crossroads.rule.handsHave",
+        "params": {
+          "symbol": "fuel",
+          "count": 3
+        }
+      },
+      "effect": [
+        {
+          "code": "crossroads.rule.collectiveDiscard",
+          "params": {
+            "symbol": "fuel",
+            "count": 3,
+            "then": [
+              {
+                "op": "morale",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "save-the-fuel",
+      "effect": [
+        {
+          "op": "morale",
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "text": {
+    "trigger": "A player has a survivor at the colony.",
+    "vignette": "A long cold week has worn the colony to a thread, and someone suggests burning fuel for hot water and one proper warm evening. Three cans would hardly be missed, they say, which is exactly what everyone always says about fuel.",
+    "options": {
+      "burn-the-fuel": "The players together put 3 Fuel cards on the waste pile (the active player's first, then clockwise) and morale rises by 1. Only possible if the hands hold 3 Fuel cards between them.",
+      "save-the-fuel": "Keep the fuel. Nothing happens."
+    }
+  },
+  "sources": {
+    "trigger": "BGG crossroads-v1.1 card 21",
+    "options": "BGG crossroads-v1.1 card 21"
+  },
+  "status": "draft",
+  "notes": "src: Crossroad_cards_v1.1.xlsx.txt card #21; The single printed option is \"may place 3 fuel...; if not, nothing happens\", so the second option is the decline."
+}
