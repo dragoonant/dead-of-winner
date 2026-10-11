@@ -78,5 +78,45 @@
   "file": "gray-beard.glb",
   "heightIn": 1.2,
   "tris": 6156
+ },
+ "harman-brooks": {
+  "file": "harman-brooks.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "james-meyers": {
+  "file": "james-meyers.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "janet-taylor": {
+  "file": "janet-taylor.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "jenny-clark": {
+  "file": "jenny-clark.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "john-price": {
+  "file": "john-price.glb",
+  "heightIn": 1.15,
+  "tris": 6156
+ },
+ "loretta-clay": {
+  "file": "loretta-clay.glb",
+  "heightIn": 1.1,
+  "tris": 6156
+ },
+ "maria-lopez": {
+  "file": "maria-lopez.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "mike-cho": {
+  "file": "mike-cho.glb",
+  "heightIn": 1.2,
+  "tris": 6155
  }
 }
