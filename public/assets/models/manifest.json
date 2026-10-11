@@ -148,5 +148,25 @@
   "file": "thomas-heart.glb",
   "heightIn": 1.2,
   "tris": 6155
+ },
+ "zombie-bloated": {
+  "file": "zombie-bloated.glb",
+  "heightIn": 1.15,
+  "tris": 6156
+ },
+ "zombie-crawler": {
+  "file": "zombie-crawler.glb",
+  "heightIn": 0.6,
+  "tris": 6155
+ },
+ "zombie-frozen": {
+  "file": "zombie-frozen.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "zombie-shambler": {
+  "file": "zombie-shambler.glb",
+  "heightIn": 1.2,
+  "tris": 6156
  }
 }
