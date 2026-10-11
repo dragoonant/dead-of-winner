@@ -28,11 +28,11 @@
     "bio": "Memorized fifty orders at a time and can read a crowd's mood from across the room."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "F 1.1.2; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Jenny_Clark.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Jenny_Clark.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Jenny_Clark.jpg",
+    "ability": "VASSAL v1.1 Survivor_Jenny_Clark.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 20"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Jenny_Clark.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

@@ -36,11 +36,11 @@
     "bio": "Wears the badge out of habit and the sidearm out of necessity."
   },
   "sources": {
-    "stats.influence": "R p7; W; C",
-    "stats.attack": "R* p7; W",
-    "stats.search": "R* p7; W",
-    "ability": "PHOTO es-github Supervivientes/Daniel-Smith"
+    "stats.influence": "VASSAL v1.1 Survivor_Daniel_Smith.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Daniel_Smith.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Daniel_Smith.jpg",
+    "ability": "VASSAL v1.1 Survivor_Daniel_Smith.jpg"
   },
   "status": "verified",
-  "notes": "src: ebay-photo-transcription.md section 4 (Spanish-edition scan): once per round, ANYWHERE (4+), a single exposure roll."
+  "notes": "Clean scan Survivor_Daniel_Smith.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

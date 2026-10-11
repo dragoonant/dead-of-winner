@@ -33,12 +33,12 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "R p4",
-    "fail": "R p4",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Blizzard.jpg",
+    "fail": "VASSAL v1.1 Crisis_Blizzard.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Blizzard.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 9 (official name); official name (R p4); mapped by effect (C6)",
+  "status": "verified",
+  "notes": "Name, Fuel symbol, no-move until the end of next round and 1 morale all match the clean scan.",
   "tags": [
     "name-official"
   ]

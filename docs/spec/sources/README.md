@@ -48,6 +48,7 @@ Unsourced or Fan-source.
 
 | 8 | Ludopedia fan translation (Portuguese), attachments 51111-51115 and 118679, by users Sauron / spartaniv | https://www.ludopedia.com.br (Dead of Winter, anexos) | downloaded by the owner 2026-10-10; read the same day. The transcription header names 51111-51115; the files present are 51112, 51113, 51114, 51115 and 118679 | `docs/sources/bgg/dead_of_winter_um_j_traducao_em_portugues_*_5111[2-5].pdf` and `..._narrativas_..._118679.pdf` (with .txt), transcription in `docs/sources/fan/ludopedia-transcription.md` | all 20 crises (51114, titles in 118679), all 10 exiled objectives (51112), all 10 main objectives both sides (51113), 30 survivor abilities (51115), items and the six decks (51114) | medium: a translation of real cards, with slips found (Fuel Shortage morale, Zombie Wave zombies, New Friends text, several hardcore numbers) |
 | 9 | BoardGameGeek thread 2054328, "Main objective cards" | https://boardgamegeek.com/thread/2054328/main-objective-cards | transcribed by Ragenarok124 2018-09-06, corrected by Git_ 2022-02-18, pasted by the owner 2026-10-10 | `docs/sources/bgg/thread-2054328-main-objectives.md` | all 10 main objectives, both sides, with hardcore changes in braces | medium: one volunteer transcription, two corrections inside it |
+| 10 | Vassal module "Dead_of_Winner_Crossroads_1.1.vmod" (Dead of Winter: A Crossroads Game, v1.1) | https://vassalengine.org (module library) | built 2015 from the printed cards; sha256 abaf1ee0...; read 2026-10-10 | `docs/sources/fan/vassal-transcription.md` (the 117 extracted card images are not kept in the repo) | clean scans of all 20 crises, all 20 main-objective faces, all 24 standard secret objectives and 29 base survivors plus Gray Beard; betrayal objective conditions are censored in the module. Source tag `VASSAL v1.1 <file>` |
 | 10 | Spanish-edition card scans | https://github.com/MiguelAngelCabanillas/Dead-Of-Winter (`images/`) | read 2026-10-10 | `docs/sources/fan/spanish-scans-transcription.md` (the images themselves are not copied) | 8 crises, 6 main objectives, 12 standard and 3 betrayal secret objectives, 4 exiled objectives, blurry location thumbnails | high for numbers (real cards); the English titles in the transcription are guesses |
 | 11 | eBay seller photos of The Long Night location cards | an eBay listing (seller photos) | read 2026-10-10 | `docs/sources/fan/photos/tln-1.png` to `tln-10.png` | survivor spaces, entrance spaces, noise spaces and symbol rows of the six locations (ruling L1: Long Night layout taken as the base layout; the Grocery Store matches the rulebook diagram) | high for what they show; a different product from the base game |
 | 12 | Taiwanese unboxing photos | a fan or seller unboxing set (non-English edition; the research notes label the edition J and show Japanese titles) | read 2026-10-10 | none in the repo; values are in the research notes | secret objective texts for Collector and Masochist, and the Exhaustion crisis symbol | medium: photos of a translated edition; the edition label is inconsistent between the brief and the notes |
@@ -78,12 +79,10 @@ in this project; the exposure die faces rest on the research notes. Whoever uses
 
 ## Still missing
 
-1. 9-10 standard secret objective texts (All I need is my books, Experienced, Hoarder, Hope, Justice, Neat freak,
-   Protected, Repopulate, Safety, and one of Junkie/Hypochondriac).
-2. 7 betrayal texts (Accept your fate, All for one, Gluttony, Mad scientist, Obsessed, Runaway, Take over).
-3. Official English names for 17 crisis cards.
-4. Forest Plum attack value (single source).
-5. Thomas Heart ability (single source).
+1. Real text for 5 betrayal objectives (Runaway, All for One, Trigger Happy, Cult Leader, Serial Killers): the VASSAL module
+   censors every betrayal condition, so they stay on the fan sheet or the Spanish scan.
+2. Nothing else for crises, main objectives, standard secret objectives or survivors: all verified from the clean VASSAL v1.1
+   scans (2026-10-10). The Crossroads cards are not covered by that pass.
 
 ## Rules that the sources fix (for quick reference, our words)
 
@@ -100,13 +99,14 @@ in this project; the exposure die faces rest on the research notes. Whoever uses
 Each per-card file ends in a conflict table with a status per row.
 
 - `survivors-sources.md`: C1 to C11. The ones that change a number the brief gave: Alexis Grey influence is 46 (not 68);
-  Daniel Smith has no "once per round" (R over P and W); Loretta Clay is a 4+ die; Thomas Heart's ability is the
-  provisional P ability; Annaleigh Chan follows P (Colony, one other player's card).
+  Daniel Smith is once per round at a 4+ die (the VASSAL scan settles it); Loretta Clay is a 4+ die; Thomas Heart is a 5+ die
+  (VASSAL v1.1 prints 5+); Annaleigh Chan is a Colony ability. All 30 are verified from the VASSAL scans.
 - `items-sources.md`: I1 to I10. School holds a Megaphone, not Football Pads; Microphone is read as the FAQ's name for
   Megaphone; Walkie Talkie once per round and Scissors location take P over BC.
-- `crises-sources.md`: C1 to C8. Fuel Shortage loses 2 morale; Zombie Wave (official name Zombie Surge) puts 6 zombies at the colony, confirmed by an English card photo; No Waste keeps the
-  printed direction (flagged).
-- `objectives-sources.md`: O1 to O14 (main) and D1 to D4 (exiled). New Friends follows the Spanish scan; We Need More Samples
-  hardcore keeps 3 tokens per player (rulebook over two fan sources); six hardcore or stockpile values take P over BT.
+- `crises-sources.md`: C1 to C8. All 20 names are official and all 20 cards verified from the VASSAL scans: Fuel Shortage loses 2 morale; Zombie Surge puts 6 zombies at the colony; Waste Not keeps the
+  printed direction (confirmed).
+- `objectives-sources.md`: O1 to O14 (main) and D1 to D4 (exiled). New Friends follows the Spanish scan; the VASSAL scans settle O1 to O7:
+  Find a Cure hardcore 3 Medicine, Leave It All Behind hardcore 3 zombies and one weapon per player and Food (not Fuel) cards,
+  Stockpile 2 food (normal) and 3 (hardcore), We Need More Samples hardcore 4 tokens per player.
 - `locations-sources.md`: L1 to L6. Long Night photos stand in for the base location cards (ruling L1); the School symbol
   row follows the photo, not the blurry Spanish thumbnail.

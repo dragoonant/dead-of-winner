@@ -25,12 +25,12 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO horror-in-the-night",
-    "fail": "PHOTO horror-in-the-night",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Horror_In_The_Night.jpg",
+    "fail": "VASSAL v1.1 Crisis_Horror_In_The_Night.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Horror_In_The_Night.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 20 (official name); official name (English card photo)",
+  "status": "verified",
+  "notes": "Scan: Food symbol, lose 2 morale.",
   "tags": [
     "name-official"
   ]

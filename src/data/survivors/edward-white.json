@@ -41,11 +41,11 @@
     "bio": "Can turn the contents of a medicine cabinet into a very bad day for something else."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "F 1.3.1; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Edward_White.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Edward_White.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Edward_White.jpg",
+    "ability": "VASSAL v1.1 Survivor_Edward_White.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 13 (C11). Die cost 1+ and the attack die in one (F 1.3.1); any medicine-symbol card works, a requested card included (F 1.3.2, F 1.3.3); the card own ability is not used."
+  "status": "verified",
+  "notes": "Clean scan Survivor_Edward_White.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

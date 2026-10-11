@@ -32,12 +32,12 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO bing https://tabletop-thailand.blogspot.com/2015/01/dead-of-winter-crossroads.html",
-    "fail": "PHOTO bing https://tabletop-thailand.blogspot.com/2015/01/dead-of-winter-crossroads.html",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Dead_Mans_March.jpg",
+    "fail": "VASSAL v1.1 Crisis_Dead_Mans_March.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Dead_Mans_March.jpg"
   },
   "status": "verified",
-  "notes": "Official name Dead Man's March (was our March of the Dead). English card photo (bing, tabletop-thailand): Tool or Fuel, 3 zombies at the school and 3 at the police station. Id kept for saves.",
+  "notes": "Official name Dead Man's March (was our March of the Dead). Tool or Fuel, 3 zombies at the School and 3 at the Police Station. Id kept for saves.",
   "tags": [
     "name-official"
   ]

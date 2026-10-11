@@ -14,20 +14,16 @@ build next. Tick items off or reply inline.
 - Tip: add `?seed=<any word>` to the URL to make a game repeatable, and include the seed in bug reports.
 - Tip: `?tier=random` plays against random bots, for comparison.
 
-## 2. Card photos (only if you have the physical game)
+## 2. Card data
 
-Lay cards in a grid of about 9 per photo and drop them in `docs/sources/photos/` (gitignored, never published).
-Most cards are now resolved from English photos found online. Still unknown:
+The card data is complete. Every crisis, main objective (both faces), standard secret objective and survivor is verified
+against clean scans of the real cards (Vassal module v1.1), and all 20 crisis names are official. Nothing is needed from
+you here.
 
-- [ ] **Hoarder and Neat Freak** (standard secret objectives): no readable text. Both stay out of the deck.
-- [ ] **Leave It All Behind**: the hidden part of the victory text (the weapon rule is kept from the earlier fan
-      record) and its hardcore side.
-- [ ] **Crisis names**: nine cards still use our own names: Despair, Empty Pantry, Endless Hordes, Killer Instinct,
-      Legions of Death, No Waste, Reorganization, Sickness and We Are Being Watched (a photo shows a title ending
-      "...hing Us"). Hailstorm and Food Spoilage have official names but blurred effect text. No Waste: which way do
-      the Food cards move?
-- [ ] **4 fan-sheet objectives** to confirm against a real card: Hope, Justice, All for One, Runaway.
-- [ ] **Thomas Heart's die requirement**: the Spanish scan reads "(5-)", we implemented 5+ as you specified.
+One small item is still unverified: the Vassal module censors the winning conditions on the betrayal objectives, so five
+of the ten betrayal cards still rest on a fan sheet or a Spanish scan: Runaway, All for One, Trigger Happy, Cult Leader
+and Serial Killers. A photo of those five real cards would close it (optional: the line counts and section numbers on the
+scans already agree with our records, and the other five betrayal cards are verified from English photos).
 
 ## 3. Rules rulings to skim (optional, one sitting)
 

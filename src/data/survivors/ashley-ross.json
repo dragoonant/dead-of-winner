@@ -27,11 +27,11 @@
     "bio": "Can frame a wall in minutes and trusts nothing she did not nail down herself."
   },
   "sources": {
-    "stats.influence": "R p7; W; C",
-    "stats.attack": "R p7; W; T",
-    "stats.search": "R* p7; W",
-    "ability": "R p7; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Ashley_Ross.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Ashley_Ross.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Ashley_Ross.jpg",
+    "ability": "VASSAL v1.1 Survivor_Ashley_Ross.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 5"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Ashley_Ross.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

@@ -1,7 +1,7 @@
 {
   "kind": "crisis",
   "id": "cr.endless-hordes",
-  "name": "Endless Hordes",
+  "name": "Unending Hordes",
   "prevent": [
     "tool"
   ],
@@ -30,13 +30,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Unending_Hordes.jpg",
+    "fail": "VASSAL v1.1 Crisis_Unending_Hordes.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Unending_Hordes.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 4 (name ours); single source",
+  "status": "verified",
+  "notes": "Official name Unending Hordes (was our Endless Hordes). Tool symbol, 8 zombies at the colony and 1 morale all match. Id kept for saves.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

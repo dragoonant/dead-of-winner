@@ -32,11 +32,11 @@
     "bio": "Used to running a building full of restless people and still expects quiet in the halls."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Arthur_Thurston.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Arthur_Thurston.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Arthur_Thurston.jpg",
+    "ability": "VASSAL v1.1 Survivor_Arthur_Thurston.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 4"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Arthur_Thurston.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

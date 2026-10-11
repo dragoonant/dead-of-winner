@@ -1,7 +1,7 @@
 {
   "kind": "crisis",
   "id": "cr.sickness",
-  "name": "Sickness",
+  "name": "Illness",
   "prevent": [
     "medicine"
   ],
@@ -39,13 +39,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO es-enfermedad; BGG ludopedia-51114",
-    "fail": "PHOTO es-enfermedad; BGG ludopedia-51114",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Illness.jpg",
+    "fail": "VASSAL v1.1 Crisis_Illness.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Illness.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 14 (name ours); conflict C5: ordinary wound; the scope filter drops survivors of exiled seats",
+  "status": "verified",
+  "notes": "Official name Illness (was our Sickness). Medicine symbol, one ordinary wound token on every non-exiled survivor, lose 1 morale (settles conflict C5). Id kept for saves.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

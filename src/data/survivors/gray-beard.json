@@ -35,11 +35,11 @@
     "bio": "Treats other people's belongings as an opening offer."
   },
   "sources": {
-    "stats.influence": "W; C; T",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Gray_Beard.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Gray_Beard.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Gray_Beard.jpg",
+    "ability": "VASSAL v1.1 Survivor_Gray_Beard.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 16. Removed in the co-op variant (W, T)."
+  "status": "verified",
+  "notes": "Clean scan Survivor_Gray_Beard.jpg matches influence, attack, search, ability location, die value and once-per-round limit. The Vassal module files him with the promos; kept because our 30-survivor roster carries him. The scan carries the not-in-co-op marker."
 }

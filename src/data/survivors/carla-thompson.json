@@ -32,11 +32,11 @@
     "bio": "Spent years as a voice on the radio and can still direct everyone at once."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Carla_Thompson.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Carla_Thompson.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Carla_Thompson.jpg",
+    "ability": "VASSAL v1.1 Survivor_Carla_Thompson.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 10"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Carla_Thompson.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

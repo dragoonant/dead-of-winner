@@ -42,11 +42,11 @@
     "bio": "Goes through the door everyone else is running from."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "R p7; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Gabriel_Diaz.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Gabriel_Diaz.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Gabriel_Diaz.jpg",
+    "ability": "VASSAL v1.1 Survivor_Gabriel_Diaz.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 15. His influence is not legible in the rulebook extract; 60 rests on the wiki and the influence pattern (C)."
+  "status": "verified",
+  "notes": "Clean scan Survivor_Gabriel_Diaz.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

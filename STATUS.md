@@ -45,7 +45,8 @@
 - Gates: typecheck clean, `npm test` green, `validate-data` 0 errors (2 count warnings), `npm run sim -- --games 30 --seed 2 --seats 4`:
   30/30 end, 0 violations, 0 leaks.
 - Update 2026-10-11 (card photos): only Hoarder and Neat Freak remain names-only; 11 objectives added, 4 of them draft from the pt-br fan sheet; 5 more crisis names are official.
-- Known gaps: 18 names-only objectives excluded (11 standard secret, 7 betrayal); 17 of the 20 crisis names are ours (`name-ours` tag);
+- Update 2026-10-10 (VASSAL v1.1 scans): all 20 crises, 10 main objectives (20 faces), 24 standard secret objectives and 30 survivors are verified against clean scans of the real cards; Hoarder and Neat Freak are real records; all 20 crisis names are official. Corrections: Leave It All Behind (Food cards, 3 zombies hardcore, one weapon per player), Find a Cure hardcore (3 Medicine), We Need More Samples hardcore (4 samples), Hypochondriac (2 Medicine). Open: 5 betrayal texts the module censors (Runaway, All for One, Trigger Happy, Cult Leader, Serial Killers).
+- Earlier known gaps (now closed except the betrayal texts above): 18 names-only objectives excluded (11 standard secret, 7 betrayal); 17 of the 20 crisis names are ours (`name-ours` tag);
   hooks choose for the player where the card says "of its choice" (rulings in `docs/needs-rules-check.md` section M2).
 
 ## Client (M3)
@@ -165,7 +166,6 @@ event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
 ## Next
 - Owner playtest gate (M4): play 3 games on Pages against the three personas: does the table feel alive, is the betrayer findable but not obvious.
 - M4 follow-ups if the playtest asks for them: Easy/Hard tiers, a betrayer that plays its own win condition, objective contribution actions in the engine.
-- Remaining source gaps: 9 standard secret objective texts, 7 betrayal texts, official English crisis names (17).
+- Remaining source gaps: 5 betrayal texts (censored in the VASSAL module).
 - Owner request: if you have a physical copy, check the conflict tables in `docs/spec/sources/*-sources.md` against it
-  (the rows marked Fan-source and the flagged numbers: Fuel Shortage, Zombie Wave, We Need More Samples hardcore,
-  Leave It All Behind, Stockpile, and the location card space counts), and skim the M1 rulings in `docs/needs-rules-check.md`.
+  (the rows marked Fan-source and the location card space counts; the card numbers are now verified from the VASSAL scans), and skim the M1 rulings in `docs/needs-rules-check.md`.

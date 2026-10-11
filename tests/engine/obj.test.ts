@@ -114,4 +114,25 @@ describe('objectives', () => {
     const both: GameState = { ...one, survivors: { ...one.survivors, 'sv.b': { ...one.survivors['sv.b']!, equipped: [w2!] } } }
     expect(hook(both, 's1', { symbol: 'weapon', n: 1 }).complete).toBe(true)
   })
+
+  it('OBJ-019 Hoarder hook (VASSAL scan): the seat must hold strictly more cards than any other player', () => {
+    const hook = CODE_HOOKS.objectives['rule.hand.mostCards']!
+    const tie = makeColony({ hands: { s1: ['it.food', 'it.food'], s2: ['it.food', 'it.fuel'] } })
+    expect(hook(tie, 's1').complete).toBe(false)
+    const ahead = makeColony({ hands: { s1: ['it.food', 'it.food', 'it.fuel'], s2: ['it.food', 'it.fuel'] } })
+    expect(hook(ahead, 's1').complete).toBe(true)
+    expect(hook(ahead, 's2').complete).toBe(false)
+  })
+
+  it('OBJ-020 Leave It All Behind weapon hook (VASSAL scan): one equipped weapon per non-exiled player, not per survivor', () => {
+    const base = makeColony({ seats: ['s1', 's2'], survivors: [{ id: 'sv.a', owner: 's1' }, { id: 'sv.b', owner: 's1' }, { id: 'sv.c', owner: 's2' }], hands: { s1: ['it.weapon'], s2: ['it.weapon'] } })
+    const hook = CODE_HOOKS.objectives['rule.non-exiled-seats.weaponEach']!
+    const w1 = base.seats['s1']!.hand[0]!
+    const w2 = base.seats['s2']!.hand[0]!
+    expect(hook(base, null).complete).toBe(false)
+    const one: GameState = { ...base, survivors: { ...base.survivors, 'sv.a': { ...base.survivors['sv.a']!, equipped: [w1] } } }
+    expect(hook(one, null).complete).toBe(false) // s2 still unarmed
+    const both: GameState = { ...one, survivors: { ...one.survivors, 'sv.c': { ...one.survivors['sv.c']!, equipped: [w2] } } }
+    expect(hook(both, null).complete).toBe(true) // s1 has a second survivor with no weapon: still complete
+  })
 })

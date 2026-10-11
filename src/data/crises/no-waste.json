@@ -1,7 +1,7 @@
 {
   "kind": "crisis",
   "id": "cr.no-waste",
-  "name": "No Waste",
+  "name": "Waste Not",
   "prevent": [
     "food"
   ],
@@ -28,13 +28,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Waste_Not.jpg",
+    "fail": "VASSAL v1.1 Crisis_Waste_Not.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Waste_Not.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 16 (name ours); NEEDS HOOK crisis.no-waste.foodToWaste: moves every removed-from-game Food card to the waste pile; the DSL has no op that returns removed cards. Direction as printed (C3), single source",
+  "status": "verified",
+  "notes": "Official name Waste Not (was our No Waste). Food symbol; every food card removed from the game goes to the waste pile (settles conflict C3: the direction is removed to waste), then lose 1 morale. Id and hook name kept for saves.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

@@ -24,12 +24,12 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO ebay 313087713029",
-    "fail": "PHOTO ebay 313087713029",
-    "bonus": "PHOTO ebay 313087713029"
+    "prevent": "VASSAL v1.1 Crisis_Overpopulation.jpg",
+    "fail": "VASSAL v1.1 Crisis_Overpopulation.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Overpopulation.jpg"
   },
   "status": "verified",
-  "notes": "src: ebay-photo-transcription.md section 3 (Item 313087713029); official English name. NEEDS HOOK crisis.overpopulation.killLowestTwo: kill the 2 lowest-influence non-exiled survivors without the morale loss",
+  "notes": "Scan: Food symbol, the 2 non-exiled survivors with the lowest influence are killed, no morale loss. Matches hook crisis.overpopulation.killLowestTwo.",
   "tags": [
     "name-official"
   ]

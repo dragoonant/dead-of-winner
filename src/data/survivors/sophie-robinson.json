@@ -26,11 +26,11 @@
     "bio": "Used to seeing the whole map from above and plans routes accordingly."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W; T",
-    "ability": "R p7; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Sophie_Robinson.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Sophie_Robinson.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Sophie_Robinson.jpg",
+    "ability": "VASSAL v1.1 Survivor_Sophie_Robinson.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 27"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Sophie_Robinson.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

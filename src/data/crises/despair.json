@@ -25,13 +25,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Despair.jpg",
+    "fail": "VASSAL v1.1 Crisis_Despair.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Despair.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 12 (name ours); single source",
+  "status": "verified",
+  "notes": "Official name confirmed by the clean scan (Medicine, lose 2 morale).",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

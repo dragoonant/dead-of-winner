@@ -1,7 +1,7 @@
 {
   "kind": "crisis",
   "id": "cr.empty-pantry",
-  "name": "Empty Pantry",
+  "name": "Starvation",
   "prevent": [
     "food"
   ],
@@ -29,13 +29,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO es-despensa-vacia; BGG ludopedia-51114",
-    "fail": "PHOTO es-despensa-vacia; BGG ludopedia-51114",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Starvation.jpg",
+    "fail": "VASSAL v1.1 Crisis_Starvation.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Starvation.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 18 (name ours); conflict C4: the official component is the starvation token",
+  "status": "verified",
+  "notes": "Official name Starvation (was our Empty Pantry). Food symbol, starvation token on the food supply and 1 morale all match. Id kept for saves.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

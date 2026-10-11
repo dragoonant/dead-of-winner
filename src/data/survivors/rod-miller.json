@@ -28,11 +28,11 @@
     "bio": "Knows every back road and how to slip through a town without being noticed."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "F 1.1.1; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Rod_Miller.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Rod_Miller.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Rod_Miller.jpg",
+    "ability": "VASSAL v1.1 Survivor_Rod_Miller.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 26"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Rod_Miller.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

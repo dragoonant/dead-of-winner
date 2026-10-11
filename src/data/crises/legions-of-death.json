@@ -26,13 +26,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Legions_Of_Death.jpg",
+    "fail": "VASSAL v1.1 Crisis_Legions_Of_Death.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Legions_Of_Death.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 11 (name ours); single source",
+  "status": "verified",
+  "notes": "Official name confirmed by the clean scan: Fuel, 12 zombies at the colony, no morale loss.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

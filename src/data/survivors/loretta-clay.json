@@ -29,11 +29,11 @@
     "bio": "Makes a pot of something out of almost nothing, and nobody asks what it was."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W; T",
-    "stats.search": "W",
-    "ability": "F 1.2.1; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Loretta_Clay.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Loretta_Clay.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Loretta_Clay.jpg",
+    "ability": "VASSAL v1.1 Survivor_Loretta_Clay.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 22 (C3, C11): the wiki misprints the die cost as (4); the FAQ corrects it to 4+"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Loretta_Clay.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

@@ -25,11 +25,11 @@
     "bio": "Notices what the numbers leave out, and what the shelves do."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "W; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_David_Garcia.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_David_Garcia.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_David_Garcia.jpg",
+    "ability": "VASSAL v1.1 Survivor_David_Garcia.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 12 (C8)"
+  "status": "verified",
+  "notes": "Clean scan Survivor_David_Garcia.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

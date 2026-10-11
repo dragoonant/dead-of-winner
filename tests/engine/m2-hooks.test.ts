@@ -26,7 +26,7 @@ describe('M2 code hooks', () => {
   it('registers every name the data uses', () => {
     for (const n of ['crisis.exhaustion.frostbiteTopFive', 'crisis.hailstorm.frostbiteRolls', 'crisis.no-waste.foodToWaste', 'crisis.overpopulation.killLowestTwo', 'crisis.reorganization.passSurvivors',
       'crossroads.bev-russel.schoolWound', 'crossroads.bev-russel.clearSchool', 'crossroads.old-divisions.skipCrisis', 'objective.kill-them.removeExiledSeat', 'objective.winter-has-come.fuelOrEnd']) expect(CODE_HOOKS.effects[n], n).toBeTypeOf('function')
-    for (const n of ['rule.zombies-outside-colony.atMost', 'rule.non-exiled-seats.weaponPerSurvivor', 'rule.food.perNonExiledSeatAtLeast', 'rule.colony.everyEntranceBarricaded']) expect(CODE_HOOKS.objectives[n], n).toBeTypeOf('function')
+    for (const n of ['rule.zombies-outside-colony.atMost', 'rule.non-exiled-seats.weaponEach', 'rule.hand.mostCards', 'rule.food.perNonExiledSeatAtLeast', 'rule.colony.everyEntranceBarricaded']) expect(CODE_HOOKS.objectives[n], n).toBeTypeOf('function')
   })
 
   it('exhaustion puts frostbite on the five highest-influence survivors', () => {
@@ -105,6 +105,6 @@ describe('M2 code hooks', () => {
     expect(o['rule.food.perNonExiledSeatAtLeast']!({ ...base, food: 12 }, null, { perSeat: 3 }).complete).toBe(true)
     expect(o['rule.food.perNonExiledSeatAtLeast']!({ ...base, food: 11 }, null, { perSeat: 3 }).complete).toBe(false)
     expect(o['rule.zombies-outside-colony.atMost']!(base, null, { n: 99 }).complete).toBe(true)
-    expect(o['rule.non-exiled-seats.weaponPerSurvivor']!(base, null).parts[0]!.need).toBe(alive(base).length)
+    expect(o['rule.non-exiled-seats.weaponEach']!(base, null).parts[0]!.need).toBe(base.seatOrder.filter((s) => !base.seats[s]!.seat.exiled).length)
   })
 })

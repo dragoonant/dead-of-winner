@@ -36,11 +36,11 @@
     "bio": "Has defended a classroom before and is not about to lose this one."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Maria_Lopez.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Maria_Lopez.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Maria_Lopez.jpg",
+    "ability": "VASSAL v1.1 Survivor_Maria_Lopez.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 23 (C11)"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Maria_Lopez.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

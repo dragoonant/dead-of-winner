@@ -25,11 +25,11 @@
     "bio": "Reads cards for a living and claims to hear the next one coming."
   },
   "sources": {
-    "stats.influence": "PHOTO owner 2026-10-10",
-    "stats.attack": "PHOTO owner 2026-10-10",
-    "stats.search": "PHOTO owner 2026-10-10",
-    "ability": "PHOTO owner 2026-10-10"
+    "stats.influence": "VASSAL v1.1 Survivor_Talia_Jones.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Talia_Jones.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Talia_Jones.jpg",
+    "ability": "VASSAL v1.1 Survivor_Talia_Jones.jpg"
   },
-  "status": "draft",
-  "notes": "Checked against the owner's photo of the English card (2026-10-10): influence 28, attack 3+, search 1+. The code hook peeks at the top two crisis cards for the reorder; the two words are table talk (spec 21 section 13)."
+  "status": "verified",
+  "notes": "Clean scan Survivor_Talia_Jones.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

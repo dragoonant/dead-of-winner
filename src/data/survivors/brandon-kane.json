@@ -30,11 +30,11 @@
     "bio": "Has cleaned up after every kind of disaster and finds this one almost familiar."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Brandon_Kane.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Brandon_Kane.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Brandon_Kane.jpg",
+    "ability": "VASSAL v1.1 Survivor_Brandon_Kane.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 7"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Brandon_Kane.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

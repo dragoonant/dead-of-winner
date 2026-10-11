@@ -29,12 +29,11 @@
     "bio": "A quick learner who borrows every skill he watches someone use."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "F 1.1.1; W; T; BGG ludopedia-51115",
-    "ability.location": "W; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_John_Price.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_John_Price.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_John_Price.jpg",
+    "ability": "VASSAL v1.1 Survivor_John_Price.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 21 (C5)"
+  "status": "verified",
+  "notes": "Clean scan Survivor_John_Price.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

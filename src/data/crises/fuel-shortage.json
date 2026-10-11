@@ -25,12 +25,12 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "R p12",
-    "fail": "R p12; PHOTO es-escasez-de-gasolina",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Fuel_Shortage.jpg",
+    "fail": "VASSAL v1.1 Crisis_Fuel_Shortage.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Fuel_Shortage.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 8 (official name); official name (R p12); conflict C1: R and ES print 2, P prints 1; R taken",
+  "status": "verified",
+  "notes": "Scan prints lose 2 morale (settles conflict C1: the Portuguese 1 was a slip).",
   "tags": [
     "name-official"
   ]

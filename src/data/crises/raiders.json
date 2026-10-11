@@ -33,12 +33,12 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO ebay 326680035955",
-    "fail": "PHOTO ebay 326680035955",
-    "bonus": "PHOTO ebay 326680035955"
+    "prevent": "VASSAL v1.1 Crisis_Raiders.jpg",
+    "fail": "VASSAL v1.1 Crisis_Raiders.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Raiders.jpg"
   },
   "status": "verified",
-  "notes": "src: research-notes-2026-10-10.md eBay listing 326680035955; official English name confirmed; removeCard hand takes a random card per seat and skips an empty hand",
+  "notes": "Scan: Food symbol, each non-exiled player randomly removes one card from hand from the game if able, lose 1 morale.",
   "tags": [
     "name-official"
   ]

@@ -31,13 +31,12 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12",
-    "name": "PHOTO bing https://www.pinterest.com/pin/boardgame--329959110211992844/"
+    "prevent": "VASSAL v1.1 Crisis_Hailstorm.jpg",
+    "fail": "VASSAL v1.1 Crisis_Hailstorm.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Hailstorm.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 6 (name ours); NEEDS HOOK crisis.hailstorm.frostbiteRolls: a per-seat d6 (4 or less) then a frostbite on one survivor of that seat chosen by its player; the DSL has no per-seat iteration with a die. Barricade removal is plain DSL. Single source; official name Hailstorm confirmed by an English card photo (bing, pinterest), whose effect text is blurred, so the mechanics stay from the fan sheet",
+  "status": "verified",
+  "notes": "Clean scan reads in full: Tool symbol, every non-exiled player rolls a die and on 4 or less puts a frostbite wound on one survivor they control, all barricades come off every location, no morale loss. Matches hook crisis.hailstorm.frostbiteRolls.",
   "tags": [
     "name-official"
   ]

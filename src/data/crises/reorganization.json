@@ -1,7 +1,7 @@
 {
   "kind": "crisis",
   "id": "cr.reorganization",
-  "name": "Reorganization",
+  "name": "Shaking Things Up",
   "prevent": [
     "tool"
   ],
@@ -28,13 +28,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO es-reorganizacion; BGG ludopedia-51114",
-    "fail": "PHOTO es-reorganizacion; BGG ludopedia-51114",
-    "bonus": "R p12"
+    "prevent": "VASSAL v1.1 Crisis_Shaking_Things_Up.jpg",
+    "fail": "VASSAL v1.1 Crisis_Shaking_Things_Up.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Shaking_Things_Up.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 5 (name ours); NEEDS HOOK crisis.reorganization.passSurvivors: no DSL op transfers control of a survivor to the next seat (each non-exiled seat hands one survivor of its choice to the seat on its left, simultaneously)",
+  "status": "verified",
+  "notes": "Official name Shaking Things Up (was our Reorganization). Tool symbol, each non-exiled player gives one survivor they control to the player on their left, lose 1 morale. The hook picks the survivor for the player (printed card lets the player choose). Id and hook name kept for saves.",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

@@ -33,13 +33,12 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12",
-    "name": "PHOTO bing https://www.pinterest.com/pin/boardgame--329959110211992844/"
+    "prevent": "VASSAL v1.1 Crisis_Food_Spoilage.jpg",
+    "fail": "VASSAL v1.1 Crisis_Food_Spoilage.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Food_Spoilage.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 15 (name ours); single source; official name Food Spoilage (was our Spoiled Food) read from an English card photo (bing, pinterest) whose effect is blurred apart from a 'Lose 1 m...' fragment that fits the fan record; mechanics stay from the fan sheet. Id kept for saves",
+  "status": "verified",
+  "notes": "Clean scan reads in full: Food symbol, until the end of next round non-exiled players cannot use food tokens to raise a die, lose 1 morale. Id kept for saves.",
   "tags": [
     "name-official"
   ]

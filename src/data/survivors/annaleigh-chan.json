@@ -25,12 +25,11 @@
     "bio": "Argues for a living and never takes a word at face value."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "W; T; BGG ludopedia-51115",
-    "ability.location": "BGG ludopedia-51115 (verify)"
+    "stats.influence": "VASSAL v1.1 Survivor_Annaleigh_Chan.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Annaleigh_Chan.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Annaleigh_Chan.jpg",
+    "ability": "VASSAL v1.1 Survivor_Annaleigh_Chan.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 3 (C10): ability location and target follow the Portuguese fan card (colony, one random card from one other hand); the wiki says anywhere, every other hand. Removed in the co-op variant (W, T)."
+  "status": "verified",
+  "notes": "Clean scan Survivor_Annaleigh_Chan.jpg matches influence, attack, search, ability location, die value and once-per-round limit. The scan carries the not-in-co-op marker."
 }

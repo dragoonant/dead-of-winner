@@ -18,5 +18,5 @@ See "Client (M3)" in `STATUS.md` for URL params, screenshots and known gaps.
 3. Art (30) after the playtest.
 
 ## Owner ask
-Play on Pages and report. Still open: 9 standard secret objective texts, 7 betrayal texts and 17 official English crisis names;
-photos of real cards (like the All I Need Is My Books and Talia Jones photos used in M3) are the fastest way to close them.
+Play on Pages and report. Card data is verified against the Vassal v1.1 scans (crises, main objectives, standard secret objectives, survivors); still open: 5 betrayal texts the module censors
+(Runaway, All for One, Trigger Happy, Cult Leader, Serial Killers). A photo of those five real cards is the fastest way to close them.

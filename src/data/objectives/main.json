@@ -73,13 +73,13 @@
       }
     },
     "sources": {
-      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
-      "sides.hardcore": "PHOTO ten-weeks-of-darkness; BGG 2054328; BGG ludopedia-51113",
+      "sides.normal": "VASSAL v1.1 Objective_8_Week_Of_Darkness_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_10_Week_Of_Darkness_Front.jpg",
       "code": "R p16",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_8_Week_Of_Darkness_Back.jpg; VASSAL v1.1 Objective_10_Week_Of_Darkness_Front.jpg"
     },
-    "notes": "src: objectives-sources.md A row M01 (O13). One card, two titles: the normal face is Eight Weeks of Darkness, the hardcore face Ten Weeks of Darkness. The id keeps the spec 11 spelling. Survive-N-rounds is complete at the colony.objective check of the last round (roundsLeft 1), the engine ends the game right after on roundsOut otherwise (BO).",
-    "status": "draft"
+    "notes": "Clean scans of both faces match every value (morale 7/6, rounds 8/10, helpless per player, 1/3 zombies at the other locations, 6 food on the hardcore face, Long). One card, two titles: Eight Weeks of Darkness (normal) and Ten Weeks of Darkness (hardcore). The id keeps the spec 11 spelling. Survive-N-rounds is complete at the colony.objective check of the last round (roundsLeft 1).",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -207,13 +207,13 @@
       }
     },
     "sources": {
-      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
-      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "sides.normal": "VASSAL v1.1 Objective_Kill_Them_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_Kill_Them_Front.jpg",
       "code": "R p16",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_Kill_Them_Back.jpg; VASSAL v1.1 Objective_Kill_Them_Front.jpg"
     },
-    "notes": "src: objectives-sources.md A row M02 (O12). Exile change is a seat.exiled trigger on a code hook (spec 11 O2.10).",
-    "status": "draft"
+    "notes": "Clean scans of both faces match every value. Exile change is a seat.exiled trigger on a code hook (spec 11 O2.10).",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -266,7 +266,7 @@
         "counters": {
           "medicine": {
             "need": "perSeat",
-            "perSeatMultiplier": 2
+            "perSeatMultiplier": 3
           }
         },
         "contributions": [
@@ -290,17 +290,17 @@
       },
       "hardcore": {
         "setup": "Morale 5 and six rounds. Twelve zombies wait at the colony and two at each other location.",
-        "victory": "The same medicine drive: two cards for every player who started."
+        "victory": "The same medicine drive, but three cards for every player who started the game."
       }
     },
     "sources": {
-      "sides.normal": "PHOTO bing https://www.spritesanddice.com/reviews/dead-winter-review-making-survival-matter/",
-      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "sides.normal": "VASSAL v1.1 Objective_Find_A_Cure_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_Find_A_Cure_Front.jpg",
       "code": "R p16",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_Find_A_Cure_Back.jpg; VASSAL v1.1 Objective_Find_A_Cure_Front.jpg"
     },
-    "notes": "Normal side checked against an English card photo (bing, spritesanddice): morale 5, six rounds, no zombie line, two Medicine per starting player, rated short. Every value matched the earlier fan figures, so nothing changed. Hardcore side is still from the fan sources. Starter-card exclusion is table honesty only: the data cannot tell a starting card from a found one.",
-    "status": "draft"
+    "notes": "Clean scans: normal side (morale 5, six rounds, no setup, 2 Medicine per starting player, Short) matched. Hardcore side corrected from 2 to 3 Medicine per starting player (settles O1); it is rated Medium on the card while the card-level time keeps the normal-side Short. Starter-card exclusion is table honesty only: the data cannot tell a starting card from a found one.",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -453,13 +453,13 @@
       }
     },
     "sources": {
-      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
-      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "sides.normal": "VASSAL v1.1 Objective_Home_Sweet_Home_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_Home_Sweet_Home_Front.jpg",
       "code": "R p16",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_Home_Sweet_Home_Back.jpg; VASSAL v1.1 Objective_Home_Sweet_Home_Front.jpg"
     },
-    "notes": "src: objectives-sources.md A row M04 (O8 normal morale 6 confirmed; O5 hardcore morale and rounds 5 and 5, Portuguese sheet over the BGG thread).",
-    "status": "draft"
+    "notes": "Clean scans of both faces match every value (6/6 with 12 colony zombies and 10 colony barricades; 5/5 with 18 and 14; one barricade at each other location; settles O5 and O8).",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -553,13 +553,13 @@
       }
     },
     "sources": {
-      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
-      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "sides.normal": "VASSAL v1.1 Objective_Raiding_Party_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_Raiding_Party_Front.jpg",
       "code": "R p16",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_Raiding_Party_Back.jpg; VASSAL v1.1 Objective_Raiding_Party_Front.jpg"
     },
-    "notes": "src: objectives-sources.md A row M05 (O9: colony included in the normal setup). The hardcore seat-count split reads seatCountAtLeast, which counts seats still in the game; the card means players who started. Differs only after an elimination.",
-    "status": "draft"
+    "notes": "Clean scans of both faces match every value: the colony is included in the normal side setup (settles O9); hardcore needs 2 emptied decks for 2 to 3 players and 3 for 4 to 5. The hardcore seat-count split reads seatCountAtLeast, which counts seats still in the game; the card means players who started. Differs only after an elimination.",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -588,15 +588,15 @@
           }
         ],
         "counters": {
-          "fuel": {
+          "food": {
             "need": "perSeat",
             "perSeatMultiplier": 2
           }
         },
         "contributions": [
           {
-            "symbol": "fuel",
-            "counter": "fuel",
+            "symbol": "food",
+            "counter": "food",
             "exiledMayContribute": true,
             "excludeStarter": true
           }
@@ -604,11 +604,11 @@
         "complete": {
           "all": [
             {
-              "code": "rule.non-exiled-seats.weaponPerSurvivor"
+              "code": "rule.non-exiled-seats.weaponEach"
             },
             {
               "test": "objectiveCounterAtLeast",
-              "value": "fuel"
+              "value": "food"
             }
           ]
         }
@@ -626,22 +626,22 @@
           },
           {
             "op": "addZombies",
-            "value": 2,
+            "value": 3,
             "scope": {
               "who": "nonColonyLocations"
             }
           }
         ],
         "counters": {
-          "fuel": {
+          "food": {
             "need": "perSeat",
             "perSeatMultiplier": 3
           }
         },
         "contributions": [
           {
-            "symbol": "fuel",
-            "counter": "fuel",
+            "symbol": "food",
+            "counter": "food",
             "exiledMayContribute": true,
             "excludeStarter": true
           }
@@ -649,11 +649,11 @@
         "complete": {
           "all": [
             {
-              "code": "rule.non-exiled-seats.weaponPerSurvivor"
+              "code": "rule.non-exiled-seats.weaponEach"
             },
             {
               "test": "objectiveCounterAtLeast",
-              "value": "fuel"
+              "value": "food"
             }
           ]
         }
@@ -662,21 +662,21 @@
     "text": {
       "normal": {
         "setup": "Morale 6 and five rounds. Twelve zombies at the colony and two at each other location.",
-        "victory": "Every player still in the colony carries one equipped weapon for each survivor they control, and the objective holds two fuel cards for each player who started. Starting fuel does not count; fuel can be added at any moment of a player's own turn."
+        "victory": "Every player still in the colony has at least one weapon equipped on a survivor they control, and the objective holds two food cards for each player who started the game. Starting food does not count; food can be added at any moment of a player's own turn."
       },
       "hardcore": {
-        "setup": "Morale 5 and five rounds. The same zombies as the normal side.",
-        "victory": "The same arming rule, with three fuel cards per player who started."
+        "setup": "Morale 5 and five rounds. Twelve zombies at the colony and three at each other location.",
+        "victory": "The same armed-player rule, with three food cards for each player who started the game."
       }
     },
     "sources": {
-      "sides.normal": "PHOTO bing https://boardgamegeek.com/thread/2054328/main-objective-cards",
-      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113 (verify)",
+      "sides.normal": "VASSAL v1.1 Objective_Leave_It_All_Behind_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_Leave_It_All_Behind_Front.jpg",
       "code": "R p16",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_Leave_It_All_Behind_Back.jpg; VASSAL v1.1 Objective_Leave_It_All_Behind_Front.jpg"
     },
-    "notes": "Normal side set from an English card photo (bing, BGG spread): morale 6, five rounds, 12 colony zombies, 2 per other location, and the cost is 2 FUEL per starting player (the earlier fan figure said Food). The victory line is partly hidden under an overlapping card, so the arming rule (one equipped weapon per survivor of every non-exiled player) stays from the earlier fan record; time rating not readable, kept short. Hardcore side moved to Fuel as well, other numbers unverified. Starter-card exclusion is table honesty only.",
-    "status": "draft"
+    "notes": "Corrected from clean scans (settles O2, O3, O4): the card-count cost is FOOD (the can icon) not Fuel, 2 per starting player normal and 3 hardcore; the hardcore face puts 3 zombies at each other location (not 2); and the armed rule is one equipped weapon per non-exiled player, not one per survivor. Morale 6/5 and five rounds on both faces, 12 colony zombies, Short. Starter-card exclusion is table honesty only.",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -835,13 +835,13 @@
       }
     },
     "sources": {
-      "sides.normal": "PHOTO bing https://www.theboardgamefamily.com/2016/10/dead-of-winter-board-game-review/",
-      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "sides.normal": "VASSAL v1.1 Objective_Stockpile_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_Stockpile_Front.jpg",
       "code": "R p16",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_Stockpile_Back.jpg; VASSAL v1.1 Objective_Stockpile_Front.jpg"
     },
-    "notes": "Normal side corrected to an English card photo (bing, theboardgamefamily): food per non-exiled player is 2, not 3 (earlier fan figure O6). Morale 6, six rounds, 18 colony zombies, entrance barricades and 2 Medicine, 2 Tool, 2 Fuel already matched; rated medium. The hardcore side keeps the fan figures (3 food, unverified). Food is counted over the live non-exiled players, so it is a code condition. Starter-card exclusion is table honesty only.",
-    "status": "draft"
+    "notes": "Clean scans of both faces match every value (settles O6 and O10): normal 2 food tokens per non-exiled player, hardcore 3; both need a barricade at every colony entrance and 2 Medicine, 2 Tool and 2 Fuel cards under the objective. Food is counted over the live non-exiled players, so it is a code condition. Starter-card exclusion is table honesty only.",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -974,13 +974,13 @@
       }
     },
     "sources": {
-      "sides.normal": "BGG 2054328; BGG ludopedia-51113",
-      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "sides.normal": "VASSAL v1.1 Objective_Winter_Has_Come_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_Winter_Has_Come_Front.jpg",
       "code": "R p16",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_Winter_Has_Come_Back.jpg; VASSAL v1.1 Objective_Winter_Has_Come_Front.jpg"
     },
-    "notes": "src: objectives-sources.md A row M08 (O14: the fuel card is compulsory). The compulsory card is a code effect on the colony.payFood window (spec 11 O2.10); complete is read at the last round check (roundsLeft 1).",
-    "status": "draft"
+    "notes": "Clean scans of both faces match every value (morale 8/7, rounds 8/10, zombies 10+1 and 12+2, 8 or 10 Fuel cards, Long). The compulsory card is a code effect on the colony.payFood window (spec 11 O2.10); complete is read at the last round check (roundsLeft 1). The printed card says a single player may place the card and the game ends if none is placed.",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -1047,13 +1047,13 @@
       }
     },
     "sources": {
-      "sides.normal": "PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
-      "sides.hardcore": "BGG 2054328; BGG ludopedia-51113",
+      "sides.normal": "VASSAL v1.1 Objective_Too_Many_Mouths_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_Too_Many_Mouths_Front.jpg",
       "code": "R p17",
-      "time": "BGG ludopedia-51113"
+      "time": "VASSAL v1.1 Objective_Too_Many_Mouths_Back.jpg; VASSAL v1.1 Objective_Too_Many_Mouths_Front.jpg"
     },
-    "notes": "src: objectives-sources.md A row M09. Hardcore is rated medium on the card.",
-    "status": "draft"
+    "notes": "Clean scans of both faces match every value. The hardcore face is rated Medium on the card while the card-level time keeps the normal-side Short.",
+    "status": "verified"
   },
   {
     "kind": "mainObjective",
@@ -1117,7 +1117,7 @@
         "counters": {
           "samples": {
             "need": "perSeat",
-            "perSeatMultiplier": 3
+            "perSeatMultiplier": 4
           }
         },
         "complete": {
@@ -1150,16 +1150,16 @@
       },
       "hardcore": {
         "setup": "Morale 6, five rounds, three zombies at every location outside the colony.",
-        "victory": "The same sampling roll and the same three samples per starting player."
+        "victory": "The same sampling roll, now four samples for every player who started the game."
       }
     },
     "sources": {
-      "sides.normal": "R p6; R p15; PHOTO es-main-objectives; BGG 2054328; BGG ludopedia-51113",
-      "sides.hardcore": "R p15; BGG 2054328; BGG ludopedia-51113 (verify)",
+      "sides.normal": "VASSAL v1.1 Objective_We_Need_More_Samples_Back.jpg",
+      "sides.hardcore": "VASSAL v1.1 Objective_We_Need_More_Samples_Front.jpg",
       "code": "R p17",
-      "time": "R p15"
+      "time": "VASSAL v1.1 Objective_We_Need_More_Samples_Back.jpg; VASSAL v1.1 Objective_We_Need_More_Samples_Front.jpg"
     },
-    "status": "draft",
-    "notes": "src: objectives-sources.md A row M10 (O7: the rulebook hardcore card prints 3 samples per player, the thread and the Portuguese sheet say 4; 3 used, flagged; O11: one roll per zombie killed)."
+    "status": "verified",
+    "notes": "Corrected from clean scans (settles O7): the hardcore face asks for 4 samples per starting player, not 3 (the earlier rulebook reading was an illustration); the normal face stays at 3. Other values match (morale 6, rounds 6/5, 1 and 3 zombies at the other locations, die of 4 or more, Short). One roll per zombie killed (O11)."
   }
 ]

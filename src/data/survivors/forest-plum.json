@@ -37,11 +37,11 @@
     "bio": "Still carries the red suit and a stubborn belief that people deserve one good morning."
   },
   "sources": {
-    "stats.influence": "R p7; W; C; T",
-    "stats.attack": "PHOTO es-github Supervivientes/Forest-plum; W",
-    "stats.search": "PHOTO es-github Supervivientes/Forest-plum; R p10; W; T",
-    "ability": "PHOTO es-github Supervivientes/Forest-plum"
+    "stats.influence": "VASSAL v1.1 Survivor_Forest_Plum.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Forest_Plum.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Forest_Plum.jpg",
+    "ability": "VASSAL v1.1 Survivor_Forest_Plum.jpg"
   },
   "status": "verified",
-  "notes": "src: ebay-photo-transcription.md section 4 (Spanish-edition scan): ANYWHERE, at the start of your turn remove Forest from the game to raise morale by 1; attack 2+, search 5+, influence 14."
+  "notes": "Clean scan Survivor_Forest_Plum.jpg matches influence, attack, search, ability location, die value and once-per-round limit. Attack confirmed as 2 or more."
 }

@@ -29,11 +29,11 @@
     "bio": "Knows how to keep a crowd calm and a rumor from spreading."
   },
   "sources": {
-    "stats.influence": "R p7; W; C; T",
-    "stats.attack": "R* p7; W",
-    "stats.search": "R* p7; W",
-    "ability": "R p7; W; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Brian_Lee.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Brian_Lee.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Brian_Lee.jpg",
+    "ability": "VASSAL v1.1 Survivor_Brian_Lee.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 8"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Brian_Lee.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

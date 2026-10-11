@@ -35,11 +35,11 @@
     "bio": "Treats the wounded first and asks questions after the bleeding stops."
   },
   "sources": {
-    "stats.influence": "R p7; W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "R p7; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Olivia_Brown.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Olivia_Brown.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Olivia_Brown.jpg",
+    "ability": "VASSAL v1.1 Survivor_Olivia_Brown.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 25"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Olivia_Brown.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

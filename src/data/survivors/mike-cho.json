@@ -28,11 +28,11 @@
     "bio": "Claims the training is real and moves as if it is."
   },
   "sources": {
-    "stats.influence": "R p7; W; C",
-    "stats.attack": "R p7; W",
-    "stats.search": "W",
-    "ability": "R p7; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Mike_Cho.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Mike_Cho.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Mike_Cho.jpg",
+    "ability": "VASSAL v1.1 Survivor_Mike_Cho.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 24"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Mike_Cho.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

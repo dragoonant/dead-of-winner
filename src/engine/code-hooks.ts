@@ -327,7 +327,7 @@ const objectives: Record<string, CodeObjectiveHook> = {
     }))
     return { complete: parts.every((p) => p.have >= p.need), parts }
   },
-  /** Hypochondriac: the hand holds at least one card and every card in it has `params.symbol` (Medicine). */
+  /** Neat Freak: the hand holds at least one card and every card in it has `params.symbol` (Medicine). */
   'rule.hand.onlySymbol': (state, seat, params) => {
     const symbol = String(params?.['symbol'] ?? 'medicine') as ItemSymbol
     const hand = seat ? state.seats[seat]?.hand ?? [] : []
@@ -349,12 +349,15 @@ const objectives: Record<string, CodeObjectiveHook> = {
     const have = state.locationOrder.filter((l) => l !== 'colony').reduce((t, l) => t + state.locations[l]!.entrances.reduce((a, e) => a + e.zombies, 0), 0)
     return { complete: have <= n, parts: [{ label: `zombies outside the colony (at most ${n})`, have, need: n }] }
   },
-  /** Leave It All Behind: every non-exiled seat carries one equipped weapon for each survivor it controls. */
-  'rule.non-exiled-seats.weaponPerSurvivor': (state) => {
+  /** Leave It All Behind: every non-exiled seat has at least one equipped weapon on a survivor it controls (one per player, not one per survivor). */
+  'rule.non-exiled-seats.weaponEach': (state) => {
     const seats = nonExiledSeats(state)
-    const need = seats.reduce((n, s) => n + aliveOf(state, s).length, 0)
-    const have = seats.reduce((n, s) => n + Math.min(aliveOf(state, s).length, equippedWith(state, s, 'weapon')), 0)
-    return report('survivors with an equipped weapon', have, need)
+    return report('players with an equipped weapon', seats.filter((s) => equippedWith(state, s, 'weapon') >= 1).length, seats.length)
+  },
+  /** Hoarder: the seat holds strictly more cards in hand than any other live seat. */
+  'rule.hand.mostCards': (state, seat) => {
+    const mine = seat ? state.seats[seat]?.hand.length ?? 0 : 0
+    return report('cards in hand over the next largest hand', mine - bestOther(state, seat, (s) => state.seats[s]?.hand.length ?? 0), 1)
   },
   /** Stockpile: the food supply holds `perSeat` tokens for every non-exiled seat. */
   'rule.food.perNonExiledSeatAtLeast': (state, _seat, params) =>

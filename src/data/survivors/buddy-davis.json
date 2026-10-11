@@ -28,11 +28,11 @@
     "bio": "Counts reps in his sleep and does not stay down once he hits the floor."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W; T",
-    "ability": "F 1.1.5; W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_Buddy_Davis.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Buddy_Davis.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Buddy_Davis.jpg",
+    "ability": "VASSAL v1.1 Survivor_Buddy_Davis.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 9"
+  "status": "verified",
+  "notes": "Clean scan Survivor_Buddy_Davis.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

@@ -16,10 +16,21 @@ session and are not committed; the rulebook and FAQ are the owner's private copi
 | T | TV Tropes `Characters/DeadOfWinter` (`tvtropes-characters.txt`) | prose that confirms attack and search thresholds and abilities; hints about what the Crossroads cards do | low alone (trope prose, some of it wrong); useful as an independent second reader |
 | C | Self-consistency check (ours) | the 30 wiki influence values are all distinct and form exactly 10, 12, 14 ... 68 | strong evidence that no influence value is mistyped, since one typo would break the pattern |
 | P | Portuguese fan translation of all 30 survivors, Ludopedia attachment 51115 (`dead_of_winter_um_j_traducao_em_portugues_30_c_51115.pdf`), downloaded by the owner 2026-10-10; read through `docs/sources/fan/ludopedia-transcription.md` | ability location and ability text of all 30 survivors; prints NO influence, attack or search values; die-cost marks only on Bev Russell (1+) and Daniel Smith (4+) | medium: a translation of the real cards; outranks W where they differ and is outranked by R and F. A `P*` tag means P differs from the other sources, see Notes |
+| VASSAL | Vassal module "Dead_of_Winter_Crossroads_1.1.vmod" (vassalengine.org, sha256 abaf1ee0..., built 2015 from the printed cards): clean scans of 29 base survivors plus Gray Beard (filed there as a promo, with Felicia Day and Kodiak Colby, which are not in our roster), read 2026-10-10 (`fan/vassal-transcription.md`) | influence, attack, search, ability location, die value, once-per-round and co-op marker of every card | highest for card content: a scan of the printed card |
 | B | Handoff brief Part G.1 (`docs/DEAD-OF-WINTER-HANDOFF.md`) | the starting table of known rows | memory-grade; checked below and corrected where wrong |
 
 Influence matters for rules: all 30 are distinct (tag C), and the lowest influence at a location decides who
 dies on an overrun or when a bite spreads (R p13).
+
+## VASSAL v1.1 cross-check (2026-10-10)
+
+All 30 survivors were compared field by field with the scans (`Survivor_<name>.jpg`): influence, attack, search, ability
+location, die value, once-per-round limit and co-op marker. Result: no value differs and no gameplay change; all 30 are
+now status verified with the source tag `VASSAL v1.1 Survivor_<name>.jpg`. The five specific checks: Thomas Heart prints
+(5+), not (5-), so the 5+ die value stands; Daniel Smith prints (4+) and "once per round"; Forest Plum prints attack 2+ and
+search 5+; Annaleigh Chan is a Colony ability with the not-in-co-op marker; Alexis Grey is 46 / 5+ / 4+ with the library
+ability once per round; John Price is a NON-COLONY ability. Loretta Clay prints "(4)" without a plus (see C3, F 1.2.1
+still rules 4+).
 
 ## Table (all 30)
 
@@ -63,17 +74,17 @@ die must show that number or higher.
 
 | ID | Subject | Sources disagree | What the spec does | Status |
 |---|---|---|---|---|
-| C1 | Alexis Grey influence | brief G.1 says 68. The R sample card (p7), W and C all say 46; 68 is Brian Lee's value and sits beside her card in the R text extract | 46 / 5+ / 4+ | Corrected |
-| C2 | Daniel Smith "once per round" | R p7 prints the ability with no round limit (only the 4+ die cost and "exposure once"); W, the brief and now P (4+ die, once per round) add "once per round" | follow the printed rulebook card: no round limit, each use costs a 4+ die (R p10: a die-cost ability may be used repeatedly unless it says otherwise). Two fan sources against one official sample card; revisit if the owner's physical card differs | Superseded 2026-10-10: the Spanish card scan prints 'once per round', now implemented |
+| C1 | Alexis Grey influence | brief G.1 says 68. The R sample card (p7), W, C and VASSAL all say 46; 68 is Brian Lee's value and sits beside her card in the R text extract | 46 / 5+ / 4+ | Corrected; Confirmed (VASSAL) |
+| C2 | Daniel Smith "once per round" | R p7 prints the ability with no round limit (only the 4+ die cost and "exposure once"); W, the brief, P and the Spanish scan add "once per round"; the VASSAL scan prints "(4+) Once per round" | once per round, each use costs a 4+ die | Confirmed (VASSAL v1.1 Survivor_Daniel_Smith.jpg) |
 | C3 | Loretta Clay activation | W prints a plain `(4)`; F 1.2.1 says that was a misprint for `(4+)` | 4+ die, once per round | Corrected (F over W) |
-| C4 | Thomas Heart ability | W page text is identical to Talia Jones's (discarded); the brief's guess has no source; T gives no ability text; P prints a real ability: Colony, once per round, kill 2 zombies at the colony, no exposure roll, no die cost printed | use the P ability, marked provisional (single fan source); stats 64 / 1+ / 3+ (W, C) kept; keep him out of golden examples until a card photo confirms | Fan-source (provisional) |
-| C5 | John Price location | W labels the ability `NON-COLONY`; F 1.1.1 only says copies begin on arrival and end when his next move completes, and never mentions the colony; P prints "away from the colony" | he copies abilities only while away from the colony | Confirmed (W,P agree) |
-| C6 | James Meyers reroll | W: reroll "one or more" unused dice and keep the second result; T: one die | take W (it reads like a quote of the card) | Fan-source |
-| C7 | Forest Plum attack | brief: 2+ or 3+ unknown; W says 2+; no R example shows his attack (R p10 shows only his search, 5+); P prints no stats | 2+ (single source) | Fan-source |
+| C4 | Thomas Heart ability | W page text is identical to Talia Jones's (discarded); the brief's guess has no source; T gives no ability text; P printed a real ability: Colony, once per round, kill 2 zombies at the colony, no exposure roll; the Spanish scan read the die cost as (5-); the VASSAL scan prints "(5+)" | Colony, 5+ die, once per round, kill 2 zombies at the colony, no exposure roll; stats 64 / 1+ / 3+ | Confirmed (VASSAL v1.1 Survivor_Thomas_Heart.jpg: 5+, not 5-) |
+| C5 | John Price location | W labels the ability `NON-COLONY`; F 1.1.1 only says copies begin on arrival and end when his next move completes; P prints "away from the colony"; VASSAL prints NON-COLONY | he copies abilities only while away from the colony | Confirmed (W,P,VASSAL agree) |
+| C6 | James Meyers reroll | W: reroll "one or more" unused dice and keep the second result; T: one die; VASSAL: "reroll 1 or more of your unused action dice, you must keep the second results" | one or more dice | Confirmed (VASSAL) |
+| C7 | Forest Plum attack | brief: 2+ or 3+ unknown; W says 2+; no R example shows his attack; P prints no stats; VASSAL prints 2+ | 2+ | Confirmed (VASSAL v1.1 Survivor_Forest_Plum.jpg) |
 | C8 | David Garcia | W with no round limit and look-only (no extra keep); P agrees (look at 1 extra card, no keep, no round limit printed) | as in the table | Confirmed (W,P agree) |
 | C9 | Alexis Grey "once per round" | R p7 card text prints "Once per round" for her library search; W and T agree; P omits it | once per round (R); P's omission is a translation slip | Corrected (R over P) |
-| C10 | Annaleigh Chan ability location and target | W: Anywhere, peek at 1 card in each other player's hand; P: Colony, look at 1 randomly chosen card from another player (one player). W and T both say not allowed in co-op | P: Colony, one other player's card, random choice; keep the co-op exclusion (W,T). The precedence rule puts P above W, but the readings differ in two fields, so a card photo is wanted | Fan-source |
-| C11 | Die-cost marks for Loretta Clay, Maria Lopez, Edward White | P prints no die cost for them (it prints costs only for Bev Russell 1+ and Daniel Smith 4+); F 1.2.1 and W give 4+, 1+ and 1+ (Edward: 1+ plus the attack die, F 1.3.1) | keep the F/W costs; the translation dropped them | Confirmed (F over P) |
+| C10 | Annaleigh Chan ability location and target | W: Anywhere, peek at 1 card in each other player's hand; P: Colony, look at 1 randomly chosen card from another player; W and T say not allowed in co-op; VASSAL prints COLONY, "look at 1 card at random in a player's hand" once per round, with the not-in-co-op marker | Colony, once per round, one random card from one player's hand (the hook picks another player's hand); co-op exclusion kept | Confirmed (VASSAL v1.1 Survivor_Annaleigh_Chan.jpg) |
+| C11 | Die-cost marks for Loretta Clay, Maria Lopez, Edward White | P prints no die cost for them; F 1.2.1 and W give 4+, 1+ and 1+ (Edward: 1+ plus the attack die, F 1.3.1); the VASSAL scans print (4), (1+) and (1+) | keep the F/W costs; the scan agrees (Loretta's "(4)" is the F 1.2.1 misprint, see C3) | Confirmed (VASSAL) |
 
 Cross-checks that agreed, no conflict: Ashley Ross attack 2+ (R example, T) and search 5+ (R*); Mike Cho attack 2+
 (R example); Forest Plum search 5+ (R example); influence 56 Olivia Brown, 66 Daniel Smith, 52 Ashley Ross, 30 Mike
@@ -106,8 +117,8 @@ from the BGG "all crossroad cards" sheet and are not recorded here.
 
 ## Notes for the data schema
 
-- Thomas Heart's ability (C4) is now provisional (P only). The schema should allow a `provisional` flag on an ability,
-  and the loader may warn when a provisional ability is used in a golden example.
+- Thomas Heart's ability (C4) is no longer provisional: the VASSAL scan confirms it. A `provisional` flag on an ability
+  may still be worth keeping in the schema for future unseen cards.
 - Ability-location counts in the table: Anywhere 16, Colony 7 (Annaleigh Chan and Thomas Heart added from P), School 2, Library 1, Grocery Store 1, Police Station 1, Hospital 1, Non-colony 1 (= 30; none unknown any more).
 - Die-cost abilities seen: Daniel Smith 4+, Loretta Clay 4+, Edward White 1+, Maria Lopez 1+, Bev Russell 1+ (P prints only Bev's and Daniel's).
 - Co-op exclusions (W, T): Annaleigh Chan, Gray Beard. P prints no co-op note for either.

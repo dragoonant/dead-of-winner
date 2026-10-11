@@ -29,11 +29,11 @@
     "bio": "Listens to everyone and is always one thought ahead of whatever they say next."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W; T",
-    "stats.search": "W",
-    "ability": "W; T; BGG ludopedia-51115"
+    "stats.influence": "VASSAL v1.1 Survivor_James_Meyers.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_James_Meyers.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_James_Meyers.jpg",
+    "ability": "VASSAL v1.1 Survivor_James_Meyers.jpg"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 18 (C6): the wiki says one or more dice, TV Tropes says one die; the wiki reading is used"
+  "status": "verified",
+  "notes": "Clean scan Survivor_James_Meyers.jpg matches influence, attack, search, ability location, die value and once-per-round limit."
 }

@@ -1,7 +1,7 @@
 {
   "kind": "crisis",
   "id": "cr.we-are-being-watched",
-  "name": "We Are Being Watched",
+  "name": "They're Watching Us",
   "prevent": [
     "medicine",
     "tool"
@@ -32,15 +32,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO es-nos-estan-observando; BGG ludopedia-51114",
-    "fail": "PHOTO es-nos-estan-observando; BGG ludopedia-51114",
-    "bonus": "R p12",
-    "name": "PHOTO bing https://www.pinterest.com/pin/boardgame--329959110211992844/"
+    "prevent": "VASSAL v1.1 Crisis_Theyre_Watching_Us.jpg",
+    "fail": "VASSAL v1.1 Crisis_Theyre_Watching_Us.jpg",
+    "bonus": "VASSAL v1.1 Crisis_Theyre_Watching_Us.jpg"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 1 (name ours); two-symbol card (either scores); ES calls the store the Supermarket (C7); an English card photo (bing, pinterest) shows a title ending '...hing Us' with zombies sent to the library and grocery store and a Tool/Medicine-style symbol, which fits this card (likely Watching Us); the start of the title is cut off, so our name stays",
+  "status": "verified",
+  "notes": "Official name They're Watching Us (was our We Are Being Watched). Medicine or Tool, 3 zombies at the Library and 3 at the Grocery Store. Id kept for saves.",
   "tags": [
-    "name-ours",
-    "name-partial-photo"
+    "name-official"
   ]
 }

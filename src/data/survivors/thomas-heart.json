@@ -36,11 +36,11 @@
     "bio": "Carries himself like a man who has already survived worse and says very little about it."
   },
   "sources": {
-    "stats.influence": "W; C",
-    "stats.attack": "W",
-    "stats.search": "W",
-    "ability": "PHOTO es-github Supervivientes/Thomas-Heart"
+    "stats.influence": "VASSAL v1.1 Survivor_Thomas_Heart.jpg",
+    "stats.attack": "VASSAL v1.1 Survivor_Thomas_Heart.jpg",
+    "stats.search": "VASSAL v1.1 Survivor_Thomas_Heart.jpg",
+    "ability": "VASSAL v1.1 Survivor_Thomas_Heart.jpg"
   },
   "status": "verified",
-  "notes": "src: ebay-photo-transcription.md section 4 (Spanish-edition scan). Die value read as 5+ per the owner brief; the transcription read the Spanish card as (5-), flagged in OWNER-REVIEW. Provisional flag cleared."
+  "notes": "Clean scan Survivor_Thomas_Heart.jpg matches influence, attack, search, ability location, die value and once-per-round limit. Die value confirmed as 5 or more: the clean scan prints (5+), not (5-)."
 }
