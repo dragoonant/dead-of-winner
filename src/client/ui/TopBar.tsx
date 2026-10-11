@@ -26,15 +26,15 @@ export function TopBar(): ReactElement | null {
     <div className="topbar" data-testid="topbar">
       <span className="title">DEAD OF WINNER</span>
       <span className="stat" title="Morale: the game is lost at 0" data-testid="topbar-morale"><MoraleIcon /> Morale <b>{v.morale}</b></span>
-      <span className="stat" title="Rounds left" data-testid="topbar-round"><SnowIcon /> Rounds left <b>{v.roundsLeft}</b></span>
+      <span className="stat" title="Rounds left" data-testid="topbar-round"><SnowIcon /> Rounds <b>{v.roundsLeft}</b></span>
       <span className="stat" title="Food in the supply" data-testid="topbar-food"><SymbolIcon symbol="food" size={15} /> Food <b>{v.food}</b></span>
       <span className="stat" title="Cards in the waste pile" data-testid="topbar-waste">Waste <b>{v.waste.length}</b></span>
-      <span className="stat" title="Zombies standing at the colony entrances" data-testid="topbar-zombies"><ZombieIcon /> At the gates <b>{zombies}</b></span>
+      <span className="stat" title="Zombies standing at the colony entrances" data-testid="topbar-zombies"><ZombieIcon /> Gates <b>{zombies}</b></span>
       <span className="stat crisis" title="This round's crisis" data-testid="topbar-crisis">
         Crisis: {v.crisis.cardId ? nameOf(v.crisis.cardId) : 'none yet'}{crisis && v.crisis.cardId ? ` - cards added: ${crisis.cardsIn}` : ''}
       </span>
       <span className="grow" />
-      <span className="stat" data-testid="topbar-seat">First: <b style={{ color: 'var(--fg)' }}>{name(v.firstSeat)}</b> Active: <b style={{ color: 'var(--fg)' }}>{name(v.activeSeat)}</b></span>
+      <span className="stat seatstat" data-testid="topbar-seat">First <b>{name(v.firstSeat)}</b> Active <b>{name(v.activeSeat)}</b></span>
       <span style={{ display: 'flex', gap: 3 }}>
         {cams.map(([n, label, tip]) => <button key={n} className={`btn chip ${camera === n ? 'sel' : ''}`} title={`Camera ${n}: ${tip}`} onClick={() => ui.set({ camera: n })}>{label}</button>)}
       </span>

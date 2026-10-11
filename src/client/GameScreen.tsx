@@ -1,6 +1,7 @@
 // The in-game screen: table canvas plus every HUD panel. Lazy-loaded from App so the title screen stays light.
 import { useEffect, useMemo, useState, type ReactElement } from 'react'
 import { useGameAudio } from './audio/useAudioSettings'
+import { nameOf } from './data'
 import { HandFan } from './cards/HandFan'
 import { HoverSurvivorCard } from './cards/SurvivorChip'
 import { startBotDriver, stopBotDriver } from './bot/botDriver'
@@ -20,7 +21,8 @@ import { installTestHooks, isTestMode } from './testing/testHooks'
 import { GameOver } from './ui/GameOver'
 import { HowToPlay, KeysHelp, ObjectivePanel, SettingsPopover } from './ui/Panels'
 import { PromptDock } from './ui/PromptDock'
-import { FeedRail, SeatRail } from './ui/Rails'
+import { FeedRail } from './ui/FeedRail'
+import { SeatRail } from './ui/Rails'
 import { TopBar } from './ui/TopBar'
 import './ui/hud.css'
 import './cards/cards.css'
@@ -30,15 +32,28 @@ function Banner(): ReactElement | null {
   return b ? <div key={b.id} className={`banner ${b.kind}`} data-testid="banner">{b.text}</div> : null
 }
 
+/** The card-by-card crisis reveal: each flipped card with its +1 or -1, the running total against the target, then the verdict and the morale change. */
 function CrisisStrip(): ReactElement | null {
   const r = usePresentedStore((s) => s.crisisReveal)
   if (!r || r.cards.length === 0) return null
   const total = r.cards[r.cards.length - 1]!.runningTotal
+  const o = r.outcome
   return (
     <div className="crisis-reveal panel" data-testid="crisis-reveal">
-      <b>Crisis cards</b>
-      {r.cards.map((c, i) => <span key={i} className={`cc ${c.points < 0 ? 'neg' : ''}`}>{c.points > 0 ? '+1' : '-1'} {c.name}</span>)}
-      <b>Total {total}</b>
+      <div className="cr-head">
+        <b>{r.crisisId ? nameOf(r.crisisId) : 'Crisis'}</b>
+        <span className="muted">{r.needed !== null ? `needs ${r.needed}${r.bonusAt !== null ? `, bonus at ${r.bonusAt}` : ''}` : ''}</span>
+      </div>
+      <div className="cr-cards">
+        {r.cards.map((c, i) => (
+          <span key={i} className={`cc ${c.points < 0 ? 'neg' : ''}`} data-testid="crisis-card"><b>{c.points > 0 ? '+1' : '-1'}</b> {c.name}<i className="rt">{c.runningTotal}</i></span>
+        ))}
+      </div>
+      <div className="cr-total" data-testid="crisis-total">
+        <b>Total {o ? o.total : total}{(o?.needed ?? r.needed) !== null && (o?.needed ?? r.needed) !== undefined ? ` of ${o?.needed ?? r.needed}` : ''}</b>
+        {o && <span className={`verdict ${o.prevented ? 'HIT' : 'MISS'}`} data-testid="crisis-verdict">{o.prevented ? (o.bonus ? 'PREVENTED, BONUS' : 'PREVENTED') : 'NOT PREVENTED'}</span>}
+        {o && r.moraleDelta !== null && r.moraleDelta !== 0 && <span className="muted">Morale {r.moraleDelta > 0 ? `+${r.moraleDelta}` : r.moraleDelta}</span>}
+      </div>
     </div>
   )
 }

@@ -142,7 +142,7 @@ export async function playUntilRecap(page: Page, opts: { seed?: number; maxSteps
         await clickText(dock, opts2.includes('Decline') ? 'Decline' : opts2[0]!)
         break
       }
-      case 'votes': await clickText(dock, 'No, keep'); break
+      case 'votes': await dock.getByTestId('prompt-option-no').click(); break // the exile vote, a tie-break ballot or a Crossroads group vote: always No
       case 'exilePlacement': await clickText(dock, 'Place them'); break
       default: {
         // searchKeepOrNoise, searchKeepWhich, crossroadsOption, biteSpreadOption and the generic option list

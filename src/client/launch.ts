@@ -10,6 +10,8 @@ export interface LaunchRequest {
   seed: string
   tier?: AiTier // every bot's tier when `bots` does not say (default normal)
   bots?: BotChoice[] // per bot, in seat order (the human excluded)
+  /** Rules variants (co-op, two-player, hardcore, betrayer, player elimination, remove mature Crossroads). */
+  variants?: GameVariants
   /** Continue the autosave instead of starting a new game. */
   resume?: boolean
 }
@@ -22,6 +24,7 @@ export interface UrlOptions {
   test: boolean
   fps: boolean
   speed?: number
+  variants?: GameVariants
 }
 
 export function parseUrl(search: string): UrlOptions {
@@ -35,7 +38,9 @@ export function parseUrl(search: string): UrlOptions {
     if (list.length >= 2 && list.length <= 5 && list.every((s) => s === 'human' || s === 'bot')) out.seats = list as SeatKind[]
   }
   const tier = q.get('tier')
-  if (tier === 'random' || tier === 'normal') out.tier = tier
+  if (tier === 'random' || tier === 'normal' || tier === 'easy' || tier === 'hard') out.tier = tier
+  const variants = parseVariants(q.get('variants'), q.get('mature'))
+  if (variants) out.variants = variants
   const obj = q.get('objective')
   if (obj) out.objective = obj.slice(0, 80)
   const sp = q.get('speed')
@@ -46,7 +51,87 @@ export function parseUrl(search: string): UrlOptions {
 /** The request the URL implies, or null when it does not skip the start screen. */
 export function requestFromUrl(o: UrlOptions, randomSeed: () => string): LaunchRequest | null {
   if (!o.seats) return null
-  return { seats: o.seats, objective: o.objective ?? 'random', seed: o.seed ?? randomSeed(), ...(o.tier ? { tier: o.tier } : {}) }
+  return { seats: o.seats, objective: o.objective ?? 'random', seed: o.seed ?? randomSeed(), ...(o.tier ? { tier: o.tier } : {}), ...(o.variants ? { variants: o.variants } : {}) }
+}
+
+/** `?variants=coop,hardcore,betrayer,elimination` and `?mature=0` (leave the mature Crossroads cards out). Unknown words are ignored. */
+export function parseVariants(list: string | null, mature: string | null): GameVariants | undefined {
+  const v: GameVariants = {}
+  for (const w of (list ?? '').split(',').map((x) => x.trim().toLowerCase())) {
+    if (w === 'coop') v.coop = true
+    else if (w === 'twoplayer' || w === 'two-player') v.twoPlayer = true
+    else if (w === 'hardcore') v.hardcore = true
+    else if (w === 'betrayer') v.betrayer = true
+    else if (w === 'elimination' || w === 'playerelimination') v.playerElimination = true
+  }
+  if (mature === '0' || mature === 'off' || mature === 'false') v.removeMature = true
+  return Object.keys(v).length ? v : undefined
+}
+
+// ---------- variants: what the start screen offers and how it checks a combination ----------
+export interface VariantChoice { coop: boolean; hardcore: boolean; betrayer: boolean; playerElimination: boolean; includeMature: boolean }
+export const DEFAULT_VARIANT_CHOICE: VariantChoice = { coop: false, hardcore: false, betrayer: false, playerElimination: false, includeMature: true }
+
+export interface VariantCheck {
+  /** Combinations the engine would refuse; the start screen blocks Start and says why. */
+  errors: string[]
+  /** What the table will actually play (two seats are the two-player game; co-op uses the hardcore side). */
+  notes: string[]
+  /** The variants to hand to createGame (only the flags that are on). */
+  variants: GameVariants
+}
+
+/** Checks a choice for a table of `bots` bots plus the human against the engine's own setup rules (setup.ts validateSetup). Pure. */
+export function checkVariants(bots: number, c: VariantChoice): VariantCheck {
+  const errors: string[] = []
+  const notes: string[] = []
+  const seats = bots + 1
+  if (bots < 1 || seats > 5) errors.push(`A table seats 2 to 5 players, you and 1 to 4 bots (this one has ${seats}).`)
+  const twoPlayer = seats === 2
+  const coopRules = c.coop || twoPlayer
+  if (c.betrayer && coopRules) errors.push('The betrayer variant needs a competitive table: it cannot be combined with co-op or the two-player game.')
+  if (twoPlayer) notes.push('Two seats play the two-player co-op game: seven starting items, keep 3 of 4 survivors, the hardcore objective side, no secret objectives and no exile.')
+  else if (c.coop) notes.push('Co-op: everyone wins or loses together on the hardcore objective side, with no secret objectives and no exile.')
+  if (coopRules && c.hardcore) notes.push('Co-op already uses the hardcore objective side.')
+  const variants: GameVariants = {}
+  if (c.coop && !twoPlayer) variants.coop = true
+  if (twoPlayer) variants.twoPlayer = true
+  if (c.hardcore && !coopRules) variants.hardcore = true
+  if (c.betrayer && !coopRules) variants.betrayer = true
+  if (c.playerElimination) variants.playerElimination = true
+  if (!c.includeMature) variants.removeMature = true
+  return { errors, notes, variants }
+}
+
+/** The start screen's choice for a set of variants read from the URL. */
+export function choiceFromVariants(v: GameVariants | undefined): VariantChoice {
+  return { coop: !!v?.coop, hardcore: !!v?.hardcore, betrayer: !!v?.betrayer, playerElimination: !!v?.playerElimination, includeMature: !v?.removeMature }
+}
+
+// ---------- AI tiers ----------
+export interface TierInfo { id: AiTier; label: string; blurb: string }
+export const TIER_INFO: Record<AiTier, TierInfo> = {
+  easy: { id: 'easy', label: 'Easy', blurb: 'Plays loosely: makes mistakes, helps little with food and only accuses after an attack.' },
+  normal: { id: 'normal', label: 'Normal', blurb: 'Plays the colony sensibly and keeps a suspicion ledger.' },
+  hard: { id: 'hard', label: 'Hard', blurb: 'Plays tight: tracks what the others can hold, looks two moves ahead and calls votes sooner.' },
+  random: { id: 'random', label: 'Random (chaos)', blurb: 'Picks any legal move. Useful for comparison.' },
+}
+/** What the start screen offers when src/ai does not say which tiers it has: the two that always exist. */
+export const FALLBACK_TIERS: readonly AiTier[] = ['normal', 'random']
+const TIER_ORDER: readonly AiTier[] = ['easy', 'normal', 'hard', 'random']
+
+/** The tiers an AI module offers, read from whichever list it exports (`AI_TIERS`, `TIERS`, ...); the fallback when it exports none. Normal is always kept. */
+export function tiersFromModule(mod: unknown): TierInfo[] {
+  const m = (mod && typeof mod === 'object' ? mod : {}) as Record<string, unknown>
+  const raw = ['AI_TIERS', 'AI_TIER_IDS', 'TIERS', 'TIER_LIST', 'tiers'].map((k) => m[k]).find((x) => Array.isArray(x)) as unknown[] | undefined
+  const ids = new Set<AiTier>()
+  for (const item of raw ?? []) {
+    const id = typeof item === 'string' ? item : item && typeof item === 'object' ? ((item as { id?: unknown; tier?: unknown }).id ?? (item as { tier?: unknown }).tier) : null
+    if (typeof id === 'string' && id in TIER_INFO) ids.add(id as AiTier)
+  }
+  if (ids.size === 0) for (const t of FALLBACK_TIERS) ids.add(t)
+  ids.add('normal')
+  return TIER_ORDER.filter((t) => ids.has(t)).map((t) => TIER_INFO[t])
 }
 
 export const SEAT_IDS = ['s1', 's2', 's3', 's4', 's5'] as const
@@ -66,7 +151,7 @@ export const DEFAULT_PERSONAS: { id: string; name: string }[] = [
   { id: 'ps.quartermaster', name: 'Vera Lindqvist' }, { id: 'ps.optimist', name: 'Teddy Marchbanks' }, { id: 'ps.hardcase', name: 'Ruth Castellano' },
 ]
 
-export function buildSetup(req: Pick<LaunchRequest, 'seats' | 'tier' | 'bots'>, objective: string, variants?: GameVariants): GameSetup {
+export function buildSetup(req: Pick<LaunchRequest, 'seats' | 'tier' | 'bots'> & { variants?: GameVariants }, objective: string, variants: GameVariants | undefined = req.variants): GameSetup {
   let botIndex = -1
   const seats: SeatSetup[] = req.seats.map((kind, i) => {
     if (kind === 'human') return { id: SEAT_IDS[i]!, kind, name: 'Player' }

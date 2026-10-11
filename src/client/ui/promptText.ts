@@ -106,3 +106,12 @@ export function exileText(i: { names: readonly string[] }): string {
 }
 export function chooseSurvivorsText(i: { keep: number; offered: number }): string { return `Pick ${i.keep} of ${i.offered} survivors to keep.` }
 export function leaderText(): string { return 'Pick the leader of your group. The leader sets your influence for the first-player token.' }
+
+/** An exiled first player still breaks ties (R p4, R p11), so the ballot asks them up front what they would vote if the table splits evenly. */
+export function tieBreakText(i: { target: string; eligible: number }): string {
+  return `You are exiled and cannot vote, but as first player you break ties. The table is voting on whether to exile ${i.target} (${i.eligible} ${i.eligible === 1 ? 'voter' : 'voters'}). If the vote ends in a tie, should ${i.target} be exiled?`
+}
+/** A table vote raised by a Crossroads card: the two answers are the card's own labels. */
+export function effectVoteText(i: { card: string; eligible: number; yes: string; no: string }): string {
+  return `${i.card}: the table votes. ${i.eligible} ${i.eligible === 1 ? 'player votes' : 'players vote'}; the majority decides and the first player breaks a tie. Yes means "${i.yes}"; No means "${i.no}".`
+}

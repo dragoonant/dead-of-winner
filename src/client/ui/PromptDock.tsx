@@ -4,13 +4,14 @@ import { useEffect, useMemo, useState, type ReactElement } from 'react'
 import { describe, query, type Action, type PendingDecision, type SeatId, type SeatView } from '../../engine/index'
 import { locName, nameOf, rec, seatNameOf } from '../data'
 import { isPresentationIdle, usePresentedStore } from '../presentation/presentedStore'
-import { dispatch, isBotDecision, isHumanDecision, legalFor, submitHumanVote, useGameStore, validateAction } from '../store/gameStore'
+import { dispatch, isBotDecision, isHumanDecision, isHumanTieBreaker, legalFor, submitHumanVote, useGameStore, validateAction } from '../store/gameStore'
 import { useTrueView } from '../store/hooks'
 import { ContributePicker } from './ContributePicker'
 import { CrossroadsCard } from '../cards/CrossroadsCard'
 import { ItemCard } from '../cards/ItemCard'
 import { SurvivorCard } from '../cards/SurvivorCard'
 import * as T from './promptText'
+import { effectVoteSource, isEffectVote } from './voteModel'
 import { TurnActionForm, describeAction, labelNamesOf } from './TurnActionForm'
 
 type Loose = Record<string, unknown>
@@ -239,22 +240,55 @@ function ExileForm({ pd, v, legal }: { pd: PendingDecision; v: SeatView; legal: 
 }
 
 function VotesForm({ pd, v }: { pd: PendingDecision; v: SeatView }): ReactElement {
-  const target = (pd.context.seatId ?? '') as SeatId
+  const data = ctxData(pd)
+  const eligible = ((data['eligible'] as string[] | undefined) ?? []).length
+  const tieOnly = isHumanTieBreaker()
+  const effect = isEffectVote(pd, !!v.vote)
+  const rejection = <RejectionLine pd={pd} />
+  if (effect) {
+    const lastTriggered = [...v.crossroads.log].reverse().find((x) => x.triggered && x.cardId)?.cardId ?? null
+    const guess = v.crossroads.active?.cardId ?? lastTriggered
+    const src = effectVoteSource(pd, rec(guess), guess)
+    const cardId = src.cardId ?? undefined
+    const card = rec(cardId)
+    const labels = { yes: src.yes, no: src.no }
+    return (
+      <>
+        <div className="dock-head"><h3>{tieOnly ? 'Break the tie' : 'Vote'}: {nameOf(cardId)}</h3></div>
+        <div className="dock-body">
+          <div className="dock-text" data-testid="prompt-text">
+            {(card?.['text']?.['vignette'] as string | undefined) ? <i>{card!['text']['vignette'] as string} </i> : null}
+            {T.effectVoteText({ card: nameOf(cardId), eligible, yes: labels.yes, no: labels.no })}
+          </div>
+          {tieOnly && <div className="muted">You are exiled and cannot vote, but you break ties as first player. Your answer counts only if the vote is tied.</div>}
+          <div className="muted">Ballots are secret until everyone has voted.</div>
+        </div>
+        {rejection}
+        <div className="dock-foot">
+          <button className="btn" data-testid="prompt-option-yes" onClick={() => void submitHumanVote(true)}>Yes: {labels.yes}</button>
+          <button className="btn primary" data-primary data-testid="prompt-option-no" onClick={() => void submitHumanVote(false)}>No: {labels.no}</button>
+        </div>
+      </>
+    )
+  }
+  const target = (pd.context.seatId ?? v.vote?.target ?? '') as SeatId
   const f = query.voteForecast(v, target)
-  const caller = (ctxData(pd)['caller'] as string | undefined) ?? ''
+  const caller = (data['caller'] as string | undefined) ?? v.vote?.caller ?? ''
+  const targetName = seatNameOf(v.setup, target)
   return (
     <>
-      <div className="dock-head"><h3>Vote: exile {seatNameOf(v.setup, target)}?</h3></div>
+      <div className="dock-head"><h3>{tieOnly ? `Break the tie: exile ${targetName}?` : `Vote: exile ${targetName}?`}</h3></div>
       <div className="dock-body">
         <div className="dock-text" data-testid="prompt-text">
-          {caller ? `${seatNameOf(v.setup, caller)} called this vote. ` : ''}{T.votesText({ target: seatNameOf(v.setup, target), eligible: f.eligible.length, needed: f.needed, tiebreak: seatNameOf(v.setup, f.tiebreakBy) })}
+          {caller ? `${seatNameOf(v.setup, caller)} called this vote. ` : ''}
+          {tieOnly ? T.tieBreakText({ target: targetName, eligible: f.eligible.length }) : T.votesText({ target: targetName, eligible: f.eligible.length, needed: f.needed, tiebreak: seatNameOf(v.setup, f.tiebreakBy) })}
         </div>
         <div className="muted">Ballots are secret until everyone has voted.</div>
       </div>
-      <RejectionLine pd={pd} />
+      {rejection}
       <div className="dock-foot">
-        <button className="btn danger" data-testid="prompt-option-yes" onClick={() => void submitHumanVote(true)}>Yes, exile</button>
-        <button className="btn primary" data-primary data-testid="prompt-option-no" onClick={() => void submitHumanVote(false)}>No, keep</button>
+        <button className="btn danger" data-testid="prompt-option-yes" onClick={() => void submitHumanVote(true)}>{tieOnly ? `Yes, exile ${targetName} on a tie` : 'Yes, exile'}</button>
+        <button className="btn primary" data-primary data-testid="prompt-option-no" onClick={() => void submitHumanVote(false)}>{tieOnly ? 'No, keep on a tie' : 'No, keep'}</button>
       </div>
     </>
   )
@@ -311,9 +345,11 @@ export function PromptDock(): ReactElement | null {
   const pending = useGameStore((s) => s.pending)
   const state = useGameStore((s) => s.state)
   const botVotes = useGameStore((s) => s.botVotes)
+  const humanBallot = useGameStore((s) => s.humanBallot)
   const idle = usePresentedStore((s) => s.idle)
   const v = useTrueView()
   void botVotes
+  void humanBallot // re-render when the human's ballot is held back (the dock closes and the table waits for the bots)
   // Enter confirms the primary button of the open form (50 §5)
   useEffect(() => {
     const h = (e: KeyboardEvent): void => {

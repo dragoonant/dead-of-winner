@@ -17,7 +17,7 @@ export const BEAT_SPEC: Partial<Record<GameEventType, Spec>> = {
   ExposureRolled: { kind: 'exposure', ms: 900 }, WoundTaken: { kind: 'exposure', ms: 300 }, SurvivorKilled: { kind: 'exposure', ms: 600 },
   SearchDrawn: { kind: 'card', ms: 400 }, SearchKept: { kind: 'card', ms: 400 }, NoiseAdded: { kind: 'card', ms: 400 }, CardContributed: { kind: 'card', ms: 400 }, CardAddedToObjective: { kind: 'card', ms: 400 },
   CrisisRevealed: { kind: 'banner', ms: 1200 }, CrisisCardRevealed: { kind: 'crisisCard', ms: 500 }, CrisisResolved: { kind: 'banner', ms: 1000 },
-  ZombieAdded: { kind: 'zombie', ms: 250 }, BarricadeDestroyed: { kind: 'zombie', ms: 250 }, EntranceOverrun: { kind: 'zombie', ms: 250 },
+  ZombieKilled: { kind: 'zombie', ms: 250 }, ZombieAdded: { kind: 'zombie', ms: 250 }, BarricadeDestroyed: { kind: 'zombie', ms: 250 }, EntranceOverrun: { kind: 'zombie', ms: 250 },
   FoodPaid: { kind: 'tick', ms: 400 }, Starvation: { kind: 'tick', ms: 400 }, WasteChecked: { kind: 'tick', ms: 400 }, MoraleChanged: { kind: 'tick', ms: 400 },
   RoundTicked: { kind: 'tick', ms: 400 }, FirstSeatPassed: { kind: 'tick', ms: 400 },
   VoteCalled: { kind: 'vote', ms: 1500 }, VotesCast: { kind: 'vote', ms: 900 }, VoteResult: { kind: 'vote', ms: 800 }, SeatExiled: { kind: 'vote', ms: 800 },

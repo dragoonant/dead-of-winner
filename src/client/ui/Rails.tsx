@@ -1,17 +1,16 @@
-// Seat rail (left, '[') and feed rail (right, ']') (50 §3, §9, §10).
-import { useEffect, useRef, type ReactElement } from 'react'
+// Seat rail (left, '[') (50 §3, §9); the feed rail (right, ']') lives in FeedRail.tsx and shares RailHead.
+import type { ReactElement } from 'react'
 import { SurvivorChip } from '../cards/SurvivorChip'
 import { nameOf } from '../data'
 import { seatNameOf } from '../data'
-import { usePresentedStore, type FeedEntry } from '../presentation/presentedStore'
 import { useGameStore } from '../store/gameStore'
 import { usePresentedView } from '../store/hooks'
 import { useSettingsStore } from '../store/settingsStore'
 import { ui, useUiStore } from '../store/uiStore'
-import { seatColour } from '../table/seats'
+import { seatColour, seatMark, usePalette } from '../table/seats'
 import { useTalkStore } from '../bot/talk'
 
-function Head({ title, side, badge }: { title: string; side: 'left' | 'right'; badge?: number }): ReactElement {
+export function RailHead({ title, side, badge }: { title: string; side: 'left' | 'right'; badge?: number }): ReactElement {
   const collapsed = useSettingsStore((s) => (side === 'left' ? s.leftCollapsed : s.rightCollapsed))
   const set = useSettingsStore((s) => s.set)
   return (
@@ -35,13 +34,14 @@ export function SeatRail(): ReactElement | null {
   const collapsed = useSettingsStore((s) => s.leftCollapsed)
   const viewer = useGameStore((s) => s.viewer)
   const hover = useUiStore((s) => s.hoverSurvivor)
+  const palette = usePalette()
   if (!v) return null
   // clockwise from the viewer
   const i0 = Math.max(0, v.seatOrder.indexOf(viewer))
   const order = [...v.seatOrder.slice(i0), ...v.seatOrder.slice(0, i0)]
   return (
     <div className={`rail left panel ${collapsed ? 'collapsed' : ''}`} data-testid="seat-rail">
-      <Head title="Seats" side="left" />
+      <RailHead title="Seats" side="left" />
       <div className="rail-body">
         {order.map((id) => {
           const s = v.seats[id]!
@@ -50,9 +50,9 @@ export function SeatRail(): ReactElement | null {
           const diceLeft = s.dice.filter((d) => !d.used).length
           const you = id === viewer
           return (
-            <div key={id} className={`seat-card ${v.activeSeat === id ? 'active' : ''}`} style={{ borderLeftColor: seatColour(v.seatOrder, id) }} data-testid={`seat-${id}`} data-hand={you ? v.me.hand.length : s.handCount} data-dice-left={diceLeft} data-exiled={s.seat.exiled}>
+            <div key={id} className={`seat-card ${v.activeSeat === id ? 'active' : ''}`} style={{ borderLeftColor: seatColour(v.seatOrder, id, palette) }} data-testid={`seat-${id}`} data-hand={you ? v.me.hand.length : s.handCount} data-dice-left={diceLeft} data-exiled={s.seat.exiled}>
               <div className="row">
-                <span className="name">{seatNameOf(v.setup, id)}{you ? ' (you)' : ''}</span>
+                <span className="name">{seatMark(v.seatOrder, id, palette) && <span className="mark" style={{ color: seatColour(v.seatOrder, id, palette) }} aria-hidden="true">{seatMark(v.seatOrder, id, palette)} </span>}{seatNameOf(v.setup, id)}{you ? ' (you)' : ''}</span>
                 {v.firstSeat === id && <span className="tag gold" title="First player token">first</span>}
                 {s.seat.exiled && <span className="tag bad">exiled</span>}
                 {s.seat.eliminated && <span className="tag bad">out</span>}
@@ -89,37 +89,6 @@ function SurvRow({ id, lead, hover }: { id: string; lead?: boolean; hover?: bool
     >
       <SurvivorChip id={id} leader={lead} wounds={sv?.wounds ?? 0} frostbite={sv?.frostbite ?? 0} />
       {equipped.length > 0 && <div className="muted" style={{ fontSize: 11 }}>{equipped.join(', ')}</div>}
-    </div>
-  )
-}
-
-export function FeedRail(): ReactElement {
-  const feed = usePresentedStore((s) => s.feed)
-  const collapsed = useSettingsStore((s) => s.rightCollapsed)
-  const seen = useRef(0)
-  const body = useRef<HTMLDivElement>(null)
-  const unread = collapsed ? Math.max(0, feed.length - seen.current) : 0
-  useEffect(() => {
-    if (!collapsed) { seen.current = feed.length; const b = body.current; if (b) b.scrollTop = b.scrollHeight }
-  }, [feed.length, collapsed])
-  const groups: { key: string; lines: FeedEntry[] }[] = []
-  for (const e of feed) {
-    const last = groups[groups.length - 1]
-    if (last && last.key === e.turnKey) last.lines.push(e)
-    else groups.push({ key: e.turnKey, lines: [e] })
-  }
-  return (
-    <div className={`rail right panel ${collapsed ? 'collapsed' : ''}`} data-testid="feed-rail">
-      <Head title="Event feed" side="right" badge={unread} />
-      <div className="rail-body" ref={body}>
-        {groups.slice(-40).map((g, i) => (
-          <div className="feed-group" key={`${g.key}-${i}`}>
-            <h4>{g.key}</h4>
-            {g.lines.map((l) => <div key={l.seq} className={`feed-line ${l.tone}`} data-testid="feed-line">{l.text}</div>)}
-          </div>
-        ))}
-        {feed.length === 0 && <div className="muted">Nothing has happened yet.</div>}
-      </div>
     </div>
   )
 }

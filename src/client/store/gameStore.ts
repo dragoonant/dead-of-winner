@@ -36,13 +36,15 @@ export interface GameStoreState {
   version: number
   /** Bot ballots collected privately for the open vote (the human's is added when they answer). */
   botVotes: Record<SeatId, boolean>
+  /** The human's answer to the open vote, held until the bots' ballots are in: a yes/no from an eligible voter, or the tie-break answer of an exiled first player. */
+  humanBallot: { id: string; yes: boolean } | null
   /** Decision ids the 5 s watchdog force-answered. */
   watchdog: string[]
   seed: string
 }
 
 const INITIAL: GameStoreState = {
-  state: null, pending: null, viewer: 's1', events: [], eventSeq: 0, lastRejection: null, fatal: null, version: 0, botVotes: {}, watchdog: [], seed: '',
+  state: null, pending: null, viewer: 's1', events: [], eventSeq: 0, lastRejection: null, fatal: null, version: 0, botVotes: {}, humanBallot: null, watchdog: [], seed: '',
 }
 export const useGameStore = create<GameStoreState>(() => ({ ...INITIAL }))
 
@@ -84,8 +86,19 @@ export function isHumanDecision(s: GameStoreState = useGameStore.getState()): bo
   const pd = s.pending
   const st = s.state
   if (!pd || !st || pd.kind === 'gameOver') return false
-  if (pd.seat === 'all') return voteEligible(pd).includes(s.viewer) && st.seats[s.viewer]?.seat.kind === 'human'
+  if (pd.seat === 'all') {
+    if (s.humanBallot?.id === pd.id) return false // already answered; the table is waiting for the bots' ballots
+    return (voteEligible(pd).includes(s.viewer) || tiebreakSeatOf(pd) === s.viewer) && st.seats[s.viewer]?.seat.kind === 'human'
+  }
   return st.seats[pd.seat]?.seat.kind === 'human'
+}
+/** True when the human is the exiled first player who answers a vote tie through the ballot's extra `tiebreakSeat` key (and does not vote otherwise). */
+export function isHumanTieBreaker(s: GameStoreState = useGameStore.getState()): boolean {
+  const pd = s.pending
+  return !!pd && pd.kind === 'votes' && tiebreakSeatOf(pd) === s.viewer && !voteEligible(pd).includes(s.viewer)
+}
+export function tiebreakSeatOf(pd: PendingDecision): SeatId | null {
+  return ((pd.context.data as { tiebreakSeat?: SeatId } | undefined)?.tiebreakSeat ?? null) as SeatId | null
 }
 export function isBotDecision(s: GameStoreState = useGameStore.getState()): boolean {
   const pd = s.pending
@@ -116,7 +129,7 @@ function commitStep(before: GameState, after: GameState, events: readonly GameEv
     events: seqEvents.length ? [...s.events, ...seqEvents].slice(-EVENT_LOG_LIMIT) : s.events,
     eventSeq: last,
     version: s.version + 1,
-    ...(samePending ? {} : { botVotes: {} }),
+    ...(samePending ? {} : { botVotes: {}, humanBallot: null }),
   })
   enqueueBatch({ firstSeq: first, lastSeq: last, before, after, events: seqEvents, viewer: useGameStore.getState().viewer })
 }
@@ -175,29 +188,61 @@ export function dispatch(action: Action, source: DispatchSource = 'human'): Clie
   return null
 }
 
-/** Record one bot's private ballot for the open vote. */
+/** True when every bot that must vote on the open ballot has answered. */
+function botBallotsIn(s: GameStoreState): boolean {
+  const pd = s.pending
+  const st = s.state
+  if (!pd || !st) return false
+  return voteEligible(pd).every((x) => !isBotSeat(st, x) || s.botVotes[x] !== undefined)
+}
+
+/** Record one bot's private ballot for the open vote. When the human has already answered and still has to be sent with them, the ballot goes in now. */
 export function setBotVote(decisionId: string, seat: SeatId, yes: boolean): void {
   const s = useGameStore.getState()
   if (s.pending?.id !== decisionId) return
   useGameStore.setState({ botVotes: { ...s.botVotes, [seat]: yes } })
+  const now = useGameStore.getState()
+  // a human voter's ballot waits for the bots; the bot driver sends the ballot itself when only bots vote (the human then only answers a tie)
+  if (now.humanBallot?.id === decisionId && voteEligible(now.pending!).includes(now.viewer) && botBallotsIn(now)) {
+    const a = ballotAction()
+    if (a) dispatch(a, 'bot')
+  }
 }
 
-/** Combine the collected ballots (and the human's, when they vote) into the single castVotes action. */
+/** Combine the collected ballots (and the human's, when they vote or break a tie) into the single castVotes action. Null while the human's answer is still missing. */
 export function ballotAction(human?: boolean): Action | null {
   const s = useGameStore.getState()
   const pd = s.pending
   if (!pd || pd.kind !== 'votes' || !s.state) return null
+  const mine = human ?? (s.humanBallot?.id === pd.id ? s.humanBallot.yes : undefined)
   const votes: Record<SeatId, boolean> = {}
   for (const seat of voteEligible(pd)) {
-    const v = isBotSeat(s.state, seat) ? s.botVotes[seat] : seat === s.viewer ? human : undefined
+    const v = isBotSeat(s.state, seat) ? s.botVotes[seat] : seat === s.viewer ? mine : undefined
     votes[seat] = v ?? false
+  }
+  const tie = tiebreakSeatOf(pd)
+  if (tie) {
+    // the exiled first player's answer, used only when the vote is tied; a human who has not answered yet holds the ballot back
+    if (tie === s.viewer && s.state.seats[tie]?.seat.kind === 'human') {
+      if (mine === undefined) return null
+      votes[tie] = mine
+    } else votes[tie] = s.botVotes[tie] ?? false
   }
   return { type: 'castVotes', decisionId: pd.id, seat: 'all', votes }
 }
 
+/** The human answers the open vote (a yes or no from an eligible voter, or the tie-break answer of an exiled first player). The ballot is sent once every bot has answered. */
 export function submitHumanVote(yes: boolean): ClientRejection | null {
-  const a = ballotAction(yes)
-  return a ? dispatch(a, 'human') : null
+  const s = useGameStore.getState()
+  const pd = s.pending
+  if (!pd || pd.kind !== 'votes') return null
+  if (!isHumanDecision(s)) return reject('E_NOT_YOUR_DECISION', 'It is not your decision to make.', null)
+  if (botBallotsIn(s)) {
+    const a = ballotAction(yes)
+    return a ? dispatch(a, 'human') : null
+  }
+  useGameStore.setState({ humanBallot: { id: pd.id, yes } })
+  return null
 }
 
 // ---------- save / load ----------

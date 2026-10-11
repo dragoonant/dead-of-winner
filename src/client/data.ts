@@ -83,7 +83,7 @@ export function mainObjectives(b: DataBundle | null = bundle): MainObjectiveInfo
   return b.records.mainObjectives.map((o) => ({ id: o.id, name: o.name, time: o.time, blurb: o.text?.normal?.victory ?? o.text?.story ?? '' }))
 }
 
-import type { Names } from './presentation/feed'
+import { clip, type Names } from './presentation/feed'
 /** The name lookups the feed, beats and prompts share. */
 export function makeNames(setup: GameSetup): Names {
   return {
@@ -93,6 +93,7 @@ export function makeNames(setup: GameSetup): Names {
     item: (defId) => nameOf(defId),
     crisis: (id) => nameOf(id),
     objective: (id) => nameOf(id),
+    option: (cardId, optionId) => clip(String(rec(cardId)?.['text']?.['options']?.[optionId] ?? ''), 130),
   }
 }
 

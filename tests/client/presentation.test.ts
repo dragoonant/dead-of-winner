@@ -34,6 +34,8 @@ describe('event feed', () => {
     expect(lines.size).toBeGreaterThan(25)
     for (const [type, ls] of lines) {
       if (SILENT_EVENT_TYPES.includes(type)) { expect(ls.every((l) => l === null), type).toBe(true); continue }
+      // the feed's round, turn and colony-step headers mark phase changes; only the end of the game has a line of its own
+      if (type === 'PhaseChanged') { expect(feedLine({ type: 'PhaseChanged', phase: 'ended' } as GameEvent, N)).toBe('The game is over.'); expect(ls.filter((l) => l !== null && l !== 'The game is over.')).toEqual([]); continue }
       expect(ls.some((l) => typeof l === 'string'), type).toBe(true)
       for (const l of ls) if (l !== null) expect(l, type).not.toMatch(/undefined|NaN|\[object/)
     }
@@ -42,7 +44,7 @@ describe('event feed', () => {
   it('crisis reveals carry the running total, exposure rolls name the face, zombies are placed one by one', () => {
     expect(feedLine({ type: 'CardAddedToObjective', seat: 's1', cardId: 'c:9', defId: 'it.medicine', counter: 'medicine' }, N)).toBe('seat s1 adds medicine to the main objective.')
     expect(feedLine({ type: 'CrisisCardRevealed', cardId: 'c:1', defId: 'it.fuel', points: 1, runningTotal: 2 }, N)).toBe('Crisis card: fuel (+1), running total 2.')
-    expect(feedLine({ type: 'ExposureRolled', rollId: 'r:1', survivorId: 'sv.sparky', reason: 'move', raw: 7, face: 'frostbite' }, N)).toBe('Exposure roll for sparky: FROSTBITE (move).')
+    expect(feedLine({ type: 'ExposureRolled', rollId: 'r:1', survivorId: 'sv.sparky', reason: 'move', raw: 7, face: 'frostbite' }, N)).toBe('Exposure roll for sparky: FROSTBITE (moving).')
     expect(feedLine({ type: 'ZombieAdded', location: 'colony', entrance: 3, source: 'colonyStep', zombies: 2 }, N)).toBe('A zombie arrives at the Colony, gate 3 (2 there).')
   })
 

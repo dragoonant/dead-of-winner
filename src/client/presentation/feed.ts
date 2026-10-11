@@ -9,6 +9,8 @@ export interface Names {
   item(defId: string): string
   crisis(id: string): string
   objective(id: string): string
+  /** The printed text of one Crossroads option, shortened for a feed line (optional: the tests inject plain names). */
+  option?(cardId: string, optionId: string): string
 }
 
 const plural = (n: number, one: string, many = one + 's'): string => `${n} ${n === 1 ? one : many}`
@@ -34,9 +36,21 @@ const KILL_CAUSE: Record<string, string> = {
   wounds: 'wounds', bite: 'a bite', biteChoice: 'a bite (chosen)', overrun: 'an overrun entrance', crisis: 'a crisis', crossroads: 'a crossroads',
   item: 'an item', objective: 'the objective', ability: 'an ability', exposureChain: 'a bite chain',
 }
-const COLONY_STEP: Record<string, string> = {
-  payFood: 'Colony phase: the colony eats.', checkWaste: 'Colony phase: checking the waste pile.', resolveCrisis: 'Colony phase: the crisis resolves.',
-  addZombies: 'Colony phase: zombies arrive.', checkObjective: 'Colony phase: checking the objective.', roundTick: 'Colony phase: the round track moves.', passToken: 'Colony phase: the first-player token passes.',
+/** Headers for the colony-phase steps (the feed starts a sub-section at each one). */
+export const COLONY_STEP_TITLE: Record<string, string> = {
+  payFood: 'Step 1: the colony eats', checkWaste: 'Step 2: the waste pile', resolveCrisis: 'Step 3: the crisis resolves',
+  addZombies: 'Step 4: zombies arrive', checkObjective: 'Step 5: the objective check', roundTick: 'Step 6: the round track', passToken: 'Step 7: the first-player token',
+}
+/** Why an exposure die was rolled, in a few words. */
+export const EXPOSURE_WHY: Record<string, string> = {
+  move: 'moving', zombieKill: 'killing a zombie', biteChain: 'the bite spreading', card: 'a card', ability: 'an ability',
+}
+export const clip = (s: string, n = 110): string => {
+  const one = s.replace(/\s+/g, ' ').trim()
+  if (one.length <= n) return one
+  const cut = one.slice(0, n)
+  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('; '))
+  return `${(stop > 40 ? cut.slice(0, stop + 1) : cut.replace(/\s+\S*$/, ''))}...`
 }
 const DISCARD_REASON: Record<string, string> = { crisis: 'spent on the crisis', lastSurvivor: 'their last survivor died', played: 'played' }
 const END_REASON: Record<string, string> = { moraleZero: 'morale hit zero', roundsOut: 'the rounds ran out', objectiveComplete: 'the main objective was completed', concession: 'the human conceded' }
@@ -47,7 +61,8 @@ export function feedLine(ev: GameEvent, N: Names): string | null {
     case 'GameCreated': return `New game, seed "${ev.seed}". Main objective: ${N.objective(ev.objectiveId)}.`
     case 'ActionRejected': return null
     case 'DecisionAutoResolved': return null
-    case 'PhaseChanged': return ev.phase === 'colony' ? (ev.step ? COLONY_STEP[ev.step] ?? null : 'The colony phase begins.') : ev.phase === 'playerTurns' ? 'Player turns.' : ev.phase === 'ended' ? 'The game is over.' : null
+    // the feed's own headers (round, turn, colony step) mark phase changes, so only the end of the game gets a line
+    case 'PhaseChanged': return ev.phase === 'ended' ? 'The game is over.' : null
     case 'RoundStarted': return `Round ${ev.roundNumber} begins, ${plural(ev.roundsLeft, 'round')} left.`
     case 'TurnStarted': return `${N.seat(ev.seat)} takes turn ${ev.turnCount}.`
     case 'TurnEnded': return null
@@ -64,7 +79,7 @@ export function feedLine(ev: GameEvent, N: Names): string | null {
     case 'DieSpent': return `${N.seat(ev.seat)} spends a ${ev.value} to ${ev.purpose}${ev.survivorId ? ` with ${N.survivor(ev.survivorId)}` : ''}.`
     case 'DieBoosted': return `${N.seat(ev.seat)} raises a die from ${ev.from} to ${ev.to} (${ev.source}).`
     case 'DieAdded': return `${N.seat(ev.seat)} gains an extra die (${ev.die.value}).`
-    case 'ExposureRolled': return `Exposure roll for ${N.survivor(ev.survivorId)}: ${FACE_WORD[ev.face]} (${ev.reason}).`
+    case 'ExposureRolled': return `Exposure roll for ${N.survivor(ev.survivorId)}: ${FACE_WORD[ev.face]} (${EXPOSURE_WHY[ev.reason] ?? ev.reason}).`
     case 'ExposureFaceChanged': return `${N.survivor(ev.survivorId)} gets a different exposure result: ${FACE_WORD[ev.from]} becomes ${FACE_WORD[ev.to]}.`
     case 'ExposureSkipped': return `${N.survivor(ev.survivorId)} skips the exposure roll.`
     case 'WoundTaken': return `${N.survivor(ev.survivorId)} takes ${ev.kind === 'frostbite' ? 'frostbite' : 'a wound'} (${plural(ev.wounds, 'wound')}, ${plural(ev.frostbite, 'frostbite token')}).`
@@ -108,7 +123,7 @@ export function feedLine(ev: GameEvent, N: Names): string | null {
     case 'CardAddedToObjective': return `${N.seat(ev.seat)} adds ${N.item(ev.defId)} to the main objective.`
     case 'CardGiven': return `${N.seat(ev.from)} gives ${N.item(ev.defId)} to ${N.seat(ev.to)}.`
     case 'CardDiscarded': {
-      if (ev.to === 'deck') return null
+      if (ev.to === 'deck' || ev.reason === 'crisis') return null
       const why = DISCARD_REASON[ev.reason] ?? ev.reason.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
       return `${ev.seat ? `${N.seat(ev.seat)}'s card` : 'A card'} ${ev.to === 'removed' ? 'leaves the game' : 'goes to the waste pile'} (${why}).`
     }
@@ -126,8 +141,11 @@ export function feedLine(ev: GameEvent, N: Names): string | null {
     case 'CrisisEffectApplied': return ev.kind === 'bonus' ? `${N.crisis(ev.cardId)}: the bonus applies.` : `${N.crisis(ev.cardId)}: the failure effect applies.`
     case 'ObjectiveChecked': return ev.complete ? 'Objective check: the main objective is complete.' : 'Objective check: not complete yet.'
     case 'CrossroadsDrawn': return null
-    case 'CrossroadsTriggered': return `A crossroads is triggered for ${N.seat(ev.forSeat)}.`
-    case 'CrossroadsResolved': return `Crossroads resolved for ${N.seat(ev.forSeat)}: option ${ev.optionId}${ev.forced ? ' (the only choice)' : ''}.`
+    case 'CrossroadsTriggered': return `Crossroads: ${N.crisis(ev.cardId)} comes up for ${N.seat(ev.forSeat)}.`
+    case 'CrossroadsResolved': {
+      const text = (ev.optionId && N.option ? N.option(ev.cardId, ev.optionId) : '').replace(/[\s.!?;:]+$/, '')
+      return `${N.seat(ev.forSeat)} ${ev.forced ? 'has only one way out' : 'chooses'}: ${ev.optionId ? (text ? `"${text}"` : `option ${ev.optionId}`) : 'nothing can happen'}.`
+    }
     case 'CrossroadsReturned': return null
     case 'CrossroadsDeckShuffled': return null
     case 'VoteCalled': return `${N.seat(ev.caller)} calls a vote to exile ${N.seat(ev.target)}.`
