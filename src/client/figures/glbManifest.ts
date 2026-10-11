@@ -16,10 +16,11 @@ const listeners = new Set<() => void>()
 
 /** Accepts { slugs: [...] }, a bare array, or { models | figures | files: [...] }; items are slugs or { slug | id | name, file | url }. Anything else gives []. Pure (tests). */
 export function parseGlbManifest(raw: unknown): GlbEntry[] {
+  // Also accepts the pipeline's own shape: a top-level map { slug: { file, heightIn, tris } }.
   const list: unknown = Array.isArray(raw)
     ? raw
     : raw && typeof raw === 'object'
-      ? ((raw as Record<string, unknown>)['slugs'] ?? (raw as Record<string, unknown>)['models'] ?? (raw as Record<string, unknown>)['figures'] ?? (raw as Record<string, unknown>)['files'])
+      ? ((raw as Record<string, unknown>)['slugs'] ?? (raw as Record<string, unknown>)['models'] ?? (raw as Record<string, unknown>)['figures'] ?? (raw as Record<string, unknown>)['files'] ?? raw)
       : undefined
   const out: GlbEntry[] = []
   const add = (slugRaw: unknown, fileRaw?: unknown): void => {
@@ -35,7 +36,10 @@ export function parseGlbManifest(raw: unknown): GlbEntry[] {
       else if (it && typeof it === 'object') { const o = it as Record<string, unknown>; add(o['slug'] ?? o['id'] ?? o['name'] ?? o['file'], o['file'] ?? o['url']) }
     }
   } else if (list && typeof list === 'object') {
-    for (const [k, v] of Object.entries(list as Record<string, unknown>)) add(k, v)
+    for (const [k, v] of Object.entries(list as Record<string, unknown>)) {
+      const o = v && typeof v === 'object' ? (v as Record<string, unknown>) : undefined
+      add(k, o ? (o['file'] ?? o['url']) : v)
+    }
   }
   return out
 }

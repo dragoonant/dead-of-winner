@@ -8,6 +8,10 @@ describe('glb manifest', () => {
   it('parses { slugs }, a bare array, objects with a file, and ignores junk', () => {
     expect(parseGlbManifest({ slugs: ['alexis-grey', 'zombie-1'] }).map((e) => e.slug)).toEqual(['alexis-grey', 'zombie-1'])
     expect(parseGlbManifest(['a', 'b.glb']).map((e) => e.slug)).toEqual(['a', 'b'])
+    // the Hunyuan pipeline's shape: a top-level map of slug -> { file, heightIn, tris }
+    const piped = parseGlbManifest({ 'alexis-grey': { file: 'alexis-grey.glb', heightIn: 1.2, tris: 6155 }, 'zombie-crawler': { file: 'zombie-crawler.glb' } })
+    expect(piped.map((e) => e.slug)).toEqual(['alexis-grey', 'zombie-crawler'])
+    expect(piped[0].url.endsWith('assets/models/alexis-grey.glb')).toBe(true)
     expect(parseGlbManifest({ models: [{ slug: 'x', file: 'x.glb' }] })[0]?.url).toMatch(/assets\/models\/x\.glb$/)
     expect(parseGlbManifest({ models: { 'zombie-a': 'zombie-a.glb' } }).map((e) => e.slug)).toEqual(['zombie-a'])
     expect(parseGlbManifest(null)).toEqual([])
