@@ -1,11 +1,11 @@
 // The human's hand as a fan of DOM card faces (50 §7): name, symbols, kind and the card's own text from the data.
 // Click = open its play prompt (or tick it while the crisis picker is open). Hover lifts the card and shows the full text.
 import { useMemo, type ReactElement } from 'react'
-import { itemKindLabel, itemSymbols, itemText, nameOf } from '../data'
+import { itemSymbols, nameOf } from '../data'
 import { isHumanDecision, useGameStore } from '../store/gameStore'
 import { usePresentedView } from '../store/hooks'
 import { ui, useUiStore } from '../store/uiStore'
-import { SymbolChips } from '../ui/Icons'
+import { ItemCard } from './ItemCard'
 
 const SYMBOL_ORDER = ['weapon', 'medicine', 'food', 'fuel', 'tool', 'education', 'survivor']
 
@@ -43,10 +43,7 @@ export function HandFan(): ReactElement | null {
             onMouseLeave={() => ui.set({ hoverCard: null })}
           >
             {ticked && <span className="ticked">ticked</span>}
-            <span className="kind">{itemKindLabel(defId)}</span>
-            <span className="nm">{nameOf(defId)}</span>
-            <SymbolChips symbols={itemSymbols(defId)} size={16} />
-            <span className="tx">{itemText(defId)}</span>
+            <ItemCard defId={defId} size="sm" ticked={ticked} />
           </button>
         )
       })}

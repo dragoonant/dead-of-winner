@@ -1,6 +1,8 @@
 // Seat rail (left, '[') and feed rail (right, ']') (50 §3, §9, §10).
 import { useEffect, useRef, type ReactElement } from 'react'
-import { nameOf, seatNameOf, survivorAbility, survivorOccupation, survivorStats } from '../data'
+import { SurvivorChip } from '../cards/SurvivorChip'
+import { nameOf } from '../data'
+import { seatNameOf } from '../data'
 import { usePresentedStore, type FeedEntry } from '../presentation/presentedStore'
 import { useGameStore } from '../store/gameStore'
 import { usePresentedView } from '../store/hooks'
@@ -75,20 +77,17 @@ export function SeatRail(): ReactElement | null {
 
 function SurvRow({ id, lead, hover }: { id: string; lead?: boolean; hover?: boolean }): ReactElement {
   const v = usePresentedView()
-  const st = survivorStats(id)
   const sv = v?.survivors[id]
   const equipped = sv?.equipped.map((c) => nameOf(v?.cards[c]?.defId)) ?? []
   return (
     <div
       className={`surv ${hover ? 'hover' : ''}`}
-      title={`${survivorOccupation(id)}. ${survivorAbility(id)}`}
       onMouseEnter={() => ui.set({ hoverSurvivor: id })}
       onMouseLeave={() => ui.set({ hoverSurvivor: null })}
       onClick={() => ui.set({ selectedSurvivor: id })}
       style={{ cursor: 'pointer' }}
     >
-      {lead ? '★ ' : ''}{nameOf(id)}{st ? <span className="muted"> inf {st.influence} atk {st.attack} src {st.search}</span> : null}
-      {sv && (sv.wounds > 0 || sv.frostbite > 0) ? <span style={{ color: 'var(--bad)' }}> {sv.wounds}w {sv.frostbite}f</span> : null}
+      <SurvivorChip id={id} leader={lead} wounds={sv?.wounds ?? 0} frostbite={sv?.frostbite ?? 0} />
       {equipped.length > 0 && <div className="muted" style={{ fontSize: 11 }}>{equipped.join(', ')}</div>}
     </div>
   )

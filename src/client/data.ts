@@ -37,6 +37,38 @@ export function survivorStats(id: string): { influence: number; attack: number; 
 export function survivorAbility(id: string): string { return (rec(id)?.['text']?.['ability'] as string | undefined) ?? '' }
 export function survivorOccupation(id: string): string { return (rec(id)?.['occupation'] as string | undefined) ?? '' }
 
+/** The keyword printed at the start of a survivor's ability box: where the ability works (LIBRARY, COLONY, ...). Empty when it works anywhere. */
+export function survivorAbilityKeyword(id: string): string {
+  const loc = (rec(id)?.['ability'] as { location?: string } | undefined)?.location
+  if (!loc || loc === 'anywhere') return ''
+  if (loc === 'colony') return 'Colony'
+  if (loc === 'nonColony') return 'Outside'
+  return nameOf(loc)
+}
+
+/** The location deck an item belongs to: its number and name, or null for the starter deck and for items in no deck. */
+export function itemDeck(defId: string | undefined): { number: number | null; name: string } | null {
+  if (!bundle || !defId) return null
+  const deck = bundle.records.decks.find((d) => d.id !== 'deck.starter' && d.cards.some((c) => c.item === defId))
+  if (!deck) return null
+  const loc = bundle.records.locations.find((l) => l.deck === deck.id)
+  return loc ? { number: loc.number ?? null, name: loc.name } : null
+}
+export function isStarterItem(defId: string | undefined): boolean {
+  return !!bundle && !!defId && !!bundle.records.decks.find((d) => d.id === 'deck.starter')?.cards.some((c) => c.item === defId)
+}
+export function locationSymbolOrder(id: string): ItemSymbol[] { return (rec(id)?.['symbolOrder'] as ItemSymbol[] | undefined) ?? [] }
+
+export interface CrisisInfo { prevent: ItemSymbol[]; perSeat: number; plus: number; fail: string; bonus: string }
+export function crisisInfo(id: string | null | undefined): CrisisInfo | null {
+  const r = rec(id)
+  if (!r) return null
+  return {
+    prevent: (r['prevent'] as ItemSymbol[] | undefined) ?? [], perSeat: (r['need']?.['perSeat'] as number | undefined) ?? 1, plus: (r['need']?.['plus'] as number | undefined) ?? 0,
+    fail: (r['text']?.['fail'] as string | undefined) ?? '', bonus: (r['text']?.['bonus'] as string | undefined) ?? '',
+  }
+}
+
 export const BOT_NAMES = ['Rook', 'Sparrow', 'Wren', 'Ash', 'Moss']
 export function seatNameOf(setup: GameSetup, seat: SeatId): string {
   const i = setup.seats.findIndex((s) => s.id === seat)

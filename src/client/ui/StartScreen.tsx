@@ -1,6 +1,6 @@
 // Start screen (50 §2): one human plus 1-4 bots, the main objective (or random), animation speed, a seed, Start and Continue.
 // It deliberately imports no engine code: the data chunk loads in the background for the objective list, the engine loads with the game.
-import { useEffect, useState, type ReactElement } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactElement } from 'react'
 import { BOT_NAMES, mainObjectives, setClientBundle, type MainObjectiveInfo } from '../data'
 import type { AiTier } from '../../engine/types'
 import { loadClientBundle } from '../dataLoad'
@@ -8,6 +8,7 @@ import { DEFAULT_PERSONAS, randomSeedWord, type BotChoice, type LaunchRequest } 
 import { SPEED_PRESETS, speedName, useSettingsStore, type SpeedPreset } from '../store/settingsStore'
 import { peekAutosave } from '../store/savePeek'
 import { SEAT_COLOURS } from '../table/seats'
+import { titleCandidates, useArt } from '../cards/art'
 import './hud.css'
 
 interface PersonaInfo { id: string; name: string; blurb: string }
@@ -24,6 +25,7 @@ export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) 
   const speed = useSettingsStore((s) => s.speed)
   const set = useSettingsStore((s) => s.set)
   const save = peekAutosave()
+  const titleArt = useArt(titleCandidates())
 
   useEffect(() => {
     let alive = true
@@ -43,7 +45,7 @@ export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) 
     onStart({ seats: ['human', ...Array.from({ length: bots }, () => 'bot' as const)], objective, seed: seed.trim() || randomSeedWord(), bots: choices })
   }
   return (
-    <div className="start" data-testid="start-screen">
+    <div className="start" data-testid="start-screen" data-title-art={titleArt ? 'asset' : 'generated'} style={titleArt ? ({ ['--title-img' as string]: `url(${titleArt})` } as CSSProperties) : undefined}>
       <div className="start-card panel">
         <h1>Dead of Winner</h1>
         <div className="sub">A colony of AI survivors, one human at the table.</div>

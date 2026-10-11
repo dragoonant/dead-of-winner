@@ -2,14 +2,14 @@
 // (query.*, pending.context, pending.options[].odds). The dock opens only when the presentation is idle and the decision is the human's.
 import { useEffect, useMemo, useState, type ReactElement } from 'react'
 import { describe, query, type Action, type PendingDecision, type SeatId, type SeatView } from '../../engine/index'
-import {
-  itemSymbols, itemText, locName, nameOf, rec, seatNameOf, survivorAbility, survivorOccupation, survivorStats,
-} from '../data'
+import { locName, nameOf, rec, seatNameOf } from '../data'
 import { isPresentationIdle, usePresentedStore } from '../presentation/presentedStore'
 import { dispatch, isBotDecision, isHumanDecision, legalFor, submitHumanVote, useGameStore, validateAction } from '../store/gameStore'
 import { useTrueView } from '../store/hooks'
 import { ContributePicker } from './ContributePicker'
-import { SymbolChips } from './Icons'
+import { CrossroadsCard } from '../cards/CrossroadsCard'
+import { ItemCard } from '../cards/ItemCard'
+import { SurvivorCard } from '../cards/SurvivorCard'
 import * as T from './promptText'
 import { TurnActionForm, describeAction, labelNamesOf } from './TurnActionForm'
 
@@ -17,14 +17,10 @@ type Loose = Record<string, unknown>
 const ctxData = (pd: PendingDecision): Loose => (pd.context.data ?? {}) as Loose
 
 // ---------- small shared pieces ----------
-function Portrait({ id, selected, onClick, extra }: { id: string; selected?: boolean; onClick?: () => void; extra?: string }): ReactElement {
-  const st = survivorStats(id)
+function Portrait({ id, selected, onClick }: { id: string; selected?: boolean; onClick?: () => void; extra?: string }): ReactElement {
   return (
     <button className={`portrait ${selected ? 'sel' : ''}`} onClick={onClick} data-testid={`portrait-${id}`}>
-      <span className="nm">{nameOf(id)}</span>
-      <span className="muted" style={{ fontSize: 11 }}>{survivorOccupation(id)}{extra ? ` - ${extra}` : ''}</span>
-      {st && <span className="st">influence {st.influence} / attack {st.attack} / search {st.search}</span>}
-      <span className="ab">{survivorAbility(id)}</span>
+      <SurvivorCard id={id} size="pk" selected={selected} />
     </button>
   )
 }
@@ -110,9 +106,9 @@ function KeepForm({ pd, v, legal }: { pd: PendingDecision; v: SeatView; legal: A
             const cardId = (o.action as unknown as { cardId?: string }).cardId
             const defId = cardId ? v.cards[cardId]?.defId : undefined
             return (
-              <button key={o.id} className="opt" data-testid={`prompt-option-${o.id}`} onClick={() => answer(o.action)}>
-                {defId && <SymbolChips symbols={itemSymbols(defId)} />} <b>{o.label || describeAction(v, o.action)}</b>
-                {defId && <div className="muted" style={{ fontSize: 11 }}>{itemText(defId)}</div>}
+              <button key={o.id} className={`opt ${defId ? 'card-opt' : ''}`} data-testid={`prompt-option-${o.id}`} onClick={() => answer(o.action)}>
+                {defId && <ItemCard defId={defId} size="md" />}
+                <b>{o.label || describeAction(v, o.action)}</b>
               </button>
             )
           })}
@@ -137,8 +133,8 @@ function RequestResponseForm({ pd, v, legal }: { pd: PendingDecision; v: SeatVie
             const give = (o.action as unknown as { give: string | null }).give
             const defId = give ? v.cards[give]?.defId : undefined
             return (
-              <button key={o.id} className="opt" data-testid={`prompt-option-${o.id}`} onClick={() => answer(o.action)}>
-                {give === null ? <b>Decline</b> : <><SymbolChips symbols={itemSymbols(defId)} /> <b>Give {nameOf(defId)}</b></>}
+              <button key={o.id} className={`opt ${give === null ? '' : 'card-opt'}`} data-testid={`prompt-option-${o.id}`} onClick={() => answer(o.action)}>
+                {give === null ? <b>Decline</b> : <><ItemCard defId={defId} size="sm" /> <b>Give {nameOf(defId)}</b></>}
               </button>
             )
           })}
@@ -153,23 +149,34 @@ function CrossroadsForm({ pd, v, legal }: { pd: PendingDecision; v: SeatView; le
   const opts = optionActions(pd, legal)
   const cardId = pd.context.cardId ?? v.crossroads.active?.cardId
   const r = rec(cardId)
-  const optText = (r?.['text']?.['options'] ?? {}) as Record<string, string>
+  const known = !!r?.['text']?.['options']
   return (
     <>
       <div className="dock-head"><h3>Crossroads: {nameOf(cardId)}</h3></div>
       <div className="dock-body">
-        <div className="dock-text" data-testid="prompt-text">{(r?.['text']?.['vignette'] as string | undefined) ?? describe.decision(pd)}</div>
-        <div className="opt-list">
-          {opts.map((o) => {
-            const id = (o.action as unknown as { optionId?: string }).optionId ?? o.id
-            return (
-              <button key={o.id} className="opt" data-testid={`prompt-option-${id}`} onClick={() => answer(o.action)}>
-                <b>{o.label || id}</b>
-                {optText[id] && <div className="muted" style={{ fontSize: 12 }}>{optText[id]}</div>}
-              </button>
-            )
-          })}
-        </div>
+        <div className="dock-text sr-only" data-testid="prompt-text">{(r?.['text']?.['vignette'] as string | undefined) ?? describe.decision(pd)}</div>
+        {known ? (
+          <CrossroadsCard
+            id={cardId}
+            size="xl"
+            renderOption={(oid, _i, text) => {
+              const o = opts.find((x) => ((x.action as unknown as { optionId?: string }).optionId ?? x.id) === oid)
+              if (!o) return <p className="xr-opt">{text}</p>
+              return (
+                <button key={o.id} className="opt" data-testid={`prompt-option-${oid}`} onClick={() => answer(o.action)}>
+                  <b>{o.label || oid}</b>{text && <div className="xr-opt" style={{ marginTop: 3 }}>{text}</div>}
+                </button>
+              )
+            }}
+          />
+        ) : (
+          <div className="opt-list">
+            {opts.map((o) => {
+              const id = (o.action as unknown as { optionId?: string }).optionId ?? o.id
+              return <button key={o.id} className="opt" data-testid={`prompt-option-${id}`} onClick={() => answer(o.action)}><b>{o.label || id}</b></button>
+            })}
+          </div>
+        )}
       </div>
       <RejectionLine pd={pd} />
     </>

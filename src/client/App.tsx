@@ -5,11 +5,17 @@ import { useSettingsStore } from './store/settingsStore'
 import { StartScreen } from './ui/StartScreen'
 
 const GameScreen = lazy(() => import('./GameScreen'))
+const Gallery = lazy(() => import('./figures/Gallery'))
+const CardSheet = lazy(() => import('./cards/CardSheet'))
 
 type Screen = { kind: 'start'; error?: string } | { kind: 'game'; request: LaunchRequest; nonce: number }
 
 const urlOptions = parseUrl(typeof location !== 'undefined' ? location.search : '')
 if (urlOptions.speed !== undefined) useSettingsStore.getState().set({ speed: urlOptions.speed })
+
+const search = typeof location !== 'undefined' ? location.search : ''
+const wantGallery = new URLSearchParams(search).has('gallery')
+const wantCards = new URLSearchParams(search).has('cards')
 
 export function App(): ReactElement {
   const [screen, setScreen] = useState<Screen>(() => {
@@ -17,6 +23,9 @@ export function App(): ReactElement {
     return req ? { kind: 'game', request: req, nonce: 0 } : { kind: 'start' }
   })
   const start = (request: LaunchRequest): void => setScreen((s) => ({ kind: 'game', request, nonce: (s.kind === 'game' ? s.nonce : 0) + 1 }))
+  if (wantGallery || wantCards) {
+    return <Suspense fallback={null}>{wantGallery ? <Gallery /> : <CardSheet />}</Suspense>
+  }
   if (screen.kind === 'start') return <StartScreen onStart={start} error={screen.error ?? null} />
   return (
     <Suspense fallback={<div className="start"><div className="start-card panel" style={{ textAlign: 'center' }}>Loading the table...</div></div>}>

@@ -1,6 +1,7 @@
 // The in-game screen: table canvas plus every HUD panel. Lazy-loaded from App so the title screen stays light.
 import { useEffect, useMemo, useState, type ReactElement } from 'react'
 import { HandFan } from './cards/HandFan'
+import { HoverSurvivorCard } from './cards/SurvivorChip'
 import { startBotDriver, stopBotDriver } from './bot/botDriver'
 import { resetDeciders } from './bot/deciders'
 import { startTalk } from './bot/talk'
@@ -21,6 +22,7 @@ import { PromptDock } from './ui/PromptDock'
 import { FeedRail, SeatRail } from './ui/Rails'
 import { TopBar } from './ui/TopBar'
 import './ui/hud.css'
+import './cards/cards.css'
 
 function Banner(): ReactElement | null {
   const b = usePresentedStore((s) => s.banner)
@@ -133,6 +135,7 @@ export default function GameScreen({ request, fps, onExit, onRestart }: {
           <SeatRail />
           <FeedRail />
           <HandFan />
+          <HoverSurvivorCard />
           <DiceTray />
           <CrisisStrip />
           <PromptDock />

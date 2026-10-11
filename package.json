@@ -14,9 +14,12 @@
     "e2e": "playwright test",
     "sim": "tsx tools/sim.ts",
     "bench:ai": "tsx tools/ai-bench.ts",
-    "validate:data": "tsx tools/validate-data.ts"
+    "validate:data": "tsx tools/validate-data.ts",
+    "textures": "python tools/textures/gen_textures.py"
   },
   "dependencies": {
+    "@fontsource/bebas-neue": "^5.3.0",
+    "@fontsource/crimson-text": "^5.3.0",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
     "react": "19.2.8",

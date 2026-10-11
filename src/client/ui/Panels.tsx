@@ -1,6 +1,8 @@
 // Objective panel (O), How to Play drawer, Settings popover and the key list (50 §3, §14, §17).
 import { useMemo, type ReactElement } from 'react'
 import { query, type ObjectiveProgressReport, type SeatView } from '../../engine/index'
+import { ExiledCard } from '../cards/ObjectiveCards'
+import { MainObjectiveCard, SecretObjectiveCard } from '../cards/ObjectiveCards'
 import { nameOf, partLabel, rec } from '../data'
 import { useTrueView } from '../store/hooks'
 import { SPEED_PRESETS, speedName, useSettingsStore, type SpeedPreset } from '../store/settingsStore'
@@ -36,28 +38,24 @@ export function ObjectivePanel(): ReactElement | null {
   const secret = useMemo(() => (v && secretId ? safeProgress(v, secretId) : null), [v, secretId])
   const exiled = useMemo(() => (v && exiledId ? safeProgress(v, exiledId) : null), [v, exiledId])
   if (!open || !v) return null
-  const mainRec = rec(v.objective.id)
   const side = v.objective.side === 'hardcore' ? 'hardcore' : 'normal'
-  const mainText = mainRec?.['text']?.[side] as { setup?: string; victory?: string } | undefined
   return (
     <div className="drawer l panel" role="dialog" aria-label="Objectives" data-testid="objective-panel">
       <button className="btn chip x" onClick={() => ui.set({ objectiveOpen: false })} aria-label="Close">Close</button>
       <h2>Objectives</h2>
       <h3>Main objective: {nameOf(v.objective.id)}</h3>
-      {mainText?.victory && <p>{mainText.victory}</p>}
-      {mainText?.setup && <p className="muted">{mainText.setup}</p>}
+      <div className="obj-card"><MainObjectiveCard id={v.objective.id} hardcore={side === 'hardcore'} size="lg" /></div>
       {main && <Parts r={main} />}
       {exiledId ? (
         <>
           <h3>Your exiled objective: {nameOf(exiledId)}</h3>
-          <p>{(rec(exiledId)?.['text']?.['goal'] as string | undefined) ?? ''}</p>
+          <div className="obj-card"><ExiledCard id={exiledId} size="xl" /></div>
           {exiled && <Parts r={exiled} />}
         </>
       ) : secretId ? (
         <>
           <h3>Your secret objective: {nameOf(secretId)}</h3>
-          <p>{(rec(secretId)?.['text']?.['goal'] as string | undefined) ?? ''}</p>
-          {rec(secretId)?.['type'] === 'betrayal' && <p className="muted">{(rec(secretId)?.['text']?.['betrayer'] as string | undefined) ?? ''}</p>}
+          <div className="obj-card"><SecretObjectiveCard id={secretId} size="xl" /></div>
           {secret && <Parts r={secret} />}
         </>
       ) : <p className="muted">You have no secret objective in this game.</p>}

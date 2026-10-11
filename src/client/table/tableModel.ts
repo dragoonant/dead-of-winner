@@ -2,7 +2,7 @@
 // Pure (no three.js): the 3D scene only draws what this returns, and the DOM test proxies read it too.
 import type { SeatView } from '../../engine/index'
 import {
-  assignSlots, colonyLayout, slotPoint, spaceItems, tileLayouts,
+  assignSlots, colonyLayout, gridPositions, pt, slotPoint, spaceItems, tileLayouts,
   type ColonyLayout, type Pt, type TileCapacity, type TileLayout,
 } from './layout'
 
@@ -29,6 +29,11 @@ export interface TableModel {
   entrances: EntranceModel[]
   moraleAt: Pt
   roundAt: Pt
+  /** Food tokens in the supply box (capped for drawing), and how many cards sit in the waste pile, crisis deck and contributions. */
+  foodTokens: Pt[]
+  wasteCards: number
+  crisisDeck: number
+  contributions: number
 }
 
 export function buildTableModel(v: SeatView): TableModel {
@@ -88,6 +93,10 @@ export function buildTableModel(v: SeatView): TableModel {
   return {
     colony, tiles, figures, zombies, barricades, noise, helpless, entrances,
     moraleAt: colony.moraleTrack[Math.max(0, Math.min(colony.moraleTrack.length - 1, v.morale))] ?? colony.moraleTrack[0]!,
+    foodTokens: gridPositions(Math.min(v.food, 30), 10, 0.52, pt(colony.food.x, colony.food.z + 0.3)),
+    wasteCards: v.waste.length,
+    crisisDeck: v.crisisDeckCount,
+    contributions: v.crisis.contributionCount,
     roundAt: colony.roundTrack[Math.max(0, Math.min(colony.roundTrack.length - 1, v.roundsLeft))] ?? colony.roundTrack[0]!,
   }
 }

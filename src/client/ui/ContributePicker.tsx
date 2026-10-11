@@ -2,10 +2,11 @@
 // Used for the `crisisContribution` decision and from the turn action list. The Confirm is checked with the engine's own validate().
 import { useEffect, useMemo, type ReactElement } from 'react'
 import { query, type PendingDecision, type SeatView } from '../../engine/index'
-import { itemSymbols, itemText, nameOf, seatNameOf } from '../data'
+import { CrisisCard } from '../cards/CrisisCard'
+import { ItemCard } from '../cards/ItemCard'
+import { itemSymbols, nameOf, seatNameOf } from '../data'
 import { dispatch, useGameStore, validateAction } from '../store/gameStore'
 import { ui, useUiStore } from '../store/uiStore'
-import { SymbolChips } from './Icons'
 import { contributeText } from './promptText'
 
 export function ContributePicker({ pd, v, endsTurn, onBack }: { pd: PendingDecision; v: SeatView; endsTurn: boolean; onBack?: () => void }): ReactElement {
@@ -29,18 +30,20 @@ export function ContributePicker({ pd, v, endsTurn, onBack }: { pd: PendingDecis
     <>
       <div className="dock-head"><h3>Crisis: {nameOf(crisis.cardId)}</h3></div>
       <div className="dock-body">
-        <div className="dock-text" data-testid="prompt-text">{text}</div>
-        <div className="muted">Cards that prevent it are marked. Click cards here or in your hand to tick them.</div>
-        <div className="opt-list">
+        <div className="crisis-split">
+          <CrisisCard id={crisis.cardId} size="md" />
+          <div className="dock-text" data-testid="prompt-text">{text}<div className="muted" style={{ marginTop: 6 }}>Cards that prevent it are marked. Click cards here or in your hand to tick them.</div></div>
+        </div>
+        <div className="opt-list cards">
           {cards.length === 0 && <div className="muted">You have no cards to add.</div>}
           {cards.map((c) => {
             const defId = v.cards[c]?.defId
             const syms = itemSymbols(defId)
             const match = syms.some((s) => crisis.prevent.includes(s))
             return (
-              <button key={c} className={`opt ${sel.includes(c) ? 'sel' : ''}`} onClick={() => ui.toggleContrib(c)} data-testid={`contrib-${c}`}>
-                <SymbolChips symbols={syms} /> <b>{nameOf(defId)}</b> {match && <span className="tag gold">prevents</span>}
-                <div className="muted" style={{ fontSize: 11 }}>{itemText(defId)}</div>
+              <button key={c} className={`opt card-opt ${sel.includes(c) ? 'sel' : ''}`} onClick={() => ui.toggleContrib(c)} data-testid={`contrib-${c}`}>
+                <ItemCard defId={defId} size="sm" ticked={sel.includes(c)} />
+                <span className="co-name"><b>{nameOf(defId)}</b> {match && <span className="tag gold">prevents</span>}</span>
               </button>
             )
           })}

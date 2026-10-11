@@ -2,6 +2,8 @@
 // the Crossroads log and the final hands. This is how the human audits the bots: nothing is hidden once the game has ended.
 import { useMemo, type ReactElement } from 'react'
 import { query, type ObjectiveProgressReport, type SeatView } from '../../engine/index'
+import { CrisisCard } from '../cards/CrisisCard'
+import { ExiledCard, SecretObjectiveCard } from '../cards/ObjectiveCards'
 import { nameOf, partLabel, rec, seatNameOf } from '../data'
 import { usePresentedStore } from '../presentation/presentedStore'
 import { exportSave, useGameStore } from '../store/gameStore'
@@ -58,14 +60,14 @@ export function GameOver({ onRestart, onExit }: { onRestart: (req: LaunchRequest
               <h3>{name(r.id)}{r.id === v.seat ? ' (you)' : ''} <span className={`tag ${r.outcome === 'won' ? 'gold' : 'bad'}`}>{r.outcome ?? 'no result'}</span></h3>
               {r.secret ? (
                 <>
-                  <div><b>{nameOf(r.secret)}</b>{rec(r.secret)?.['type'] === 'betrayal' ? <span className="tag bad" style={{ marginLeft: 6 }}>betrayer</span> : null}</div>
-                  <div className="muted">{(rec(r.secret)?.['text']?.['goal'] as string | undefined) ?? ''}</div>
+                  <div className="recap-card"><SecretObjectiveCard id={r.secret} size="lg" /></div>
+                  {rec(r.secret)?.['type'] === 'betrayal' ? <div><span className="tag bad">betrayer</span></div> : null}
                   {r.sp?.parts.map((p, i) => <div key={i} className="progress-part"><span>{partLabel(p.label)}</span><b>{p.have} of {p.need}</b></div>)}
                 </>
               ) : <div className="muted">No secret objective.</div>}
               {r.exiled && (
                 <div style={{ marginTop: 4 }}>
-                  <div><b>Exiled: {nameOf(r.exiled)}</b></div>
+                  <div className="recap-card"><ExiledCard id={r.exiled} size="lg" /></div>
                   {r.ep?.parts.map((p, i) => <div key={i} className="progress-part"><span>{partLabel(p.label)}</span><b>{p.have} of {p.need}</b></div>)}
                 </div>
               )}
@@ -84,6 +86,11 @@ export function GameOver({ onRestart, onExit }: { onRestart: (req: LaunchRequest
             {recap.contributions.length === 0 && <tr><td colSpan={3} className="muted">No crisis was resolved.</td></tr>}
           </tbody>
         </table>
+        {recap.contributions.length > 0 && (
+          <div className="card-strip" data-testid="recap-crisis-cards">
+            {[...new Set(recap.contributions.map((c) => c.crisisId))].map((id) => <CrisisCard key={id} id={id} size="sm" />)}
+          </div>
+        )}
         <h3>Crossroads</h3>
         <table>
           <tbody>

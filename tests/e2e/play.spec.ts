@@ -56,6 +56,7 @@ test('a full game vs three Normal bots, through UI clicks only', async ({ page }
   await expect(page.getByTestId('game-over')).toBeVisible()
   await expect(page.getByTestId('recap-seat-s1')).toBeVisible()
   await page.screenshot({ path: `${OUT}/m3-recap.png` })
+  await page.screenshot({ path: `${OUT}/m5-recap.png` })
   expect(turnShot, 'saw a human turn').toBe(true)
   if (!crisisShot) {
     // the strip can be brief at high speed; fall back to the recap's crisis table so the screenshot exists
