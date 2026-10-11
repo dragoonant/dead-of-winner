@@ -13,3 +13,7 @@ Tokens.txt
 .claude/worktrees/
 # never commit rules or card PDFs (repo is public)
 *.pdf
+# secrets: any tokens file, whatever the extension
+tokens.txt*
+Tokens.txt*
+*.token*
