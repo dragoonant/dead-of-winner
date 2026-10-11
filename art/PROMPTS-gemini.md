@@ -51,7 +51,7 @@ Create an image: a waist-up painted portrait of a lanky man in his 40s with a su
 ### brian-lee
 
 ```
-Create an image: a waist-up painted portrait of a composed man in his 50s with neat graying hair, wearing a long camel overcoat with a ceremonial chain of office over it, holding a megaphone, cold snowy ruined small town in the background, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, portrait orientation 4:5, no text, no logos, no frame, no watermark.
+Create an image: a waist-up painted portrait of a heavier-set man in his early sixties with a round face, thinning sandy-gray hair, tired eyes and reading glasses pushed up on his forehead, wearing a rumpled tweed overcoat with a ceremonial chain of office over it, holding a megaphone, an ordinary fictional person, not a celebrity, not resembling any real actor, cold snowy ruined small town in the background, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, portrait orientation 4:5, no text, no logos, no frame, no watermark.
 ```
 
 ### buddy-davis
@@ -257,3 +257,13 @@ Create an image: a waist-up painted portrait of a heavyset woman in her 50s with
 ```
 
 The accepted prompt is the one listed above under loretta-clay.
+
+### brian-lee (replaced after batch 1; first version resembled a real actor)
+
+Original prompt:
+
+```
+Create an image: a waist-up painted portrait of a composed man in his 50s with neat graying hair, wearing a long camel overcoat with a ceremonial chain of office over it, holding a megaphone, cold snowy ruined small town in the background, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, portrait orientation 4:5, no text, no logos, no frame, no watermark.
+```
+
+The accepted prompt is the one listed above under brian-lee.
