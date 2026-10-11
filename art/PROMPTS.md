@@ -149,3 +149,7 @@ Negative prompt: `character sheet, model sheet, turnaround, multiple views, inse
 ### zombie-frozen (Zombie), seed 0, style 0.25, reference alexis-grey s0
 
 `one single character, full body, front three-quarter view, standing, winter apocalypse clothing, isolated on a pure white background, plain white background, high-key even soft lighting, no shadows, no text, no logos, mildly stylized heroic proportions, about four and a half heads tall, the head is almost a fifth of the whole height, large head, broad torso, short sturdy legs, detailed clothing and gear, not cute, painted miniature concept, a stiff frozen zombie in a grey-blue winter coat rimed with ice, icicles hanging from the arms and jaw, pale blue frosted skin, rigid upright pose, one arm forward`
+
+### zombie-crawler (Zombie), seed 4, style 0.25, reference alexis-grey s0
+
+`one single zombie, full body, side three-quarter view, crawling on all fours like a quadruped with hands and feet on the ground, back low, head raised, plain white background, even soft lighting, no shadows, no text, no logos, mildly stylized heroic proportions, large head, broad torso, detailed clothing, gaunt, not cute, painted miniature concept, a gaunt crawling zombie in a tattered grey-blue parka, dragging itself on its hands with both legs mangled, low to the ground, head raised, grey-blue skin`

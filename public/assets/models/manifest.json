@@ -118,5 +118,35 @@
   "file": "mike-cho.glb",
   "heightIn": 1.2,
   "tris": 6155
+ },
+ "olivia-brown": {
+  "file": "olivia-brown.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "rod-miller": {
+  "file": "rod-miller.glb",
+  "heightIn": 1.25,
+  "tris": 6156
+ },
+ "sophie-robinson": {
+  "file": "sophie-robinson.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "sparky": {
+  "file": "sparky.glb",
+  "heightIn": 0.65,
+  "tris": 6155
+ },
+ "talia-jones": {
+  "file": "talia-jones.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "thomas-heart": {
+  "file": "thomas-heart.glb",
+  "heightIn": 1.2,
+  "tris": 6155
  }
 }
