@@ -1,30 +1,50 @@
-// Start screen (50 §2): one human plus 1-4 bots, the main objective (or random), animation speed, a seed, Start and Continue.
-// It deliberately imports no engine code: the data chunk loads in the background for the objective list, the engine loads with the game.
-import { useEffect, useState, type CSSProperties, type ReactElement } from 'react'
+// Start screen (50 §2): one human plus 1-4 bots (persona and difficulty each), the main objective (or random), the rules variants, animation
+// speed, a seed, Start and Continue. It deliberately imports no engine code: the data chunk loads in the background for the objective list
+// and the AI module (a dynamic import) tells it which difficulty tiers exist; the engine loads with the game.
+import { useEffect, useMemo, useState, type CSSProperties, type ReactElement } from 'react'
 import { BOT_NAMES, mainObjectives, setClientBundle, type MainObjectiveInfo } from '../data'
 import type { AiTier } from '../../engine/types'
 import { useTitleMusic } from '../audio/useAudioSettings'
 import { loadClientBundle } from '../dataLoad'
-import { DEFAULT_PERSONAS, randomSeedWord, type BotChoice, type LaunchRequest } from '../launch'
+import {
+  DEFAULT_PERSONAS, DEFAULT_VARIANT_CHOICE, FALLBACK_TIERS, TIER_INFO, checkVariants, choiceFromVariants, parseUrl, randomSeedWord, tiersFromModule,
+  type BotChoice, type LaunchRequest, type TierInfo, type VariantChoice,
+} from '../launch'
 import { SPEED_PRESETS, speedName, useSettingsStore, type SpeedPreset } from '../store/settingsStore'
 import { peekAutosave } from '../store/savePeek'
-import { SEAT_COLOURS } from '../table/seats'
+import { seatColourAt, usePalette } from '../table/seats'
 import { titleCandidates, useArt } from '../cards/art'
 import './hud.css'
 
 interface PersonaInfo { id: string; name: string; blurb: string }
 
+const MAX_BOTS = 4
+
+function VariantRow({ id, label, hint, checked, disabled, onChange }: { id: string; label: string; hint: string; checked: boolean; disabled?: boolean; onChange: (on: boolean) => void }): ReactElement {
+  return (
+    <label className={`variant ${disabled ? 'off' : ''}`} title={hint}>
+      <input type="checkbox" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} data-testid={`setup-variant-${id}`} />
+      <span><b>{label}</b><span className="hint">{hint}</span></span>
+    </label>
+  )
+}
+
 export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) => void; error?: string | null }): ReactElement {
+  const urlVariants = useMemo(() => parseUrl(typeof location !== 'undefined' ? location.search : '').variants, [])
   const [bots, setBots] = useState(3)
   const [personas, setPersonas] = useState<PersonaInfo[]>(DEFAULT_PERSONAS.map((p) => ({ ...p, blurb: '' })))
   // per bot: the persona id and the difficulty; distinct personas by default, Normal everywhere
-  const [cfg, setCfg] = useState<{ persona: string; tier: AiTier }[]>(() => Array.from({ length: 4 }, (_v, i) => ({ persona: DEFAULT_PERSONAS[i % DEFAULT_PERSONAS.length]!.id, tier: 'normal' as AiTier })))
+  const [cfg, setCfg] = useState<{ persona: string; tier: AiTier }[]>(() => Array.from({ length: MAX_BOTS }, (_v, i) => ({ persona: DEFAULT_PERSONAS[i % DEFAULT_PERSONAS.length]!.id, tier: 'normal' as AiTier })))
+  const [tiers, setTiers] = useState<TierInfo[]>(() => FALLBACK_TIERS.map((t) => TIER_INFO[t]))
   const [objective, setObjective] = useState<string>('random')
   const [objectives, setObjectives] = useState<MainObjectiveInfo[]>([])
+  const [matureCards, setMatureCards] = useState<number | null>(null)
   const [dataError, setDataError] = useState<string | null>(null)
   const [seed, setSeed] = useState(() => randomSeedWord())
+  const [choice, setChoice] = useState<VariantChoice>(() => ({ ...DEFAULT_VARIANT_CHOICE, ...choiceFromVariants(urlVariants) }))
   const speed = useSettingsStore((s) => s.speed)
   const set = useSettingsStore((s) => s.set)
+  const palette = usePalette()
   const save = peekAutosave()
   const titleArt = useArt(titleCandidates())
   useTitleMusic()
@@ -37,47 +57,61 @@ export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) 
       setObjectives(mainObjectives(b))
       const ps = b.records.personas.map((p) => ({ id: p.id, name: p.name, blurb: p.blurb }))
       if (ps.length) setPersonas(ps)
+      setMatureCards(b.records.crossroads.filter((c) => (c as { mature?: boolean }).mature).length)
     }, (e: Error) => { if (alive) setDataError(e.message) })
+    // the difficulty tiers the AI offers (the module is already in the engine chunk the data load fetches); a failure keeps the fallback list
+    import('../../ai/index').then((m) => { if (alive) setTiers(tiersFromModule(m)) }, () => { /* keep the fallback tiers */ })
     return () => { alive = false }
   }, [])
 
+  const twoPlayer = bots === 1
+  const coopRules = choice.coop || twoPlayer
+  const check = checkVariants(bots, choice)
   const setBot = (i: number, patch: Partial<{ persona: string; tier: AiTier }>): void => setCfg((c) => c.map((x, k) => (k === i ? { ...x, ...patch } : x)))
+  const setVariant = (patch: Partial<VariantChoice>): void => setChoice((c) => ({ ...c, ...patch }))
+  const tierIds = tiers.map((t) => t.id)
   const start = (): void => {
-    const choices: BotChoice[] = cfg.slice(0, bots).map((c) => ({ persona: c.persona, tier: c.tier, name: personas.find((p) => p.id === c.persona)?.name }))
-    onStart({ seats: ['human', ...Array.from({ length: bots }, () => 'bot' as const)], objective, seed: seed.trim() || randomSeedWord(), bots: choices })
+    if (check.errors.length) return
+    const choices: BotChoice[] = cfg.slice(0, bots).map((c) => ({ persona: c.persona, tier: tierIds.includes(c.tier) ? c.tier : 'normal', name: personas.find((p) => p.id === c.persona)?.name }))
+    onStart({ seats: ['human', ...Array.from({ length: bots }, () => 'bot' as const)], objective, seed: seed.trim() || randomSeedWord(), bots: choices, ...(Object.keys(check.variants).length ? { variants: check.variants } : {}) })
   }
   return (
     <div className="start" data-testid="start-screen" data-title-art={titleArt ? 'asset' : 'generated'} style={titleArt ? ({ ['--title-img' as string]: `url(${titleArt})` } as CSSProperties) : undefined}>
       <div className="start-card panel">
         <h1>Dead of Winner</h1>
         <div className="sub">A colony of AI survivors, one human at the table.</div>
-        <div className="grid2">
+        <div className="grid3">
           <div>
             <h2>Seats (clockwise)</h2>
-            <div className="seat-row" data-testid="setup-seat-0"><span className="dot" style={{ background: SEAT_COLOURS[0] }} /><span className="grow"><b>You</b> <span className="muted">(human)</span></span></div>
-            {Array.from({ length: bots }, (_v, i) => (
-              <div key={i}>
-                <div className="seat-row" data-testid={`setup-seat-${i + 1}`}>
-                  <span className="dot" style={{ background: SEAT_COLOURS[(i + 1) % SEAT_COLOURS.length] }} />
-                  <span className="grow">{personas.find((p) => p.id === cfg[i]!.persona)?.name ?? BOT_NAMES[i % BOT_NAMES.length]} <span className="muted">(bot)</span></span>
-                  {bots > 1 && i === bots - 1 && <button className="btn chip" aria-label="Remove this bot" onClick={() => setBots(bots - 1)}>Remove</button>}
+            <div className="seat-row" data-testid="setup-seat-0"><span className="dot" style={{ background: seatColourAt(0, palette) }} /><span className="grow"><b>You</b> <span className="muted">(human)</span></span></div>
+            {Array.from({ length: bots }, (_v, i) => {
+              const persona = personas.find((p) => p.id === cfg[i]!.persona)
+              const tier = TIER_INFO[cfg[i]!.tier]
+              return (
+                <div key={i}>
+                  <div className="seat-row" data-testid={`setup-seat-${i + 1}`}>
+                    <span className="dot" style={{ background: seatColourAt(i + 1, palette) }} />
+                    <span className="grow">{persona?.name ?? BOT_NAMES[i % BOT_NAMES.length]} <span className="muted">(bot)</span></span>
+                    {bots > 1 && i === bots - 1 && <button className="btn chip" aria-label="Remove this bot" onClick={() => setBots(bots - 1)}>Remove</button>}
+                  </div>
+                  <div className="bot-cfg">
+                    <select aria-label={`Persona for bot ${i + 1}`} value={cfg[i]!.persona} onChange={(e) => setBot(i, { persona: e.target.value })} data-testid={`setup-persona-${i + 1}`} title={persona?.blurb}>
+                      {personas.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                    </select>
+                    <select aria-label={`Difficulty for bot ${i + 1}`} value={tierIds.includes(cfg[i]!.tier) ? cfg[i]!.tier : 'normal'} onChange={(e) => setBot(i, { tier: e.target.value as AiTier })} data-testid={`setup-tier-${i + 1}`} title={tier?.blurb}>
+                      {tiers.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+                    </select>
+                  </div>
+                  {persona?.blurb && <div className="bot-blurb muted" data-testid={`setup-blurb-${i + 1}`}>{persona.blurb}</div>}
                 </div>
-                <div className="bot-cfg">
-                  <select aria-label={`Persona for bot ${i + 1}`} value={cfg[i]!.persona} onChange={(e) => setBot(i, { persona: e.target.value })} data-testid={`setup-persona-${i + 1}`} title={personas.find((p) => p.id === cfg[i]!.persona)?.blurb}>
-                    {personas.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                  </select>
-                  <select aria-label={`Difficulty for bot ${i + 1}`} value={cfg[i]!.tier} onChange={(e) => setBot(i, { tier: e.target.value as AiTier })} data-testid={`setup-tier-${i + 1}`}>
-                    <option value="normal">Normal</option><option value="random">Random (chaos)</option>
-                  </select>
-                </div>
-              </div>
-            ))}
-            {bots < 4 && <button className="btn chip" data-testid="setup-add-bot" onClick={() => setBots(bots + 1)}>Add a bot</button>}
-            <h2 style={{ marginTop: 12 }}>Animation speed</h2>
+              )
+            })}
+            {bots < MAX_BOTS && <button className="btn chip" data-testid="setup-add-bot" onClick={() => setBots(bots + 1)}>Add a bot</button>}
+            <h2 style={{ marginTop: 10 }}>Animation speed</h2>
             <select value={speedName(speed)} onChange={(e) => set({ speed: SPEED_PRESETS[e.target.value as SpeedPreset] ?? 1 })} data-testid="setup-speed">
               <option value="instant">Instant</option><option value="fast">Fast</option><option value="normal">Normal</option><option value="slow">Slow</option>
             </select>
-            <h2 style={{ marginTop: 12 }}>Seed</h2>
+            <h2 style={{ marginTop: 10 }}>Seed</h2>
             <div style={{ display: 'flex', gap: 6 }}>
               <input type="text" value={seed} onChange={(e) => setSeed(e.target.value)} aria-label="Seed" data-testid="setup-seed" style={{ flex: 1, minWidth: 0 }} />
               <button className="btn chip" onClick={() => setSeed(randomSeedWord())}>New</button>
@@ -96,9 +130,20 @@ export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) 
             </div>
             {dataError && <div className="error">{dataError}</div>}
           </div>
+          <div data-testid="setup-variants">
+            <h2>Variants</h2>
+            <VariantRow id="coop" label="Co-op" hint="One team, no secret objectives, no exile. Plays the hardcore objective side." checked={coopRules} disabled={twoPlayer} onChange={(on) => setVariant({ coop: on, betrayer: on ? false : choice.betrayer })} />
+            <VariantRow id="twoPlayer" label="Two players" hint="You and one bot on the co-op rules: 7 starting items, keep 3 of 4 survivors." checked={twoPlayer} onChange={(on) => setBots(on ? 1 : 2)} />
+            <VariantRow id="hardcore" label="Hardcore objective side" hint="Use the harder printed side of the main objective." checked={choice.hardcore || coopRules} disabled={coopRules} onChange={(on) => setVariant({ hardcore: on })} />
+            <VariantRow id="betrayer" label="Betrayer variant" hint="A smaller secret-objective deck, so a betrayer is much more likely to be at the table." checked={choice.betrayer && !coopRules} disabled={coopRules} onChange={(on) => setVariant({ betrayer: on })} />
+            <VariantRow id="elimination" label="Player elimination" hint="A seat whose last survivor dies is out of the game instead of drawing a new leader." checked={choice.playerElimination} onChange={(on) => setVariant({ playerElimination: on })} />
+            <VariantRow id="mature" label="Mature Crossroads cards" hint={`On (default): all 80 Crossroads cards, as in the original game.${matureCards ? ` Off: the ${matureCards} cards with adult themes are left out.` : ' Off: the cards with adult themes are left out.'}`} checked={choice.includeMature} onChange={(on) => setVariant({ includeMature: on })} />
+            {check.notes.map((n) => <div key={n} className="note" data-testid="setup-note">{n}</div>)}
+            {check.errors.map((n) => <div key={n} className="error" data-testid="setup-variant-error">{n}</div>)}
+          </div>
         </div>
         <div className="go">
-          <button className="btn primary big" onClick={start} data-testid="setup-start">Start</button>
+          <button className="btn primary big" onClick={start} disabled={check.errors.length > 0} data-testid="setup-start">Start</button>
           {save && (
             <button className="btn big" data-testid="setup-continue" onClick={() => onStart({ seats: [], objective: 'random', seed: '', resume: true })}>
               Continue (round {save.round})

@@ -69,8 +69,8 @@ Playable in the browser against Random bots: https://dragoonant.github.io/dead-o
   effect (crisis fail) dropped the exiled owner's replacement-placement decision, losing a survivor card (`effects.ts` addZombies);
   the sim counted that waiting survivor as missing; the colony-phase feed line printed twice; discard lines read "Rook card".
 - Known gaps: (Random bots wrecked morale in M3; fixed by the M4 Normal tier above.) The generic option list serves
-  itemTarget / effectChoice / objectiveChoice (works, terse); decision kinds the e2e run has not hit yet: crossroadsOption,
-  exilePlacement, searchKeepWhich, newLeader, objectiveChoice (forms exist); placeholder 3D art; objective part labels are mapped
+  itemTarget / effectChoice / objectiveChoice (works, terse); decision kinds the e2e run has not hit yet: newLeader, objectiveChoice
+  (forms exist; crossroadsOption, exilePlacement, searchKeepWhich and votes are covered since M7); placeholder 3D art; objective part labels are mapped
   to plain words only for the common tests; the "two words" table talk on Talia Jones is not modelled.
 
 ## AI (M4)
@@ -140,8 +140,7 @@ event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
   location with an optional `to` choice of entrance spaces (ZOM-017..019; `00` §16); a request can address everyone (`to: 'all'`,
   CARD-020); crisis removals are logged after the effect (CRIS-021); event cards already left the game (CARD-021 pins it). Sample-roll
   order was already right (GOLD-001b). Deviation kept: hooks still pick the replacement leader themselves (item 10).
-- Client limits: the exiled first player's tie-break answer defaults to "no" (no ballot UI for it); the Normal AI never attracts, so it
-  uses no `to`.
+- Client limits: the Normal AI never attracts, so it uses no `to`. (The exiled first player's tie-break ballot was added in M7.)
 - Data from eBay photos: Gluttony and Obsessed (betrayal), Junkie and Hypochondriac (standard), Thomas Heart (5+, once per round, no
   exposure; provisional flag cleared), Daniel Smith (once per round), Forest Plum, Raiders and Overpopulation official names
   (Exhaustion name seen too). New hooks `rule.hand.symbolsAtLeast`, `rule.hand.onlySymbol`, `rule.seat-survivors.eachEquippedSymbolAtLeast`.
@@ -192,3 +191,46 @@ event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
   `src/ai/normal/options.ts` the hook names is the next AI step.
 - Known gaps: the client labels an injected ability (greenhouse, clinic, craving) with the survivor's own ability text; an attached
   survivor ability is not drawn on the card.
+
+## Client polish (M7, 2026-10-11)
+Everything here is `src/client/**`, `tests/client/m7.test.ts` and `tests/e2e/{m7.spec,drive,policy}.ts`; the engine and the AI are untouched. Every number the
+feed, tray and recap print is an engine event field or a `query.*` call on the presented state (the exposure odds of a roll, the crisis target); the client only counts
+the lines it has already listed.
+- **Feed** (`presentation/feedModel.ts`, `ui/FeedRail.tsx`): lines are grouped by round, then turn, with a header per colony-phase step ("Step 3: the crisis resolves").
+  Four breakdown groups fold open: the **crisis reveal** (each card flipped with +1/-1, the running total against the target, the verdict chip, the failure effect and
+  the morale change), every **exposure roll** (the face with an odds bar, the odds it had from `query.exposureOdds`, wound/frostbite/bite-chain steps, a death in the
+  chip), **zombie placement** (entrance number, barricade broken, overrun victim, a count chip) and a **vote** (ballots, result, exile). The newest three groups stay
+  open. A Crossroads card vote reads as a table vote (nobody is exiled); Crossroads lines name the card and the option taken. Phase-change lines are gone (the headers say it).
+- **Crisis strip** shows the target and bonus line (`query.crisis`), each flipped card with its running total, then the verdict and the morale change.
+- **Recap story** (`recap/story.ts`, `ui/GameOver.tsx`): per seat "what they were really doing": the secret objective with its engine progress and whether it was met,
+  the betrayer reveal, the hidden crisis cards per crisis (a seat-by-crisis table too), the Crossroads choices with the option text, the final hand, and the table's
+  suspicion by round **when the AI exposes it**: the recap calls an optional `suspicionTrajectory(seed)` export of `src/ai` (shape in `recap/suspicion.ts`); nothing exports
+  it yet, so the section is skipped. Play again keeps the personas, tiers and variants.
+- **Effects** (`vfx/`): light snowfall (one Points object), a flickering firelight over the colony (a point light and an additive decal), a frost vignette that grows as
+  morale falls (CSS, from the engine morale), short edge flashes for zombie kills, wounds, frostbite, bites and deaths, a 3D tumble with changing faces for the action dice
+  and a 12-sided exposure die in the tray (with the odds under it). **Demand frameloop respected**: ambient effects ask for frames at 24 per second only while active
+  (High graphics, no reduced-motion preference, tab visible); **Low graphics** turns off the snow, the shadows (new on High: one 1024 shadow map) and the flicker, and the
+  canvas then renders nothing while the table is still (the e2e counts frames through `window.__game.frames()`).
+- **Settings popover**: animation speed, graphics, seat colours (Default, Alternative, Colour-blind safe = Okabe-Ito with a shape mark beside each seat), narration,
+  the two rails with `[` and `]` (verified in the e2e, remembered in `dow.settings`), the volumes, tutorial tips and **Replay tutorial tips**. Nine one-off tips
+  (`ui/tipsModel.ts`) show the first time each situation comes up.
+- **Start screen**: three columns (seats, objective, variants). Co-op, two players (forces you plus one bot; un-ticking seats a second), hardcore objective side, betrayer
+  variant, player elimination and **Mature Crossroads cards (default ON: all 80 cards, as in the original; off leaves out the 9 with adult themes)**. Validation
+  (`launch.ts` `checkVariants`, tested against the engine's own `createGame` for every offered combination): the betrayer variant cannot join co-op or two-player (greyed
+  with a note), co-op shows the hardcore side as forced, Start is blocked on an invalid combination. Per bot: persona with its blurb and a difficulty. The tier list is
+  read from `src/ai` (its exported `AI_TIERS`, a dynamic import; Normal and Random are the fallback when a module lists none), so Easy, Normal, Hard and Random show once
+  the AI exports them, as `src/ai/tiers.ts` now does. URL: `?variants=coop,hardcore,betrayer,elimination,twoPlayer` and `?mature=0`; `?tier=easy|hard` accepted.
+- **Votes**: an exiled first player now gets a ballot of their own when a vote needs a tie-break (the old default was "no"). It is asked up front ("if the vote ends in a
+  tie, should X be exiled?"), held until the bots' private ballots are in, and sent in the one `castVotes` as `votes[tiebreakSeat]`. A human voter's ballot is held the same
+  way, which also closes a small race (the ballot used to go out with unanswered bots counted as "no"). **Crossroads group votes** read the card and the two answers from the
+  decision's own continuation and show them ("Yes means ..."), instead of the exile text that was wrong for them.
+- **E2E** (`tests/e2e/m7.spec.ts`, 13 tests, helper `drive.ts`): the human's decisions are answered through the `?test=1` hook by a fixed policy until the wanted prompt
+  opens, then the test clicks the real dock. Seeds: `b` (Crossroads choice and keep-which-card after making noise), `s16` (Crossroads group vote), `i` (you hold the
+  first-player token: exile placement, then the tie-break ballot; bots are paused through the new `window.__game.pauseBots(true)` hook and one ballot is completed through the
+  hook). Also covered: start-screen variants and validation, variants reaching the engine, settings, rails keys, Low graphics, tips, the feed groups and crisis strip,
+  the tray tumble and hit flash, the recap story. Screenshots (gitignored): `e2e-out/m7-{start,settings,feed,crisis,snow,recap}.png`.
+- **Fixed on the way**: the top bar title was clipped at 1280 px and its buttons shifted as the active seat changed (fixed-width seat block, shorter labels); the
+  prompt dock did not re-render when a held ballot was set; talk lines carry no round or turn and join the group before them.
+- Chunk sizes (gzip): title 24 KB (was 18), react 62, client 51.5 (was 45), engine 193 (the AI work grew it), three 266; the first load is title + react, about 86 KB.
+- Known limits: a bot that is the exiled first player answers a vote tie as "no" (the bot driver collects ballots for eligible seats only; `src/client/bot/` is not part of
+  this work); `window.__game.frames()` and `pauseBots` are test hooks only; the firelight is subtle by design; the Easy and Hard tiers play as far as the AI work has taken them.

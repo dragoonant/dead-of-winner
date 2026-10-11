@@ -42,14 +42,29 @@ genuine gaps in the rulebook. Skim those and correct any your copy or table expe
 - [ ] **AI depth.** The bots are the slim version: one Normal tier, 3 personas with about 20 lines each. The full
       spec adds Easy and Hard tiers, 6 personas with about 60 lines each, and a deeper suspicion model. Wanted
       before art, after, or later?
-- [ ] **Variants.** Co-op, two-player, hardcore objective sides, betrayer variant, player elimination, mature-card
-      toggle. The engine supports the flags; the start screen exposes only some. Priority?
+- [x] **Variants.** Resolved in M7: the start screen now has co-op, two-player, hardcore objective side, betrayer
+      variant, player elimination and a mature-Crossroads toggle (default ON, as in the original), with validation.
+      Please try each once and tell me if any combination should be blocked or worded differently.
 - [ ] **Token budget per push.** This push used about 1.8M of the 2.5M ceiling. Same ceiling next time?
 
 ## 5. Known weaknesses I will fix without being asked
 
 - Bots win We Need More Samples about 24-30% of the time (target 35%), and about half of all crises still fail.
 - Leave It All Behind, Stockpile and Winter Has Come have never been completed by bots.
-- Some prompts (Crossroads choice, exile placement, keep-which-card after a search) have not been exercised by the
-  automated browser test yet.
-- Placeholder figures, no sound, no snow effect.
+- ~~Some prompts (Crossroads choice, exile placement, keep-which-card after a search) have not been exercised by the
+  automated browser test yet.~~ Resolved in M7: the browser test now reaches the Crossroads choice and group vote,
+  keep-which-card, a vote, exile placement and the exiled first player's tie-break ballot.
+- ~~No snow effect.~~ Resolved in M7: snowfall, firelight, a frost vignette, hit flashes and a dice tumble, with a Low
+  graphics switch. Placeholder figures remain.
+
+## 6. Resolved in M7 (client polish)
+
+- The exiled first player used to answer a vote tie with a silent "no". They now get a ballot of their own.
+- Crossroads group votes showed the exile wording; they now show the card and its two answers.
+- The feed is grouped by round and turn, with the crisis reveal, every exposure roll (with its odds), zombie placement
+  and votes as breakdowns, and a header per colony-phase step.
+- The recap tells each seat's story (objective met or not, betrayer, hidden crisis cards, Crossroads choices).
+- Settings: seat colours including a colour-blind-safe set, the rails on [ and ], tutorial tips and a replay switch.
+- Still open for you: the recap shows the table's suspicion of each seat only if the AI exposes it (it does not
+  yet), and the start screen lists whatever tiers the AI exports (Easy, Normal, Hard, Random now). Please look at the
+  colour-blind-safe palette if that matters to you, and at the flicker of the firelight (it is deliberately subtle).
