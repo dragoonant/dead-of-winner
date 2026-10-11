@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { G, Instanced, M, matsFor } from '../table/sceneKit'
 import type { Pt } from '../table/layout'
 import { flattenMeshes, useGlbs, type LoadedGlb } from './glbLoader'
+import { useShadows } from '../vfx/fx'
 
 // Inches on the table. The models are authored at 1.2 in (strict miniature scale), which is unreadable from the default camera, so figures are drawn
 // at about twice that and clamped to the slot spacing (1.62 in): a wide pose shrinks rather than overlapping its neighbour.
@@ -20,9 +21,11 @@ export const FIGURE_LEAN = 0.42
 /** The body of a survivor from its loaded GLB (see `useGlbClone`), on a seat-coloured base. */
 export function GlbSurvivor({ clone, colour }: { clone: { object: THREE.Object3D; glb: LoadedGlb }; colour: string }): ReactElement {
   const fit = useMemo(() => { const f = clone.glb.fit(SURVIVOR_HEIGHT, SURVIVOR_MAX_WIDTH); return { scale: f.scale, offset: new THREE.Vector3().setFromMatrixPosition(f.matrix) } }, [clone])
+  const shadows = useShadows()
+  useLayoutEffect(() => { clone.object.traverse((o) => { if ((o as THREE.Mesh).isMesh) o.castShadow = shadows }) }, [clone, shadows])
   return (
     <>
-      <mesh geometry={G.base} material={matsFor(colour).base} position-y={0.07} />
+      <mesh geometry={G.base} material={matsFor(colour).base} position-y={0.07} castShadow={shadows} />
       <group position-y={0.14} rotation-x={-FIGURE_LEAN}>
         <group position={[fit.offset.x, fit.offset.y, fit.offset.z]} scale={fit.scale}><primitive object={clone.object} /></group>
       </group>
@@ -34,6 +37,7 @@ function ZombieVariant({ glb, points, offset }: { glb: LoadedGlb; points: readon
   const parts = useMemo(() => flattenMeshes(glb), [glb])
   const fit = useMemo(() => glb.fit(ZOMBIE_HEIGHT, ZOMBIE_MAX_WIDTH), [glb])
   const refs = useRef<(THREE.InstancedMesh | null)[]>([])
+  const shadows = useShadows()
   useLayoutEffect(() => {
     const place = new THREE.Matrix4()
     const tilt = new THREE.Matrix4().makeRotationX(-FIGURE_LEAN)
@@ -57,7 +61,7 @@ function ZombieVariant({ glb, points, offset }: { glb: LoadedGlb; points: readon
   return (
     <>
       {parts.map((p, k) => (
-        <instancedMesh key={k} ref={(r) => { refs.current[k] = r }} args={[p.mesh.geometry, p.mesh.material, 200]} frustumCulled={false} />
+        <instancedMesh key={k} ref={(r) => { refs.current[k] = r }} args={[p.mesh.geometry, p.mesh.material, 200]} frustumCulled={false} castShadow={shadows} />
       ))}
     </>
   )

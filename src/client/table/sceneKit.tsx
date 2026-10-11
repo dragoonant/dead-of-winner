@@ -2,6 +2,7 @@
 import { useLayoutEffect, useRef, type ReactElement } from 'react'
 import * as THREE from 'three'
 import type { Pt } from './layout'
+import { useShadows } from '../vfx/fx'
 
 export const G = {
   disc: new THREE.CircleGeometry(0.55, 20),
@@ -50,6 +51,7 @@ export function Instanced({ points, max, y, geometry, material, flat = false, sc
   points: readonly Pt[]; max: number; y: number; geometry: THREE.BufferGeometry; material: THREE.Material; flat?: boolean; scale?: number; jitter?: boolean
 }): ReactElement {
   const ref = useRef<THREE.InstancedMesh>(null)
+  const shadows = useShadows()
   useLayoutEffect(() => {
     const m = ref.current
     if (!m) return
@@ -65,17 +67,18 @@ export function Instanced({ points, max, y, geometry, material, flat = false, sc
     m.count = n
     m.instanceMatrix.needsUpdate = true
   }, [points, max, y, flat, scale, jitter])
-  return <instancedMesh ref={ref} args={[geometry, material, max]} frustumCulled={false} />
+  return <instancedMesh ref={ref} args={[geometry, material, max]} frustumCulled={false} castShadow={shadows} />
 }
 
 /** The procedural survivor: a round seat-coloured base, a capsule body and a head. */
 export function ProceduralBody({ colour }: { colour: string }): ReactElement {
   const mats = matsFor(colour)
+  const shadows = useShadows()
   return (
     <>
-      <mesh geometry={G.base} material={mats.base} position-y={0.07} />
-      <mesh geometry={G.capsule} material={mats.body} position-y={0.78} />
-      <mesh geometry={G.head} material={mats.body} position-y={1.42} />
+      <mesh geometry={G.base} material={mats.base} position-y={0.07} castShadow={shadows} />
+      <mesh geometry={G.capsule} material={mats.body} position-y={0.78} castShadow={shadows} />
+      <mesh geometry={G.head} material={mats.body} position-y={1.42} castShadow={shadows} />
     </>
   )
 }

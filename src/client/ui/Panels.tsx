@@ -1,12 +1,10 @@
-// Objective panel (O), How to Play drawer, Settings popover and the key list (50 §3, §14, §17).
+// Objective panel (O), How to Play drawer and the key list (50 §3, §17); the settings popover is in Settings.tsx.
 import { useMemo, type ReactElement } from 'react'
 import { query, type ObjectiveProgressReport, type SeatView } from '../../engine/index'
 import { ExiledCard } from '../cards/ObjectiveCards'
 import { MainObjectiveCard, SecretObjectiveCard } from '../cards/ObjectiveCards'
 import { nameOf, partLabel, rec } from '../data'
 import { useTrueView } from '../store/hooks'
-import { AudioSettingsSection } from '../audio/AudioSettings'
-import { SPEED_PRESETS, speedName, useSettingsStore, type SpeedPreset } from '../store/settingsStore'
 import { ui, useUiStore } from '../store/uiStore'
 
 function Parts({ r }: { r: ObjectiveProgressReport }): ReactElement {
@@ -109,32 +107,6 @@ export function KeysHelp(): ReactElement | null {
       <b>Keys</b>
       {rows.map(([k, d]) => <div key={k} className="progress-part"><kbd>{k}</kbd><span>{d}</span></div>)}
       <button className="btn" onClick={() => ui.set({ keysOpen: false })}>Close</button>
-    </div>
-  )
-}
-
-export function SettingsPopover(): ReactElement | null {
-  const open = useUiStore((s) => s.settingsOpen)
-  const s = useSettingsStore()
-  if (!open) return null
-  return (
-    <div className="pop panel" role="dialog" aria-label="Settings" data-testid="settings-panel">
-      <label>Animation speed
-        <select value={speedName(s.speed)} onChange={(e) => s.set({ speed: SPEED_PRESETS[e.target.value as SpeedPreset] ?? 1 })} data-testid="settings-speed">
-          <option value="instant">Instant</option><option value="fast">Fast</option><option value="normal">Normal</option><option value="slow">Slow</option>
-        </select>
-      </label>
-      <label>Graphics
-        <select value={s.graphics} onChange={(e) => s.set({ graphics: e.target.value === 'low' ? 'low' : 'high' })} data-testid="settings-graphics">
-          <option value="high">High</option><option value="low">Low</option>
-        </select>
-      </label>
-      <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <input type="checkbox" checked={s.narration} onChange={(e) => s.set({ narration: e.target.checked })} data-testid="settings-narration" /> Narration (the table pauses while the narrator speaks)
-      </label>
-      <AudioSettingsSection />
-      <button className="btn" onClick={() => ui.set({ keysOpen: true, settingsOpen: false })}>Key list</button>
-      <button className="btn" onClick={() => ui.set({ settingsOpen: false })}>Close</button>
     </div>
   )
 }

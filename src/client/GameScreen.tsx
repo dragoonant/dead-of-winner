@@ -19,7 +19,10 @@ import { buildTableModel } from './table/tableModel'
 import { usePresentedView } from './store/hooks'
 import { installTestHooks, isTestMode } from './testing/testHooks'
 import { GameOver } from './ui/GameOver'
-import { HowToPlay, KeysHelp, ObjectivePanel, SettingsPopover } from './ui/Panels'
+import { HowToPlay, KeysHelp, ObjectivePanel } from './ui/Panels'
+import { SettingsPopover } from './ui/Settings'
+import { Tips } from './ui/Tips'
+import { FrostVignette, HitFlash } from './vfx/Overlays'
 import { PromptDock } from './ui/PromptDock'
 import { FeedRail } from './ui/FeedRail'
 import { SeatRail } from './ui/Rails'
@@ -154,7 +157,10 @@ export default function GameScreen({ request, fps, onExit, onRestart }: {
           <HandFan />
           <HoverSurvivorCard />
           <DiceTray />
+          <FrostVignette />
           <CrisisStrip />
+          <HitFlash />
+          <Tips />
           <PromptDock />
           <Banner />
           <ObjectivePanel />

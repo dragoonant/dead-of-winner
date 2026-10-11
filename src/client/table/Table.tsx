@@ -12,13 +12,16 @@ import { useGlbClone } from '../figures/glbLoader'
 import { survivorSlug, useGlbManifest, zombieSlugs } from '../figures/glbManifest'
 import { useGameStore } from '../store/gameStore'
 import { usePresentedView } from '../store/hooks'
-import { useSettingsStore } from '../store/settingsStore'
+import { useSettingsStore, type PaletteId } from '../store/settingsStore'
 import { ui, useUiStore } from '../store/uiStore'
 import { boardCanvasSize, loadTextureSet, paintBoard, paintTile, tileCanvasSize, type TextureSet } from './boardPaint'
 import { LabelSprite } from './LabelSprite'
 import { CAMERA_PRESETS, COLONY_SIZE, TILE_H, TILE_W, colonyLayout, followPose, type CameraPose, type ColonyLayout, type Pt, type TileLayout } from './layout'
 import { G, Instanced, M, ProceduralBody } from './sceneKit'
-import { seatColour, seatRimPosition } from './seats'
+import { seatColour, seatRimPosition, usePalette } from './seats'
+import { Effects } from '../vfx/Effects'
+import { useShadows } from '../vfx/fx'
+import { bumpFrame } from '../vfx/frameStats'
 import { buildTableModel, type FigureModel, type TableModel } from './tableModel'
 
 /** Height of the printed surfaces: everything that stands on the table sits on this. */
@@ -31,10 +34,15 @@ const SLAB = {
 
 // ---------- lights ----------
 function Lights(): ReactElement {
+  const shadows = useShadows()
   return (
     <>
       <hemisphereLight args={['#a9bde6', '#2a2f3c', 1.5]} />
-      <directionalLight position={[14, 34, 18]} intensity={1.9} color="#c4d4ff" />
+      <directionalLight
+        position={[14, 34, 18]} intensity={1.9} color="#c4d4ff" castShadow={shadows}
+        shadow-mapSize={[1024, 1024]} shadow-bias={-0.0004} shadow-normalBias={0.05}
+        shadow-camera-left={-48} shadow-camera-right={48} shadow-camera-top={40} shadow-camera-bottom={-40} shadow-camera-near={5} shadow-camera-far={90}
+      />
       <pointLight position={[0, 7, 0]} intensity={160} distance={40} decay={1.6} color="#ffb067" />
     </>
   )
@@ -130,11 +138,12 @@ function useHtmlImage(url: string | null): HTMLImageElement | null {
 
 /** A printed slab: a dark body with the painted canvas laid on its top face (canvas top = north). */
 function Slab({ w, d, h = 0.2, body, tex }: { w: number; d: number; h?: number; body: THREE.Material; tex: THREE.Texture | null }): ReactElement {
+  const shadows = useShadows()
   const mat = useMemo(() => (tex ? new THREE.MeshStandardMaterial({ map: tex, roughness: 0.88, metalness: 0 }) : null), [tex])
   return (
     <group>
-      <mesh position-y={TOP - h / 2} material={body}><boxGeometry args={[w, h, d]} /></mesh>
-      {mat && <mesh rotation-x={-Math.PI / 2} position-y={TOP + 0.002} material={mat}><planeGeometry args={[w, d]} /></mesh>}
+      <mesh position-y={TOP - h / 2} material={body} receiveShadow={shadows}><boxGeometry args={[w, h, d]} /></mesh>
+      {mat && <mesh rotation-x={-Math.PI / 2} position-y={TOP + 0.002} material={mat} receiveShadow={shadows}><planeGeometry args={[w, d]} /></mesh>}
     </group>
   )
 }
@@ -177,7 +186,8 @@ function TableTop(): ReactElement {
     t.needsUpdate = true
     return new THREE.MeshStandardMaterial({ map: t, color: '#9a9a9a', roughness: 0.95 })
   }, [set])
-  return <mesh rotation-x={-Math.PI / 2} position-y={-0.2} material={mat}><planeGeometry args={[170, 130]} /></mesh>
+  const shadows = useShadows()
+  return <mesh rotation-x={-Math.PI / 2} position-y={-0.2} material={mat} receiveShadow={shadows}><planeGeometry args={[170, 130]} /></mesh>
 }
 
 // ---------- figures ----------
@@ -215,8 +225,8 @@ function Figure({ fig, colour, selected, label }: { fig: FigureModel; colour: st
 }
 
 // ---------- the scene ----------
-function Scene({ m, seatOrder, hands, names, selected }: {
-  m: TableModel; seatOrder: string[]; hands: number[]; names: string[]; selected: string | null
+function Scene({ m, seatOrder, hands, names, selected, palette }: {
+  m: TableModel; seatOrder: string[]; hands: number[]; names: string[]; selected: string | null; palette: PaletteId
 }): ReactElement {
   useGlbManifest() // a GLB listed in the manifest swaps in once it is known
   const tileIds = Object.keys(m.tiles)
@@ -244,7 +254,7 @@ function Scene({ m, seatOrder, hands, names, selected }: {
       <Instanced points={m.noise} max={40} y={TOP + 0.15} geometry={G.token} material={M.noise} scale={0.8} />
       <Instanced points={m.helpless} max={30} y={TOP + 0.45} geometry={G.capsule} material={M.helpless} scale={0.7} />
       {m.figures.map((f) => (
-        <Figure key={f.id} fig={f} colour={seatColour(seatOrder, f.seat)} selected={selected === f.id} label={nameOf(f.id).split(' ')[0]!} />
+        <Figure key={f.id} fig={f} colour={seatColour(seatOrder, f.seat, palette)} selected={selected === f.id} label={nameOf(f.id).split(' ')[0]!} />
       ))}
       {/* hand stacks on the rim */}
       {seatOrder.map((seat, i) => {
@@ -252,8 +262,8 @@ function Scene({ m, seatOrder, hands, names, selected }: {
         return (
           <group key={seat} position={[x, 0, z]}>
             <mesh position-y={0.2} material={M.stack}><boxGeometry args={[2.6, Math.min(1.6, 0.2 + (hands[i] ?? 0) * 0.12), 1.8]} /></mesh>
-            <mesh position-y={0.01} rotation-x={-Math.PI / 2}><ringGeometry args={[1.9, 2.1, 28]} /><meshBasicMaterial color={seatColour(seatOrder, seat)} /></mesh>
-            <LabelSprite text={`${names[i]} - ${hands[i] ?? 0} cards`} border={seatColour(seatOrder, seat)} position={[0, 2.0, 0]} height={0.8} fontPx={13} />
+            <mesh position-y={0.01} rotation-x={-Math.PI / 2}><ringGeometry args={[1.9, 2.1, 28]} /><meshBasicMaterial color={seatColour(seatOrder, seat, palette)} /></mesh>
+            <LabelSprite text={`${names[i]} - ${hands[i] ?? 0} cards`} border={seatColour(seatOrder, seat, palette)} position={[0, 2.0, 0]} height={0.8} fontPx={13} />
           </group>
         )
       })}
@@ -261,9 +271,16 @@ function Scene({ m, seatOrder, hands, names, selected }: {
   )
 }
 
+/** Counts rendered frames for the test hook. */
+function FrameCounter(): null {
+  useFrame(() => { bumpFrame() })
+  return null
+}
+
 // ---------- the canvas ----------
 export default function Table(): ReactElement {
   const graphics = useSettingsStore((s) => s.graphics)
+  const palette = usePalette()
   const v = usePresentedView()
   const selected = useUiStore((s) => s.selectedSurvivor)
   const viewer = useGameStore((s) => s.viewer)
@@ -274,6 +291,7 @@ export default function Table(): ReactElement {
     <Canvas
       frameloop="demand"
       flat
+      shadows={graphics === 'low' ? false : 'soft'}
       dpr={graphics === 'low' ? 1 : [1, 1.5]}
       camera={{ position: CAMERA_PRESETS[1].position, fov: 42, near: 0.5, far: 260 }}
       gl={{ antialias: graphics !== 'low', powerPreference: 'high-performance' }}
@@ -284,7 +302,9 @@ export default function Table(): ReactElement {
       <Lights />
       <FigureLights />
       <CameraRig />
-      {v && model && <Scene m={model} seatOrder={v.seatOrder} hands={hands} names={names} selected={selected} />}
+      <Effects />
+      <FrameCounter />
+      {v && model && <Scene m={model} seatOrder={v.seatOrder} hands={hands} names={names} selected={selected} palette={palette} />}
     </Canvas>
   )
 }
