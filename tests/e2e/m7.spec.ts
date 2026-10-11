@@ -27,6 +27,7 @@ const pendingOf = (page: Page): Promise<{ id: string; kind: string; seat: string
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
 test('the start screen: variants with validation, mature Crossroads on by default, persona and difficulty per bot', async ({ page }) => {
+  test.setTimeout(90_000) // many steps; under the full parallel run the 3D pages starve it past the 30 s default
   const errors: string[] = []
   watch(page, errors)
   const tiersModule = '../../src/ai/tiers' // read at run time: the list is the AI's to define

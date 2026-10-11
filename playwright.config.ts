@@ -9,6 +9,10 @@ const BASE_URL = `http://localhost:${PORT}/dead-of-winner/`
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
+  // Each spec drives a full 3D table; 12 parallel headless WebGL pages (the 24-core default) starve one another past
+  // the 30 s default. Four workers and a 90 s budget keep runs green without hiding real hangs.
+  workers: 4,
+  timeout: 90_000,
   retries: 0,
   reporter: 'list',
   use: {
