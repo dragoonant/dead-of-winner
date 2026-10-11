@@ -1,7 +1,8 @@
 // callVote and castVotes (10 R7.7, R16). One vote per turn, called by any seat (an exiled caller too) against another seat that is
 // neither exiled nor eliminated; every eligible seat answers privately inside ONE `castVotes` action (simultaneous). Yes beats no;
-// a tie is broken by the first seat's own vote, or the next eligible seat clockwise when the first seat cannot vote (R16.4,
-// R20.14). A passed vote exiles the target inside the same step (exile.ts). Votes raised by Crossroads cards run in effects.ts.
+// a tie is always broken by the first player, even an exiled one who cannot vote (digest General; R p4, p11); only an eliminated
+// first seat falls back to the next eligible seat clockwise. An ineligible tie-breaker answers through the optional extra ballot key
+// `votes[tiebreakSeat]` (named in the decision's `context.data.tiebreakSeat`; missing = no). A passed vote exiles the target inside the same step (exile.ts). Votes raised by Crossroads cards run in effects.ts.
 //
 // Continuations: a decision raised while a multi-step flow is unfinished carries `context.data.resume` (a plain JSON object); the
 // phase machine (phases/player-turns.ts) reads it back when the decision is answered and carries on.
@@ -27,8 +28,10 @@ export function attachResume(acc: Out, resume: Resume): void {
 /** Every non-exiled, non-eliminated seat (R16.1); the target of an exile vote votes too. */
 export const voteEligible = (state: GameState): SeatId[] =>
   state.seatOrder.filter((s) => !state.seats[s]!.seat.eliminated && !state.seats[s]!.seat.exiled && !isForbidden(state, 'vote', { seat: s }))
-/** The seat whose vote decides a tie: the first seat, else the next eligible seat clockwise from it (R16.4). Null when nobody is eligible. */
+/** The seat whose answer decides a tie: always the first seat (exiled or not, digest General), else the next eligible seat clockwise if it was eliminated. */
 export function tiebreaker(state: GameState, eligible: SeatId[]): SeatId | null {
+  const first = state.seats[state.firstSeat]
+  if (first && !first.seat.eliminated) return state.firstSeat
   const order = state.seatOrder
   const start = Math.max(0, order.indexOf(state.firstSeat))
   return order.map((_, i) => order[(start + i) % order.length]!).find((s) => eligible.includes(s)) ?? null
@@ -37,6 +40,12 @@ export function tiebreaker(state: GameState, eligible: SeatId[]): SeatId | null 
 export function voteForecastFor(state: GameState, target: SeatId): { target: SeatId; eligible: SeatId[]; needed: number; tiebreakBy: SeatId } {
   const eligible = voteEligible(state)
   return { target, eligible, needed: Math.floor(eligible.length / 2) + 1, tiebreakBy: tiebreaker(state, eligible) ?? state.firstSeat }
+}
+
+/** `{tiebreakSeat}` when the tie-breaker cannot vote (exiled first player), so the ballot can carry its answer. */
+function tieSeatData(state: GameState, eligible: SeatId[]): { tiebreakSeat?: SeatId } {
+  const t = tiebreaker(state, eligible)
+  return t && !eligible.includes(t) ? { tiebreakSeat: t } : {}
 }
 
 // ---------- callVote ----------
@@ -73,13 +82,15 @@ export function continueAfterResult(acc: Out, passed: boolean, target: SeatId, c
 function resolveVote(acc: Out, votes: Record<SeatId, boolean>, eligible: SeatId[], caller: SeatId, target: SeatId): void {
   const yes = eligible.filter((s) => votes[s]).length
   const no = eligible.length - yes
+  const shown: Record<SeatId, boolean> = {}
+  for (const s of eligible) shown[s] = votes[s]!
   let tiebreakBy: SeatId | null = null
   let passed = yes > no
   if (eligible.length > 0 && yes === no) {
     tiebreakBy = tiebreaker(acc.state, eligible)
     passed = !!tiebreakBy && !!votes[tiebreakBy]
   }
-  acc.events.push({ type: 'VotesCast', target, votes: { ...votes } }, { type: 'VoteResult', target, yes, no, exiled: passed, tiebreakBy })
+  acc.events.push({ type: 'VotesCast', target, votes: { ...shown } }, { type: 'VoteResult', target, yes, no, exiled: passed, tiebreakBy })
   acc.state = { ...acc.state, vote: null }
   mergeInto(acc, fireWindow(acc.state, 'vote.result', { seat: caller, params: { yes, no, passed } }))
   if (halted(acc)) {
@@ -99,7 +110,7 @@ export function applyCallVote(state: GameState, a: CallVoteAction): ActionResult
   if (eligible.length === 0) { resolveVote(acc, {}, eligible, a.seat, a.target); return acc } // nobody may vote: it fails at once (R16.4)
   raisePending(acc, () => ({
     seat: 'all', kind: 'votes', window: 'action.vote', canPass: false,
-    context: { seatId: a.target, data: { code: 'callVote', eligible, caller: a.seat, target: a.target } },
+    context: { seatId: a.target, data: { code: 'callVote', eligible, caller: a.seat, target: a.target, ...tieSeatData(acc.state, eligible) } },
   }))
   return acc
 }
@@ -114,8 +125,10 @@ export function validateCastVotes(state: GameState, a: CastVotesAction): Rejecti
   const eligible = ((pd.context.data as { eligible?: SeatId[] } | undefined)?.eligible ?? []) as SeatId[]
   const votes = a.votes
   if (!votes || typeof votes !== 'object' || Array.isArray(votes)) return rejection('E_BAD_PAYLOAD', 'votes must be a seat -> boolean map')
-  for (const s of Object.keys(votes)) if (!eligible.includes(s)) return rejection('E_BAD_PAYLOAD', `seat ${s} cannot vote`, { seat: s })
+  const tieSeat = (pd.context.data as { tiebreakSeat?: SeatId } | undefined)?.tiebreakSeat
+  for (const s of Object.keys(votes)) if (!eligible.includes(s) && s !== tieSeat) return rejection('E_BAD_PAYLOAD', `seat ${s} cannot vote`, { seat: s })
   for (const s of eligible) if (typeof votes[s] !== 'boolean') return rejection('E_BAD_PAYLOAD', `seat ${s} needs a yes or no`, { seat: s })
+  if (tieSeat && votes[tieSeat] !== undefined && typeof votes[tieSeat] !== 'boolean') return rejection('E_BAD_PAYLOAD', `seat ${tieSeat} needs a yes or no`, { seat: tieSeat })
   return null
 }
 
@@ -127,6 +140,8 @@ export function applyCastVotes(state: GameState, a: CastVotesAction): ActionResu
   const eligible = (state.pending.context.data as { eligible: SeatId[] }).eligible
   const votes: Record<SeatId, boolean> = {}
   for (const s of eligible) votes[s] = a.votes[s]!
+  const tieSeat = (state.pending.context.data as { tiebreakSeat?: SeatId } | undefined)?.tiebreakSeat
+  if (tieSeat) votes[tieSeat] = a.votes[tieSeat] === true // the exiled first player's tie-break answer (ignored unless there is a tie)
   acc.state = { ...state, vote: { ...v, votes } }
   resolveVote(acc, votes, eligible, v.caller, v.target)
   return acc
@@ -137,7 +152,8 @@ export function applyCastVotes(state: GameState, a: CastVotesAction): ActionResu
 export function ballotCandidates(state: GameState): CastVotesAction[] {
   const pd = state.pending
   if (pd.kind !== 'votes') return []
-  const eligible = ((pd.context.data as { eligible?: SeatId[] } | undefined)?.eligible ?? []) as SeatId[]
+  const data = pd.context.data as { eligible?: SeatId[]; tiebreakSeat?: SeatId } | undefined
+  const eligible = [...((data?.eligible ?? []) as SeatId[]), ...(data?.tiebreakSeat ? [data.tiebreakSeat] : [])]
   const out: CastVotesAction[] = []
   for (let mask = 0; mask < 1 << eligible.length; mask++) {
     const votes: Record<SeatId, boolean> = {}

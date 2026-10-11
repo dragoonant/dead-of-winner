@@ -70,6 +70,22 @@ describe('colony phase', () => {
     expect(t).not.toContain('ObjectiveChecked')
   })
 
+  it('COL-019 morale 0 inside Adding Zombies does not stop the step: both queued overruns resolve, then the game ends before the other locations (FAQ 6.2.1)', () => {
+    let s = makeColony({
+      survivors: [{ id: 'sv.a', owner: 's1' }, { id: 'sv.c', owner: 's1' }, { id: 'sv.d', owner: 's1' }, { id: 'sv.b', owner: 's1' }, { id: 'sv.e', owner: 's3', location: SCHOOL }],
+      morale: 1, food: 9, crisis: null,
+    })
+    s = patchEntrance(patchEntrance(s, 'colony', 1, { zombies: 3 }), 'colony', 2, { zombies: 3 })
+    const r = run(s)
+    const t = types(r.events)
+    const overruns = of<{ killed: string }>(r.events, 'EntranceOverrun')
+    expect(overruns).toHaveLength(2) // the second zombie still resolves after morale hit 0
+    expect(t.indexOf('GameEnded')).toBeGreaterThan(t.lastIndexOf('EntranceOverrun'))
+    expect(of(r.events, 'GameEnded')[0]).toMatchObject({ reason: 'moraleZero' })
+    expect(of<{ location: string }>(r.events, 'ZombiesToAdd').find((z) => z.location === SCHOOL)).toBeUndefined()
+    expect(r.state.phase).toBe('ended')
+  })
+
   it('COL-013 and COL-014 each noise token is a d6; 3 or lower adds a zombie, 4 or more does not; tokens clear', () => {
     const s = makeColony({ survivors: [{ id: 'sv.a', owner: 's1' }], crisis: null, noise: { [SCHOOL]: 2 }, rng: forceRng([6, 3], [6, 4]) })
     const r = run(s)

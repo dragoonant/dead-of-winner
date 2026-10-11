@@ -81,6 +81,15 @@ describe('moving', () => {
     expect(applyMove({ ...exiled, effects: [ban] }, move(exiled, 'sv.ashley', SCHOOL)).rejection).toBeUndefined()
   })
 
+  it('MOVE-010 an exiled seat cannot move a survivor back to the colony (digest, Exile)', () => {
+    const s = makeState({ survivors: [{ id: 'sv.ashley', owner: 's1', location: SCHOOL }], exiled: ['s1'], dice: { s1: [1] } })
+    const r = applyMove(s, move(s, 'sv.ashley', 'colony'))
+    expect(r.rejection?.code).toBe('E_TARGET_INVALID')
+    expect(legalMoves(s).some((a) => (a as { to: string }).to === 'colony')).toBe(false)
+    expect(moveTargetsFor(s, 'sv.ashley').some((t) => t.location === 'colony')).toBe(false)
+    expect(applyMove(s, move(s, 'sv.ashley', LIBRARY)).rejection).toBeUndefined() // other locations stay open
+  })
+
   it('MOVE-011 John Price moving away from Rod Miller still skips exposure; copies start after arrival', () => {
     const s = makeState({
       survivors: [{ id: 'sv.price', owner: 's1', location: SCHOOL }, { id: 'sv.rod', owner: 's2', location: SCHOOL }, { id: 'sv.harman', owner: 's2', location: LIBRARY }],

@@ -71,6 +71,7 @@ export function describeAction(v: SeatView, a: Action): string {
       const loc = v.survivors[sid]?.location ?? 'colony'
       return T.attractText({
         who, where: N.loc(loc), total: a.from.reduce((n, f) => n + f.count, 0),
+        to: a.to?.map((t) => `gate ${t.entrance}${t.count > 1 ? ` (${t.count})` : ''}`),
         from: a.from.map((f) => `${f.location === 'colony' ? `gate ${f.entrance}` : N.loc(f.location)} (${T.plural(v.locations[f.location]?.entrances.find((e) => e.index === f.entrance)?.zombies ?? f.count, 'zombie')})`),
       })
     }
@@ -84,7 +85,7 @@ export function describeAction(v: SeatView, a: Action): string {
       const o = v.objective
       return T.objectiveCardText({ card: nameOf(v.cards[a.cardId]?.defId), objective: nameOf(o.id), have: Object.entries(o.counters).map(([k, n]) => `${k} ${n}`).join(', ') })
     }
-    case 'request': return T.requestText({ to: N.seat(a.to), want: a.defId ? nameOf(a.defId) : a.symbol ? `a ${a.symbol} card` : 'a card', handCount: v.seats[a.to]?.handCount ?? 0 })
+    case 'request': return T.requestText({ to: a.to === 'all' ? 'every other player' : N.seat(a.to), want: a.defId ? nameOf(a.defId) : a.symbol ? `a ${a.symbol} card` : 'a card', handCount: v.seats[a.to]?.handCount ?? 0 })
     case 'handOff': {
       const from = Object.values(v.survivors).find((s) => s.equipped.includes(a.cardId))
       return T.handOffText({ card: nameOf(v.cards[a.cardId]?.defId), from: nameOf(from?.id), to: nameOf(a.toSurvivorId) })

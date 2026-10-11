@@ -37,6 +37,9 @@
     "rule.zombies-outside-colony.atMost",
     "rule.non-exiled-seats.weaponPerSurvivor",
     "rule.food.perNonExiledSeatAtLeast",
-    "rule.colony.everyEntranceBarricaded"
+    "rule.colony.everyEntranceBarricaded",
+    "rule.hand.symbolsAtLeast",
+    "rule.hand.onlySymbol",
+    "rule.seat-survivors.eachEquippedSymbolAtLeast"
   ]
 }

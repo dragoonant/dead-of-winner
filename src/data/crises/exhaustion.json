@@ -24,13 +24,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "PHOTO es-agotamiento; BGG ludopedia-51114",
+    "prevent": "PHOTO ebay 405654582648; PHOTO es-agotamiento; BGG ludopedia-51114",
     "fail": "PHOTO es-agotamiento; BGG ludopedia-51114",
     "bonus": "R p12"
   },
   "status": "draft",
-  "notes": "src: crises-sources.md row 13 (name ours); NEEDS HOOK crisis.exhaustion.frostbiteTopFive: frostbite on each of the 5 non-exiled survivors with the highest influence; the DSL has no top-N-by-influence scope",
+  "notes": "src: crises-sources.md row 13 (official English name seen on a card photo, eBay 405654582648; text only partly legible, left as is); NEEDS HOOK crisis.exhaustion.frostbiteTopFive: frostbite on each of the 5 non-exiled survivors with the highest influence; the DSL has no top-N-by-influence scope",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

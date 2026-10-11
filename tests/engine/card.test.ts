@@ -24,6 +24,15 @@ describe('card actions', () => {
     expect(r.state.seats.s1!.hand).toEqual([])
   })
 
+  it('CARD-021 an event card (Outsiders) leaves the game when played: it never reaches the waste pile (2020 printing, R p10)', () => {
+    const { state: s0, id } = addCard(makeState(), 'it.outsiders', 'hand:s1')
+    const r = play(s0, id)
+    expect(r.rejection).toBeUndefined()
+    expect(r.events.find((e) => e.type === 'CardPlayed')).toMatchObject({ to: 'removed' })
+    expect(r.state.removed).toContain(id)
+    expect(r.state.waste).not.toContain(id)
+  })
+
   it('CARD-002 a card not in hand, or played on another seat\'s turn, is rejected without changing state', () => {
     const { state: s0, id } = addCard(makeState(), 'it.food-1', 'hand:s1')
     const other = addCard(s0, 'it.food-1', 'hand:s2')
@@ -106,6 +115,20 @@ describe('card actions', () => {
     const d = respondRequest(r.state, act(r.state, 'respondRequest', { give: null }) as RespondRequestAction)
     expect(d.events.find((e) => e.type === 'RequestAnswered')).toMatchObject({ cardId: null })
     expect(d.pending).toBeUndefined() // the caller raises s1's next turnAction
+  })
+
+  it('CARD-020 one request addressed to every other player asks the seats in turn until one gives (R p11)', () => {
+    let s = makeState()
+    s = setSurvivor(s, 'sv.ashley', { wounds: 1 })
+    const m = addCard(s, 'it.medicine', 'hand:s3'); s = m.state
+    const r = request(s, act(s, 'request', { to: 'all', symbol: 'medicine' }) as RequestAction)
+    expect(r.events.filter((e) => e.type === 'RequestMade')).toHaveLength(1)
+    expect(r.pending).toMatchObject({ kind: 'requestResponse', seat: 's2' })
+    const d = respondRequest(r.state, act(r.state, 'respondRequest', { give: null }, 's2') as RespondRequestAction)
+    expect(d.pending).toMatchObject({ kind: 'requestResponse', seat: 's3' }) // s2 declined: s3 is asked next
+    const g = respondRequest(d.state, act(d.state, 'respondRequest', { give: m.id }, 's3') as RespondRequestAction)
+    expect(types(g.events)).toEqual(expect.arrayContaining(['CardGiven', 'CardPlayed']))
+    expect(g.state.request).toBeNull()
   })
 
   it('CARD-009 a given card is revealed and played at once for the requester; it never enters their hand', () => {

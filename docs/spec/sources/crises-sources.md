@@ -6,7 +6,7 @@ live in `docs/sources/` (gitignored) and were read in the session only. Nothing 
 
 English names: only Blizzard (R p4), Fuel Shortage (R p12) and Horror in the Night (English card photo) are
 official. Every other title is our own and is marked `(ours)`; it is a working label for the data files, not a claim
-about the printed English name. 17 official names are still missing (see `README.md`).
+about the printed English name. 14 official names are still missing (see `README.md`).
 
 ## Source tags
 
@@ -51,13 +51,13 @@ number). Tags read `prevent / fail`; the count and bonus tags are in the shared-
 | 10 | Forcas dos mortos (Forca dos mortos) | n/a | Strength of the Dead (ours) | Fuel | remove every barricade at the Colony, then add 10 zombies at the Colony; no morale loss | P / P | single source |
 | 11 | Legioes da morte | n/a | Legions of Death (ours) | Fuel | add 12 zombies at the Colony; no morale loss | P / P | single source |
 | 12 | Desespero | n/a | Despair (ours) | Medicine | lose 2 morale | P / P | single source |
-| 13 | Exaustao | Agotamiento | Exhaustion (ours) | Medicine | put 1 frostbite wound on each of the 5 non-exiled survivors with the highest influence; no morale loss | ES,P,J / ES,P | |
+| 13 | Exaustao | Agotamiento | **Exhaustion** (official, PHOTO ebay 405654582648) | Medicine | put 1 frostbite wound on each of the 5 non-exiled survivors with the highest influence; no morale loss | ES,P,J / ES,P | |
 | 14 | Doencas (Molestia) | Enfermedad | Sickness (ours) | Medicine | put 1 ordinary wound on every non-exiled survivor; lose 1 morale | ES,P / ES,P | ES says ordinary wound; P just says wound token |
 | 15 | Comida vencida | n/a | Spoiled Food (ours) | Food | until the end of the next round non-exiled players cannot spend food tokens to raise action dice; lose 1 morale | P / P | single source |
 | 16 | Sem desperdicio (Nao desperdicaras) | n/a | No Waste (ours) | Food | as printed: every Food card that left the game goes onto the waste pile; lose 1 morale | P / P | direction flagged, see C3 |
-| 17 | Invasores (Saqueadores) | n/a | Raiders (ours) | Food | if able, each non-exiled player removes 1 random card of their hand from the game; lose 1 morale | P / P | single source |
+| 17 | Invasores (Saqueadores) | n/a | **Raiders** (official, PHOTO ebay 326680035955) | Food | if able, each non-exiled player removes 1 random card of their hand from the game; lose 1 morale | P / P | single source |
 | 18 | Fome (Inanicao) | Despensa vacia | Empty Pantry (ours) | Food | add 1 starvation token to the food supply; lose 1 morale | ES,P / ES,P | the official token name is starvation token (R Pay Food step, FAQ 6.1.1); ES says Hunger token, P says hunger marker |
-| 19 | Super populacao (Superpopulacao) | n/a | Overpopulation (ours) | Food | kill the 2 non-exiled survivors with the lowest influence; no morale loss | P / P | single source |
+| 19 | Super populacao (Superpopulacao) | n/a | **Overpopulation** (official, PHOTO ebay 313087713029) | Food | kill the 2 non-exiled survivors with the lowest influence; no morale loss | P / P | single source |
 | 20 | Horror na noite (Terror na noite) | Horror en la noche | **Horror in the Night** (official, photo) | Food | lose 2 morale | Ph,ES,P / Ph,ES,P | |
 
 Counts by prevent symbol (S, our check): two-symbol cards 3 (#1 Medicine or Tool, #2 Tool or Fuel, #3 Food or

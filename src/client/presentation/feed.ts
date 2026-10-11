@@ -113,7 +113,7 @@ export function feedLine(ev: GameEvent, N: Names): string | null {
       return `${ev.seat ? `${N.seat(ev.seat)}'s card` : 'A card'} ${ev.to === 'removed' ? 'leaves the game' : 'goes to the waste pile'} (${why}).`
     }
     case 'WasteCleaned': return `${N.survivor(ev.by)} cleans ${plural(ev.cardIds.length, 'waste card')}; ${ev.wasteAfter} remain.`
-    case 'RequestMade': return `${N.seat(ev.from)} asks ${N.seat(ev.to)} for ${ev.defId ? N.item(ev.defId) : ev.symbol ? `a ${ev.symbol} card` : 'a card'}.`
+    case 'RequestMade': return `${N.seat(ev.from)} asks ${ev.all ? 'everyone' : N.seat(ev.to)} for ${ev.defId ? N.item(ev.defId) : ev.symbol ? `a ${ev.symbol} card` : 'a card'}.`
     case 'RequestAnswered': return ev.cardId ? `${N.seat(ev.to)} gives ${N.seat(ev.from)} a card.` : `${N.seat(ev.to)} declines.`
     case 'FoodPaid': return `The colony eats: ${ev.needed} food for ${plural(ev.survivors, 'survivor')}; ${ev.foodAfter} left.`
     case 'Starvation': return `Not enough food (needed ${ev.needed}, had ${ev.supply}): starvation ${ev.starvationAfter}, morale -${ev.moraleLoss}.`

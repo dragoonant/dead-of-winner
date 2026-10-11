@@ -38,10 +38,10 @@
   },
   "sources": {
     "stats.influence": "R p7; W; C; T",
-    "stats.attack": "W",
-    "stats.search": "R p10; W; T",
-    "ability": "R p7; W; T; BGG ludopedia-51115"
+    "stats.attack": "PHOTO es-github Supervivientes/Forest-plum; W",
+    "stats.search": "PHOTO es-github Supervivientes/Forest-plum; R p10; W; T",
+    "ability": "PHOTO es-github Supervivientes/Forest-plum"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 14 (C7): the attack value 2+ rests on the wiki alone"
+  "status": "verified",
+  "notes": "src: ebay-photo-transcription.md section 4 (Spanish-edition scan): ANYWHERE, at the start of your turn remove Forest from the game to raise morale by 1; attack 2+, search 5+, influence 14."
 }

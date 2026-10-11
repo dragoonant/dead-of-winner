@@ -52,8 +52,9 @@ export function barricadeText(i: { who: string; gate: string; need: number | nul
 export function cleanWasteText(i: { who: string; waste: number }): string {
   return `Clean waste with ${i.who}? The waste pile holds ${plural(i.waste, 'card')}; cleaning takes the top ones out of the game.`
 }
-export function attractText(i: { who: string; where: string; total: number; from: readonly string[] }): string {
-  return `Attract ${plural(i.total, 'zombie')} to ${the(i.where)} with ${i.who}? From: ${i.from.join(', ')}. Only into empty spaces.`
+export function attractText(i: { who: string; where: string; total: number; from: readonly string[]; to?: readonly string[] }): string {
+  if (i.total === 0) return `Attract no zombies with ${i.who}? The die is spent and nothing moves.`
+  return `Attract ${plural(i.total, 'zombie')} to ${the(i.where)} with ${i.who}? From: ${i.from.join(', ')}.${i.to && i.to.length ? ` Placed at ${i.to.join(' and ')}.` : ''} Only into empty spaces.`
 }
 export function abilityText(i: { who: string; ability: string }): string {
   return `Use ${i.who}'s ability? ${i.ability || 'See the survivor card.'}`

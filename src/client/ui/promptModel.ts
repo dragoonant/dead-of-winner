@@ -46,13 +46,13 @@ function variantLabel(a: Action, N: LabelNames): string {
     case 'search': return 'Search here'
     case 'barricade': return `Gate ${a.entrance}`
     case 'cleanWaste': return 'Clean the waste pile'
-    case 'attract': return a.from.map((f) => `${f.count} from ${f.location === 'colony' ? `gate ${f.entrance}` : N.loc(f.location)}`).join(', ')
+    case 'attract': return (a.from.length === 0 ? 'None (0 zombies)' : a.from.map((f) => `${f.count} from ${f.location === 'colony' ? `gate ${f.entrance}` : N.loc(f.location)}`).join(', ')) + (a.to ? ` to ${a.to.map((t) => `gate ${t.entrance}${t.count > 1 ? ` x${t.count}` : ''}`).join(' + ')}` : '')
     case 'move': return N.loc(a.to)
     case 'useAbility': return camelWords(a.abilityId)
     case 'playCard': return a.equipTo ? `Equip on ${N.survivor(a.equipTo)}` : `Play ${N.card(a.cardId)}`
     case 'contributeObjective': return N.card(a.cardId)
     case 'spendFood': return `${a.tokens} food on die ${a.dieId.split(':d')[1] ?? ''}`.trim()
-    case 'request': return `${N.seat(a.to)}: ${a.defId ? 'a specific card' : a.symbol ? `a ${a.symbol} card` : 'a card'}`
+    case 'request': return `${a.to === 'all' ? 'Everyone' : N.seat(a.to)}: ${a.defId ? 'a specific card' : a.symbol ? `a ${a.symbol} card` : 'a card'}`
     case 'handOff': return `${N.card(a.cardId)} to ${N.survivor(a.toSurvivorId)}`
     case 'callVote': return `Exile ${N.seat(a.target)}`
     default: return a.type

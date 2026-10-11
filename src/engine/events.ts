@@ -89,7 +89,7 @@ export interface CardContributed extends Ev<'CardContributed'> { seat: SeatId; c
 export interface CardGiven extends Ev<'CardGiven'> { from: SeatId; to: SeatId; cardId: CardId; defId: Id } // public: a given card is revealed and played at once (F 5.2.1)
 export interface CardDiscarded extends Ev<'CardDiscarded'> { seat: SeatId | null; cardId: CardId; to: 'waste' | 'removed' | 'deck'; reason: string; revealed?: false } // revealed:false → state.removedHidden; cardId PRIVATE to seat (F 2.3.1, R p14)
 export interface WasteCleaned extends Ev<'WasteCleaned'> { by: SurvivorId; cardIds: CardId[]; wasteAfter: number }
-export interface RequestMade extends Ev<'RequestMade'> { from: SeatId; to: SeatId; symbol?: ItemSymbol; defId?: Id; note?: string }
+export interface RequestMade extends Ev<'RequestMade'> { from: SeatId; to: SeatId; symbol?: ItemSymbol; defId?: Id; note?: string; all?: true /* addressed to every other player; `to` is the first one asked */ }
 export interface RequestAnswered extends Ev<'RequestAnswered'> { from: SeatId; to: SeatId; cardId: CardId | null }
 
 // ---------- colony phase (E.4) ----------

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { beginColonyPhase } from '../../src/engine/colony-phase'
 import { objectiveNeed } from '../../src/engine/effects'
 import { checkMainObjective, endGame, evaluateWinners, mainObjectiveStatus, objectiveProgressFromView, ownObjectiveProgress, seatStatus } from '../../src/engine/objectives'
+import { CODE_HOOKS } from '../../src/engine/code-hooks'
+import type { GameState } from '../../src/engine/types'
 import { view } from '../../src/engine/view'
 import { makeColony, of, types } from './col-fixture'
 
@@ -86,5 +88,30 @@ describe('objectives', () => {
     expect(seatStatus(s, 's1').complete).toBe(true)
     expect(seatStatus(s, 's2').complete).toBe(false)
     expect(seatStatus(s, 's2').parts[1]).toMatchObject({ have: 2, need: 3 })
+  })
+
+  it('OBJ-017 Gluttony / Obsessed hand hook: starter cards are not counted; Hypochondriac needs a hand of only Medicine', () => {
+    const base = makeColony({ hands: { s1: ['it.food', 'it.food', 'it.food', 'it.food', 'it.food', 'it.food', 'it.fuel', 'it.med'] } })
+    const six = CODE_HOOKS.objectives['rule.hand.symbolsAtLeast']!
+    const params = { symbols: { food: 6 }, excludeStarter: true }
+    expect(six(base, 's1', params).complete).toBe(true)
+    const hand = base.seats['s1']!.hand
+    const starter = { ...base, cards: { ...base.cards, [hand[0]!]: { ...base.cards[hand[0]!]!, starter: true as const } } }
+    expect(six(starter, 's1', params).complete).toBe(false) // five food left once one starter card is excluded
+    expect(six(starter, 's1', { symbols: { food: 6 } }).complete).toBe(true)
+    const only = CODE_HOOKS.objectives['rule.hand.onlySymbol']!
+    expect(only(base, 's1', { symbol: 'medicine' }).complete).toBe(false)
+    expect(only(makeColony({ hands: { s1: ['it.med', 'it.med'] } }), 's1', { symbol: 'medicine' }).complete).toBe(true)
+    expect(only(makeColony({ hands: { s1: [] } }), 's1', { symbol: 'medicine' }).complete).toBe(false) // at least one card
+  })
+
+  it('OBJ-018 Obsessed weapon hook: every survivor the seat controls carries a weapon', () => {
+    const base = makeColony({ survivors: [{ id: 'sv.a', owner: 's1' }, { id: 'sv.b', owner: 's1' }], hands: { s1: ['it.weapon', 'it.weapon'] } })
+    const [w1, w2] = base.seats['s1']!.hand
+    const hook = CODE_HOOKS.objectives['rule.seat-survivors.eachEquippedSymbolAtLeast']!
+    const one: GameState = { ...base, survivors: { ...base.survivors, 'sv.a': { ...base.survivors['sv.a']!, equipped: [w1!] } } }
+    expect(hook(one, 's1', { symbol: 'weapon', n: 1 }).complete).toBe(false)
+    const both: GameState = { ...one, survivors: { ...one.survivors, 'sv.b': { ...one.survivors['sv.b']!, equipped: [w2!] } } }
+    expect(hook(both, 's1', { symbol: 'weapon', n: 1 }).complete).toBe(true)
   })
 })

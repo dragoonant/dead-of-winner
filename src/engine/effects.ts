@@ -31,7 +31,7 @@ import type {
 import { bundleFor } from './bundles'
 import { CODE_HOOKS } from './code-hooks'
 import { checkCrossroads } from './crossroads'
-import { addWoundInto, rollExposureFor as realRollExposure, setServices, svc as exposureServices } from './exposure'
+import { addWoundInto, isMoraleEndDeferred, rollExposureFor as realRollExposure, setServices, svc as exposureServices } from './exposure'
 import { addSurvivorFromDeck as realAddSurvivor, removeSurvivor as realRemoveSurvivor } from './survivors'
 import { addZombies as realAddZombies } from './zombies'
 
@@ -166,7 +166,7 @@ export function changeMorale(acc: Acc, delta: number, reason: MoraleReason, sour
   if (actual === 0) return
   patch(acc, { morale: after })
   emit(acc, { type: 'MoraleChanged', delta: actual, after, reason, ...(sourceId ? { sourceId } : {}) })
-  if (after === 0 && acc.state.phase !== 'ended') {
+  if (after === 0 && acc.state.phase !== 'ended' && !isMoraleEndDeferred()) {
     const r = routines.endGame(acc.state, 'moraleZero')
     acc.state = r.state; emit(acc, ...r.events)
   }

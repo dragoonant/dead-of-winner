@@ -134,7 +134,7 @@ Rejections name the `RejectionCode` the engine must return (00 §14) and never c
 | MOVE-007 | Survivor dies on the move's exposure roll → no `action.move` window: a held Crossroads card with a move trigger does not fire | F 2.1.1 |
 | MOVE-008 | `query.moveTargets` lists every location with an empty space, its zombie count and the survivor's exposure odds; the current location is excluded | 00 §10 |
 | MOVE-009 | Blizzard failed last colony phase → `move` by a non-exiled seat → `E_FORBIDDEN` until the end of the next round; an exiled seat may still move | R p4, brief G.5 |
-| MOVE-010 | Exiled seat (placement already done) moves a survivor back to the colony → allowed: `SurvivorMoved {kind:'action'}`, `ExposureRolled {reason:'move'}` as usual; that survivor then counts toward `FoodPaid.survivors` and the colony's `ZombiesToAdd` (unsourced: R p14 mandates only the initial move out) | R p14, F 5.4 |
+| MOVE-010 | Exiled seat (placement already done) moves a survivor to the colony → rejected `E_TARGET_INVALID`, and absent from `legalActions` / `moveTargets` (CORRECTED 2026-10-10; digest Exile "Can exiled survivors move back to the colony? No") | digest, Exile |
 | MOVE-011 | John Price moves away from Rod Miller → still no exposure on that move; arrives next to Harman Brooks and rolls raw 10 → frostbite (copies start after arrival) | F 1.1.1 |
 
 ## EXPO (exposure, wounds, bites)
@@ -391,7 +391,7 @@ Each becomes a `RULING:` line in `docs/needs-rules-check.md` via the orchestrato
 | ATK-008, ATK-009 | A hit always wounds; the steal happens only if the controller holds a card; wound, then death, then steal. |
 | DICE-016, DICE-017, EXIL-007 | An exiled seat's food card is a per-card choice (`effectChoice`, code `exiledFoodCard`): the printed effect (F 5.4.4) or +1 on one unused die, max 6 (`DieBoosted {source:'item'}`). R p14's "rather than" and F 5.4.4's "yes" conflict, so this is Corrected, not Confirmed (10 R20.12 says so). `DieAdded {source:'exiledFood'}` is a contract member the engine never emits; `events.ts` should drop that source before the freeze. |
 | SRCH-008, SRCH-009 | Returned cards go under the deck in draw order; an emptied deck ends the search with the cards drawn so far. |
-| MOVE-004, MOVE-010 | Moving to the current location is invalid; an exiled seat's survivors may move back to the colony after the initial placement and then count for food and zombies (10 R20.13). |
+| MOVE-004, MOVE-010 | Moving to the current location is invalid; an exiled seat's survivors may not move back to the colony (digest Exile; corrected 2026-10-10). |
 | CARD-015, EXIL-010, ZOM-010 | Every exiled placement of a new survivor is one `effectChoice` with code `exiledSurvivorPlacement` (10 R10.5); `itemTarget` is never used for it. |
 | XRD-015 | A Crossroads card with both options impossible is removed with no effect (10 R20.10). |
 | SURV-012 | An empty survivor deck eliminates the seat as the player-elimination variant would (10 R20.9). |

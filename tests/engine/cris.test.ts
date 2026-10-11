@@ -22,6 +22,15 @@ describe('crisis resolution', () => {
     expect(of(r.events, 'MoraleChanged').find((m) => (m as { reason: string }).reason === 'crisisFailed')).toMatchObject({ delta: -2 })
   })
 
+  it('CRIS-021 the contributed cards are listed as removed after the fail effect and the morale change (R p12)', () => {
+    const r = run({ contributions: { s1: ['it.fuel', 'it.fuel'], s2: ['it.fuel', 'it.weapon'] } })
+    const t = types(r.events)
+    const removals = of<{ reason: string }>(r.events, 'CardDiscarded').filter((d) => d.reason === 'crisis')
+    expect(removals).toHaveLength(4)
+    expect(t.indexOf('CardDiscarded')).toBeGreaterThan(t.indexOf('CrisisEffectApplied'))
+    expect(t.indexOf('CardDiscarded')).toBeGreaterThan(t.indexOf('MoraleChanged'))
+  })
+
   it('CRIS-005 three Fuel meet the need of 3: prevented, no effect, no bonus', () => {
     const r = run({ contributions: { s1: ['it.fuel', 'it.fuel'], s2: ['it.fuel'] } })
     expect(of(r.events, 'CrisisResolved')[0]).toMatchObject({ total: 3, needed: 3, prevented: true, bonus: false })

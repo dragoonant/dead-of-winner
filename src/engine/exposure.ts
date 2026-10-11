@@ -119,7 +119,17 @@ function defaultForbidden(state: GameState, what: ForbidWhat, q: GrantQuery): bo
   return false
 }
 
+/** FAQ 6.2.1: inside Adding Zombies morale 0 does not end the game at once; colony-phase.ts checks it after sections B, D and F. */
+let moraleEndDeferred = false
+export const isMoraleEndDeferred = (): boolean => moraleEndDeferred
+export function withMoraleEndDeferred<T>(fn: () => T): T {
+  const prev = moraleEndDeferred
+  moraleEndDeferred = true
+  try { return fn() } finally { moraleEndDeferred = prev }
+}
+
 function endGame(acc: Out, reason: 'moraleZero'): void {
+  if (moraleEndDeferred) return
   const s = acc.state
   acc.events.push({ type: 'GameEnded', reason, objectiveComplete: false, winners: [], morale: s.morale, roundsLeft: s.roundsLeft })
   acc.state = { ...s, phase: 'ended', result: { reason, objectiveComplete: false, winners: [] } }

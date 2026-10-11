@@ -33,13 +33,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12"
+    "prevent": "PHOTO ebay 326680035955",
+    "fail": "PHOTO ebay 326680035955",
+    "bonus": "PHOTO ebay 326680035955"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 17 (name ours); single source; removeCard hand takes a random card per seat and skips an empty hand",
+  "status": "verified",
+  "notes": "src: research-notes-2026-10-10.md eBay listing 326680035955; official English name confirmed; removeCard hand takes a random card per seat and skips an empty hand",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

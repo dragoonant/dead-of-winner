@@ -17,61 +17,50 @@ build next. Tick items off or reply inline.
 ## 2. Card photos (only if you have the physical game)
 
 Lay cards in a grid of about 9 per photo and drop them in `docs/sources/photos/` (gitignored, never published).
-About 6 photos covers everything.
+Everything below is still unknown; the rest of the cards were resolved from the eBay photos and Spanish scans.
 
-**Standard secret objectives with no known text (10)**
+**Standard secret objectives with no known text (8)**
 - [ ] Experienced
 - [ ] Hoarder
 - [ ] Hope
-- [ ] Hypochondriac
-- [ ] Junkie
 - [ ] Justice
 - [ ] Neat Freak
 - [ ] Protected
 - [ ] Repopulate
 - [ ] Safety
 
-**Betrayal objectives with no known text (7)**
+**Betrayal objectives with no known text (5)**
 - [ ] Accept Your Fate
 - [ ] All for One
-- [ ] Gluttony
 - [ ] Mad Scientist
-- [ ] Obsessed
 - [ ] Runaway
 - [ ] Take Over
 
-These 17 are left out of the deck until their text is known. The game deals from the 14 standard and 3 betrayal
-objectives we have.
+These 13 are left out of the deck until their text is known. The game deals from the 16 standard and 5 betrayal
+objectives we have (Junkie, Hypochondriac, Gluttony and Obsessed were added from the photos).
 
-**Crisis cards (all 20, for their official English names)**
-- [ ] All 20 crisis cards. Effects are known from Spanish and Portuguese sources; only Blizzard, Fuel Shortage and
-      Horror in the Night have confirmed English names. The other 17 use our own names for now (Despair, Empty
-      Pantry, Endless Hordes, Exhaustion, Hailstorm, Killer Instinct, Legions of Death, March of the Dead, No Waste,
-      Overpopulation, Raiders, Reorganization, Sickness, Spoiled Food, Strength of the Dead, We Are Being Watched,
-      Zombie Wave).
-- [ ] In particular, Zombie Wave: is it 6 or 8 zombies at the colony? And No Waste: which way do the Food cards move?
+**Crisis cards (official English names for 14)**
+- [ ] The remaining crisis cards use our own names: Despair, Empty Pantry, Endless Hordes, Hailstorm, Killer
+      Instinct, Legions of Death, March of the Dead, No Waste, Reorganization, Sickness, Spoiled Food (a photo hints
+      at "Food Spoilage"), Strength of the Dead, We Are Being Watched, Zombie Wave. Blizzard, Fuel Shortage, Horror in
+      the Night, Raiders, Overpopulation and Exhaustion are confirmed.
+- [ ] Zombie Wave: is it 6 or 8 zombies at the colony? No Waste: which way do the Food cards move?
 
-**Single-source values**
-- [ ] Thomas Heart survivor card (his ability comes from one fan translation only).
-- [ ] Forest Plum survivor card (his attack value 2+ comes from one wiki only).
-- [ ] Daniel Smith survivor card: does the ability say "once per round"? (The rulebook sample card does not; fan
-      sources do.)
-
-**Main objectives where fan sources disagree (both sides of each card)**
-- [ ] Find a Cure (hardcore: 2 or 3 Medicine per player?)
+**Main objectives**
 - [ ] Leave It All Behind (normal rounds 5 or 6; hardcore zombies 2 or 3; weapon per survivor or per player?)
-- [ ] Home Sweet Home (hardcore morale and rounds 5/5, or no change?)
 - [ ] Stockpile (normal: 2 or 3 food tokens per player?)
+- [ ] Find a Cure numbers (the photo is blurred: setup morale, rounds, zombies and Medicine cards per player)
 
-**Location cards**
-- [ ] The six location cards. Five of them were counted from photos of The Long Night printing; a base-game photo
-      confirms survivor and entrance space counts.
+**One value to confirm**
+- [ ] Thomas Heart's die requirement: the Spanish scan reads "(5-)", we implemented 5+ as you specified.
 
 ## 3. Rules rulings to skim (optional, one sitting)
 
-`docs/needs-rules-check.md` holds 196 `RULING:` lines: places where the rulebook was silent or sources disagreed,
-with what we did and why. Most are edge cases. Skim the **Unsourced** and **Fan-source** ones and correct any your
-copy or table experience contradicts. Corrections become small data or engine fixes.
+`docs/needs-rules-check.md` holds 196 `RULING:` lines; `docs/rulings-resolution.md` checked them against the
+rulebooks, FAQ and the designer rulings digest. Of the 101 that were unsourced or fan-sourced, 15 are now confirmed
+by an official source and 14 were corrected (the engine now follows the corrected ones). **72 are still open**: about
+30 are fan-sourced card data, about 17 are engine or AI design conventions with no rules content, and the rest are
+genuine gaps in the rulebook. Skim those and correct any your copy or table experience contradicts.
 
 ## 4. Decisions for the next push
 

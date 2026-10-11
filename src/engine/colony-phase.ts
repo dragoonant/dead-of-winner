@@ -10,7 +10,7 @@ import { rollActionDice } from './dice'
 import { expireEffects, recOf } from './effects'
 import { addZombiesInto } from './zombies'
 import { resolveCrisisInto } from './crisis'
-import { aliveAt, fireInto, halted, isOver, loseMoraleInto, mergeInto, startOut, type Out } from './exposure'
+import { aliveAt, fireInto, halted, isOver, loseMoraleInto, mergeInto, startOut, withMoraleEndDeferred, type Out } from './exposure'
 import { checkMainObjective, endGame, finalizeEnding } from './objectives'
 import { roll } from './rng'
 import type { ColonyStep, EffectInstance, GameEndReason, GameState, LocationId, PendingDecision, SeatId, WindowId } from './types'
@@ -118,7 +118,16 @@ function checkWaste(acc: Out): void {
 const fresh = (): ZCursor => ({ stage: 'colony', idx: 0, started: false, remaining: 0, nextIndex: 0, noiseTotal: 0 })
 const survivorsThere = (s: GameState, loc: LocationId): number => aliveAt(s, loc).length + (s.locations[loc]?.helpless ?? 0)
 
-function addZombiesStep(acc: Out): void {
+/** Morale 0 reached inside Adding Zombies ends the game only at a checkpoint: after (B) colony, (D) other locations, (F) noise (FAQ 6.2.1). */
+function moraleCheckpoint(acc: Out): boolean {
+  if (acc.state.morale > 0 || isOver(acc.state)) return isOver(acc.state)
+  endWith(acc, 'moraleZero')
+  return true
+}
+
+function addZombiesStep(acc: Out): void { withMoraleEndDeferred(() => addZombiesStepInner(acc)) }
+
+function addZombiesStepInner(acc: Out): void {
   let z = readCursor(acc.state).z ?? fresh()
   const save = (): void => { acc.state = writeCursor(acc.state, { ...readCursor(acc.state), z }) }
   const order = acc.state.locationOrder
@@ -136,7 +145,8 @@ function addZombiesStep(acc: Out): void {
       z = { ...z, remaining: r.remaining, nextIndex: r.nextIndex }
       if (halted(acc)) { save(); return }
     }
-    z = { ...fresh(), stage: 'locations' } // (B) morale 0 has ended the game already
+    z = { ...fresh(), stage: 'locations' }
+    if (moraleCheckpoint(acc)) return // (B)
   }
 
   // (C) every other location in locationOrder: one per survivor there
@@ -155,7 +165,8 @@ function addZombiesStep(acc: Out): void {
         if (halted(acc)) { save(); return }
       }
     }
-    z = { ...fresh(), stage: 'noise' } // (D)
+    z = { ...fresh(), stage: 'noise' }
+    if (moraleCheckpoint(acc)) return // (D)
   }
 
   // (E) noise, location by location: each token is a d6, 3 or lower adds a zombie (tokens leave as they are rolled)
@@ -180,6 +191,7 @@ function addZombiesStep(acc: Out): void {
     }
     acc.events.push({ type: 'NoiseCleared', location: loc, count: z.noiseTotal })
   }
+  moraleCheckpoint(acc) // (F)
 }
 
 // ---------- the driver ----------

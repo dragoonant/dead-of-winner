@@ -317,6 +317,31 @@ const objectives: Record<string, CodeObjectiveHook> = {
   'rule.barricades.totalAtLeast': (state, _seat, params) =>
     report('barricades on the board', state.locationOrder.reduce((n, l) => n + barricadesAt(state, l), 0), num(params, 'n', 1)),
 
+  /** Gluttony / Obsessed: cards in the seat's hand per symbol, `params.symbols` = {symbol: n}; starter-deck cards are left out when `excludeStarter` (photo cards). */
+  'rule.hand.symbolsAtLeast': (state, seat, params) => {
+    const need = (params?.['symbols'] ?? {}) as Record<string, number>
+    const hand = (seat ? state.seats[seat]?.hand ?? [] : []).filter((c) => !(params?.['excludeStarter'] === true && state.cards[c]?.starter))
+    const parts = Object.entries(need).map(([sym, n]) => ({
+      label: `${sym} cards in hand`, have: hand.filter((c) => symbolsOf(defOf(state, c)).includes(sym as ItemSymbol)).length, need: n,
+    }))
+    return { complete: parts.every((p) => p.have >= p.need), parts }
+  },
+  /** Hypochondriac: the hand holds at least one card and every card in it has `params.symbol` (Medicine). */
+  'rule.hand.onlySymbol': (state, seat, params) => {
+    const symbol = String(params?.['symbol'] ?? 'medicine') as ItemSymbol
+    const hand = seat ? state.seats[seat]?.hand ?? [] : []
+    const match = hand.filter((c) => symbolsOf(defOf(state, c)).includes(symbol)).length
+    return { complete: hand.length > 0 && match === hand.length, parts: [{ label: `hand holds only ${symbol} cards`, have: hand.length > 0 && match === hand.length ? 1 : 0, need: 1 }] }
+  },
+  /** Obsessed: every survivor the seat controls carries at least `n` equipped cards with `params.symbol` (Weapon). */
+  'rule.seat-survivors.eachEquippedSymbolAtLeast': (state, seat, params) => {
+    const symbol = String(params?.['symbol'] ?? 'weapon') as ItemSymbol
+    const n = num(params, 'n', 1)
+    const mine = aliveOf(state, seat)
+    const ok = mine.filter((s) => s.equipped.filter((c) => symbolsOf(defOf(state, c)).includes(symbol)).length >= n).length
+    return { complete: mine.length > 0 && ok === mine.length, parts: [{ label: `survivors carrying ${n}+ ${symbol}`, have: ok, need: Math.max(1, mine.length) }] }
+  },
+
   /** Kill Them: at most `n` zombies stand across every location but the colony. */
   'rule.zombies-outside-colony.atMost': (state, _seat, params) => {
     const n = num(params, 'n', 3)

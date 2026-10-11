@@ -25,22 +25,22 @@
         "location": "here",
         "value": "noExposure"
       }
-    ]
+    ],
+    "cost": {
+      "die": 5
+    }
   },
   "coop": true,
   "text": {
-    "ability": "Provisional: once a round at the colony, Thomas drops two zombies there without a roll for exposure.",
+    "ability": "At the colony, once a round, with a die of 5 or more Thomas takes down two zombies there and nobody rolls for exposure.",
     "bio": "Carries himself like a man who has already survived worse and says very little about it."
   },
   "sources": {
     "stats.influence": "W; C",
     "stats.attack": "W",
     "stats.search": "W",
-    "ability": "BGG ludopedia-51115 (verify)"
+    "ability": "PHOTO es-github Supervivientes/Thomas-Heart"
   },
-  "status": "draft",
-  "notes": "src: survivors-sources.md row 30 (C4). PROVISIONAL: single fan source (Portuguese card transcription, no card photo, no die cost printed). The wiki text is a copy of Talia Jones and is discarded. Keep out of golden examples until a card photo confirms.",
-  "tags": [
-    "provisional"
-  ]
+  "status": "verified",
+  "notes": "src: ebay-photo-transcription.md section 4 (Spanish-edition scan). Die value read as 5+ per the owner brief; the transcription read the Spanish card as (5-), flagged in OWNER-REVIEW. Provisional flag cleared."
 }

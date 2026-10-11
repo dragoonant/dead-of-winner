@@ -22,7 +22,8 @@ export interface AttackAction extends Base<'attack'> { survivorId: SurvivorId; d
 export interface SearchAction extends Base<'search'> { survivorId: SurvivorId; dieId: DieId } // at the survivor's location, never the colony
 export interface BarricadeAction extends Base<'barricade'> { survivorId: SurvivorId; dieId: DieId; entrance: EntranceIndex }
 export interface CleanWasteAction extends Base<'cleanWaste'> { survivorId: SurvivorId; dieId: DieId } // survivor at the colony; top 3 waste cards leave the game
-export interface AttractAction extends Base<'attract'> { survivorId: SurvivorId; dieId: DieId; from: { location: LocationId; entrance: EntranceIndex; count: number }[] } // 2 zombies in total, into empty spaces only (F 5.1.1)
+/** 0-2 zombies in total from ONE other location, into empty spaces only (F 5.1.1). `to` (optional, additive 2026-10-10) is the player's free choice of destination entrance spaces at the survivor's location (split allowed); its counts must add up to the zombies moved. Omitted = first empty space, lowest entrance first. */
+export interface AttractAction extends Base<'attract'> { survivorId: SurvivorId; dieId: DieId; from: { location: LocationId; entrance: EntranceIndex; count: number }[]; to?: { entrance: EntranceIndex; count: number }[] }
 export interface UseAbilityAction extends Base<'useAbility'> { survivorId: SurvivorId; abilityId: Id; dieId?: DieId; data?: Record<string, unknown> } // (N+) abilities spend a die ≥ N
 export interface PlayCardAction extends Base<'playCard'> { cardId: CardId; equipTo?: SurvivorId; data?: Record<string, unknown> } // from hand, own turn only (E.6)
 export interface ContributeCrisisAction extends Base<'contributeCrisis'> { cardIds: CardId[] } // face down, from hand or equipped; also answers `crisisContribution` ([] = nothing)
@@ -30,7 +31,7 @@ export interface ContributeCrisisAction extends Base<'contributeCrisis'> { cardI
 export interface ContributeObjectiveAction extends Base<'contributeObjective'> { cardId: CardId }
 export interface MoveAction extends Base<'move'> { survivorId: SurvivorId; to: LocationId } // once per survivor per turn; exposure after
 export interface SpendFoodAction extends Base<'spendFood'> { dieId: DieId; tokens: number } // +1 per token on one unused die, max 6 (F 5.3.1)
-export interface RequestAction extends Base<'request'> { to: SeatId; symbol?: ItemSymbol; defId?: Id; note?: string } // ask for an item card
+export interface RequestAction extends Base<'request'> { to: SeatId | 'all'; symbol?: ItemSymbol; defId?: Id; note?: string } // ask for an item card
 export interface HandOffAction extends Base<'handOff'> { cardId: CardId; toSurvivorId: SurvivorId } // equipped item, same location
 export interface CallVoteAction extends Base<'callVote'> { target: SeatId } // once per turn, another seat
 export interface EndTurnAction extends Base<'endTurn'> {}

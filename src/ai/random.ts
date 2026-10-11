@@ -57,7 +57,7 @@ export function weightOf(v: SeatView, pending: PendingDecision, a: Action): numb
     }
     case 'cleanWaste': return v.waste.length >= 7 ? 4 : 0.5
     case 'move': return 1.5 / (1 + 2 * woundsOn(v, a.survivorId))
-    case 'attract': return 0.5
+    case 'attract': return a.from.length === 0 ? 0.05 : a.to ? 0.1 : 0.5
     case 'spendFood': return 0.5
     case 'request': return 0.3
     case 'handOff': return 0.3

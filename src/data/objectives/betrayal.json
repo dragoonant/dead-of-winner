@@ -5,12 +5,37 @@
     "name": "Gluttony",
     "type": "betrayal",
     "code": "S11",
-    "text": null,
-    "status": "unknown",
-    "sources": {
-      "name": "BGG etwest-names"
+    "requiresMain": false,
+    "ai": {
+      "lever": "hoard:food"
     },
-    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "code": "rule.hand.symbolsAtLeast",
+          "params": {
+            "symbols": {
+              "food": 6
+            },
+            "excludeStarter": true
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while you hold at least six food cards in your hand; the cards you started with do not count."
+    },
+    "sources": {
+      "complete": "PHOTO ebay 313087713029; BGG etwest-names",
+      "requiresMain": "R p3"
+    },
+    "status": "verified",
+    "notes": "src: ebay-photo-transcription.md section 1 (Item 313087713029, also 157718227050). Food cards counted in hand, starter item cards excluded."
   },
   {
     "kind": "secretObjective",
@@ -193,11 +218,50 @@
     "name": "Obsessed",
     "type": "betrayal",
     "code": "S20",
-    "text": null,
-    "status": "unknown",
-    "sources": {
-      "name": "BGG etwest-names"
+    "requiresMain": false,
+    "ai": {
+      "lever": "custom"
     },
-    "notes": "src: objectives-sources.md names only; the card text is not known yet, the engine must skip this record."
+    "complete": {
+      "all": [
+        {
+          "test": "moraleAtMost",
+          "subject": "colony",
+          "value": 0
+        },
+        {
+          "test": "survivorsAtMost",
+          "subject": "seat",
+          "value": 1
+        },
+        {
+          "code": "rule.seat-survivors.eachEquippedSymbolAtLeast",
+          "params": {
+            "symbol": "weapon",
+            "n": 1
+          }
+        },
+        {
+          "code": "rule.hand.symbolsAtLeast",
+          "params": {
+            "symbols": {
+              "fuel": 1,
+              "medicine": 1,
+              "food": 1
+            },
+            "excludeStarter": true
+          }
+        }
+      ]
+    },
+    "text": {
+      "goal": "Let the colony collapse (morale zero) while you have only one survivor, that survivor carries a weapon, and you hold at least one fuel, one medicine and one food card in your hand; starting cards do not count."
+    },
+    "sources": {
+      "complete": "PHOTO ebay 146752101002; BGG etwest-names",
+      "requiresMain": "R p3"
+    },
+    "status": "verified",
+    "notes": "src: research-notes-2026-10-10.md eBay listing 146752101002 (Obsessed, S20 p19). The survivor condition is read as 'only one survivor in your following'; the weapon condition covers each survivor you control."
   }
 ]

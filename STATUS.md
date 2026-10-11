@@ -131,6 +131,20 @@ event feed (`Name: "line"`) and as a 4 s speech bubble on the seat card.
   for kill, barricade, heal, food and waste. `AI_TUNE='{"death":2}'` overrides the tuning constants in `src/ai/normal/plan.ts` for bench
   experiments.
 
+## Rules corrections and photo data (2026-10-10)
+- Engine now follows the official rulings in `docs/rulings-resolution.md` (CHANGES NEEDED): exiled survivors cannot move back to the
+  colony (MOVE-010 flipped); morale 0 inside Adding Zombies ends the game only at checkpoints B, D, F (COL-019, `withMoraleEndDeferred`);
+  the first player breaks vote ties even when exiled (VOTE-007; ballot key `tiebreakSeat`); attract = 0-2 zombies from one other
+  location with an optional `to` choice of entrance spaces (ZOM-017..019; `00` §16); a request can address everyone (`to: 'all'`,
+  CARD-020); crisis removals are logged after the effect (CRIS-021); event cards already left the game (CARD-021 pins it). Sample-roll
+  order was already right (GOLD-001b). Deviation kept: hooks still pick the replacement leader themselves (item 10).
+- Client limits: the exiled first player's tie-break answer defaults to "no" (no ballot UI for it); the Normal AI never attracts, so it
+  uses no `to`.
+- Data from eBay photos: Gluttony and Obsessed (betrayal), Junkie and Hypochondriac (standard), Thomas Heart (5+, once per round, no
+  exposure; provisional flag cleared), Daniel Smith (once per round), Forest Plum, Raiders and Overpopulation official names
+  (Exhaustion name seen too). New hooks `rule.hand.symbolsAtLeast`, `rule.hand.onlySymbol`, `rule.seat-survivors.eachEquippedSymbolAtLeast`.
+  Playable objectives now 16 standard + 5 betrayal + 10 exiled. Still unknown: see `OWNER-REVIEW.md` section 2.
+
 ## Spec status
 | Spec | Status |
 |---|---|

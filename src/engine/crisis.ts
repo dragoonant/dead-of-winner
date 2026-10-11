@@ -69,7 +69,6 @@ export function resolveCrisisInto(acc: Out): void {
     ...s, removed: [...s.removed, ...order.map((c) => c.cardId)],
     crisis: { ...s.crisis, contributions: [], result, history: [...s.crisis.history, { roundNumber: s.roundNumber, cardId, result }] },
   }
-  for (const c of order) acc.events.push({ type: 'CardDiscarded', seat: null, cardId: c.cardId, to: 'removed', reason: 'crisis' }) // seat null: the pile was shuffled
   acc.events.push({ type: 'CrisisResolved', cardId, total, needed, prevented, bonus, cards: order.length })
   acc.state = s
 
@@ -85,6 +84,8 @@ export function resolveCrisisInto(acc: Out): void {
   }
   const delta = acc.state.morale - moraleBefore
   if (delta !== 0) setResultMorale(acc, delta)
+  // R p12: "After resolving the crisis, remove all cards" - the log lists the removals after the effect and the morale change (seat null: the pile was shuffled)
+  for (const c of order) acc.events.push({ type: 'CardDiscarded', seat: null, cardId: c.cardId, to: 'removed', reason: 'crisis' }) // seat null: the pile was shuffled
   fireInto(acc, 'crisis.resolved')
 }
 

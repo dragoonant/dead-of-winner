@@ -1,4 +1,4 @@
-// move (R7.4): once per survivor per turn, to a different location with a free survivor space; exposure follows,
+// move (R7.4): once per survivor per turn, to a different location with a free survivor space (never the colony for an exiled seat); exposure follows,
 // and a bite spreads among the survivors at the DESTINATION.
 import type { Action, MoveAction } from '../actions'
 import { woundOnMoveInto } from '../code-hooks'
@@ -13,6 +13,7 @@ export function validateMove(state: GameState, a: MoveAction): Rejection | null 
   const sv = state.survivors[a.survivorId]!
   if (!state.locations[a.to]) return rej('E_TARGET_INVALID', 'no such location')
   if (a.to === sv.location) return rej('E_TARGET_INVALID', 'the survivor is already there')
+  if (a.to === 'colony' && state.seats[a.seat]?.seat.exiled) return rej('E_TARGET_INVALID', 'exiled survivors cannot move back to the colony') // digest, Exile
   if (sv.movedThisTurn && sv.extraMoves <= 0) return rej('E_ALREADY_MOVED', 'this survivor has already moved this turn')
   if (svc().forbidden(state, 'move', { survivorId: a.survivorId, seat: a.seat, location: sv.location })) return rej('E_FORBIDDEN', 'moving is forbidden right now')
   if (freeSurvivorSpaces(state, a.to) <= 0) return rej('E_NO_SPACE', 'no free survivor space there')
@@ -42,7 +43,7 @@ export function moveTargetsFor(state: GameState, survivorId: SurvivorId): MoveTa
   if (!sv || sv.status !== 'alive' || (sv.movedThisTurn && sv.extraMoves <= 0)) return []
   const exposure = exposureOddsFor(state, survivorId, 'move')
   return state.locationOrder
-    .filter((l) => l !== sv.location && freeSurvivorSpaces(state, l) > 0)
+    .filter((l) => l !== sv.location && freeSurvivorSpaces(state, l) > 0 && !(l === 'colony' && sv.owner && state.seats[sv.owner]?.seat.exiled))
     .map((location) => ({ location, emptySpaces: freeSurvivorSpaces(state, location), zombies: zombiesAt(state, location), exposure }))
 }
 

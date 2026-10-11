@@ -112,8 +112,8 @@ research notes and not read here). Texts are our one-line summaries.
 | 9 | Hoarder | n/a | (text unknown) | N |
 | 10 | Hope | n/a | (text unknown) | N |
 | 11 | Hunger | n/a | at least 3 Food-symbol cards in hand | Ph,N |
-| 12 | Hypochondriac | possibly Farmaceutico | (text unknown; one of 12 and 13 has the Farmaceutico text below) | N |
-| 13 | Junkie | possibly Farmaceutico | (text unknown; the ES Farmaceutico card shows only Medicine cards in hand, at least 1) | N |
+| 12 | Hypochondriac | Farmaceutico | main objective complete and your hand holds only Medicine cards, at least 1 (verified 2026-10-10 per owner brief; same condition as the ES Farmaceutico scan) | ES,N,PHOTO ebay 313087713029 |
+| 13 | Junkie | n/a | main objective complete and at least 3 Medicine cards in hand (verified, PHOTO ebay 146752101002) | PHOTO,N |
 | 14 | Justice | n/a | (text unknown) | N |
 | 15 | Leader | Lider | your group has more survivors than any other player's group | ES,N |
 | 16 | Loner | Solitario | you control exactly one survivor | ES,N |
@@ -126,9 +126,8 @@ research notes and not read here). Texts are our one-line summaries.
 | 23 | The way back home | El camino de vuelta a casa | at least 2 Fuel, 1 Food and 1 Weapon card in hand | ES,N |
 | 24 | Zombie killing robot! | Un robot asesino de zombis | at least 1 Weapon and 2 Tool cards in hand | ES,N |
 
-Counts (S): 24 names; 14 texts known (13 named rows plus the Farmaceutico card, which is one of rows 12 and 13);
-10 unknown (9 named rows plus the other of Junkie and Hypochondriac). The ES Farmaceutico mapping to Junkie or
-Hypochondriac is a guess by the Spanish-scan reader; Junkie is the likelier fit, not verified.
+Counts (S): 24 names; 16 texts known; 8 unknown (Experienced, Hoarder, Hope, Justice, Neat freak, Protected,
+Repopulate, Safety). Junkie and Hypochondriac resolved 2026-10-10 (eBay photos); the ES Farmaceutico card maps to Hypochondriac.
 
 Secret objective rules (R p6, BO): each player gets 2 standard and, with the betrayer rule, the setup adds 1 betrayal
 card to the pool dealt (R setup step 4); cards may be hidden; the same card can count for several objectives.
@@ -143,7 +142,7 @@ objective: they need morale at 0 plus a private condition. The other seven are u
 
 | Story id | Name (N, R) | Condition (all required) | Tags |
 |---|---|---|---|
-| S11 | Gluttony | (text unknown) | N,R |
+| S11 | Gluttony | morale is 0 and you hold at least 6 Food cards in hand (starter item cards do not count) | PHOTO ebay 313087713029,N,R |
 | S12 | Runaway | (text unknown) | N,R |
 | S13 | Take Over | (text unknown) | N,R |
 | S14 | All for One | (text unknown) | N,R |
@@ -152,10 +151,10 @@ objective: they need morale at 0 plus a private condition. The other seven are u
 | S17 | Cult Leader | morale is 0 and you control at least 2 more survivors than any other player | ES,N,R (the same review agrees) |
 | S18 | Serial Killers | morale is 0, at least 5 survivors have been removed from the game (helpless survivors do not count) and you control at least 2 survivors | ES,N,R |
 | S19 | Mad Scientist | (text unknown) | N,R |
-| S20 | Obsessed | (text unknown) | N,R |
+| S20 | Obsessed | morale is 0, only 1 survivor in your following, at least 1 Weapon equipped to each survivor you control, at least 1 Fuel, 1 Medicine and 1 Food card in hand (starter cards do not count) | PHOTO ebay 146752101002,N,R |
 
-Counts (S): 10 names, 3 texts known, 7 unknown (Accept your fate, All for one, Gluttony, Mad scientist, Obsessed,
-Runaway, Take over).
+Counts (S): 10 names, 5 texts known (Gluttony and Obsessed added 2026-10-10), 5 unknown (Accept your fate, All for one,
+Mad scientist, Runaway, Take over).
 
 ---
 
@@ -198,8 +197,7 @@ Counts (S): 10 cards; 10 values from P, 4 cross-checked by ES, 1 by a real photo
 
 ## Still missing for objectives
 
-- Texts for 9 standard secret objectives (All I need is my books, Experienced, Hoarder, Hope, Justice, Neat freak,
-  Protected, Repopulate, Safety) and one of Junkie or Hypochondriac.
-- Texts for 7 betrayal objectives (Accept your fate, All for one, Gluttony, Mad scientist, Obsessed, Runaway, Take over).
+- Texts for 8 standard secret objectives (Experienced, Hoarder, Hope, Justice, Neat freak, Protected, Repopulate, Safety).
+- Texts for 5 betrayal objectives (Accept your fate, All for one, Mad scientist, Runaway, Take over).
 - A real English photo for the hardcore faces still resting on P over BT (Find a Cure, Leave It All Behind, Home
   Sweet Home, Stockpile) and for the We Need More Samples hardcore token count.

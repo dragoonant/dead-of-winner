@@ -117,17 +117,17 @@ describe('attract', () => {
   const attract = (s: GameState, from: AttractAction['from']): AttractAction => act(s, { type: 'attract', survivorId: 'sv.ashley', dieId: 's1:d1', from }) as AttractAction
   const board = (extra: (s: GameState) => GameState = (s) => s) => {
     let s = makeState({ survivors: [{ id: 'sv.ashley', owner: 's1', location: 'colony' }], dice: { s1: [1, 1] } })
-    s = withZombies(s, SCHOOL, 1, 1)
+    s = withZombies(s, SCHOOL, 1, 2)
     s = withZombies(s, LIBRARY, 1, 1)
     return extra(s)
   }
 
   it('ZOM-013 two zombies arrive in the lowest empty colony entrances', () => {
     const s = board()
-    const r = applyAttract(s, attract(s, [{ location: SCHOOL, entrance: 1, count: 1 }, { location: LIBRARY, entrance: 1, count: 1 }]))
+    const r = applyAttract(s, attract(s, [{ location: SCHOOL, entrance: 1, count: 2 }]))
     expect(of(r.events, 'ZombieMoved')).toHaveLength(2)
     expect(r.state.locations['colony']!.entrances.map((e) => e.zombies).slice(0, 2)).toEqual([2, 0])
-    expect(zombiesAt(r.state, SCHOOL) + zombiesAt(r.state, LIBRARY)).toBe(0)
+    expect(zombiesAt(r.state, SCHOOL)).toBe(0)
   })
 
   it('ZOM-014 only the zombies that fit move, and never by breaking a barricade', () => {
@@ -137,17 +137,49 @@ describe('attract', () => {
       return x
     })
     expect(emptySpacesAt(s, 'colony')).toBe(1)
-    const r = applyAttract(s, attract(s, [{ location: SCHOOL, entrance: 1, count: 1 }, { location: LIBRARY, entrance: 1, count: 1 }]))
+    const r = applyAttract(s, attract(s, [{ location: SCHOOL, entrance: 1, count: 2 }]))
     expect(of(r.events, 'ZombieMoved')).toHaveLength(1)
-    expect(zombiesAt(r.state, SCHOOL) + zombiesAt(r.state, LIBRARY)).toBe(1)
+    expect(zombiesAt(r.state, SCHOOL)).toBe(1)
     const none = board((b) => { let x = b; for (let i = 1; i <= 6; i++) x = withZombies(x, 'colony', i, 3); return x })
     expect(applyAttract(none, attract(none, [{ location: SCHOOL, entrance: 1, count: 1 }])).rejection?.code).toBe('E_NO_SPACE')
   })
 
   it('ZOM-015 bad counts are rejected', () => {
     const s = board()
-    expect(applyAttract(s, attract(s, [{ location: SCHOOL, entrance: 1, count: 2 }])).rejection?.code).toBe('E_NO_ZOMBIE')
+    expect(applyAttract(s, attract(s, [{ location: LIBRARY, entrance: 1, count: 2 }])).rejection?.code).toBe('E_NO_ZOMBIE')
     expect(applyAttract(s, attract(s, [{ location: SCHOOL, entrance: 1, count: 1 }, { location: LIBRARY, entrance: 1, count: 1 }, { location: GAS, entrance: 1, count: 1 }])).rejection?.code).toBe('E_BAD_PAYLOAD')
+  })
+
+  it('ZOM-017 the attracting player places the zombies in entrances of their choice, split allowed', () => {
+    const s = board()
+    const r = applyAttract(s, { ...attract(s, [{ location: SCHOOL, entrance: 1, count: 2 }]), to: [{ entrance: 3, count: 1 }, { entrance: 5, count: 1 }] })
+    expect(of(r.events, 'ZombieMoved').map((e) => (e as { to: { entrance: number } }).to.entrance)).toEqual([3, 5])
+    expect(r.state.locations['colony']!.entrances.map((e) => e.zombies)).toEqual([0, 0, 1, 0, 1, 0])
+    const both = applyAttract(s, { ...attract(s, [{ location: SCHOOL, entrance: 1, count: 2 }]), to: [{ entrance: 6, count: 2 }] })
+    expect(both.state.locations['colony']!.entrances[5]!.zombies).toBe(2)
+    // counts must add up, entrances must exist and be empty
+    expect(applyAttract(s, { ...attract(s, [{ location: SCHOOL, entrance: 1, count: 2 }]), to: [{ entrance: 3, count: 1 }] }).rejection?.code).toBe('E_BAD_PAYLOAD')
+    expect(applyAttract(s, { ...attract(s, [{ location: SCHOOL, entrance: 1, count: 1 }]), to: [{ entrance: 9, count: 1 }] }).rejection?.code).toBe('E_NO_SPACE')
+    const full = withZombies(s, 'colony', 4, 3)
+    expect(applyAttract(full, { ...attract(full, [{ location: SCHOOL, entrance: 1, count: 1 }]), to: [{ entrance: 4, count: 1 }] }).rejection?.code).toBe('E_NO_SPACE')
+  })
+
+  it('ZOM-018 the player may attract fewer than 2 zombies, even none, and the die is still spent', () => {
+    const s = board()
+    const one = applyAttract(s, attract(s, [{ location: SCHOOL, entrance: 1, count: 1 }]))
+    expect(of(one.events, 'ZombieMoved')).toHaveLength(1)
+    expect(zombiesAt(one.state, SCHOOL)).toBe(1)
+    const none = applyAttract(s, attract(s, []))
+    expect(none.rejection).toBeUndefined()
+    expect(of(none.events, 'ZombieMoved')).toHaveLength(0)
+    expect(of(none.events, 'DieSpent')).toHaveLength(1)
+  })
+
+  it('ZOM-019 zombies come from one other location only', () => {
+    const s = board()
+    expect(applyAttract(s, attract(s, [{ location: SCHOOL, entrance: 1, count: 1 }, { location: LIBRARY, entrance: 1, count: 1 }])).rejection?.code).toBe('E_BAD_PAYLOAD')
+    const colonyZ = withZombies(s, 'colony', 2, 1)
+    expect(applyAttract(colonyZ, attract(colonyZ, [{ location: 'colony', entrance: 2, count: 1 }])).rejection?.code).toBe('E_TARGET_INVALID') // not from one colony entrance to another
   })
 
   it('ZOM-016 one zombie on the board moves that one; none is an error', () => {

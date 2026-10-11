@@ -24,13 +24,13 @@
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
-    "prevent": "BGG ludopedia-51114 (verify)",
-    "fail": "BGG ludopedia-51114 (verify)",
-    "bonus": "R p12"
+    "prevent": "PHOTO ebay 313087713029",
+    "fail": "PHOTO ebay 313087713029",
+    "bonus": "PHOTO ebay 313087713029"
   },
-  "status": "draft",
-  "notes": "src: crises-sources.md row 19 (name ours); NEEDS HOOK crisis.overpopulation.killLowestTwo: kill the 2 lowest-influence non-exiled survivors without the morale loss (the DSL has no rank-N scope; killSurvivor would cost morale unless noMoraleOnDeath is granted first). Single source",
+  "status": "verified",
+  "notes": "src: ebay-photo-transcription.md section 3 (Item 313087713029); official English name. NEEDS HOOK crisis.overpopulation.killLowestTwo: kill the 2 lowest-influence non-exiled survivors without the morale loss",
   "tags": [
-    "name-ours"
+    "name-official"
   ]
 }

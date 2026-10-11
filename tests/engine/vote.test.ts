@@ -79,15 +79,18 @@ describe('callVote and castVotes', () => {
     expect(result(cast(open, { s1: true, s2: false, s3: false })).exiled).toBe(false)
   })
 
-  it('VOTE-007 a tie with the first seat unable to vote is broken by the next eligible seat clockwise (10 R16.4 over the checklist line)', () => {
+  it('VOTE-007 a tie is still broken by the first player when that seat is exiled and cannot vote (digest General, R p4)', () => {
     let s = exile(fourSeats(), 's1') // s1 holds the token but is exiled; it may still call the vote
     const open = call(s, 's3').state
     expect((open.pending.context.data as { eligible: string[] }).eligible).toEqual(['s2', 's3', 's4'])
     // 3 eligible seats cannot tie; drop one more voter by exiling s4 as well for a 2-voter table
     s = exile(exile(fourSeats(), 's1'), 's4')
     const two = call(s, 's3').state
-    const r = cast(two, { s2: true, s3: false })
-    expect(result(r)).toMatchObject({ yes: 1, no: 1, tiebreakBy: 's2', exiled: true })
+    expect((two.pending.context.data as { tiebreakSeat?: string }).tiebreakSeat).toBe('s1')
+    expect(result(cast(two, { s2: true, s3: false, s1: true }))).toMatchObject({ yes: 1, no: 1, tiebreakBy: 's1', exiled: true })
+    expect(result(cast(two, { s2: true, s3: false, s1: false }))).toMatchObject({ yes: 1, no: 1, tiebreakBy: 's1', exiled: false })
+    expect(result(cast(two, { s2: true, s3: false }))).toMatchObject({ tiebreakBy: 's1', exiled: false }) // no answer from the first player = no
+    expect(voteForecastFor(s, 's3').tiebreakBy).toBe('s1')
   })
 
   it('VOTE-008 ballots stay secret until cast: no view carries them, VotesCast then shows everyone\'s answer', () => {
