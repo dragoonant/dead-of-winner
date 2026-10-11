@@ -1,0 +1,42 @@
+{
+ "alexis-grey": {
+  "file": "alexis-grey.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "andrew-evans": {
+  "file": "andrew-evans.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "annaleigh-chan": {
+  "file": "annaleigh-chan.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "arthur-thurston": {
+  "file": "arthur-thurston.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "ashley-ross": {
+  "file": "ashley-ross.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "bev-russell": {
+  "file": "bev-russell.glb",
+  "heightIn": 1.2,
+  "tris": 6156
+ },
+ "brandon-kane": {
+  "file": "brandon-kane.glb",
+  "heightIn": 1.2,
+  "tris": 6155
+ },
+ "forest-plum": {
+  "file": "forest-plum.glb",
+  "heightIn": 1.15,
+  "tris": 6155
+ }
+}
