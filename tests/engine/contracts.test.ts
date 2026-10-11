@@ -207,6 +207,22 @@ describe('view', () => {
     expect(view(s, 's1').pending).toBe(s.pending)
     expect(view(s, 's3').pending).toBe(s.pending)
   })
+  it('VIEW-021 an addressee’s pending continuation never carries the recorded answers (Gambling antes name other seats’ hand cards)', () => {
+    const s = fixture()
+    // s2 antes c:3 first; s1 is now asked, and the suspended work records s2's answer
+    s.pending = {
+      id: 'd:4', seat: 's1', kind: 'effectChoice', window: 'crossroads', canPass: false,
+      context: { data: { code: 'effectChoice', cont: { jobs: [{ t: 'run', work: [{ node: { code: 'crossroads.gambling.ante' }, idx: 0, answers: ['c:3', 'pass'] }], rc: { sourceId: 'xr.gambling', sourceKind: 'crossroads' } }, { t: 'fire', desc: {}, rc: {}, answers: ['c:4'] }] } } },
+      options: [{ id: 'pass', label: 'Keep the rest', action: { type: 'effectChoice', decisionId: 'd:4', seat: 's1', optionId: 'pass' } }],
+    } as unknown as PendingDecision
+    expect(hiddenIdsFor(s, 's1')).toContain('c:3')
+    const text = serializeView(view(s, 's1'))
+    expect(text.includes('"c:3"')).toBe(false)
+    expect(text.includes('"c:4"')).toBe(false)
+    expect(text.includes('crossroads.gambling.ante')).toBe(true) // the nodes stay for the client
+    // the engine's own state keeps the answers it needs to resume
+    expect(JSON.stringify(s.pending).includes('"c:3"')).toBe(true)
+  })
   it('CONTRACT-015 (VIEW-019) secret-objective effects and unrevealed removals stay private until the recap', () => {
     const s = fixture()
     s.effects = [

@@ -138,6 +138,23 @@ export function redactPending(pd: PendingDecision): PendingDecision {
   return { id: pd.id, seat: pd.seat, kind: pd.kind, window: pd.window, context, canPass: pd.canPass, redacted: true }
 }
 
+/**
+ * The suspended-effect continuation (`context.data.cont`) records the answers given so far, in every seat's turn (Gambling antes: each
+ * seat's offered hand cards). The addressee needs the nodes (the vote model reads them) but never the engine's recorded answers, which
+ * can name another seat's hidden cards (VIEW-021).
+ */
+function scrubCont(pd: PendingDecision): PendingDecision {
+  const data = pd.context.data as { cont?: { jobs?: unknown[] } } | undefined
+  if (!data?.cont?.jobs) return pd
+  const jobs = data.cont.jobs.map((j) => {
+    const job = j as { t?: string; work?: { answers?: string[] }[]; answers?: string[] }
+    if (job.t === 'run' && Array.isArray(job.work)) return { ...job, work: job.work.map((w) => ({ ...w, answers: [] })) }
+    if (job.t === 'fire') return { ...job, answers: [] }
+    return job
+  })
+  return { ...pd, context: { ...pd.context, data: { ...data, cont: { ...data.cont, jobs } } } } as PendingDecision
+}
+
 export function recap(state: GameState): GameRecap {
   const secretObjectives: GameRecap['secretObjectives'] = {}
   const hands: GameRecap['hands'] = {}
@@ -193,7 +210,7 @@ export function view(state: GameState, seatId: SeatId): SeatView {
   // effects: public ones plus the viewer's own private (secret/exiled objective) ones
   const effects = ended ? state.effects : state.effects.filter((e) => !isPrivateEffect(e) || e.ownerSeat === seatId)
   // the pending decision: full for its addressee (or 'all'); a public stub for everyone else
-  const pending = ended || state.pending.seat === 'all' || state.pending.seat === seatId ? state.pending : redactPending(state.pending)
+  const pending = ended ? state.pending : state.pending.seat === 'all' || state.pending.seat === seatId ? scrubCont(state.pending) : redactPending(state.pending)
 
   const held = state.crossroads.held
   const crossroads: CrossroadsView = {

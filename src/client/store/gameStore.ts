@@ -104,11 +104,17 @@ export function isBotDecision(s: GameStoreState = useGameStore.getState()): bool
   const pd = s.pending
   const st = s.state
   if (!pd || !st || pd.kind === 'gameOver') return false
-  if (pd.seat === 'all') return voteEligible(pd).some((x) => isBotSeat(st, x) && s.botVotes[x] === undefined) || voteEligible(pd).every((x) => isBotSeat(st, x))
+  if (pd.seat === 'all') return ballotSeats(pd).some((x) => isBotSeat(st, x) && s.botVotes[x] === undefined) || voteEligible(pd).every((x) => isBotSeat(st, x))
   return isBotSeat(st, pd.seat)
 }
 export function voteEligible(pd: PendingDecision): SeatId[] {
   return ((pd.context.data as { eligible?: SeatId[] } | undefined)?.eligible ?? []) as SeatId[]
+}
+/** Every seat that gives a ballot answer: the eligible voters, then the exiled first player's tie-break key when there is one. */
+export function ballotSeats(pd: PendingDecision): SeatId[] {
+  const tie = tiebreakSeatOf(pd)
+  const el = voteEligible(pd)
+  return tie && !el.includes(tie) ? [...el, tie] : el
 }
 
 function pushEvents(events: readonly GameEvent[]): { seqEvents: SeqEvent[]; first: number; last: number } {
@@ -193,7 +199,7 @@ function botBallotsIn(s: GameStoreState): boolean {
   const pd = s.pending
   const st = s.state
   if (!pd || !st) return false
-  return voteEligible(pd).every((x) => !isBotSeat(st, x) || s.botVotes[x] !== undefined)
+  return ballotSeats(pd).every((x) => !isBotSeat(st, x) || s.botVotes[x] !== undefined)
 }
 
 /** Record one bot's private ballot for the open vote. When the human has already answered and still has to be sent with them, the ballot goes in now. */
@@ -226,7 +232,7 @@ export function ballotAction(human?: boolean): Action | null {
     if (tie === s.viewer && s.state.seats[tie]?.seat.kind === 'human') {
       if (mine === undefined) return null
       votes[tie] = mine
-    } else votes[tie] = s.botVotes[tie] ?? false
+    } else votes[tie] = s.botVotes[tie] ?? false // a bot first player's answer is asked of its decider by the bot driver (setBotVote), like any ballot
   }
   return { type: 'castVotes', decisionId: pd.id, seat: 'all', votes }
 }

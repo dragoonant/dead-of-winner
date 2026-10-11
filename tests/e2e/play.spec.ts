@@ -68,9 +68,12 @@ test('a full game vs three Normal bots, through UI clicks only', async ({ page }
 })
 
 test('the Objectives panel and How to play open from the top bar', async ({ page }) => {
+  // in the full parallel run the WebGL canvas starves the main thread, so the first click can wait long for a stable hit target
+  test.setTimeout(90_000)
   const errors: string[] = []
   await boot(page, errors)
-  await buttonByText(page, 'Objectives').click()
+  await expect(page.getByTestId('prompt-dock')).toBeVisible({ timeout: 60_000 }) // the opening decisions are up: the table has settled
+  await page.getByTestId('topbar-objective').click({ timeout: 60_000 })
   const obj = page.getByTestId('objective-panel')
   await expect(obj).toBeVisible()
   await expect(obj).toContainText('Main objective: We Need More Samples')

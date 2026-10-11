@@ -5,7 +5,7 @@ import { view, type Action, type PendingDecision, type SeatId } from '../../engi
 import { skipAll } from '../presentation/director'
 import { isPresentationIdle, usePresentedStore } from '../presentation/presentedStore'
 import {
-  ballotAction, dispatch, isBotDecision, isBotSeat, legalFor, setBotVote, useGameStore, voteEligible,
+  ballotAction, ballotSeats, dispatch, isBotDecision, isBotSeat, legalFor, setBotVote, useGameStore, voteEligible,
 } from '../store/gameStore'
 import { scaled, useSettingsStore } from '../store/settingsStore'
 import { getDecider } from './deciders'
@@ -58,7 +58,8 @@ export function createBotDriver(opts: BotDriverOptions = {}): BotDriver {
   async function answerVotes(pd: PendingDecision, force: boolean): Promise<void> {
     const s = useGameStore.getState()
     const st = s.state!
-    for (const seat of voteEligible(pd)) {
+    const eligible = voteEligible(pd)
+    for (const seat of ballotSeats(pd)) { // the voters, then a bot exiled first player's tie-break key
       if (!isBotSeat(st, seat) || s.botVotes[seat] !== undefined) continue
       let yes = false
       if (!force) {
@@ -71,7 +72,7 @@ export function createBotDriver(opts: BotDriverOptions = {}): BotDriver {
       if (!stillOpen(pd.id)) return
       setBotVote(pd.id, seat, yes)
       const target = (pd.context.data as { target?: SeatId } | undefined)?.target
-      if (!force && target) sayLean(seat, target, yes)
+      if (!force && target && eligible.includes(seat)) sayLean(seat, target, yes)
     }
     const cur = useGameStore.getState()
     if (!stillOpen(pd.id)) return
