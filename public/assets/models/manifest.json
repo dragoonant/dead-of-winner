@@ -42,7 +42,7 @@
  "buddy-davis": {
   "file": "buddy-davis.glb",
   "heightIn": 1.25,
-  "tris": 6155
+  "tris": 6156
  },
  "carla-thompson": {
   "file": "carla-thompson.glb",
@@ -57,7 +57,7 @@
  "david-garcia": {
   "file": "david-garcia.glb",
   "heightIn": 1.2,
-  "tris": 6155
+  "tris": 6156
  },
  "edward-white": {
   "file": "edward-white.glb",
@@ -77,7 +77,7 @@
  "gray-beard": {
   "file": "gray-beard.glb",
   "heightIn": 1.2,
-  "tris": 6156
+  "tris": 6155
  },
  "harman-brooks": {
   "file": "harman-brooks.glb",
