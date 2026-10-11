@@ -147,7 +147,8 @@ export function snowmobileTrail(acc: Acc, survivorId: SurvivorId, from: Location
   const e = acc.state.effects.find((x) => x.data?.['snowmobile'] !== undefined && x.survivorIds?.includes(survivorId))
   if (!e) return
   for (const loc of [from, to]) {
-    if (loc === 'colony') { const r = routines.addZombies(acc.state, 'colony', 1, 'crossroads'); acc.state = r.state; acc.events.push(...r.events) }
+    // an overrun kill can mint a decision (new leader, an exiled owner's placement): keep it, or the seat is left without a leader (found by the Normal bench, seed 21 game 4)
+    if (loc === 'colony') { const r = routines.addZombies(acc.state, 'colony', 1, 'crossroads'); acc.state = r.state; acc.events.push(...r.events); if (r.pending) { acc.pending = r.pending; return } }
     else {
       const l = acc.state.locations[loc]!
       const n = Math.min(1, l.capacity.noiseSpaces - l.noise)

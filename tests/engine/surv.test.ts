@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { patchLocation, patchSeat, patchSurvivor } from '../../src/engine/decks'
-import { runEffectNodes, type RunCtx } from '../../src/engine/effects'
+import { mkAcc, runEffectNodes, setRoutines, type RunCtx } from '../../src/engine/effects'
+import { snowmobileTrail } from '../../src/engine/crossroads-hooks'
+import { addZombies as realAddZombies } from '../../src/engine/zombies'
 import type { GameEvent } from '../../src/engine/events'
 import {
   addHelpless, addSurvivor, applyChooseLeader, applyExiledPlacement, changeMorale, hasFreeSpace, isExiledPlacement, killHelpless, killSurvivor,
@@ -230,5 +232,19 @@ describe('survivors', () => {
     expect(r.pending!.options!.map((o) => o.id).sort()).toEqual([`leader:${c}`, `leader:${d}`].sort())
     expect(r.state.pending).toBe(r.pending)
     for (const o of r.pending!.options!) expect(validateChooseLeader(r.state, 's1', (o.action as { survivorId: string }).survivorId)).toBeNull()
+  })
+
+  it('SURV-019 a Snowmobile trail that adds a zombie at the colony keeps the newLeader decision an overrun raises', () => {
+    const s0 = grow(base('surv-19'), 's1', 1)
+    const lead = leaderOf(s0)
+    const marked: GameState = { ...s0, effects: [{ id: 'e:1', sourceId: 'xr.the-arctic-king', sourceKind: 'crossroads', name: 'snowmobile', data: { snowmobile: { wounds: 0 } }, survivorIds: [followerOf(s0)], duration: 'game', expires: null }] as never }
+    const killed = killSurvivor(marked, lead, 'overrun')
+    setRoutines({ addZombies: (st) => ({ state: killed.state, events: killed.events, pending: killed.decision! }) })
+    try {
+      const acc = mkAcc(marked)
+      snowmobileTrail(acc, followerOf(marked), 'colony', 'colony')
+      expect(acc.pending).toMatchObject({ kind: 'newLeader', seat: 's1' })
+      expect(acc.events.filter((e) => e.type === 'SurvivorKilled')).toHaveLength(1) // it stopped at the first decision
+    } finally { setRoutines({ addZombies: realAddZombies }) }
   })
 })

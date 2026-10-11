@@ -6,6 +6,8 @@ import { CODE_HOOKS } from '../../src/engine/code-hooks'
 import type { GameState } from '../../src/engine/types'
 import { view } from '../../src/engine/view'
 import { makeColony, of, types } from './col-fixture'
+import { createGame, legalActions, step } from '../../src/engine/index'
+import { loadDefaultBundle } from '../../tools/default-bundle'
 
 const FOOD3 = ['it.food', 'it.food', 'it.food']
 
@@ -134,5 +136,20 @@ describe('objectives', () => {
     expect(hook(one, null).complete).toBe(false) // s2 still unarmed
     const both: GameState = { ...one, survivors: { ...one.survivors, 'sv.c': { ...one.survivors['sv.c']!, equipped: [w2] } } }
     expect(hook(both, null).complete).toBe(true) // s1 has a second survivor with no weapon: still complete
+  })
+
+  it('OBJ-021 a margin that is behind reads as 0 in the progress report (Leader: survivors over the next largest group), while the condition still compares the real number', () => {
+    let st = createGame({ seats: ['s1', 's2', 's3'].map((id) => ({ id, kind: 'bot' as const })), mainObjective: 'obj.main.we-need-more-samples' }, 'obj21', loadDefaultBundle()).state
+    for (let k = 0; k < 40 && st.phase === 'setup'; k++) st = step(st, legalActions(st)[0]!).state
+    let s: GameState = { ...st, seats: { ...st.seats, s1: { ...st.seats['s1']!, secretObjectiveId: 'obj.betrayal.cult-leader' } } }
+    for (const id of [...s.seats['s3']!.survivors]) s = { ...s, survivors: { ...s.survivors, [id]: { ...s.survivors[id]!, owner: 's2' } }, seats: { ...s.seats, s2: { ...s.seats['s2']!, survivors: [...s.seats['s2']!.survivors, id] }, s3: { ...s.seats['s3']!, survivors: [] } } }
+    const raw = CODE_HOOKS.objectives['rule.group-size.mostSurvivors']!(s, 's1', { margin: 1 })
+    expect(raw.parts[0]!.have).toBeLessThan(0) // the real number is behind
+    const own = ownObjectiveProgress(view(s, 's1')).own!
+    const lead = own.parts.find((p) => /next largest/.test(p.label))
+    expect(lead).toBeDefined()
+    expect(lead!.have).toBe(0)
+    for (const p of own.parts) expect(p.have, p.label).toBeGreaterThanOrEqual(0)
+    expect(own.complete).toBe(false)
   })
 })

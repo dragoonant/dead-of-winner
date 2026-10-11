@@ -222,7 +222,8 @@ export function stateFromView(v: SeatView): GameState {
 }
 
 const reportOf = (kind: ObjectiveProgressReport['kind'], objectiveId: Id, st: GoalStatus, requiresMain: boolean): ObjectiveProgressReport =>
-  ({ objectiveId, kind, complete: st.complete, requiresMain, parts: st.parts })
+  // progress is shown from zero: a margin that is behind (Leader: -1 of 1) reads as 0 (the condition itself still compares the real number)
+  ({ objectiveId, kind, complete: st.complete, requiresMain, parts: st.parts.map((p) => (p.have < 0 ? { ...p, have: 0 } : p)) })
 
 /** The main objective's parts (any viewer), or the viewer's own secret/exiled objective by id. Another seat's id before the end throws (OBJ-006). */
 export function objectiveProgressFromView(v: SeatView, objectiveId?: Id): ObjectiveProgressReport {
