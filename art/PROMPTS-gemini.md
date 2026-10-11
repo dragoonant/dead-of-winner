@@ -186,6 +186,56 @@ Create an image: a waist-up painted portrait of a mysterious woman in her 50s wi
 Create an image: a waist-up painted portrait of a square-jawed man in his 40s with a close-cropped haircut, wearing a military surplus winter parka and gloves, dog tags at his collar, a rifle held across his chest, a quiet steady stare, cold snowy ruined small town in the background with a barricade of sandbags and wrecked cars, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, portrait orientation 4:5, no text, no logos, no frame, no watermark.
 ```
 
+## Locations
+
+### police-station
+
+```
+Create an image: a wide 16:9 painted exterior of a small-town police station, snowy and abandoned, at dusk, deep snow drifts, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, no readable signs, no brand names, no text, no logos, no people, no frame, no watermark.
+```
+
+### grocery-store
+
+```
+Create an image: a wide 16:9 painted exterior of a small-town grocery store with shattered windows and an empty parking lot, snowy and abandoned, at dusk, deep snow drifts, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, no readable signs, no brand names, no text, no logos, no people, no frame, no watermark.
+```
+
+### school
+
+```
+Create an image: a wide 16:9 painted exterior of a small-town brick elementary school with a snow-buried playground, snowy and abandoned, at dusk, deep snow drifts, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, no readable signs, no brand names, no text, no logos, no people, no frame, no watermark.
+```
+
+### library
+
+```
+Create an image: a wide 16:9 painted exterior of a small-town stone public library with tall steps and dark windows, snowy and abandoned, at dusk, deep snow drifts, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, no readable signs, no brand names, no text, no logos, no people, no frame, no watermark.
+```
+
+### hospital
+
+```
+Create an image: a wide 16:9 painted exterior of a small-town hospital with an emergency entrance canopy and abandoned ambulances, snowy and abandoned, at dusk, deep snow drifts, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, no readable signs, no brand names, no text, no logos, no people, no frame, no watermark.
+```
+
+### gas-station
+
+```
+Create an image: a wide 16:9 painted exterior of a roadside gas station with a collapsed canopy and rusted pumps, snowy and abandoned, at dusk, deep snow drifts, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, no readable signs, no brand names, no text, no logos, no people, no frame, no watermark.
+```
+
+### colony
+
+```
+Create an image: a wide 16:9 painted exterior of a fortified survivor colony built in an old building compound, with barricades of scrap metal, sandbags and wooden palisades, a few warm lit windows and smoke from a chimney, snowy and abandoned, at dusk, deep snow drifts, dramatic overcast light, painterly realistic illustration, desaturated cold winter palette, grounded and gritty, no readable signs, no brand names, no text, no logos, no people, no frame, no watermark.
+```
+
+## Title art
+
+```
+Create an image: a wide 16:9 painted scene of a fortified winter colony at night, tall barricade walls and watchtowers, a few survivors silhouetted against orange firelight, heavy snow falling, a handful of faint zombie silhouettes shambling far away in the dark, painterly realistic illustration, desaturated cold winter palette with warm fire glow, grounded and gritty, cinematic, no text, no logos, no frame, no watermark.
+```
+
 ## Rejected first attempts and retries
 
 ### john-price (retry 1: legible lettering in the background)
