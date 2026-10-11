@@ -1,0 +1,1635 @@
+{
+  "_comment": "Owned by the audio task. All prompts and lines are original wording. `npx tsx tools/audio-build-manifest.ts` merges new items in (never overwrites existing ones); `npx tsx tools/gen-audio.ts` generates missing files into public/audio/<id>.mp3 (music into public/audio/music/<id>.mp3). Mirrored by src/client/audio/manifest.ts.",
+  "voices": {
+    "narrator": {
+      "name": "Jacob Eder",
+      "voiceId": "0c14Fsfhfnl8M9pCB5pf",
+      "role": "Narrator (chosen): melancholic, bleak, defeated yet authoritative",
+      "settings": {
+        "stability": 0.62,
+        "similarity_boost": 0.8,
+        "style": 0.12,
+        "speed": 0.93
+      }
+    },
+    "alt-josh": {
+      "name": "Josh",
+      "voiceId": "GttLHvAanVsdyJN0LBjc",
+      "role": "Narrator alternative: distant, cold and clear",
+      "settings": {
+        "stability": 0.62,
+        "similarity_boost": 0.8,
+        "style": 0.12,
+        "speed": 0.93
+      }
+    },
+    "alt-remmy": {
+      "name": "Remmy",
+      "voiceId": "Z7tQdvLS6QRQRjTLVY3x",
+      "role": "Narrator alternative: dispirited, solemn and tired",
+      "settings": {
+        "stability": 0.62,
+        "similarity_boost": 0.8,
+        "style": 0.12,
+        "speed": 0.93
+      }
+    },
+    "hardcase": {
+      "name": "Katie",
+      "voiceId": "xbiBdmKZawukYRB1IuEc",
+      "role": "Hard Case: lower register, serious, husky",
+      "settings": {
+        "stability": 0.55,
+        "similarity_boost": 0.8,
+        "style": 0.2,
+        "speed": 1
+      }
+    },
+    "optimist": {
+      "name": "Will",
+      "voiceId": "bIHbv24MWmeRgasZH58o",
+      "role": "Optimist: relaxed, conversational tenor",
+      "settings": {
+        "stability": 0.42,
+        "similarity_boost": 0.78,
+        "style": 0.3,
+        "speed": 1.05
+      }
+    },
+    "quartermaster": {
+      "name": "Evelyn",
+      "voiceId": "XEoBW4iDmiawQP72xnAF",
+      "role": "Quartermaster: restrained, composed, even",
+      "settings": {
+        "stability": 0.66,
+        "similarity_boost": 0.8,
+        "style": 0.1,
+        "speed": 0.96
+      }
+    }
+  },
+  "voiceModelId": "eleven_flash_v2_5",
+  "music": {
+    "endpoint": "/v1/music",
+    "modelId": "music_v1",
+    "forceInstrumental": true,
+    "outputFormat": "mp3_44100_128"
+  },
+  "items": [
+    {
+      "id": "amb-wind-loop",
+      "kind": "sfx",
+      "group": "ambience",
+      "prompt": "A steady cold winter wind blowing across open snow: a low continuous howl with soft gusts and a fine hiss of blown snow, even and seamless, no music, no voices, no birds",
+      "durationSeconds": 10,
+      "promptInfluence": 0.6,
+      "loop": true
+    },
+    {
+      "id": "amb-generator-loop",
+      "kind": "sfx",
+      "group": "ambience",
+      "prompt": "A diesel generator humming far away across the snow: a muffled steady low engine drone with a faint rhythmic put-put, even and seamless, no music, no voices",
+      "durationSeconds": 8,
+      "promptInfluence": 0.6,
+      "loop": true
+    },
+    {
+      "id": "amb-fire-loop",
+      "kind": "sfx",
+      "group": "ambience",
+      "prompt": "A cozy fire burning in a stove, close up: a constant dense bed of small soft crackles and hissing embers with a gentle warm flame roar, evenly continuous, no loud pops, no silence, seamless, no music, no voices",
+      "durationSeconds": 8,
+      "promptInfluence": 0.6,
+      "loop": true
+    },
+    {
+      "id": "amb-moans-loop",
+      "kind": "sfx",
+      "group": "ambience",
+      "prompt": "A far-off chorus of undead moans carried on the winter wind: many distant low hollow groans overlapping, ghostly and faint, even and seamless, no music, no screams, no words",
+      "durationSeconds": 10,
+      "promptInfluence": 0.55,
+      "loop": true
+    },
+    {
+      "id": "snow-creak",
+      "kind": "sfx",
+      "group": "ambience",
+      "prompt": "Boots stepping slowly on deep frozen snow: a dry squeaky creak and crunch of packed snow, two slow steps, no music, no voices",
+      "durationSeconds": 1.2,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "dice-3",
+      "kind": "sfx",
+      "group": "dice",
+      "prompt": "Three wooden dice shaken in a hand then thrown onto a hard wooden table: a quick rattle, then a clatter and tumble to a stop, no music, no voices",
+      "durationSeconds": 1.3,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "dice-4",
+      "kind": "sfx",
+      "group": "dice",
+      "prompt": "Four wooden dice shaken in a hand then thrown onto a hard wooden table: a quick rattle, then a clatter and tumble to a stop, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "dice-5",
+      "kind": "sfx",
+      "group": "dice",
+      "prompt": "Five wooden dice shaken in a cupped hand then thrown onto a hard wooden table: a longer rattle, then a busy clatter and tumble to a stop, no music, no voices",
+      "durationSeconds": 1.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "dice-exposure",
+      "kind": "sfx",
+      "group": "dice",
+      "prompt": "One large heavy die rolling slowly on a wooden table: a deep wooden knocking tumble that slows and settles with a final low thud, ominous, no music, no voices",
+      "durationSeconds": 1.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "dice-single",
+      "kind": "sfx",
+      "group": "dice",
+      "prompt": "One small die dropped and skittering a short way across a wooden table before it stops, no music, no voices",
+      "durationSeconds": 0.8,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "food-bump",
+      "kind": "sfx",
+      "group": "dice",
+      "prompt": "A small wooden token tapped down onto a cardboard game board: one short soft knock and a faint cardboard tick, no music, no rattle",
+      "durationSeconds": 0.5,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "card-draw",
+      "kind": "sfx",
+      "group": "cards",
+      "prompt": "One playing card slid off the top of a deck and picked up: a soft paper swish and a light flick, no music, no voices",
+      "durationSeconds": 0.6,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "card-flip",
+      "kind": "sfx",
+      "group": "cards",
+      "prompt": "A single playing card flipped face up onto a felt table: a crisp short paper snap and a soft slap, no music, no voices",
+      "durationSeconds": 0.5,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "card-shuffle",
+      "kind": "sfx",
+      "group": "cards",
+      "prompt": "A deck of cards riffle-shuffled: a quick fluttering paper riffle and a tidy squaring tap at the end, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "card-waste",
+      "kind": "sfx",
+      "group": "cards",
+      "prompt": "A card tossed onto a discard pile: a light paper flick and a soft slap on a stack of cards, no music, no voices",
+      "durationSeconds": 0.6,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "card-slide-crisis",
+      "kind": "sfx",
+      "group": "cards",
+      "prompt": "A single card slid face down across a wooden table and stopping under a pile: a long soft paper scrape and a tiny tap, no music, no voices",
+      "durationSeconds": 0.9,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "card-equip",
+      "kind": "sfx",
+      "group": "cards",
+      "prompt": "A leather strap buckled and a small metal clip snapping shut as gear is equipped: one crisp metallic click and a leather creak, no music, no voices",
+      "durationSeconds": 0.7,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "search-police",
+      "kind": "sfx",
+      "group": "search",
+      "prompt": "Someone rummaging through a metal police locker: a steel door rattling open, clinking keys and handcuffs, hands searching a metal box, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "search-grocery",
+      "kind": "sfx",
+      "group": "search",
+      "prompt": "Hands rummaging among grocery shelves: rustling plastic packaging, clinking tin cans, a glass jar sliding, cardboard scraping, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "search-school",
+      "kind": "sfx",
+      "group": "search",
+      "prompt": "Rummaging through a school classroom: a wooden desk drawer scraping open, pencils rolling, a metal locker door rattling, paper shuffling, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "search-library",
+      "kind": "sfx",
+      "group": "search",
+      "prompt": "Pages of old books and loose papers shuffled and flipped through: dry paper rustling, a heavy book thudding onto a wooden shelf, quiet, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "search-hospital",
+      "kind": "sfx",
+      "group": "search",
+      "prompt": "Rummaging through a hospital supply cabinet: a metal drawer sliding, plastic pill bottles rattling, rubber gloves snapping, glass vials clinking, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "search-gas",
+      "kind": "sfx",
+      "group": "search",
+      "prompt": "A gas station fuel pump handle lifted and its nozzle clacking back: a squeaky metal lever, fuel sloshing in a jerrycan, a heavy rubber hose dragging, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "barricade",
+      "kind": "sfx",
+      "group": "actions",
+      "prompt": "A hammer driving nails into wooden planks to barricade a door: three quick hard hammer blows on nails with wood creaking, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "barricade-break",
+      "kind": "sfx",
+      "group": "actions",
+      "prompt": "A wooden barricade splintering as it is smashed from outside: loud cracking planks, nails shrieking, wood crashing down, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "attract",
+      "kind": "sfx",
+      "group": "actions",
+      "prompt": "A glass bottle thrown and smashing on a distant street: a short whoosh, a clean glass shatter and tinkling shards, no music, no voices",
+      "durationSeconds": 1.2,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "clean-waste",
+      "kind": "sfx",
+      "group": "actions",
+      "prompt": "Heavy rubbish bags dragged across snowy ground: plastic bags rustling and scraping, then a dull thump as they are dropped, no music, no voices",
+      "durationSeconds": 1.4,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "melee-thud",
+      "kind": "sfx",
+      "group": "combat",
+      "prompt": "A baseball bat swung hard into something solid: a short whoosh then one dull heavy thud, no music, no voices, no screaming",
+      "durationSeconds": 0.8,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "gunshot",
+      "kind": "sfx",
+      "group": "combat",
+      "prompt": "A loud close single pistol gunshot outdoors: one very sharp, powerful, full-volume bang with a short echo rolling away over snow, no music, no voices, no reloading",
+      "durationSeconds": 1.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "zombie-drop",
+      "kind": "sfx",
+      "group": "combat",
+      "prompt": "A heavy body collapsing onto frozen ground: a dull heavy fall, a slump and a soft rattle of clothing, no music, no voices",
+      "durationSeconds": 1.2,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "zombie-growl",
+      "kind": "sfx",
+      "group": "combat",
+      "prompt": "A single low guttural undead groan and wet rasp, hollow and slow, no words, no music, no screaming",
+      "durationSeconds": 1.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "attack-scuffle",
+      "kind": "sfx",
+      "group": "survivor attack",
+      "prompt": "Two people scuffling and shoving: quick cloth scrapes, boots shuffling on a floor, a hard grunt of effort and a thump against a wall, no words, no music",
+      "durationSeconds": 1.2,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "card-snatch",
+      "kind": "sfx",
+      "group": "survivor attack",
+      "prompt": "A card snatched sharply out of a hand: a sudden quick paper snap and a short startled breath, no words, no music",
+      "durationSeconds": 0.6,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "wound-grunt",
+      "kind": "sfx",
+      "group": "exposure",
+      "prompt": "A man's short sharp grunt of pain as he is hit, a pained exhale through the teeth, no words, no music",
+      "durationSeconds": 0.7,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "frostbite-shiver",
+      "kind": "sfx",
+      "group": "exposure",
+      "prompt": "A person shivering violently from cold: teeth chattering rapidly, ragged shaky breaths, cloth trembling, no words, no music",
+      "durationSeconds": 1.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "bite-scream",
+      "kind": "sfx",
+      "group": "exposure",
+      "prompt": "A short terrified scream of a woman cut off sharply, then a choked gasp, no words, no music",
+      "durationSeconds": 1.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "heartbeat",
+      "kind": "sfx",
+      "group": "exposure",
+      "prompt": "A slow heavy human heartbeat: four deep muffled thumps, tense and ominous, no music, no voices",
+      "durationSeconds": 2.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "survivor-death",
+      "kind": "sfx",
+      "group": "exposure",
+      "prompt": "A short pained cry of a man collapsing and a heavy fall onto snow, no words, no music",
+      "durationSeconds": 1.8,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "crisis-bell",
+      "kind": "sfx",
+      "group": "colony",
+      "prompt": "A single cold iron bell tolling slowly: one deep strike with a long ringing decay across a frozen valley, no music, no voices",
+      "durationSeconds": 2.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "morale-drop",
+      "kind": "sfx",
+      "group": "colony",
+      "prompt": "A low cello note sinking downward in pitch with a cold wind gust, a sorrowful falling sweep, no drums, no voices",
+      "durationSeconds": 2.2,
+      "promptInfluence": 0.55
+    },
+    {
+      "id": "starvation-growl",
+      "kind": "sfx",
+      "group": "colony",
+      "prompt": "A hungry stomach growling loudly: a long low gurgling rumble in a quiet room, no words, no music",
+      "durationSeconds": 1.8,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "zombies-gate",
+      "kind": "sfx",
+      "group": "colony",
+      "prompt": "Zombies arriving at a gate: dull dragging footsteps in snow, many hands slapping and rattling a chain-link gate, low groaning, no music, no screams",
+      "durationSeconds": 2.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "overrun-crash",
+      "kind": "sfx",
+      "group": "colony",
+      "prompt": "A gate crashing open under a crowd of bodies: metal buckling and a loud crash, followed by a distant scream, no music",
+      "durationSeconds": 2.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "round-tick",
+      "kind": "sfx",
+      "group": "colony",
+      "prompt": "A heavy mechanical clock tick: one deep wooden clunk of a counter moving one notch, short and dry, no music, no voices",
+      "durationSeconds": 0.6,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "vote-tick",
+      "kind": "sfx",
+      "group": "social",
+      "prompt": "One slow clock tick, a single ominous tock in a silent room, no music, no voices",
+      "durationSeconds": 0.6,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "thumbs-clack",
+      "kind": "sfx",
+      "group": "social",
+      "prompt": "Several wooden pegs clacking down onto a table all at once: a sharp short staccato clatter of wood on wood, no music, no voices",
+      "durationSeconds": 0.8,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "exile-door",
+      "kind": "sfx",
+      "group": "social",
+      "prompt": "A heavy wooden door slammed shut hard in a cold hall with an iron bolt sliding across: a loud slam and a metal bolt clunk, no music, no voices",
+      "durationSeconds": 1.5,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "request-knock",
+      "kind": "sfx",
+      "group": "social",
+      "prompt": "Three firm knocks with a knuckle on a wooden door, knock knock knock, quiet room, no music, no voices",
+      "durationSeconds": 1.2,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "ui-click",
+      "kind": "sfx",
+      "group": "interface",
+      "prompt": "A soft single click of a wooden game piece placed on a table, very subtle and short, no music, no voices",
+      "durationSeconds": 0.5,
+      "promptInfluence": 0.65
+    },
+    {
+      "id": "objective-complete",
+      "kind": "sfx",
+      "group": "interface",
+      "prompt": "A short warm hopeful bell chime in a cold room: two soft glass bell notes rising, gentle decay, no music, no voices",
+      "durationSeconds": 2,
+      "promptInfluence": 0.55
+    },
+    {
+      "id": "footsteps-snow",
+      "kind": "sfx",
+      "group": "interface",
+      "prompt": "Three quick footsteps crunching through snow, boots on frozen powder, no music, no voices",
+      "durationSeconds": 1.2,
+      "promptInfluence": 0.6
+    },
+    {
+      "id": "nar-round-a",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "Another day in the snow. The colony holds, for now."
+    },
+    {
+      "id": "nar-round-b",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "A new round begins. The cold has not moved on."
+    },
+    {
+      "id": "nar-round-last",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "The last round. Whatever happens now, happens now."
+    },
+    {
+      "id": "nar-crisis-a",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "The colony meets a crisis. Hand in what you can spare."
+    },
+    {
+      "id": "nar-crisis-b",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "Something has gone wrong again. Cards go in, face down."
+    },
+    {
+      "id": "nar-crisis-ok",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "The colony weathers it. Barely."
+    },
+    {
+      "id": "nar-crisis-fail",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "It was not enough. The colony pays for it."
+    },
+    {
+      "id": "nar-gate",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "The dead have reached the gate."
+    },
+    {
+      "id": "nar-starve",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "The stores run dry, and the colony goes hungry."
+    },
+    {
+      "id": "nar-morale-low",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "Morale is almost gone. People are watching each other."
+    },
+    {
+      "id": "nar-vote-called",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "A vote has been called. Someone here is not trusted."
+    },
+    {
+      "id": "nar-vote-count",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "Three. Two. One."
+    },
+    {
+      "id": "nar-exiled",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "Exiled. The door closes behind them, and the cold takes the rest."
+    },
+    {
+      "id": "nar-spared",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "Not enough votes. They stay, and they will remember."
+    },
+    {
+      "id": "nar-objective-complete",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "The colony's goal is met. Hold on to it."
+    },
+    {
+      "id": "nar-colony-falls",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "The colony falls. The winter takes everyone who stayed."
+    },
+    {
+      "id": "nar-end-win",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "You made it through the winter, and you were not alone."
+    },
+    {
+      "id": "nar-end-lose",
+      "kind": "voice",
+      "group": "narrator",
+      "voice": "narrator",
+      "text": "Some people left the colony alive. You were not among them."
+    },
+    {
+      "id": "nar-obj-x-weeks-of-darkness",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Eight weeks of darkness. Outlast the winter, and be still standing when the last day ends."
+    },
+    {
+      "id": "nar-obj-kill-them",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Kill them. Thin out the dead until only a handful are left walking."
+    },
+    {
+      "id": "nar-obj-find-a-cure",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Find a cure. Gather medicine, enough for everyone who set out, and bring it home."
+    },
+    {
+      "id": "nar-obj-home-sweet-home",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Home sweet home. Board up the colony, and every other place, until nothing gets through."
+    },
+    {
+      "id": "nar-obj-raiding-party",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Raiding party. Strip two other places bare before the cold takes them."
+    },
+    {
+      "id": "nar-obj-leave-it-all-behind",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Leave it all behind. Arm everyone, stock the food, and be ready to run."
+    },
+    {
+      "id": "nar-obj-stockpile",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Stockpile. Fill the supply, bar the doors, and hoard enough to last."
+    },
+    {
+      "id": "nar-obj-winter-has-come",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Winter has come. Keep feeding the fire, or the cold will finish this."
+    },
+    {
+      "id": "nar-obj-too-many-mouths",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "Too many mouths. Five rounds. Hold out for five rounds."
+    },
+    {
+      "id": "nar-obj-we-need-more-samples",
+      "kind": "voice",
+      "group": "objective intro",
+      "voice": "narrator",
+      "text": "We need more samples. Every dead one may carry something worth taking."
+    },
+    {
+      "id": "sample-narrator",
+      "kind": "voice",
+      "group": "narrator audition",
+      "voice": "narrator",
+      "text": "Another night. The fire is low, the gate is thin, and someone in this room is lying."
+    },
+    {
+      "id": "sample-alt-josh",
+      "kind": "voice",
+      "group": "narrator audition",
+      "voice": "alt-josh",
+      "text": "Another night. The fire is low, the gate is thin, and someone in this room is lying."
+    },
+    {
+      "id": "sample-alt-remmy",
+      "kind": "voice",
+      "group": "narrator audition",
+      "voice": "alt-remmy",
+      "text": "Another night. The fire is low, the gate is thin, and someone in this room is lying."
+    },
+    {
+      "id": "vo-xr-annaleigh-chan",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.annaleigh-chan",
+      "text": "Annaleigh is in the old holding block with the cell keys in her hand and one name she cannot stop repeating. What she does with the next few minutes will tell the colony what kind of person she turned out to be."
+    },
+    {
+      "id": "vo-xr-arthur-thurston",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.arthur-thurston",
+      "text": "The feral kids have trailed Arthur for blocks, a ragged line of faces with nothing behind the eyes. They close in around the cart he is guarding, and he knows how this ends whichever way he leans."
+    },
+    {
+      "id": "vo-xr-bev-russell",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.bev-russell",
+      "text": "Bev stops at the school gate without meaning to, and the playground swing is still moving. Someone small is waiting in the shadow of the stairwell, and she has to decide what she can live with before she takes another step."
+    },
+    {
+      "id": "vo-xr-bitter-cold-night",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.bitter-cold-night",
+      "text": "Ice has sealed the seams of the doorframe and the wind keeps trying every gap. Behind the door a small group has a stove barely warm enough to matter, and outside a half-frozen traveller is scratching at the wood."
+    },
+    {
+      "id": "vo-xr-book-of-the-dead",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.book-of-the-dead",
+      "text": "Inside a locked case at the back of the library sits a huge hand-lettered volume with a cracked spine. It is heavy enough to be a weapon and odd enough to be a treasure, and you only have room in your pack for one idea of what it is for."
+    },
+    {
+      "id": "vo-xr-brian-lee",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.brian-lee",
+      "text": "Brian pins a sketched floor plan to the wall and calls the whole colony to look. He says the colony has been scraping by on bad luck, and that tonight it can start taking what it needs."
+    },
+    {
+      "id": "vo-xr-carla-thompson",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.carla-thompson",
+      "text": "The house Carla is combing is not as empty as it looked from the road. Something in a stained coat paces the upper landing, one hand resting on a holster, and its head turns slowly toward the stairs."
+    },
+    {
+      "id": "vo-xr-christmas",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.christmas",
+      "text": "Someone has tied scraps of foil to a coat rack and called it a tree. When an old cook asks if the stores can spare a real meal for one evening, the whole hall holds its breath."
+    },
+    {
+      "id": "vo-xr-crazed-survivor",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.crazed-survivor",
+      "text": "A collapsed lean-to rattles and a gaunt woman bursts from it with a length of rebar and nothing in her eyes that you can reason with. She is guarding a stash under the planks."
+    },
+    {
+      "id": "vo-xr-david-garcia",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.david-garcia",
+      "text": "David has audited the stores three nights running, and the numbers refuse to close. Either someone is quietly pocketing rations, or he has made a mistake in front of everyone, and he has to commit to one of those stories now."
+    },
+    {
+      "id": "vo-xr-heads-up",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.heads-up",
+      "text": "The evidence room has two containers still sealed: a battered cooler and a steel drum. Whichever one you pry open, something inside is going to scream back at you."
+    },
+    {
+      "id": "vo-xr-hunted",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.hunted",
+      "text": "The wound is too clean to be a bite. It is a burn across the ribs where a bullet skimmed past, and the tracks in the snow beyond the hedge belong to boots, not shuffling feet. Somebody is out there, patient and warm, and they have chosen the colony as their quarry."
+    },
+    {
+      "id": "vo-xr-jenny-clark",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.jenny-clark",
+      "text": "On the long road a lone shape is limping forward with a loose crowd of the dead behind her. The lookout knows the walk before the face, and the rifle is already up."
+    },
+    {
+      "id": "vo-xr-little-survivors",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.little-survivors",
+      "text": "Tiny boot prints cross the stairwell dust and end at a boiler room door. When the survivor calls out, a handful of faces appear behind a stack of crates, quiet and watchful, as if they have practised hiding for a long time."
+    },
+    {
+      "id": "vo-xr-lovers-quarrel",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.lovers-quarrel",
+      "text": "Two people who shared a tent for weeks start trading the kind of accusations that cannot be unsaid, in the open, with the whole block listening. One of them will have to give ground before the dead decide for them."
+    },
+    {
+      "id": "vo-xr-maude",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.maude",
+      "text": "The freezer aisle still hums with cold, and one stocked shelf looks untouched since the last delivery. A faded hand-painted sign above it says take only what you need, and for some reason it makes the survivor think of Maude."
+    },
+    {
+      "id": "vo-xr-old-divisions",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.old-divisions",
+      "text": "Two shifts collide in the supply corridor and a shoving match turns ugly when one of them starts listing who does not belong here. Voices rally behind him from the back, and for a moment the colony looks ready to split along lines the world already erased. It falls to the table to say what kind of place this will be."
+    },
+    {
+      "id": "vo-xr-outbreak",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.outbreak",
+      "text": "Marlow stopped eating on Tuesday, and by Friday there is a blistered rash climbing his arms and a smell in the dormitory that people are trying not to name. Two cots away, a child has started to cough. The table must say what happens to the ones who cannot defend themselves."
+    },
+    {
+      "id": "vo-xr-outsiders",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.outsiders",
+      "text": "A rusted truck idles at the gate with its lights off, its bed crowded with silent faces under blankets. The driver steps down slowly, hands open, and asks whether there is room for a winter."
+    },
+    {
+      "id": "vo-xr-rascals",
+      "kind": "voice",
+      "group": "crossroads",
+      "voice": "narrator",
+      "card": "xr.rascals",
+      "text": "In a corner of the hospital activity room waits a karaoke machine, a crate of board games and three working car batteries. It is enough to put on a real party for the colony, if you do not mind the noise."
+    },
+    {
+      "id": "pv-hardcase-turn-start-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "turn.start",
+      "template": "My turn. Stay out of the way.",
+      "text": "My turn. Stay out of the way."
+    },
+    {
+      "id": "pv-hardcase-turn-start-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "turn.start",
+      "template": "Gate first. Talk later.",
+      "text": "Gate first. Talk later."
+    },
+    {
+      "id": "pv-hardcase-crisis-prevented-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "crisis.prevented",
+      "template": "Good. Don't make me count on you twice.",
+      "text": "Good. Don't make me count on you twice."
+    },
+    {
+      "id": "pv-hardcase-crisis-prevented-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "crisis.prevented",
+      "template": "Held. Barely. Moving on.",
+      "text": "Held. Barely. Moving on."
+    },
+    {
+      "id": "pv-hardcase-crisis-failed-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "crisis.failed",
+      "template": "Short. Someone is playing us.",
+      "text": "Short. Someone is playing us."
+    },
+    {
+      "id": "pv-hardcase-crisis-failed-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "crisis.failed",
+      "template": "That's not bad luck. That's a hand on the scale.",
+      "text": "That's not bad luck. That's a hand on the scale."
+    },
+    {
+      "id": "pv-hardcase-vote-called-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "vote.called",
+      "template": "About time someone put {seat} up.",
+      "text": "About time someone put them up."
+    },
+    {
+      "id": "pv-hardcase-vote-called-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "vote.called",
+      "template": "{seat} on the block. I'm listening.",
+      "text": "That one on the block. I'm listening."
+    },
+    {
+      "id": "pv-hardcase-vote-lean-yes-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "vote.lean.yes",
+      "template": "{seat} goes out. Yes.",
+      "text": "That one goes out. Yes."
+    },
+    {
+      "id": "pv-hardcase-vote-lean-yes-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "vote.lean.yes",
+      "template": "I've seen enough of {seat}. Yes.",
+      "text": "I've seen enough of them. Yes."
+    },
+    {
+      "id": "pv-hardcase-vote-lean-no-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "vote.lean.no",
+      "template": "No. {seat} hasn't earned the boot yet.",
+      "text": "No. That one hasn't earned the boot yet."
+    },
+    {
+      "id": "pv-hardcase-vote-lean-no-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "vote.lean.no",
+      "template": "Not {seat}. Not on this. No.",
+      "text": "Not them. Not on this. No."
+    },
+    {
+      "id": "pv-hardcase-request-give-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "request.give",
+      "template": "Take it, {seat}. Don't waste it.",
+      "text": "Take it, friend. Don't waste it."
+    },
+    {
+      "id": "pv-hardcase-request-give-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "request.give",
+      "template": "One time, {seat}. Make it count.",
+      "text": "One time, friend. Make it count."
+    },
+    {
+      "id": "pv-hardcase-request-decline-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "request.decline",
+      "template": "No, {seat}.",
+      "text": "No, friend."
+    },
+    {
+      "id": "pv-hardcase-request-decline-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "request.decline",
+      "template": "Find it elsewhere, {seat}.",
+      "text": "Find it elsewhere, friend."
+    },
+    {
+      "id": "pv-hardcase-exposure-bite-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "exposure.bite",
+      "template": "{survivor} is down. Keep the line tight.",
+      "text": "One of ours is down. Keep the line tight."
+    },
+    {
+      "id": "pv-hardcase-exposure-bite-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "exposure.bite",
+      "template": "Lost {survivor}. Nobody cry, work.",
+      "text": "Lost one of ours. Nobody cry, work."
+    },
+    {
+      "id": "pv-hardcase-morale-low-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "morale.low",
+      "template": "We're nearly dead. Act like it matters.",
+      "text": "We're nearly dead. Act like it matters."
+    },
+    {
+      "id": "pv-hardcase-morale-low-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "morale.low",
+      "template": "One more bad round and it's over. Think.",
+      "text": "One more bad round and it's over. Think."
+    },
+    {
+      "id": "pv-hardcase-game-won-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "game.won",
+      "template": "Still breathing. Good enough.",
+      "text": "Still breathing. Good enough."
+    },
+    {
+      "id": "pv-hardcase-game-won-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "game.won",
+      "template": "We lived. Don't get soft.",
+      "text": "We lived. Don't get soft."
+    },
+    {
+      "id": "pv-hardcase-game-lost-0",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "game.lost",
+      "template": "Should have voted sooner.",
+      "text": "Should have voted sooner."
+    },
+    {
+      "id": "pv-hardcase-game-lost-1",
+      "kind": "voice",
+      "group": "persona: Ruth Castellano",
+      "voice": "hardcase",
+      "persona": "hardcase",
+      "key": "game.lost",
+      "template": "That's the winter. It always wins eventually.",
+      "text": "That's the winter. It always wins eventually."
+    },
+    {
+      "id": "pv-optimist-turn-start-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "turn.start",
+      "template": "Okay team, deep breath. We've got this.",
+      "text": "Okay team, deep breath. We've got this."
+    },
+    {
+      "id": "pv-optimist-turn-start-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "turn.start",
+      "template": "New turn, fresh luck. Let's go.",
+      "text": "New turn, fresh luck. Let's go."
+    },
+    {
+      "id": "pv-optimist-crisis-prevented-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "crisis.prevented",
+      "template": "Ha! We did it! Look at us!",
+      "text": "Ha! We did it! Look at us!"
+    },
+    {
+      "id": "pv-optimist-crisis-prevented-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "crisis.prevented",
+      "template": "Told you. Teamwork wins the winter.",
+      "text": "Told you. Teamwork wins the winter."
+    },
+    {
+      "id": "pv-optimist-crisis-failed-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "crisis.failed",
+      "template": "Ouch. Okay. We'll get the next one.",
+      "text": "Ouch. Okay. We'll get the next one."
+    },
+    {
+      "id": "pv-optimist-crisis-failed-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "crisis.failed",
+      "template": "Short by {n}, but nobody panic.",
+      "text": "Short by a few, but nobody panic."
+    },
+    {
+      "id": "pv-optimist-vote-called-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "vote.called",
+      "template": "A vote on {seat}? Let's be gentle about it.",
+      "text": "A vote on them? Let's be gentle about it."
+    },
+    {
+      "id": "pv-optimist-vote-called-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "vote.called",
+      "template": "Oh. A vote on {seat}. Let's hear it out first.",
+      "text": "Oh. A vote on them. Let's hear it out first."
+    },
+    {
+      "id": "pv-optimist-vote-lean-yes-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "vote.lean.yes",
+      "template": "I hate this, but it's yes on {seat}.",
+      "text": "I hate this, but it's yes on them."
+    },
+    {
+      "id": "pv-optimist-vote-lean-yes-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "vote.lean.yes",
+      "template": "Sorry, {seat}. The signs are too loud. Yes.",
+      "text": "Sorry. The signs are too loud. Yes."
+    },
+    {
+      "id": "pv-optimist-vote-lean-no-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "vote.lean.no",
+      "template": "No way, not {seat}. Give them a break.",
+      "text": "No way, not them. Give them a break."
+    },
+    {
+      "id": "pv-optimist-vote-lean-no-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "vote.lean.no",
+      "template": "I trust {seat}. That's a no from me.",
+      "text": "I trust them. That's a no from me."
+    },
+    {
+      "id": "pv-optimist-request-give-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "request.give",
+      "template": "Sure thing, {seat}! Take it.",
+      "text": "Sure thing, friend! Take it."
+    },
+    {
+      "id": "pv-optimist-request-give-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "request.give",
+      "template": "Happy to help, {seat}. Pay it forward.",
+      "text": "Happy to help, friend. Pay it forward."
+    },
+    {
+      "id": "pv-optimist-request-decline-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "request.decline",
+      "template": "Oh {seat}, I really wish I could.",
+      "text": "Oh friend, I really wish I could."
+    },
+    {
+      "id": "pv-optimist-request-decline-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "request.decline",
+      "template": "Ugh, sorry {seat}. I'm holding this one back.",
+      "text": "Ugh, sorry friend. I'm holding this one back."
+    },
+    {
+      "id": "pv-optimist-exposure-bite-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "exposure.bite",
+      "template": "No... not {survivor}. They deserved better.",
+      "text": "No... not one of ours. They deserved better."
+    },
+    {
+      "id": "pv-optimist-exposure-bite-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "exposure.bite",
+      "template": "Rest easy, {survivor}. We'll keep going.",
+      "text": "Rest easy, one of ours. We'll keep going."
+    },
+    {
+      "id": "pv-optimist-morale-low-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "morale.low",
+      "template": "Still hanging on! We just need one good round.",
+      "text": "Still hanging on! We just need one good round."
+    },
+    {
+      "id": "pv-optimist-morale-low-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "morale.low",
+      "template": "Hearts up, everyone. It's not over.",
+      "text": "Hearts up, everyone. It's not over."
+    },
+    {
+      "id": "pv-optimist-game-won-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "game.won",
+      "template": "We survived! Group hug, everybody!",
+      "text": "We survived! Group hug, everybody!"
+    },
+    {
+      "id": "pv-optimist-game-won-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "game.won",
+      "template": "I knew it! What a crew.",
+      "text": "I knew it! What a crew."
+    },
+    {
+      "id": "pv-optimist-game-lost-0",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "game.lost",
+      "template": "Well. That didn't go how I hoped.",
+      "text": "Well. That didn't go how I hoped."
+    },
+    {
+      "id": "pv-optimist-game-lost-1",
+      "kind": "voice",
+      "group": "persona: Teddy Marchbanks",
+      "voice": "optimist",
+      "persona": "optimist",
+      "key": "game.lost",
+      "template": "I'm sorry, everyone. We gave it all.",
+      "text": "I'm sorry, everyone. We gave it all."
+    },
+    {
+      "id": "pv-quartermaster-turn-start-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "turn.start",
+      "template": "Stores first. Then everything else.",
+      "text": "Stores first. Then everything else."
+    },
+    {
+      "id": "pv-quartermaster-turn-start-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "turn.start",
+      "template": "I counted the pantry again. Let's not be wasteful.",
+      "text": "I counted the pantry again. Let's not be wasteful."
+    },
+    {
+      "id": "pv-quartermaster-crisis-prevented-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "crisis.prevented",
+      "template": "Covered, and with nothing wasted. Good.",
+      "text": "Covered, and with nothing wasted. Good."
+    },
+    {
+      "id": "pv-quartermaster-crisis-prevented-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "crisis.prevented",
+      "template": "That's the shortfall closed. Write it down.",
+      "text": "That's the shortfall closed. Write it down."
+    },
+    {
+      "id": "pv-quartermaster-crisis-failed-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "crisis.failed",
+      "template": "We came up short. Somebody's numbers were off.",
+      "text": "We came up short. Somebody's numbers were off."
+    },
+    {
+      "id": "pv-quartermaster-crisis-failed-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "crisis.failed",
+      "template": "That is a bad ledger. Remember it.",
+      "text": "That is a bad ledger. Remember it."
+    },
+    {
+      "id": "pv-quartermaster-vote-called-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "vote.called",
+      "template": "A vote on {seat}. Fine. Let's see the figures.",
+      "text": "A vote on them. Fine. Let's see the figures."
+    },
+    {
+      "id": "pv-quartermaster-vote-called-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "vote.called",
+      "template": "Calling it on {seat}? Then it had better add up.",
+      "text": "Calling it on them? Then it had better add up."
+    },
+    {
+      "id": "pv-quartermaster-vote-lean-yes-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "vote.lean.yes",
+      "template": "The sums keep pointing at {seat}. I'm voting yes.",
+      "text": "The sums keep pointing at them. I'm voting yes."
+    },
+    {
+      "id": "pv-quartermaster-vote-lean-yes-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "vote.lean.yes",
+      "template": "{seat}'s account doesn't balance. Yes.",
+      "text": "That one's account doesn't balance. Yes."
+    },
+    {
+      "id": "pv-quartermaster-vote-lean-no-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "vote.lean.no",
+      "template": "Not enough against {seat}. I vote no.",
+      "text": "Not enough against them. I vote no."
+    },
+    {
+      "id": "pv-quartermaster-vote-lean-no-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "vote.lean.no",
+      "template": "I can't make the case for {seat}. No.",
+      "text": "I can't make the case for them. No."
+    },
+    {
+      "id": "pv-quartermaster-request-give-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "request.give",
+      "template": "Here, {seat}. That comes out of my share.",
+      "text": "Here, friend. That comes out of my share."
+    },
+    {
+      "id": "pv-quartermaster-request-give-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "request.give",
+      "template": "Take it, {seat}. Use it well.",
+      "text": "Take it, friend. Use it well."
+    },
+    {
+      "id": "pv-quartermaster-request-decline-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "request.decline",
+      "template": "Sorry {seat}, I can't spare it.",
+      "text": "Sorry friend, I can't spare it."
+    },
+    {
+      "id": "pv-quartermaster-request-decline-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "request.decline",
+      "template": "Not this time, {seat}. I need what I hold.",
+      "text": "Not this time, friend. I need what I hold."
+    },
+    {
+      "id": "pv-quartermaster-exposure-bite-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "exposure.bite",
+      "template": "{survivor} is gone. One less mouth, one more hole.",
+      "text": "One of ours is gone. One less mouth, one more hole."
+    },
+    {
+      "id": "pv-quartermaster-exposure-bite-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "exposure.bite",
+      "template": "We lost {survivor}. Keep moving.",
+      "text": "We lost one of ours. Keep moving."
+    },
+    {
+      "id": "pv-quartermaster-morale-low-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "morale.low",
+      "template": "Morale is nearly out. Every decision counts now.",
+      "text": "Morale is nearly out. Every decision counts now."
+    },
+    {
+      "id": "pv-quartermaster-morale-low-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "morale.low",
+      "template": "We are close to the edge. No more gambles.",
+      "text": "We are close to the edge. No more gambles."
+    },
+    {
+      "id": "pv-quartermaster-game-won-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "game.won",
+      "template": "The books balance. We lived.",
+      "text": "The books balance. We lived."
+    },
+    {
+      "id": "pv-quartermaster-game-won-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "game.won",
+      "template": "Well run, all of you.",
+      "text": "Well run, all of you."
+    },
+    {
+      "id": "pv-quartermaster-game-lost-0",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "game.lost",
+      "template": "We ran out of everything at once.",
+      "text": "We ran out of everything at once."
+    },
+    {
+      "id": "pv-quartermaster-game-lost-1",
+      "kind": "voice",
+      "group": "persona: Vera Lindqvist",
+      "voice": "quartermaster",
+      "persona": "quartermaster",
+      "key": "game.lost",
+      "template": "The ledger is closed. We lost.",
+      "text": "The ledger is closed. We lost."
+    },
+    {
+      "id": "music-title",
+      "kind": "music",
+      "group": "title",
+      "prompt": "Cold intimate instrumental title theme for a winter survival drama: a slow sparse solo piano melody in a minor key over a soft bed of wind, low bowed cello and quiet sustained strings, wide empty reverb, melancholic but quietly hopeful, no vocals, no drums, no percussion, a gentle ending that can loop back to the start",
+      "durationSeconds": 75,
+      "loop": true
+    },
+    {
+      "id": "music-tension",
+      "kind": "music",
+      "group": "tension",
+      "prompt": "Tense suspense underscore for a crisis and a vote: low pulsing string ostinato slowly growing, dissonant sustained violins, a deep muted heartbeat-like pulse and soft muted drum hits, cold and dread-filled, steady and loopable, no vocals, no melody, no big climax",
+      "durationSeconds": 60,
+      "loop": true
+    },
+    {
+      "id": "music-victory",
+      "kind": "music",
+      "group": "stinger",
+      "prompt": "A short hopeful stinger as dawn breaks over a frozen colony: warm piano and strings rising into a gentle major chord that rings out and fades, quiet relief, no vocals, no drums",
+      "durationSeconds": 10
+    },
+    {
+      "id": "music-defeat",
+      "kind": "music",
+      "group": "stinger",
+      "prompt": "A short somber stinger as a colony falls: low cello and piano sinking into a hollow minor chord that fades away into cold wind, bleak and final, no vocals, no drums",
+      "durationSeconds": 10
+    },
+    {
+      "id": "music-colony-a",
+      "kind": "music",
+      "group": "colony",
+      "prompt": "Low-intensity ambient underscore for a besieged winter colony: sparse single piano notes with long silences, soft sustained string pads, distant wind, calm and watchful, steady and even in volume with no build and no climax, cold and intimate, no vocals, no drums, no percussion",
+      "durationSeconds": 120,
+      "loop": true
+    },
+    {
+      "id": "music-colony-b",
+      "kind": "music",
+      "group": "colony",
+      "prompt": "Low-intensity ambient underscore for a besieged winter colony: a warm low cello drone and muted slow piano arpeggios, soft strings, faint creaking wood and wind, a quiet firelit mood, steady and even in volume with no build and no climax, no vocals, no drums, no percussion",
+      "durationSeconds": 120,
+      "loop": true
+    }
+  ]
+}
