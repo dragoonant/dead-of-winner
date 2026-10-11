@@ -4,9 +4,10 @@ import type { CSSProperties, ReactElement } from 'react'
 import { crisisInfo, nameOf } from '../data'
 import { SymbolIcon } from '../ui/Icons'
 import { hash01 } from './art'
+import { previewProps } from './preview'
 import type { CardSize } from './SurvivorCard'
 
-export function CrisisCard({ id, size = 'md', selected }: { id: string | null | undefined; size?: CardSize; selected?: boolean }): ReactElement {
+export function CrisisCard({ id, size = 'md', selected, preview = true }: { id: string | null | undefined; size?: CardSize; selected?: boolean; /** Hover or long-press shows the full card. */ preview?: boolean }): ReactElement {
   const info = crisisInfo(id)
   const name = nameOf(id)
   const h = Math.round(196 + hash01(id ?? '') * 44)
@@ -14,7 +15,7 @@ export function CrisisCard({ id, size = 'md', selected }: { id: string | null | 
   const need = !info ? '' : info.perSeat === 1 && info.plus === 0 ? 'number of non-exiled players' : `${info.perSeat === 1 ? '' : `${info.perSeat} x `}number of non-exiled players${info.plus ? ` + ${info.plus}` : ''}`
   const lead = info?.prevent[0]
   return (
-    <div className={`dcard ${size} ${selected ? 'sel' : ''}`} data-card="crisis" data-id={id ?? ''}>
+    <div className={`dcard ${size} ${selected ? 'sel' : ''}`} data-card="crisis" data-id={id ?? ''} {...(preview ? previewProps({ kind: 'crisis', id }) : {})}>
       <div className="dcard-face">
         <div className="cr-image" style={style}>
           {lead && <span className="glyph"><SymbolIcon symbol={lead} size={96} /></span>}

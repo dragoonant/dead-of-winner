@@ -2,9 +2,12 @@
 // option into a button while the card keeps the printed layout.
 import { Fragment, type ReactElement, type ReactNode } from 'react'
 import { nameOf, rec } from '../data'
+import { previewProps } from './preview'
 import type { CardSize } from './SurvivorCard'
 
-export function CrossroadsCard({ id, size = 'xl', renderOption }: {
+export function CrossroadsCard({ id, size = 'xl', renderOption, preview = true }: {
+  /** Hover or long-press shows the full card. */
+  preview?: boolean
   id: string | undefined
   size?: CardSize
   /** Wraps the option text (return a button); the card passes the option id, its 0-based index and its text. */
@@ -15,7 +18,7 @@ export function CrossroadsCard({ id, size = 'xl', renderOption }: {
   const optIds = ((r?.['options'] as { id: string }[] | undefined)?.map((o) => o.id)) ?? Object.keys(text.options ?? {})
   const options = optIds.map((oid) => [oid, text.options?.[oid] ?? ''] as const)
   return (
-    <div className={`dcard fluid ${size}`} data-card="crossroads" data-id={id ?? ''}>
+    <div className={`dcard fluid ${size}`} data-card="crossroads" data-id={id ?? ''} {...(preview ? previewProps({ kind: 'crossroads', id }) : {})}>
       <div className="dcard-face xr-face">
         <div className="xr-body">
           <h4>{nameOf(id)}</h4>

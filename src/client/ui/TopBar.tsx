@@ -3,6 +3,7 @@
 import { useMemo, type ReactElement } from 'react'
 import { query } from '../../engine/index'
 import { nameOf, seatNameOf } from '../data'
+import { previewProps } from '../cards/preview'
 import { usePresentedView } from '../store/hooks'
 import { useSettingsStore } from '../store/settingsStore'
 import { ui, useUiStore, type CameraPreset } from '../store/uiStore'
@@ -30,7 +31,7 @@ export function TopBar(): ReactElement | null {
       <span className="stat" title="Food in the supply" data-testid="topbar-food"><SymbolIcon symbol="food" size={15} /> Food <b>{v.food}</b></span>
       <span className="stat" title="Cards in the waste pile" data-testid="topbar-waste">Waste <b>{v.waste.length}</b></span>
       <span className="stat" title="Zombies standing at the colony entrances" data-testid="topbar-zombies"><ZombieIcon /> Gates <b>{zombies}</b></span>
-      <span className="stat crisis" title="This round's crisis" data-testid="topbar-crisis">
+      <span className="stat crisis" title="This round's crisis" data-testid="topbar-crisis" {...(v.crisis.cardId ? previewProps({ kind: 'crisis', id: v.crisis.cardId }) : {})}>
         Crisis: {v.crisis.cardId ? nameOf(v.crisis.cardId) : 'none yet'}{crisis && v.crisis.cardId ? ` - cards added: ${crisis.cardsIn}` : ''}
       </span>
       <span className="grow" />

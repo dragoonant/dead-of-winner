@@ -1,5 +1,6 @@
 // Seat rail (left, '[') (50 §3, §9); the feed rail (right, ']') lives in FeedRail.tsx and shares RailHead.
 import type { ReactElement } from 'react'
+import { previewProps } from '../cards/preview'
 import { SurvivorChip } from '../cards/SurvivorChip'
 import { nameOf } from '../data'
 import { seatNameOf } from '../data'
@@ -78,7 +79,7 @@ export function SeatRail(): ReactElement | null {
 function SurvRow({ id, lead, hover }: { id: string; lead?: boolean; hover?: boolean }): ReactElement {
   const v = usePresentedView()
   const sv = v?.survivors[id]
-  const equipped = sv?.equipped.map((c) => nameOf(v?.cards[c]?.defId)) ?? []
+  const equipped = sv?.equipped.map((c) => ({ c, defId: v?.cards[c]?.defId })) ?? []
   return (
     <div
       className={`surv ${hover ? 'hover' : ''}`}
@@ -88,7 +89,11 @@ function SurvRow({ id, lead, hover }: { id: string; lead?: boolean; hover?: bool
       style={{ cursor: 'pointer' }}
     >
       <SurvivorChip id={id} leader={lead} wounds={sv?.wounds ?? 0} frostbite={sv?.frostbite ?? 0} />
-      {equipped.length > 0 && <div className="muted" style={{ fontSize: 11 }}>{equipped.join(', ')}</div>}
+      {equipped.length > 0 && (
+        <div className="muted" style={{ fontSize: 11 }} data-testid="equipped">
+          {equipped.map((e, i) => <span key={e.c}>{i > 0 ? ', ' : ''}<span className="equip" data-testid={`equipped-${e.c}`} {...previewProps({ kind: 'item', defId: e.defId })}>{nameOf(e.defId)}</span></span>)}
+        </div>
+      )}
     </div>
   )
 }

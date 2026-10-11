@@ -6,6 +6,7 @@ import { describe, query, type Action, type PendingDecision, type SeatView } fro
 import { itemSymbols, itemText, locName, nameOf, seatNameOf, survivorAbility } from '../data'
 import { dispatch, useGameStore } from '../store/gameStore'
 import { ui, useUiStore } from '../store/uiStore'
+import { previewProps } from '../cards/preview'
 import { ContributePicker } from './ContributePicker'
 import { SymbolChips } from './Icons'
 import { groupTurnActions, dieIdsOf, type Family, type LabelNames, type Variant } from './promptModel'
@@ -218,7 +219,7 @@ export function TurnActionForm({ pd, v, legal }: { pd: PendingDecision; v: SeatV
           const s = v.survivors[sid]
           const fs = byS(sid)
           return (
-            <div key={sid} className={`surv-row ${sid === selectedSurvivor ? 'sel' : ''}`} onMouseEnter={() => ui.set({ hoverSurvivor: sid })} onMouseLeave={() => ui.set({ hoverSurvivor: null })}>
+            <div key={sid} className={`surv-row ${sid === selectedSurvivor ? 'sel' : ''}`} onMouseEnter={() => ui.set({ hoverSurvivor: sid })} onMouseLeave={() => ui.set({ hoverSurvivor: null })} {...previewProps({ kind: 'survivor', id: sid })}>
               <div className="who">{nameOf(sid)}<div className="where">{locName(s?.location ?? 'colony')}{s && (s.wounds || s.frostbite) ? `, ${s.wounds}w ${s.frostbite}f` : ''}</div></div>
               {fs.length === 0 && <span className="muted">no action available</span>}
               {fs.map((f) => <button key={f.key} className="btn chip" onClick={() => open(f)} data-testid={`action-${f.key}`}>{f.label}</button>)}
@@ -230,7 +231,7 @@ export function TurnActionForm({ pd, v, legal }: { pd: PendingDecision; v: SeatV
             <div className="who">Table</div>
             {cardFams.map((f) => {
               const defId = f.key.startsWith('card:') ? v.cards[f.key.slice(5)]?.defId : undefined
-              return <button key={f.key} className="btn chip" onClick={() => open(f)} data-testid={`action-${f.key}`}><SymbolChips symbols={itemSymbols(defId)} size={12} /> Play {nameOf(defId)}</button>
+              return <button key={f.key} className="btn chip" onClick={() => open(f)} data-testid={`action-${f.key}`} {...previewProps({ kind: 'item', defId })}><SymbolChips symbols={itemSymbols(defId)} size={12} /> Play {nameOf(defId)}</button>
             })}
             {otherGlobals.map((f) => <button key={f.key} className="btn chip" onClick={() => open(f)} data-testid={`action-${f.key}`}>{f.label}</button>)}
             {canContribute && <button className="btn chip" onClick={() => setContrib(true)} data-testid="action-contribute">Add to crisis</button>}

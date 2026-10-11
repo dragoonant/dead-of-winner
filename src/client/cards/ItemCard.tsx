@@ -4,9 +4,10 @@ import type { ReactElement } from 'react'
 import { isStarterItem, itemDeck, itemKindLabel, itemSymbols, itemText, nameOf } from '../data'
 import { SymbolIcon } from '../ui/Icons'
 import { useItemArt } from './art'
+import { previewProps } from './preview'
 import type { CardSize } from './SurvivorCard'
 
-export function ItemCard({ defId, size = 'sm', selected, ticked }: { defId: string | undefined; size?: CardSize; selected?: boolean; ticked?: boolean }): ReactElement {
+export function ItemCard({ defId, size = 'sm', selected, ticked, preview = true }: { defId: string | undefined; size?: CardSize; selected?: boolean; ticked?: boolean; /** Hover or long-press shows the full card (off inside the preview itself, and in the hand fan whose slot does it). */ preview?: boolean }): ReactElement {
   const symbols = itemSymbols(defId)
   const art = useItemArt(defId)
   const name = nameOf(defId)
@@ -16,7 +17,7 @@ export function ItemCard({ defId, size = 'sm', selected, ticked }: { defId: stri
   const starter = isStarterItem(defId)
   const nameSize = name.length > 19 ? 5.6 : name.length > 15 ? 6.6 : name.length > 11 ? 7.8 : 9
   return (
-    <div className={`dcard ${size} ${selected || ticked ? 'sel' : ''}`} data-card="item" data-id={defId ?? ''}>
+    <div className={`dcard ${size} ${selected || ticked ? 'sel' : ''}`} data-card="item" data-id={defId ?? ''} {...(preview ? previewProps({ kind: 'item', defId }) : {})}>
       <div className="dcard-face">
         <div className="it-photo">
           <span className="tape" />

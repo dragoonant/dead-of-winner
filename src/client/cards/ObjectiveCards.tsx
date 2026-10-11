@@ -4,6 +4,7 @@ import type { ReactElement } from 'react'
 import { nameOf, rec } from '../data'
 import { PathIcon, WarnIcon } from '../ui/Icons'
 import { CLIP_PATHS } from './iconPaths'
+import { previewProps } from './preview'
 import type { CardSize } from './SurvivorCard'
 
 const TIME: Record<string, string> = { short: 'Short', medium: 'Medium', long: 'Long' }
@@ -44,10 +45,10 @@ export function ObjectiveCardBack({ size = 'md' }: { size?: CardSize }): ReactEl
   )
 }
 
-export function MainObjectiveCard({ id, hardcore, size = 'md' }: { id: string; hardcore?: boolean; size?: CardSize }): ReactElement {
+export function MainObjectiveCard({ id, hardcore, size = 'md', preview = true }: { id: string; hardcore?: boolean; size?: CardSize; /** Hover or long-press shows the full card. */ preview?: boolean }): ReactElement {
   const { side, name, setup, victory, time } = objectiveFace(id, hardcore)
   return (
-    <div className={`dcard ${size}`} data-card="main-objective" data-id={id} data-side={side}>
+    <div className={`dcard ${size}`} data-card="main-objective" data-id={id} data-side={side} {...(preview ? previewProps({ kind: 'main', id, hardcore }) : {})}>
       <div className="dcard-face">
         <div className="mo-board" />
         <ClipboardClip />
@@ -64,14 +65,14 @@ export function MainObjectiveCard({ id, hardcore, size = 'md' }: { id: string; h
 
 type NoteKind = 'secret' | 'betrayal' | 'exiled'
 
-export function SecretObjectiveCard({ id, kind, size = 'md' }: { id: string; kind?: NoteKind; size?: CardSize }): ReactElement {
+export function SecretObjectiveCard({ id, kind, size = 'md', preview = true }: { id: string; kind?: NoteKind; size?: CardSize; /** Hover or long-press shows the full card. */ preview?: boolean }): ReactElement {
   const r = rec(id)
   const type = (kind ?? (r?.['type'] as NoteKind | undefined) ?? 'secret') as NoteKind
   const goal = (r?.['text']?.['goal'] as string | undefined) ?? ''
   const betrayer = (r?.['text']?.['betrayer'] as string | undefined) ?? ''
   const main = !!r?.['requiresMain']
   return (
-    <div className={`dcard land ${size} ${type === 'exiled' ? 'exiled' : ''}`} data-card={type === 'betrayal' ? 'betrayal' : type === 'exiled' ? 'exiled' : 'secret-objective'} data-id={id}>
+    <div className={`dcard land ${size} ${type === 'exiled' ? 'exiled' : ''}`} data-card={type === 'betrayal' ? 'betrayal' : type === 'exiled' ? 'exiled' : 'secret-objective'} data-id={id} {...(preview ? previewProps({ kind: 'note', id, note: type }) : {})}>
       <div className="dcard-face note-face">
         <div className="note-lines" /><div className="note-margin" />
         <PathIcon className="note-clip" paths={CLIP_PATHS.map((p) => ({ ...p, sw: 2.2 }))} size={40} />

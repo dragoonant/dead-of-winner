@@ -177,3 +177,6 @@
 .sheet h1 { font-family: var(--f-head); font-weight: 400; letter-spacing: 0.05em; margin: 0 0 4px; font-size: 34px; color: #e8c050; }
 .sheet h2 { font-family: var(--f-head); font-weight: 400; letter-spacing: 0.06em; margin: 22px 0 10px; font-size: 20px; color: #cdbb90; border-bottom: 1px solid #6a5a40; padding-bottom: 3px; }
 .sheet .row { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+
+/* ---------- shared hover / long-press preview (CardPreview.tsx): never takes pointer events ---------- */
+.card-preview { position: fixed; z-index: 2000; pointer-events: none; filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.75)); }

@@ -1,11 +1,13 @@
 // The human's hand as a fan of DOM card faces (50 §7): name, symbols, kind and the card's own text from the data.
-// Click = open its play prompt (or tick it while the crisis picker is open). Hover lifts the card and shows the full text.
+// Click = open its play prompt (or tick it while the crisis picker is open). Hover lifts the card and shows the full card through CardPreview.
+// The hover target is the slot (a fixed-size, untransformed button); only the inner .fan-card animates, so the lift can never move the hit area.
 import { useMemo, type ReactElement } from 'react'
 import { itemSymbols, nameOf } from '../data'
 import { isHumanDecision, useGameStore } from '../store/gameStore'
 import { usePresentedView } from '../store/hooks'
 import { ui, useUiStore } from '../store/uiStore'
 import { ItemCard } from './ItemCard'
+import { previewProps } from './preview'
 
 const SYMBOL_ORDER = ['weapon', 'medicine', 'food', 'fuel', 'tool', 'education', 'survivor']
 
@@ -35,15 +37,16 @@ export function HandFan(): ReactElement | null {
         return (
           <button
             key={id}
-            className={`fan-card ${selected === id || ticked ? 'sel' : ''} ${!canPlay && !contribOpen ? 'dim' : ''}`}
+            className={`fan-slot ${selected === id || ticked ? 'sel' : ''} ${!canPlay && !contribOpen ? 'dim' : ''}`}
             style={{ ['--rot' as string]: `${rot}deg` }}
             data-testid={`hand-card-${id}`}
             onClick={() => (contribOpen ? ui.toggleContrib(id) : canPlay ? ui.set({ selectedCard: id }) : undefined)}
-            onMouseEnter={() => ui.set({ hoverCard: id })}
-            onMouseLeave={() => ui.set({ hoverCard: null })}
+            {...previewProps({ kind: 'item', defId }, { anchor: 'box', prefer: 'above', size: 'lg' })}
           >
-            {ticked && <span className="ticked">ticked</span>}
-            <ItemCard defId={defId} size="sm" ticked={ticked} />
+            <div className="fan-card" data-testid={`hand-card-inner-${id}`}>
+              {ticked && <span className="ticked">ticked</span>}
+              <ItemCard defId={defId} size="sm" ticked={ticked} preview={false} />
+            </div>
           </button>
         )
       })}

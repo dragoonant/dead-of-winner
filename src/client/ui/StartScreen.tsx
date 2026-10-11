@@ -15,6 +15,7 @@ import { peekAutosave } from '../store/savePeek'
 import { seatColourAt, usePalette } from '../table/seats'
 import { titleCandidates, useArt } from '../cards/art'
 import { MainObjectiveCard, ObjectiveCardBack } from '../cards/ObjectiveCards'
+import { previewProps } from '../cards/preview'
 import '../cards/cards.css'
 import './hud.css'
 
@@ -161,7 +162,7 @@ export function StartScreen({ onStart, error }: { onStart: (req: LaunchRequest) 
             <div className="obj-list" data-testid="setup-objectives">
               <button className={`obj ${objective === 'random' ? 'sel' : ''}`} onClick={() => setObjective('random')} data-testid="setup-objective-random">Random</button>
               {objectives.map((o) => (
-                <button key={o.id} className={`obj ${objective === o.id ? 'sel' : ''}`} onClick={() => setObjective(o.id)} data-testid={`setup-objective-${o.id}`} title={o.blurb}>
+                <button key={o.id} className={`obj ${objective === o.id ? 'sel' : ''}`} onClick={() => setObjective(o.id)} data-testid={`setup-objective-${o.id}`} title={o.blurb} {...previewProps({ kind: 'main', id: o.id, hardcore: choice.hardcore || coopRules })}>
                   {o.name}<span className="t">{o.time}</span>
                 </button>
               ))}

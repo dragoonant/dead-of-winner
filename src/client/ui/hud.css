@@ -104,14 +104,21 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .roll-log div { padding: 1px 0; border-bottom: 1px solid #2a2e36; cursor: default; }
 
 /* ---------- hand fan ---------- */
-.fan { position: absolute; bottom: 4px; left: 276px; right: 344px; height: 158px; z-index: 5; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; }
+/* The hover target is .fan-slot: a fixed-size button that never transforms, so the pointer's hit area cannot move. Only the inner .fan-card
+   (pointer-events: none) animates. While a slot is hovered its hit area grows upward to cover the lifted card, so leaving the card's top
+   edge, its bottom edge or crossing between overlapping cards never makes the hover flicker. */
+.fan { position: absolute; bottom: 0; left: 276px; right: 344px; height: 162px; z-index: 5; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; }
+.fan-slot { pointer-events: auto; position: relative; flex: none; width: 78px; height: 124px; padding: 0; border: 0; border-radius: 0; background: none; text-align: left; cursor: pointer; }
+.fan-slot:hover, .fan-slot:focus-visible { z-index: 20; outline: none; }
+.fan-slot:hover::before, .fan-slot:focus-visible::before { content: ''; position: absolute; left: -17px; right: -17px; bottom: 100%; height: 110px; }
 .fan-card {
-  pointer-events: auto; width: 112px; height: 157px; margin: 0 -17px; padding: 0; border: 0; border-radius: 5px; background: none; text-align: left; position: relative;
-  transform: translateY(44px) rotate(var(--rot, 0deg)); transform-origin: bottom center; transition: transform 0.14s ease, filter 0.14s;
+  position: absolute; left: -17px; bottom: 4px; width: 112px; height: 157px; border-radius: 5px; pointer-events: none;
+  transform: translateY(44px) rotate(var(--rot, 0deg)); transform-origin: bottom center; transition: transform 0.14s ease, filter 0.14s; will-change: transform;
 }
-.fan-card:hover { transform: translateY(-100px) scale(1.75); z-index: 20; }
-.fan-card.sel:not(:hover) { transform: translateY(-26px) scale(1.12); z-index: 19; }
-.fan-card.dim { filter: saturate(0.55) brightness(0.8); }
+.fan-slot:hover .fan-card, .fan-slot:focus-visible .fan-card { transform: translateY(-30px) scale(1.15); }
+.fan-slot.sel:not(:hover) .fan-card { transform: translateY(-26px) scale(1.12); }
+.fan-slot.sel { z-index: 19; }
+.fan-slot.dim .fan-card { filter: saturate(0.55) brightness(0.8); }
 .fan-card .ticked { position: absolute; top: 4px; right: 4px; z-index: 9; background: var(--accent2); color: #08131d; border-radius: 999px; font-size: 10px; padding: 0 6px; font-weight: 700; }
 
 /* ---------- prompt dock ---------- */
@@ -143,7 +150,6 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .obj-card { display: flex; justify-content: center; margin: 6px 0 10px; }
 .recap-card { display: flex; justify-content: center; margin: 4px 0 8px; }
 .card-strip { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0; }
-.hover-card { position: fixed; left: 276px; top: 58px; z-index: 15; pointer-events: none; filter: drop-shadow(0 8px 18px #000c); }
 .sv-chip { display: flex; align-items: center; gap: 7px; }
 .sv-chip .thumb { position: relative; width: 36px; height: 36px; border-radius: 4px; overflow: hidden; flex: none; border: 1px solid #6a5a40; background: #2a2d34; }
 .sv-chip .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 14%; display: block; }
@@ -369,3 +375,7 @@ select, input[type='text'] { background: var(--card2); color: var(--fg); border:
 .topbar { gap: 8px; padding: 0 10px; }
 .topbar .seatstat { width: 236px; gap: 4px; } /* a fixed width, so the buttons beside it do not shift as the first and active seats change */
 .topbar .seatstat b { color: var(--fg); font-size: 13px; display: inline-block; max-width: 84px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+
+/* things that show a card preview on hover */
+.seat-card .equip { cursor: help; text-decoration: underline dotted; text-underline-offset: 2px; }
+.topbar .stat.crisis { cursor: help; }

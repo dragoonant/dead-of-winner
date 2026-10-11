@@ -4,6 +4,7 @@ import type { CSSProperties, ReactElement } from 'react'
 import { nameOf, survivorAbility, survivorAbilityKeyword, survivorOccupation, survivorStats } from '../data'
 import { AttackIcon, SearchIcon } from '../ui/Icons'
 import { hash01, textureUrl, usePortrait } from './art'
+import { previewProps } from './preview'
 
 export type CardSize = 'sm' | 'pk' | 'md' | 'lg' | 'xl'
 
@@ -25,14 +26,14 @@ export function Silhouette({ id }: { id: string }): ReactElement {
   )
 }
 
-export function SurvivorCard({ id, size = 'md', selected, mini }: { id: string; size?: CardSize; selected?: boolean; mini?: boolean }): ReactElement {
+export function SurvivorCard({ id, size = 'md', selected, mini, preview = true }: { id: string; size?: CardSize; selected?: boolean; mini?: boolean; /** Hover or long-press shows the full card (off inside the preview itself). */ preview?: boolean }): ReactElement {
   const st = survivorStats(id)
   const art = usePortrait(id)
   const name = nameOf(id)
   const kw = survivorAbilityKeyword(id)
   const ability = survivorAbility(id)
   return (
-    <div className={`dcard ${size} ${selected ? 'sel' : ''} ${mini ? 'mini' : ''}`} data-card="survivor" data-id={id}>
+    <div className={`dcard ${size} ${selected ? 'sel' : ''} ${mini ? 'mini' : ''}`} data-card="survivor" data-id={id} {...(preview ? previewProps({ kind: 'survivor', id }) : {})}>
       <div className="dcard-face">
         <div className="sv-art">{art ? <img src={art} alt="" draggable={false} /> : <Silhouette id={id} />}</div>
         <div className="sv-name">

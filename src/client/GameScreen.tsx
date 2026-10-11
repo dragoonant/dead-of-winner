@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState, type ReactElement } from 'react'
 import { useGameAudio } from './audio/useAudioSettings'
 import { nameOf } from './data'
 import { HandFan } from './cards/HandFan'
-import { HoverSurvivorCard } from './cards/SurvivorChip'
 import { startBotDriver, stopBotDriver } from './bot/botDriver'
 import { resetDeciders } from './bot/deciders'
 import { startTalk } from './bot/talk'
@@ -155,7 +154,6 @@ export default function GameScreen({ request, fps, onExit, onRestart }: {
           <SeatRail />
           <FeedRail />
           <HandFan />
-          <HoverSurvivorCard />
           <DiceTray />
           <FrostVignette />
           <CrisisStrip />

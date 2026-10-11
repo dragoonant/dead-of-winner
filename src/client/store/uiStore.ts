@@ -16,14 +16,13 @@ export interface UiState {
   /** Bumped to make the prompt dock fall back to its action list. */
   dockReset: number
   hoverSurvivor: string | null
-  hoverCard: string | null
   /** True while the crisis-contribution picker is open (the hand fan then toggles cards instead of playing them). */
   contribOpen: boolean
 }
 
 export const INITIAL_UI: UiState = {
   objectiveOpen: false, howToOpen: false, settingsOpen: false, keysOpen: false,
-  selectedSurvivor: null, selectedCard: null, contribSel: [], camera: 1, dockReset: 0, hoverSurvivor: null, hoverCard: null, contribOpen: false,
+  selectedSurvivor: null, selectedCard: null, contribSel: [], camera: 1, dockReset: 0, hoverSurvivor: null, contribOpen: false,
 }
 
 export const useUiStore = create<UiState>(() => ({ ...INITIAL_UI }))

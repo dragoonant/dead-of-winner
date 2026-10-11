@@ -2,6 +2,7 @@
 import { Suspense, lazy, useState, type ReactElement } from 'react'
 import { parseUrl, randomSeedWord, requestFromUrl, type LaunchRequest } from './launch'
 import { useSettingsStore } from './store/settingsStore'
+import { CardPreview } from './cards/CardPreview'
 import { StartScreen } from './ui/StartScreen'
 
 const GameScreen = lazy(() => import('./GameScreen'))
@@ -24,12 +25,15 @@ export function App(): ReactElement {
   })
   const start = (request: LaunchRequest): void => setScreen((s) => ({ kind: 'game', request, nonce: (s.kind === 'game' ? s.nonce : 0) + 1 }))
   if (wantGallery || wantCards) {
-    return <Suspense fallback={null}>{wantGallery ? <Gallery /> : <CardSheet />}</Suspense>
+    return <><Suspense fallback={null}>{wantGallery ? <Gallery /> : <CardSheet />}</Suspense><CardPreview /></>
   }
-  if (screen.kind === 'start') return <StartScreen onStart={start} error={screen.error ?? null} />
+  if (screen.kind === 'start') return <><StartScreen onStart={start} error={screen.error ?? null} /><CardPreview /></>
   return (
+    <>
     <Suspense fallback={<div className="start"><div className="start-card panel" style={{ textAlign: 'center' }}>Loading the table...</div></div>}>
       <GameScreen key={screen.nonce} request={screen.request} fps={urlOptions.fps} onExit={(error) => setScreen(error ? { kind: 'start', error } : { kind: 'start' })} onRestart={start} />
     </Suspense>
+    <CardPreview />
+    </>
   )
 }

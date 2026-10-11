@@ -5,6 +5,7 @@ import { OrbitControls } from '@react-three/drei'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactElement } from 'react'
 import * as THREE from 'three'
 import { ensureFonts, useLocationArt } from '../cards/art'
+import { hidePreview, showPreviewAt } from '../cards/preview'
 import { locNumber, locShort, locationSymbolOrder, nameOf } from '../data'
 import { FigureLights } from '../figures/figureLook'
 import { FIGURE_LEAN, GlbSurvivor, SURVIVOR_HEIGHT, ZombieField } from '../figures/GlbBody'
@@ -212,8 +213,9 @@ function Figure({ fig, colour, selected, label }: { fig: FigureModel; colour: st
     <group
       ref={g}
       onClick={(e) => { e.stopPropagation(); ui.set({ selectedSurvivor: selected ? null : fig.id }) }}
-      onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; ui.set({ hoverSurvivor: fig.id }) }}
-      onPointerOut={() => { document.body.style.cursor = ''; ui.set({ hoverSurvivor: null }) }}
+      onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; ui.set({ hoverSurvivor: fig.id }); if (e.nativeEvent.pointerType !== 'touch') showPreviewAt({ kind: 'survivor', id: fig.id }, { x: e.nativeEvent.clientX, y: e.nativeEvent.clientY }, null) }}
+      onPointerMove={(e) => { if (e.nativeEvent.pointerType !== 'touch') showPreviewAt({ kind: 'survivor', id: fig.id }, { x: e.nativeEvent.clientX, y: e.nativeEvent.clientY }, null) }}
+      onPointerOut={() => { document.body.style.cursor = ''; ui.set({ hoverSurvivor: null }); hidePreview(`survivor:${fig.id}`) }}
     >
       {clone ? <GlbSurvivor clone={clone} colour={colour} /> : <ProceduralBody colour={colour} />}
       {fig.leader && <mesh geometry={G.ring} material={M.gold} position={[0, top - 0.2, topZ]} rotation-x={Math.PI / 2} scale={0.5} />}
