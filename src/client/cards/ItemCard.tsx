@@ -3,10 +3,12 @@
 import type { ReactElement } from 'react'
 import { isStarterItem, itemDeck, itemKindLabel, itemSymbols, itemText, nameOf } from '../data'
 import { SymbolIcon } from '../ui/Icons'
+import { useItemArt } from './art'
 import type { CardSize } from './SurvivorCard'
 
 export function ItemCard({ defId, size = 'sm', selected, ticked }: { defId: string | undefined; size?: CardSize; selected?: boolean; ticked?: boolean }): ReactElement {
   const symbols = itemSymbols(defId)
+  const art = useItemArt(defId)
   const name = nameOf(defId)
   const kind = itemKindLabel(defId)
   const text = itemText(defId)
@@ -18,7 +20,10 @@ export function ItemCard({ defId, size = 'sm', selected, ticked }: { defId: stri
       <div className="dcard-face">
         <div className="it-photo">
           <span className="tape" />
-          <div className="pic">{symbols[0] ? <SymbolIcon symbol={symbols[0]} size={64} /> : null}</div>
+          <div className={`pic ${art ? 'has-art' : ''}`} data-art={art ? 'item' : undefined}>
+            {art ? <img className="art" src={art} alt="" draggable={false} /> : symbols[0] ? <SymbolIcon symbol={symbols[0]} size={64} /> : null}
+            {art && symbols[0] ? <span className="badge"><SymbolIcon symbol={symbols[0]} size={20} /></span> : null}
+          </div>
         </div>
         <div className="it-banner">
           <span className="nm" style={{ fontSize: `${nameSize}cqw` }}>{name}</span>

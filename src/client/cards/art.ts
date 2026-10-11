@@ -1,5 +1,5 @@
 // Optional art: portraits (public/assets/portraits/<slug>.webp, or <full id>.webp), location art (public/assets/locations/<id>.webp) and the title image
-// (public/assets/ui/title.webp). Files are produced separately and may not exist yet, so every lookup is a probe that falls back to a
+// (public/assets/ui/title.webp) and item art (public/assets/items/<slug>.webp). Files are produced separately and may not exist yet, so every lookup is a probe that falls back to a
 // stylised silhouette / texture. Each URL is probed at most once per session; nothing here ever throws.
 import { useEffect, useState } from 'react'
 
@@ -69,9 +69,11 @@ export const portraitCandidates = (survivorId: string): string[] => [
 export const locationCandidates = (locationId: string): string[] => [
   assetUrl(`assets/locations/${slugOf(locationId)}.webp`), assetUrl(`assets/locations/${locationId}.webp`),
 ]
+export const itemCandidates = (itemId: string): string[] => [assetUrl(`assets/items/${slugOf(itemId)}.webp`)]
 export const titleCandidates = (): string[] => [assetUrl('assets/ui/title.webp')]
 
 export const usePortrait = (survivorId: string): string | null => useArt(portraitCandidates(survivorId))
+export const useItemArt = (itemId: string | undefined): string | null => useArt(itemId ? itemCandidates(itemId) : [])
 export const useLocationArt = (locationId: string): string | null => useArt(locationCandidates(locationId))
 
 /** A stable 0..1 hash of a string, for per-card tints. */

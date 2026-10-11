@@ -207,7 +207,7 @@ function Figure({ fig, colour, selected, label }: { fig: FigureModel; colour: st
       {fig.leader && <mesh geometry={G.ring} material={M.gold} position-y={top - 0.2} rotation-x={Math.PI / 2} scale={0.5} />}
       {selected && <mesh geometry={G.ring} material={M.select} position-y={0.16} rotation-x={Math.PI / 2} scale={1.35} />}
       {pips.map(([i, mat]) => <mesh key={i} geometry={G.pip} material={mat} position={[-0.36 + i * 0.2, top, 0]} />)}
-      <LabelSprite text={label} border={colour} position={[0, top + 0.55, 0]} height={0.62} fontPx={12} />
+      <LabelSprite text={label} border={colour} position={[0, 0.3, 1.0]} height={0.62} fontPx={12} />
     </group>
   )
 }

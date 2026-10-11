@@ -187,7 +187,7 @@ export function slotPoint(slots: readonly Pt[], i: number): Pt {
 // ---------- camera presets ----------
 export interface CameraPose { position: [number, number, number]; target: [number, number, number] }
 export const CAMERA_PRESETS: Record<1 | 2 | 3, CameraPose> = {
-  1: { position: [0, 46, 34], target: [0, 0, 6] }, // seat view
+  1: { position: [0, 50, 26], target: [0, 0, 5.5] }, // seat view
   2: { position: [0, 62, 12], target: [0, 0, 2] }, // top down
   3: { position: [0, 24, 19], target: [0, 0, 1] }, // colony close
 }
