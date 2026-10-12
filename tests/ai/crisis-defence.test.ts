@@ -98,7 +98,7 @@ describe('AI-011 search targeting follows the crisis symbol', () => {
 
 describe('AI-012 colony defence prices a failing crisis', () => {
   it('colony zombies from a failing crisis raise the expected arrivals and the value of killing one at the colony', async () => {
-    const { st, seat } = await firstTurn('ai12', 'obj.main.stockpile')
+    const { st, seat } = await firstTurn('ai12', 'obj.main.leave-it-all-behind') // 12 colony zombies and no barricade goal: the goal layer would price the kill by what the wall survives
     const base = view(st, seat)
     const hordes = staged(base, { crisis: 'cr.legions-of-death', hand: [] }).v
     const calm = staged(base, { crisis: 'cr.fuel-shortage', hand: [], food: 20 }).v

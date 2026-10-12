@@ -4,6 +4,7 @@
 //   2. feed the colony (play food when the supply is short for this round's pay), clean waste near a multiple of ten
 //   3. search with the best qualifying die where the deck's symbols match the crisis and the seat's objective
 //   4. move only when the search gain beats the exposure roll, and never strip the colony while it is threatened
+//   5. the main objective's unmet parts (goals.ts): every kill, wall, food token, search or weapon that moves one is priced, more as rounds run out
 // Never attacks survivors, never spends dice on abilities it cannot value. Reads only the SeatView and query.*.
 import { query } from '../../engine/index'
 import type { Action, ExposureOdds, ItemSymbol, LocationId, SeatId, SurvivorId } from '../../engine/index'
@@ -14,6 +15,7 @@ import {
   OVERRUN_COST, betrayalFractions, betrayalKind, betrayalNeeds, betrayerPush, boardCost, countableForBetrayal, weaponsCarried, countableInHand, crisisPrevent, defOfCard, foodOf, isEquipCard, mainObjectiveNeeds, matchesCrisis, missingObjectiveSymbols, recOf,
   reservedCards, statsOf, symbolsOfCard, woundsOn, type Ent, type ObjNeed, type Rec,
 } from './info'
+import { Goals } from './goals'
 import type { Ledger } from './suspicion'
 
 import { afford, estimateYes } from './votes'
@@ -40,9 +42,11 @@ export function envTune(): Record<string, number> {
   try { return JSON.parse(((globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.['AI_TUNE']) ?? '{}') as Record<string, number> } catch { return {} }
 }
 const BASE_TUNE = {
-  death: 2, moveNow: 1.0, moveLater: 1.4, moveCostMult: 1.3, searchScale: 1.0, barricadeBase: 0.07, homeDefend: 0.4, homeDanger: 0.8, killBase: 0.015, sampleKill: 1.3, killThem: 0.1, barricadeOut: 0.25, needMatch: 0.65, frost: 1, maxOut: 9, objWeight: 0.5, foodKeep: 1, haveMatchW: 0.15, boostMin: 0.15, outsider: -5, thReq: 0.9, pickKill: 0.8, stayRounds: 1.5, fuelCost: 0.15, betLazy: 0.15, gunSample: 0.3, wpnSample: 0.4, medW: 0.12, medBase: 0.25, inP: 0.45, laterP: 0.25, cExtra: 0.7, objBarr: 0.25, foodTokenCost: 0.12, coverAt: 0.45, objBase: 1.5, pushScale: 1, betProtect: 1.4, sabBase: 0.2, hoard: 3, woundW: 1.0, pickInf: 25, pickAtk: 0.3, pickSea: 0.45, moraleFear: 0, riskModel: 0, pushGate: 0,
+  death: 2, moveNow: 1.0, moveLater: 1.4, moveCostMult: 1.3, searchScale: 1.0, barricadeBase: 0.07, homeDefend: 0.4, homeDanger: 0.8, killBase: 0.015, sampleKill: 1.3, barricadeOut: 0.25, needMatch: 0.65, frost: 1, maxOut: 9, objWeight: 0.5, foodKeep: 1, haveMatchW: 0.15, boostMin: 0.15, outsider: -5, thReq: 0.9, pickKill: 0.8, stayRounds: 1.5, fuelCost: 0.15, betLazy: 0.15, gunSample: 0.3, wpnSample: 0.4, medW: 0.12, medBase: 0.25, inP: 0.45, laterP: 0.25, cExtra: 0.7, foodTokenCost: 0.12, coverAt: 0.45, objBase: 1.5, pushScale: 1, betProtect: 1.4, sabBase: 0.2, hoard: 3, woundW: 1.0, pickInf: 25, pickAtk: 0.3, pickSea: 0.45, moraleFear: 0, riskModel: 0, pushGate: 0,
   // crisis reservation / targeting / colony defence
   sampleCS: 0.4, objClose: 2, objFinish: 5, crisisSearch: 1, pivot: 0.5, holdCap: 3, keepMult: 2.5, defBoost: 0, leaveCredit: 0, homeLoad: 0, failZ: 1,
+  // objective-goal layer (goals.ts): goalV is the value of finishing the goal, spread over the units still missing (floored at goalRmin, capped at goalRmax)
+  goalV: 12, goalU0: 0.7, goalU1: 1.0, goalRmin: 6, goalRmax: 16, goalMoraleLow: 1, goalMoraleFull: 4, goalKillSlack: 0.15, goalFollow: 0.6, goalSpawn: 1, goalCounter: 0.6, goalNear: 2, goalHunt: 4, goalSearch: 1, goalArm: 3, goalPost: 1, goalCrowd: 0.35, goalHome: 0.35, goalFoodMult: 1,
 }
 /** The live constants of the decision being made (see `useTune`). */
 export const TUNE: typeof BASE_TUNE & Record<string, number> = { ...BASE_TUNE }
@@ -88,10 +92,13 @@ export class PlanCache {
   private _objNeeds?: ObjNeed[]
   private _crisis?: CrisisCtx
   private _wBase?: Record<ItemSymbol, number>
+  private _goals?: Goals
   /** the survivor a fuel card played now would spare an exposure roll on its move (set while scoring the play) */
   fuelWho: SurvivorId | null = null
   constructor(readonly env: PlanEnv) {}
   get v(): SeatView { return this.env.v }
+  /** The main objective's unmet parts as prices for the actions that move them (goals.ts); off for a betrayer. */
+  goals(): Goals { return (this._goals ??= new Goals(this)) }
   food(): ReturnType<typeof query.foodNeeded> { return (this._food ??= query.foodNeeded(this.v)) }
   zombies(): ReturnType<typeof query.zombiesToAdd> { return (this._zombies ??= query.zombiesToAdd(this.v)) }
   objNeeds(): ObjNeed[] { return (this._objNeeds ??= mainObjectiveNeeds(this.v)) }
@@ -254,6 +261,12 @@ export class PlanCache {
       } else for (const s of crisisPrevent(v)) w[s] += haveMatch >= 1 ? TUNE.haveMatchW : TUNE.needMatch
     }
     for (const s of missingObjectiveSymbols(v)) w[s] += 0.55
+    if (!this.env.betrayer) {
+      const g = this.goals()
+      w.weapon += g.arm() * 0.8
+      w.food += g.food() * 0.8
+      for (const n of this.objNeeds()) if (countableInHand(v, n).length < n.remaining) w[n.symbol] += g.counter(n.symbol)
+    }
     if (this.env.betrayer) {
       // hoard what the betrayal card asks for until it has it (the starting cards do not count): the bigger the gap, the more a search for it is worth
       const needs = betrayalNeeds(v)
@@ -281,7 +294,7 @@ export class PlanCache {
     const w = this.weights(crisis)
     let s = 0
     for (const sym of ALL_SYMBOLS) s += (o.pSymbol[sym] ?? 0) * w[sym]
-    return s * TUNE.searchScale
+    return s * TUNE.searchScale + this.goals().search(loc)
   }
   // ---------- board costs ----------
   /** Zombies the next colony phase puts at `loc` (survivors there, helpless, noise), before any crisis failure. */
@@ -359,7 +372,7 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
       const loc = a.target.location
       const gain = (c.cost(loc) - c.cost(loc, { entrance: a.target.entrance, z: -1 })) * c.defW(loc)
       const d = dieOf(v, me, a.dieId)
-      const objBonus = c.finishing() ? 0 : v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleKill : v.objective.id === 'obj.main.kill-them' && loc !== 'colony' ? TUNE.killThem : 0
+      const objBonus = (c.finishing() ? 0 : v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleKill : 0) + c.goals().kill(loc, a.target.entrance)
       const baseline = loc === 'colony' ? TUNE.killBase * (v.locations['colony']!.entrances.reduce((n, e) => n + e.zombies, 0)) : 0
       return (gain + objBonus + baseline) * c.help() - c.exposureCost(a.survivorId) - 0.02 * (d?.value ?? 3)
     }
@@ -369,7 +382,7 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
       const loc = sv.location
       const gain = (c.cost(loc) - c.cost(loc, { entrance: a.entrance, b: 1 })) * c.defW(loc)
       const d = dieOf(v, me, a.dieId)
-      const wall = v.objective.id === 'obj.main.home-sweet-home' || v.objective.id === 'obj.main.stockpile' ? TUNE.objBarr : 0
+      const wall = c.goals().barricade(loc, a.entrance)
       const base = (loc === 'colony' ? TUNE.barricadeBase : TUNE.barricadeOut) + (c.env.betrayer ? 0 : wall)
       return gain * c.help() + base - 0.02 * (d?.value ?? 3)
     }
@@ -475,14 +488,15 @@ function scoreAbility(c: PlanCache, a: Extract<Action, { type: 'useAbility' }>):
         const rolls = n['value'] === 'noExposure' ? 0 : n['value'] === 'exposureOnce' ? 1 : count
         const { gain, patches } = c.bestPatches(loc, 'z', count)
         const base = loc === 'colony' ? TUNE.killBase * patches.length : 0
-        const objBonus = v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleKill : v.objective.id === 'obj.main.kill-them' && loc !== 'colony' ? TUNE.killThem : 0
-        val += (gain * c.defW(loc) + base + objBonus * patches.length) * c.help() - rolls * c.exposureCost(a.survivorId)
+        const objBonus = v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleKill : 0
+        const goal = patches.reduce((t, p) => t + c.goals().kill(loc, p.entrance), 0)
+        val += (gain * c.defW(loc) + base + objBonus * patches.length + goal) * c.help() - rolls * c.exposureCost(a.survivorId)
         break
       }
       case 'addBarricade': {
         known = true
         const { gain, patches } = c.bestPatches(loc, 'b', count)
-        val += gain * c.defW(loc) + (loc === 'colony' ? TUNE.barricadeBase : TUNE.barricadeOut) * patches.length
+        val += gain * c.defW(loc) + (loc === 'colony' ? TUNE.barricadeBase : TUNE.barricadeOut) * patches.length + patches.reduce((t, p) => t + c.goals().barricade(loc, p.entrance), 0)
         break
       }
       case 'heal': {
@@ -567,6 +581,7 @@ function scoreSpendFood(c: PlanCache, a: Extract<Action, { type: 'spendFood' }>)
   const f = c.food()
   const spare = v.food - f.needed - TUNE.foodKeep
   if (spare < a.tokens || f.shortfall > 0) return -1
+  const supplyCost = c.goals().food() * a.tokens * TUNE.goalFoodMult // supply food is progress under a stockpile goal: a token on a die is a token not banked
   const d = dieOf(v, me, a.dieId)
   if (!d || d.used) return -1
   const reach = d.value + a.tokens
@@ -585,7 +600,7 @@ function scoreSpendFood(c: PlanCache, a: Extract<Action, { type: 'spendFood' }>)
     const sn = c.dieNeed(sid, 'search')
     if (sv.location !== 'colony' && sn !== null && d.value < sn && reach >= sn) best = Math.max(best, c.searchValue(sv.location) - 0.02 * d.value)
   }
-  return best - TUNE.foodTokenCost * a.tokens
+  return best - TUNE.foodTokenCost * a.tokens - supplyCost
 }
 
 /** Adding a card under the main objective: free (no die), permanent. Loyal seats do it as soon as the card is not needed more elsewhere; a betrayer hoards. */
@@ -651,10 +666,17 @@ function scorePlay(c: PlanCache, a: Extract<Action, { type: 'playCard' }>): numb
       // a food card the crisis wants too: starving costs morale now, failing the crisis costs it later; spend it only when starvation is the bigger bill
       return (covers ? loss * 1.1 : loss * 0.45 * (food / f.shortfall)) * c.help() - (hold ? c.crisis().holdVal : 0)
     }
+    // a supply goal (Stockpile): every token counts, and the card is worth the tokens it adds to what is still missing
+    const gf = c.goals().food()
+    if (gf > 0 && !reserved.has(a.cardId) && !c.env.betrayer) {
+      const useful = Math.min(food, c.goals().foodLeft())
+      const val = gf * useful * TUNE.goalFoodMult - (hold ? c.crisis().holdVal : 0) - 0.02
+      if (val > 0) return val
+    }
     if (hold) return -1
     if (v.food - f.needed < f.needed && v.roundsLeft > 1 && !reserved.has(a.cardId)) return 0.06
     // spare food in hand turns into dice: play it when a boosted die would unlock a kill or a search
-    if (!reserved.has(a.cardId) && !c.env.betrayer) {
+    if (!reserved.has(a.cardId) && !c.env.betrayer && gf === 0) {
       const spare = Math.max(0, v.food - f.needed - TUNE.foodKeep)
       const b = bestBoost(c, spare + food)
       if (b && b.tokens > spare && b.net > TUNE.boostMin) return b.net - 0.05
@@ -686,7 +708,7 @@ function scorePlay(c: PlanCache, a: Extract<Action, { type: 'playCard' }>): numb
     const nd = c.env.betrayer ? betrayalNeeds(v) : null
     const trig = nd && syms.includes('weapon') && (nd.weapons > weaponsCarried(v) || nd.weaponsEach > 0) ? 0.7 : 0
     const samplesGun = !c.env.betrayer && v.objective.id === 'obj.main.we-need-more-samples' && equipValue(v, a.cardId) >= 0.5 ? TUNE.gunSample * Math.min(3, v.roundsLeft) : 0
-    const arm = !c.env.betrayer && v.objective.id === 'obj.main.leave-it-all-behind' && syms.includes('weapon') ? 0.6 : 0
+    const arm = !c.env.betrayer && syms.includes('weapon') ? c.goals().arm() : 0
     return equipValue(v, a.cardId) + 0.01 * (6 - st.attack) + at + trig + arm + samplesGun
   }
   return -1
@@ -721,7 +743,9 @@ function scoreMove(c: PlanCache, survivorId: SurvivorId, to: LocationId): number
   if (to !== 'colony') {
     if (from === 'colony' && outNow >= TUNE.maxOut) return -1
     const loc = v.locations[to]!
-    if (loc.deckCount <= 0) return -1
+    const g = c.goals()
+    const post = g.post(survivorId, to) - (from !== 'colony' ? g.post(survivorId, from) : 0)
+    if (loc.deckCount <= 0 && post <= 0) return -1
     const sval = c.searchValue(to)
     const baseline = from !== 'colony' ? c.searchValue(from) : 0
     // the crisis showing now is gone next round: what a deck is worth later is judged without it
@@ -740,7 +764,8 @@ function scoreMove(c: PlanCache, survivorId: SurvivorId, to: LocationId): number
     if (from === 'colony') cost += stayValue(c, survivorId)
     // one body fewer at the colony: fewer zombies next colony phase (ceil(survivors / 2))
     const relief = from === 'colony' && homeOthers > 0 ? TUNE.leaveCredit * Math.max(0, colonyCost - c.cost('colony', undefined, -1)) : 0
-    return now + later + foodCredit + relief - cost - 0.02
+    const homePull = from === 'colony' ? g.home() * (homeOthers === 0 ? 1 : 0.5) : 0
+    return now + later + foodCredit + relief + post - homePull - cost - 0.02
   }
   // coming home
   const originCost = c.cost(from, undefined, 0) - c.cost(from, undefined, -1)
@@ -748,7 +773,9 @@ function scoreMove(c: PlanCache, survivorId: SurvivorId, to: LocationId): number
   const defend = colonyCost > 0.9 ? Math.min(1.5, colonyCost) * TUNE.homeDefend : 0
   // one more body at the colony adds a zombie to the next colony phase every second survivor
   const load = TUNE.homeLoad * Math.max(0, c.cost('colony', undefined, 1) - colonyCost)
-  return danger + defend - load - expo * 1.1 - 0.1
+  const g = c.goals()
+  const pull = g.home() - g.post(survivorId, from)
+  return danger + defend + pull - load - expo * 1.1 - 0.1
 }
 
 /** Pick the best-scoring legal turn action; ties and near-ties are broken by the seeded rand. */
