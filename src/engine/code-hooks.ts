@@ -173,13 +173,13 @@ const effects: Record<string, CodeEffectHook> = {
     for (const cardId of food) acc.events.push({ type: 'CardDiscarded', seat: null, cardId, to: 'waste', reason: 'crisis' })
     return done(acc)
   },
-  /** Overpopulation: the two lowest-influence non-exiled survivors die, with no morale loss. */
+  /** Overpopulation: the two lowest-influence non-exiled survivors die; each kill costs morale like any other. */
   'crisis.overpopulation.killLowestTwo': (ctx) => {
     const acc = mkAcc(ctx.state)
     const low = byInfluence(acc.state, nonExiledSurvivors(acc.state), -1).slice(0, 2).map((s) => s.id)
     for (const id of low) {
       if (acc.state.survivors[id]?.status !== 'alive' || acc.state.phase === 'ended') continue
-      const r = killSurvivor(acc.state, id, 'crisis', { noMorale: true })
+      const r = killSurvivor(acc.state, id, 'crisis')
       acc.state = r.state; acc.events.push(...r.events); acc.pending = r.pending
       settle(acc, ctx.state.pending)
     }

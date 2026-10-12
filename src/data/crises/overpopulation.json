@@ -20,7 +20,7 @@
     ]
   },
   "text": {
-    "fail": "There are too many mouths: the two non-exiled survivors with the lowest influence die. No morale is lost.",
+    "fail": "There are too many mouths: the two non-exiled survivors with the lowest influence die, and each death costs the usual morale.",
     "bonus": "Two cards beyond the need lift morale by 1."
   },
   "sources": {
@@ -29,7 +29,7 @@
     "bonus": "VASSAL v1.1 Crisis_Overpopulation.jpg"
   },
   "status": "verified",
-  "notes": "Scan: Food symbol, the 2 non-exiled survivors with the lowest influence are killed, no morale loss. Matches hook crisis.overpopulation.killLowestTwo.",
+  "notes": "Scan: Food symbol, the 2 non-exiled survivors with the lowest influence are killed, each kill costing 1 morale as usual (R p11, p14). Matches hook crisis.overpopulation.killLowestTwo.",
   "tags": [
     "name-official"
   ]

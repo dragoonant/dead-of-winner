@@ -34,10 +34,10 @@ describe('M2 code hooks', () => {
     expect(alive(r.state).filter((v) => v.frostbite > 0).length).toBe(Math.min(5, alive(base).length))
   })
 
-  it('overpopulation kills the two lowest-influence survivors with no morale loss', () => {
+  it('overpopulation kills the two lowest-influence survivors and each kill costs morale', () => {
     const r = fx('crisis.overpopulation.killLowestTwo', base)
     expect(alive(r.state).length).toBe(alive(base).length - 2)
-    expect(r.state.morale).toBe(base.morale)
+    expect(r.state.morale).toBe(base.morale - 2)
   })
 
   it('reorganization hands one survivor to the next seat and keeps every seat consistent', () => {

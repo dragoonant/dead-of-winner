@@ -91,7 +91,7 @@ Reducer rules:
 | `crossroads` | `CrossroadsState {deck, held, active, log}` | `held` = the card the seat to the right drew for the active seat |
 | `objective` | `ObjectiveState {id, side, counters, cards, complete}` | main objective progress (spec 11) |
 | `effects` | `EffectInstance[]` | every lasting rule effect: Blizzard, Hunted, ability grants; same-named effect on the same targets refreshes to the **later** expiry (never overwrite, lesson J). `sourceKind 'secretObjective' \| 'exiledObjective'` effects carry `ownerSeat` and are private to it (§4) |
-| `attack`, `search`, `request`, `bite`, `vote`, `exile` | contexts or `null` | the in-flight mechanism whose sub-decision is open |
+| `attack`, `search`, `request`, `bite`, `vote`, `exile` | contexts or `null` | the in-flight mechanism whose sub-decision is open (`bite` also carries optional `candidates`: the survivors at the location when the bite resolved, so a replacement drawn mid-chain is never offered; absent in old saves = every alive survivor there; additive 2026-10) |
 | `pending` | `PendingDecision` | also returned in `StepResult` |
 | `log` | `Action[]` | full action log for save/replay; never in a view |
 | `result` | `GameResult\|null` | `{reason, objectiveComplete, winners}` once ended |

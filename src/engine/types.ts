@@ -162,7 +162,7 @@ export interface EffectInstance {
 // ---------- in-flight contexts ----------
 export interface TurnContext { seat: SeatId; index: number; actions: number; voteCalled: boolean; contributionAsked: boolean }
 export interface VoteState { caller: SeatId; target: SeatId; votes: Record<SeatId, boolean> | null; result: { yes: number; no: number; exiled: boolean; tiebreakBy: SeatId | null } | null }
-export interface BiteChain { location: LocationId; originId: SurvivorId; currentId: SurvivorId; killed: SurvivorId[] }
+export interface BiteChain { location: LocationId; originId: SurvivorId; currentId: SurvivorId; killed: SurvivorId[]; candidates?: SurvivorId[] /* survivors present when the bite resolved; later arrivals are never reached (additive) */ }
 export interface SearchContext { seat: SeatId; survivorId: SurvivorId; location: LocationId; dieId: DieId; drawn: CardId[]; noiseAdded: number } // drawn HIDDEN except to `seat`
 export interface RequestContext { from: SeatId; to: SeatId; want: { symbol?: ItemSymbol; defId?: Id }; note?: string; queue?: SeatId[] /* a request to everyone: the seats still to be asked after `to` (R p11, additive 2026-10-10) */ }
 export interface ExileContext { seat: SeatId; toPlace: SurvivorId[] }

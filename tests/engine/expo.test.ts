@@ -123,6 +123,24 @@ describe('exposure and the bite chain', () => {
     expect(rollExposureFor(four, 'sv.buddy', 'zombieKill').state.survivors['sv.buddy']!.status).toBe('dead')
   })
 
+  it('EXPO-017 a bite never spreads to the replacement drawn for the bitten survivor (R p11, digest Exposure)', () => {
+    // ashley is s1's only survivor at the colony; killing her draws sv.extra (influence 18, lower than mike's 30) into the colony
+    const s = makeState({
+      survivors: [{ id: 'sv.ashley', owner: 's1', location: 'colony' }, { id: 'sv.mike', owner: 's2', location: 'colony' }],
+      rng: forceRng([12, 12]),
+    })
+    const r = rollExposureFor(s, 'sv.ashley', 'zombieKill')
+    expect(r.state.survivors['sv.extra']).toMatchObject({ owner: 's1', location: 'colony', status: 'alive' })
+    expect(of(r.events, 'BiteSpreadStep')[0]).toMatchObject({ toId: 'sv.mike' })
+    expect(r.state.bite!.candidates).toEqual(['sv.mike'])
+    expect(r.pending).toMatchObject({ kind: 'biteSpreadOption', seat: 's2' })
+    // mike falls to the chain roll; the replacement is still not offered, so the chain ends
+    const out = applyBiteSpread({ ...r.state, pending: r.pending!, rng: forceRng([12, 9]) }, { type: 'biteSpread', decisionId: r.pending!.id, seat: 's2', choice: 'roll' })
+    expect(of(out.events, 'BiteSpreadStep')).toHaveLength(0)
+    expect(of(out.events, 'BiteChainEnded')[0]).toMatchObject({ reason: 'noSurvivors', killed: ['sv.mike'] })
+    expect(out.state.survivors['sv.extra']!.status).toBe('alive')
+  })
+
   it('EXPO-016 odds: Sparky, Harman, Rod Miller and the death chance', () => {
     const s = makeState({
       survivors: [

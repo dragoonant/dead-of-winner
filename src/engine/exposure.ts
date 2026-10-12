@@ -249,8 +249,10 @@ export function exposureInto(acc: Out, survivorId: SurvivorId, reason: ExposureR
   if (face === 'wound' || face === 'frostbite') addWoundInto(acc, survivorId, face, 'exposure')
   else if (face === 'bite') {
     const location = sv.location
+    // the chain may only reach survivors already here now: a replacement drawn by this kill is not one of them (R p11)
+    const candidates = aliveAt(acc.state, location).filter((v) => v.id !== survivorId).map((v) => v.id)
     killInto(acc, survivorId, 'bite')
-    startChain(acc, location, survivorId)
+    startChain(acc, location, survivorId, candidates)
   }
 }
 export function rollExposureFor(state: GameState, survivorId: SurvivorId, reason: ExposureReason, opts: { grantAt?: LocationId } = {}): Out {
@@ -261,8 +263,8 @@ export function rollExposureFor(state: GameState, survivorId: SurvivorId, reason
 
 // ---------- the bite chain (R8.7-R8.11) ----------
 /** Next victim: the alive survivor with the lowest influence at the location; Sparky-style `biteIsWound` holders are passed over. */
-export function nextBiteTarget(state: GameState, location: LocationId): SurvivorState | null {
-  const cands = aliveAt(state, location).filter((v) => !grantFor(state, 'biteIsWound', v.id))
+export function nextBiteTarget(state: GameState, location: LocationId, candidates?: SurvivorId[]): SurvivorState | null {
+  const cands = aliveAt(state, location).filter((v) => (!candidates || candidates.includes(v.id)) && !grantFor(state, 'biteIsWound', v.id))
   if (cands.length === 0) return null
   return cands.reduce((best, v) => (statsOf(state, v.id).influence < statsOf(state, best.id).influence ? v : best))
 }
@@ -272,15 +274,15 @@ function endChain(acc: Out, reason: 'killChoice' | 'blank' | 'noSurvivors'): voi
   acc.events.push({ type: 'BiteChainEnded', location: b.location, reason, killed: b.killed })
   acc.state = { ...acc.state, bite: null }
 }
-function startChain(acc: Out, location: LocationId, originId: SurvivorId): void {
-  acc.state = { ...acc.state, bite: { location, originId, currentId: originId, killed: [] } }
+function startChain(acc: Out, location: LocationId, originId: SurvivorId, candidates?: SurvivorId[]): void {
+  acc.state = { ...acc.state, bite: { location, originId, currentId: originId, killed: [], candidates } }
   if (halted(acc)) return // a decision (newLeader) is open: resumeBiteChain continues afterwards
   stepChain(acc)
 }
 function stepChain(acc: Out): void {
   const b = acc.state.bite
   if (!b) return
-  const next = nextBiteTarget(acc.state, b.location)
+  const next = nextBiteTarget(acc.state, b.location, b.candidates)
   if (!next) { endChain(acc, 'noSurvivors'); return }
   const influence = statsOf(acc.state, next.id).influence
   acc.events.push({ type: 'BiteSpreadStep', fromId: b.currentId, toId: next.id, location: b.location, influence })

@@ -157,6 +157,7 @@ Rejections name the `RejectionCode` the engine must return (00 §14) and never c
 | EXPO-014 | Olivia Brown removes a frostbite token from Forest Plum at her location → `WoundHealed {kind:'frostbite'}`; on herself → allowed; on a survivor elsewhere → `E_ABILITY_LOCATION` | R p7 |
 | EXPO-015 | A Medicine card played after the third wound is applied → `E_CARD_NOT_PLAYABLE` (the survivor is already dead); played at 2 wounds → `WoundHealed` | R p15 |
 | EXPO-016 | `query.exposureOdds` for Sparky → `bite 0, wound 4/12`; for Harman → `frostbite 0, wound 5/12`; for Rod Miller with reason `'move'` → all 0; `pDeath` for a 2-wound survivor = P(wound)+P(frostbite)+P(bite) | 00 §10 |
+| EXPO-017 | A seat's only survivor is bitten at the colony and its replacement is drawn there: the chain's first step goes to another seat's survivor, `bite.candidates` excludes the replacement, and after that survivor falls the chain ends `noSurvivors` | R p11, digest Exposure |
 
 ## CARD (items, hand, requests, hand-offs)
 
@@ -222,6 +223,7 @@ Rejections name the `RejectionCode` the engine must return (00 §14) and never c
 | CRIS-012 | `query.crisis` for s1 who put in 1 Fuel and 1 Weapon while s2 put in 2 cards → `myPoints 0, minTotal −2, maxTotal 2, needed 4, bonusAt 6` | 00 §10 |
 | CRIS-013 | Blizzard fails → `EffectApplied {sourceId:'cr.blizzard', name:'cr.blizzard#0'}` (the `forbid` node is index 0 of `fail`, 21 §7) forbidding `move` for non-exiled seats until the end of the next round, `MoraleChanged -1`; the effect expires at that round's end (`EffectExpired {reason:'duration'}`) | R p4, 00 §3, 21 §7 |
 | CRIS-014 | A second Blizzard failure while the first is active → the single effect refreshes to the LATER expiry (`EffectApplied {refreshed:true}`), never two effects | 00 §3 |
+| CRIS-022 | Overpopulation fail kills the two lowest-influence non-exiled survivors and each kill costs 1 morale (`MoraleChanged -1` twice) | R p11, p14 |
 
 ## COL (colony phase order and steps)
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { beginColonyPhase } from '../../src/engine/colony-phase'
 import { crisisReportFromView } from '../../src/engine/crisis'
 import { isForbidden } from '../../src/engine/effects'
+import { CODE_HOOKS } from '../../src/engine/code-hooks'
 import { view } from '../../src/engine/view'
 import { makeColony, of, types, type ColOpts } from './col-fixture'
 
@@ -110,5 +111,14 @@ describe('crisis resolution', () => {
     expect(of(again.events, 'EffectApplied')[0]).toMatchObject({ name: 'cr.blizzard#0', refreshed: true })
     expect(again.state.effects.filter((e) => e.name === 'cr.blizzard#0')).toHaveLength(1)
     expect(again.state.effects.find((e) => e.name === 'cr.blizzard#0')!.expires).toEqual({ roundNumber: 3 })
+  })
+
+  it('CRIS-022 an Overpopulation fail costs 1 morale per survivor killed (R p11, p14)', () => {
+    const start = makeColony({ morale: 8 })
+    const r = CODE_HOOKS.effects['crisis.overpopulation.killLowestTwo']!({ state: start, point: 'passive', seat: 's1', params: {} }, {})
+    const killed = of(r.events, 'SurvivorKilled')
+    expect(killed).toHaveLength(2)
+    expect(of(r.events, 'MoraleChanged').filter((m) => (m as { delta: number }).delta === -1)).toHaveLength(2)
+    expect(r.state.morale).toBe(6)
   })
 })
