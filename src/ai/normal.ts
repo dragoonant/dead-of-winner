@@ -320,6 +320,9 @@ function contribute(env: PlanEnv, legal: Action[], selfLedger: Ledger | null, ga
     const margin = spare >= 3 ? 0.6 : spare >= 2 ? 0.3 : 0
     k = Math.max(0, Math.ceil(shortfall + margin - 0.3 + 0.2 * scalars.generosity + TUNE.cExtra))
     if (k === 0 && q.myPoints <= 0 && expectedOthers < q.needed + 1) k = 1
+    // at least the fair share of what is still missing (the pile is short more often than it is long), more when the line is far off
+    const missing = q.needed - q.cardsIn
+    if (missing > 0) k = Math.max(k, Math.ceil(missing / (1 + later.length) - 1e-9))
     k = Math.min(k, pool.length, Math.max(1, q.bonusAt - q.myPoints))
   }
   claim(k)
@@ -367,6 +370,8 @@ function respondRequest(env: PlanEnv, pending: PendingDecision, legal: Action[],
   if (reserved.has(cheapest.give!)) return decline ?? legal[0]!
   const f = cache.food()
   const helpsColony = pending.context.symbol === 'food' && f.shortfall > 0
+  // the card the crisis pile needs from this seat stays home unless the colony is starving
+  if (!env.betrayer && !helpsColony && cache.holdsForCrisis(cheapest.give!)) return decline ?? legal[0]!
   // Easy gives by generosity alone (40 §12): no ledger, no reading of the asker
   if (tier.ledger !== 'full') return env.rand() < 0.2 + 0.7 * scalars.generosity ? cheapest : (decline ?? cheapest)
   if (env.betrayer) {

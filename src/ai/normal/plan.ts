@@ -15,6 +15,7 @@ import {
   reservedCards, statsOf, symbolsOfCard, woundsOn, type Ent, type ObjNeed, type Rec,
 } from './info'
 import type { Ledger } from './suspicion'
+
 import { afford, estimateYes } from './votes'
 
 export interface PlanMemory { requestTurn: number; voteRound: number; calledAt: number; objRound: number; fuelWho: SurvivorId | null }
@@ -40,6 +41,8 @@ export function envTune(): Record<string, number> {
 }
 const BASE_TUNE = {
   death: 2, moveNow: 1.0, moveLater: 1.4, moveCostMult: 1.3, searchScale: 1.0, barricadeBase: 0.07, homeDefend: 0.4, homeDanger: 0.8, killBase: 0.015, sampleKill: 1.3, killThem: 0.1, barricadeOut: 0.25, needMatch: 0.65, frost: 1, maxOut: 9, objWeight: 0.5, foodKeep: 1, haveMatchW: 0.15, boostMin: 0.15, outsider: -5, thReq: 0.9, pickKill: 0.8, stayRounds: 1.5, fuelCost: 0.15, betLazy: 0.15, gunSample: 0.3, wpnSample: 0.4, medW: 0.12, medBase: 0.25, inP: 0.45, laterP: 0.25, cExtra: 0.7, objBarr: 0.25, foodTokenCost: 0.12, coverAt: 0.45, objBase: 1.5, pushScale: 1, betProtect: 1.4, sabBase: 0.2, hoard: 3, woundW: 1.0, pickInf: 25, pickAtk: 0.3, pickSea: 0.45, moraleFear: 0, riskModel: 0, pushGate: 0,
+  // crisis reservation / targeting / colony defence
+  sampleCS: 0.4, objClose: 2, objFinish: 5, crisisSearch: 1, pivot: 0.5, holdCap: 3, keepMult: 2.5, defBoost: 0, leaveCredit: 0, homeLoad: 0, failZ: 1,
 }
 /** The live constants of the decision being made (see `useTune`). */
 export const TUNE: typeof BASE_TUNE & Record<string, number> = { ...BASE_TUNE }
@@ -50,6 +53,26 @@ export function useTune(over: Record<string, number> = {}): void {
 /** One exposure roll in morale points: a bite kills; a frostbite token adds a wound every turn until healed, so it is nearly as deadly (R p11). */
 const expCost = (o: ExposureOdds): number => (o.pDeath + TUNE.frost * o.frostbite + TUNE.woundW * o.wound) * TUNE.death
 export interface Patch { entrance: number; z?: number; b?: number }
+/** What the open crisis means to this seat right now: how many cards it should hold back, what failing costs, how likely failing is. */
+export interface CrisisCtx {
+  open: boolean
+  needed: number
+  cardsIn: number
+  /** matching cards in hand the seat is free to contribute (the secret objective's own cards excluded) */
+  haveMatch: number
+  seatsLeft: number
+  /** cards the seat should keep for the pile: its fair share of what is still missing, with some slack */
+  keepN: number
+  /** cards the seat would like to hold (keepN, but counting cards it does not have yet) */
+  wantN: number
+  pFail: number
+  /** morale-equivalent price of failing (morale, starvation, colony zombies as expected overruns, other effects) */
+  failCost: number
+  /** zombies a failure adds at the colony */
+  colonyZ: number
+  /** what one matching card is worth to the pile (morale-equivalent points) */
+  holdVal: number
+}
 const ALL_SYMBOLS: ItemSymbol[] = ['weapon', 'fuel', 'education', 'food', 'medicine', 'tool', 'survivor']
 
 /** Per-decision caches over the query helpers (each call rebuilds a state from the view, so call once per survivor/location). */
@@ -63,6 +86,8 @@ export class PlanCache {
   private _weights?: Record<ItemSymbol, number>
   private _reserved?: Set<string>
   private _objNeeds?: ObjNeed[]
+  private _crisis?: CrisisCtx
+  private _wBase?: Record<ItemSymbol, number>
   /** the survivor a fuel card played now would spare an exposure roll on its move (set while scoring the play) */
   fuelWho: SurvivorId | null = null
   constructor(readonly env: PlanEnv) {}
@@ -133,9 +158,83 @@ export class PlanCache {
     if (!s) { s = query.searchOdds(this.v, loc); this.sOdds.set(loc, s) }
     return s
   }
-  /** What one card is worth to this seat right now, by symbol (morale-equivalent points). */
-  weights(): Record<ItemSymbol, number> {
-    if (this._weights) return this._weights
+  /** The open crisis as this seat sees it (see CrisisCtx); `open` is false once it resolved, when none is showing, and for a betrayer's own purposes it still reads true (callers check `betrayer`). */
+  crisis(): CrisisCtx {
+    if (this._crisis) return this._crisis
+    const v = this.v
+    const none: CrisisCtx = { open: false, needed: 0, cardsIn: 0, haveMatch: 0, seatsLeft: 1, keepN: 0, wantN: 0, pFail: 0, failCost: 0, colonyZ: 0, holdVal: 0 }
+    const prevent = crisisPrevent(v)
+    if (!v.crisis.cardId || v.crisis.result || prevent.length === 0) return (this._crisis = none)
+    let q: ReturnType<typeof query.crisis>
+    try { q = query.crisis(v) } catch { return (this._crisis = none) }
+    const reserved = this.reserved()
+    const haveMatch = v.me.hand.filter((x) => !reserved.has(x) && matchesCrisis(v, x)).length
+    const order = v.seatOrder.indexOf(this.env.me) < 0 ? [] : rotateFrom(v.seatOrder, v.firstSeat)
+    const later = order.slice(order.indexOf(this.env.me) + 1).filter((s) => !v.seats[s]!.seat.exiled && !v.seats[s]!.seat.eliminated && v.seats[s]!.handCount > 0)
+    const seatsLeft = 1 + later.length
+    const remaining = Math.max(0, q.needed - q.cardsIn)
+    const wantN = remaining <= 0 ? 0 : Math.ceil((remaining / seatsLeft) * TUNE.keepMult - 1e-9)
+    const keepN = Math.min(haveMatch, wantN)
+    const margin = q.cardsIn + haveMatch + 0.75 * later.length - q.needed
+    const pFail = Math.max(0.05, Math.min(0.95, 0.5 - 0.3 * margin))
+    const prof = this.failProfile()
+    const failCost = prof.morale + prof.other + this.colonyFailCost(prof.colonyZ)
+    const holdVal = Math.min(TUNE.holdCap, failCost * TUNE.pivot)
+    return (this._crisis = { open: true, needed: q.needed, cardsIn: q.cardsIn, haveMatch, seatsLeft, keepN, wantN, pFail, failCost, colonyZ: prof.colonyZ, holdVal })
+  }
+  /** Reads the crisis card's printed failure effects from the public bundle. */
+  private failProfile(): { morale: number; colonyZ: number; other: number } {
+    const rec = recOf(this.v, this.v.crisis.cardId)
+    let morale = 0
+    let colonyZ = 0
+    let other = 0
+    for (const n of (rec?.['fail'] as Rec[] | undefined) ?? []) {
+      switch (n['op']) {
+        case 'morale': morale += Math.max(0, -Number(n['value'] ?? 0)); break
+        case 'starvation': morale += 0.8 * Number(n['value'] ?? 1); break
+        case 'addZombies': {
+          const val = Number(n['value'] ?? 1)
+          if (n['location'] === 'colony') colonyZ += val * TUNE.failZ
+          else other += 0.1 * val
+          break
+        }
+        case 'wound': other += 0.4 * Math.min(4, this.v.seatOrder.length); break
+        case 'removeBarricade': other += 0.5; break
+        case 'removeCard': other += 0.3; break
+        case 'forbid': other += 0.25; break
+        default: if (typeof n['code'] === 'string') other += /kill/i.test(String(n['code'])) ? 2.5 : 1; break
+      }
+    }
+    return { morale, colonyZ, other }
+  }
+  /** Extra expected overruns (in morale points) when `z` more zombies land on the colony board next to the ones already coming. */
+  private colonyFailCost(z: number): number {
+    if (z <= 0) return 0
+    const { ent, cap } = this.board('colony')
+    const a0 = this.baseArrivals('colony')
+    return Math.max(0, boardCost(ent, cap, a0 + z, 1) - boardCost(ent, cap, a0, 1))
+  }
+  /** How near the main objective's card counters are to done: progress 0..1 over the cards it still wants, and whether the seat's hand alone completes them. */
+  objectiveClose(): { progress: number; finishes: boolean } {
+    const needs = this.objNeeds()
+    if (needs.length === 0) return { progress: 0, finishes: false }
+    let remaining = 0
+    let inHand = 0
+    for (const n of needs) { remaining += n.remaining; inHand += Math.min(n.remaining, countableInHand(this.v, n).length) }
+    let have = 0
+    let total = 0
+    try { for (const p of query.objectiveProgress(this.v).parts) if (Number.isFinite(p.need) && p.need > 0) { have += Math.min(p.have, p.need); total += p.need } } catch { /* no progress report */ }
+    return { progress: total > 0 ? have / total : 0, finishes: remaining > 0 && inHand >= remaining }
+  }
+  /** A crisis-matching card the seat should not spend elsewhere: the pile is short and this is part of its fair share. Betrayers decide for themselves. */
+  holdsForCrisis(cardId: string): boolean {
+    if (this.env.betrayer) return false
+    const c = this.crisis()
+    return c.open && c.keepN > 0 && c.haveMatch <= c.keepN && matchesCrisis(this.v, cardId) && !this.reserved().has(cardId)
+  }
+  /** What one card is worth to this seat right now, by symbol (morale-equivalent points). With `crisis` false the open crisis is ignored (it is gone by next round). */
+  weights(crisis = true): Record<ItemSymbol, number> {
+    if (crisis ? this._weights : this._wBase) return (crisis ? this._weights : this._wBase)!
     const v = this.v
     const w: Record<ItemSymbol, number> = { weapon: 0.2, fuel: 0.2, education: 0.18, food: 0.3, medicine: 0.2, tool: 0.2, survivor: 0.25 }
     const f = this.food()
@@ -144,7 +243,16 @@ export class PlanCache {
     const reserved = this.reserved()
     const haveMatch = v.me.hand.filter((c) => !reserved.has(c) && matchesCrisis(v, c)).length
     if (!this.env.betrayer && v.objective.id === 'obj.main.we-need-more-samples') w.weapon += TUNE.wpnSample
-    for (const s of crisisPrevent(v)) w[s] += haveMatch >= 1 ? TUNE.haveMatchW : TUNE.needMatch
+    if (crisis) {
+      const cr = this.crisis()
+      if (cr.open && !this.env.betrayer) {
+        // short of its share of the pile: a matching card is worth a slice of what failing costs; a seat with its share in hand still values one a little
+        const val = cr.wantN > haveMatch ? Math.max(TUNE.needMatch, cr.holdVal * TUNE.crisisSearch) : TUNE.haveMatchW
+        // a kill objective needs its dice at the colony: the crisis pull on searching is softened there
+        const soft = v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleCS : 1
+        for (const s of crisisPrevent(v)) w[s] += Math.max(TUNE.haveMatchW, val * soft)
+      } else for (const s of crisisPrevent(v)) w[s] += haveMatch >= 1 ? TUNE.haveMatchW : TUNE.needMatch
+    }
     for (const s of missingObjectiveSymbols(v)) w[s] += 0.55
     if (this.env.betrayer) {
       // hoard what the betrayal card asks for until it has it (the starting cards do not count): the bigger the gap, the more a search for it is worth
@@ -161,26 +269,35 @@ export class PlanCache {
     } else for (const n of this.objNeeds()) if (countableInHand(v, n).length < n.remaining) w[n.symbol] += TUNE.objWeight
     const wounds = (v.seats[this.env.me]?.survivors ?? []).reduce((n, id) => n + woundsOn(v, id), 0)
     w.medicine += TUNE.medW * Math.min(4, wounds) + TUNE.medBase
-    this._weights = w
+    if (crisis) this._weights = w
+    else this._wBase = w
     return w
   }
   /** Expected value of the next card drawn at a location (0 when its deck is empty). */
-  searchValue(loc: LocationId): number {
+  searchValue(loc: LocationId, crisis = true): number {
     if (loc === 'colony') return 0
     const o = this.searchOdds(loc)
     if (o.remaining <= 0) return 0
-    const w = this.weights()
+    const w = this.weights(crisis)
     let s = 0
     for (const sym of ALL_SYMBOLS) s += (o.pSymbol[sym] ?? 0) * w[sym]
     return s * TUNE.searchScale
   }
   // ---------- board costs ----------
-  arrivals(loc: LocationId, extraSurvivors = 0): number {
+  /** Zombies the next colony phase puts at `loc` (survivors there, helpless, noise), before any crisis failure. */
+  baseArrivals(loc: LocationId, extraSurvivors = 0): number {
     const z = this.zombies()
     const p = z.perLocation.find((x) => x.location === loc)
     const base = loc === 'colony' ? Math.ceil(((p?.survivors ?? 0) + extraSurvivors) / 2) : (p?.survivors ?? 0) + extraSurvivors
     const noise = z.noise.find((x) => x.location === loc)?.expected ?? 0
     return base + Math.round(noise)
+  }
+  /** baseArrivals, plus the zombies an open crisis adds at the colony when it fails (weighted by how likely that is). */
+  arrivals(loc: LocationId, extraSurvivors = 0): number {
+    const base = this.baseArrivals(loc, extraSurvivors)
+    if (loc !== 'colony' || this.env.betrayer) return base
+    const cr = this.crisis()
+    return cr.open && cr.colonyZ > 0 ? base + Math.round(cr.pFail * cr.colonyZ) : base
   }
   board(loc: LocationId, patch?: Patch | Patch[]): { ent: Ent[]; cap: number } {
     const l = this.v.locations[loc]!
@@ -214,6 +331,11 @@ export class PlanCache {
     }
     return { patches, gain: start - cur }
   }
+  /** Scale on what killing or walling at `loc` is worth: the colony is the only place an overrun costs a survivor and morale together. */
+  defW(loc: LocationId): number {
+    if (loc !== 'colony' || TUNE.defBoost <= 0 || this.env.betrayer) return 1
+    return 1 + TUNE.defBoost * Math.min(1, this.cost('colony') / 1.5)
+  }
   cost(loc: LocationId, patch?: Patch | Patch[], extraSurvivors = 0): number {
     const { ent, cap } = this.board(loc, patch)
     const rounds = Math.min(this.env.tier.horizon, Math.max(1, this.v.roundsLeft))
@@ -221,6 +343,7 @@ export class PlanCache {
   }
 }
 
+const rotateFrom = <T,>(xs: readonly T[], first: T): T[] => { const i = xs.indexOf(first); return i <= 0 ? [...xs] : [...xs.slice(i), ...xs.slice(0, i)] }
 const unusedDice = (v: SeatView, seat: SeatId) => v.seats[seat]!.dice.filter((d) => !d.used)
 const dieOf = (v: SeatView, seat: SeatId, id: string) => v.seats[seat]!.dice.find((d) => d.id === id)
 
@@ -234,7 +357,7 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
       const sv = v.survivors[a.survivorId]
       if (!sv) return -9
       const loc = a.target.location
-      const gain = c.cost(loc) - c.cost(loc, { entrance: a.target.entrance, z: -1 })
+      const gain = (c.cost(loc) - c.cost(loc, { entrance: a.target.entrance, z: -1 })) * c.defW(loc)
       const d = dieOf(v, me, a.dieId)
       const objBonus = c.finishing() ? 0 : v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleKill : v.objective.id === 'obj.main.kill-them' && loc !== 'colony' ? TUNE.killThem : 0
       const baseline = loc === 'colony' ? TUNE.killBase * (v.locations['colony']!.entrances.reduce((n, e) => n + e.zombies, 0)) : 0
@@ -244,7 +367,7 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
       const sv = v.survivors[a.survivorId]
       if (!sv) return -9
       const loc = sv.location
-      const gain = c.cost(loc) - c.cost(loc, { entrance: a.entrance, b: 1 })
+      const gain = (c.cost(loc) - c.cost(loc, { entrance: a.entrance, b: 1 })) * c.defW(loc)
       const d = dieOf(v, me, a.dieId)
       const wall = v.objective.id === 'obj.main.home-sweet-home' || v.objective.id === 'obj.main.stockpile' ? TUNE.objBarr : 0
       const base = (loc === 'colony' ? TUNE.barricadeBase : TUNE.barricadeOut) + (c.env.betrayer ? 0 : wall)
@@ -353,13 +476,13 @@ function scoreAbility(c: PlanCache, a: Extract<Action, { type: 'useAbility' }>):
         const { gain, patches } = c.bestPatches(loc, 'z', count)
         const base = loc === 'colony' ? TUNE.killBase * patches.length : 0
         const objBonus = v.objective.id === 'obj.main.we-need-more-samples' ? TUNE.sampleKill : v.objective.id === 'obj.main.kill-them' && loc !== 'colony' ? TUNE.killThem : 0
-        val += (gain + base + objBonus * patches.length) * c.help() - rolls * c.exposureCost(a.survivorId)
+        val += (gain * c.defW(loc) + base + objBonus * patches.length) * c.help() - rolls * c.exposureCost(a.survivorId)
         break
       }
       case 'addBarricade': {
         known = true
         const { gain, patches } = c.bestPatches(loc, 'b', count)
-        val += gain + (loc === 'colony' ? TUNE.barricadeBase : TUNE.barricadeOut) * patches.length
+        val += gain * c.defW(loc) + (loc === 'colony' ? TUNE.barricadeBase : TUNE.barricadeOut) * patches.length
         break
       }
       case 'heal': {
@@ -480,6 +603,13 @@ function scoreObjective(c: PlanCache, a: Extract<Action, { type: 'contributeObje
     const mine = v.me.hand.filter((x) => matchesCrisis(v, x)).length
     const q = crisisNeed(v)
     if (mine <= q || v.morale <= 3) return -1 // the colony needs this card for the crisis first
+    if (c.holdsForCrisis(a.cardId)) {
+      // weigh the objective against the crisis pile instead of vetoing: progress makes each card worth more, and a hand that finishes the objective wins outright
+      const o = c.objectiveClose()
+      const gain = val * (1 + TUNE.objClose * o.progress) + (o.finishes ? TUNE.objFinish : 0)
+      val = gain - c.crisis().holdVal * (1 - (o.finishes ? 0.7 : 0))
+      if (val <= 0) return -1
+    }
   }
   if (foodOf(v, a.cardId) > 0 && c.food().shortfall > 0) val -= 0.6 // starving costs morale now
   return val
@@ -489,7 +619,7 @@ const crisisNeed = (v: SeatView): number => { try { return Math.max(1, Math.ceil
 /** A fuel card played before a move spares that survivor the exposure roll for the turn: worth the roll it saves on the best move it unlocks. */
 function scoreFuel(c: PlanCache, cardId: string, haveMatch: number): number {
   const { v, me } = c.env
-  if (c.reserved().has(cardId) || (matchesCrisis(v, cardId) && haveMatch <= 1) || c.env.betrayer) return -1
+  if (c.reserved().has(cardId) || (matchesCrisis(v, cardId) && (haveMatch <= 1 || c.holdsForCrisis(cardId))) || c.env.betrayer) return -1
   if (v.objective.id === 'obj.main.winter-has-come' && v.me.hand.filter((x) => symbolsOfCard(v, x).includes('fuel')).length <= 1) return -1
   let best = 0
   let who: SurvivorId | null = null
@@ -514,11 +644,14 @@ function scorePlay(c: PlanCache, a: Extract<Action, { type: 'playCard' }>): numb
   const f = c.food()
   const food = foodOf(v, a.cardId)
   if (food > 0) {
+    const hold = c.holdsForCrisis(a.cardId)
     if (f.shortfall > 0) {
       const covers = food >= f.shortfall
       const loss = f.moraleLossIfShort
-      return (covers ? loss * 1.1 : loss * 0.45 * (food / f.shortfall)) * c.help()
+      // a food card the crisis wants too: starving costs morale now, failing the crisis costs it later; spend it only when starvation is the bigger bill
+      return (covers ? loss * 1.1 : loss * 0.45 * (food / f.shortfall)) * c.help() - (hold ? c.crisis().holdVal : 0)
     }
+    if (hold) return -1
     if (v.food - f.needed < f.needed && v.roundsLeft > 1 && !reserved.has(a.cardId)) return 0.06
     // spare food in hand turns into dice: play it when a boosted die would unlock a kill or a search
     if (!reserved.has(a.cardId) && !c.env.betrayer) {
@@ -543,11 +676,11 @@ function scorePlay(c: PlanCache, a: Extract<Action, { type: 'playCard' }>): numb
     const worst = Math.max(0, ...mineIds.map((s) => woundsOn(v, s)))
     const frost = mineIds.some((s) => (v.survivors[s]?.frostbite ?? 0) > 0)
     if (worst < 1) return -1
-    if (matchesCrisis(v, a.cardId) && haveMatch <= 1 && !frost) return -1
-    return (frost ? 0.6 * TUNE.death : 0.1 + 0.2 * Math.min(2, worst)) - (reserved.has(a.cardId) ? 5 : 0)
+    if (matchesCrisis(v, a.cardId) && (haveMatch <= 1 || c.holdsForCrisis(a.cardId)) && !frost) return -1
+    return (frost ? 0.6 * TUNE.death : 0.1 + 0.2 * Math.min(2, worst)) - (reserved.has(a.cardId) ? 5 : 0) - (c.holdsForCrisis(a.cardId) ? c.crisis().holdVal : 0)
   }
   if (isEquipCard(v, a.cardId) && a.equipTo) {
-    if (reserved.has(a.cardId) || (matchesCrisis(v, a.cardId) && haveMatch <= 1)) return -1
+    if (reserved.has(a.cardId) || (matchesCrisis(v, a.cardId) && (haveMatch <= 1 || c.holdsForCrisis(a.cardId)))) return -1
     const st = statsOf(v, a.equipTo)
     const at = v.survivors[a.equipTo]?.location === 'colony' ? 0.02 : 0
     const nd = c.env.betrayer ? betrayalNeeds(v) : null
@@ -591,24 +724,31 @@ function scoreMove(c: PlanCache, survivorId: SurvivorId, to: LocationId): number
     if (loc.deckCount <= 0) return -1
     const sval = c.searchValue(to)
     const baseline = from !== 'colony' ? c.searchValue(from) : 0
+    // the crisis showing now is gone next round: what a deck is worth later is judged without it
+    const svalLater = c.searchValue(to, false)
+    const baselineLater = from !== 'colony' ? c.searchValue(from, false) : 0
     const need = c.dieNeed(survivorId, 'search')
     const dice = unusedDice(v, me)
     const usable = need === null ? dice.length : dice.filter((d) => d.value >= need).length
     const now = TUNE.moveNow * (sval - baseline) * Math.min(usable, 2)
-    const later = (sval - baseline) * (v.roundsLeft > 2 ? TUNE.moveLater : v.roundsLeft > 1 ? TUNE.moveLater / 2 : 0)
+    const later = (svalLater - baselineLater) * (v.roundsLeft > 2 ? TUNE.moveLater : v.roundsLeft > 1 ? TUNE.moveLater / 2 : 0)
     const extra = c.cost(to, undefined, 1) - c.cost(to)
     let cost = expo * (from === 'colony' ? TUNE.moveCostMult : 1) + extra * 1.2
     if (from === 'colony' && homeOthers === 0 && colonyCost > 0.25) cost += colonyCost * 0.7
     if (from === 'colony' && v.seats[me]!.survivors.length >= 1 && colonyCost > 0.8) cost += 0.3
     const foodCredit = from === 'colony' && c.food().shortfall > 0 ? 0.12 : 0
     if (from === 'colony') cost += stayValue(c, survivorId)
-    return now + later + foodCredit - cost - 0.02
+    // one body fewer at the colony: fewer zombies next colony phase (ceil(survivors / 2))
+    const relief = from === 'colony' && homeOthers > 0 ? TUNE.leaveCredit * Math.max(0, colonyCost - c.cost('colony', undefined, -1)) : 0
+    return now + later + foodCredit + relief - cost - 0.02
   }
   // coming home
   const originCost = c.cost(from, undefined, 0) - c.cost(from, undefined, -1)
   const danger = originCost > 0.5 ? originCost * TUNE.homeDanger : 0
   const defend = colonyCost > 0.9 ? Math.min(1.5, colonyCost) * TUNE.homeDefend : 0
-  return danger + defend - expo * 1.1 - 0.1
+  // one more body at the colony adds a zombie to the next colony phase every second survivor
+  const load = TUNE.homeLoad * Math.max(0, c.cost('colony', undefined, 1) - colonyCost)
+  return danger + defend - load - expo * 1.1 - 0.1
 }
 
 /** Pick the best-scoring legal turn action; ties and near-ties are broken by the seeded rand. */
