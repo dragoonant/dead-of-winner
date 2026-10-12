@@ -5,6 +5,7 @@ import { query } from '../../engine/index'
 import type { SeatId } from '../../engine/index'
 import type { SeatView } from '../../engine/view'
 import { DEFAULT_SCALARS, getPersona } from '../personas'
+import type { Suspects } from './suspicion'
 
 export const eligibleVoters = (v: SeatView): SeatId[] => v.seatOrder.filter((s) => !v.seats[s]!.seat.exiled && !v.seats[s]!.seat.eliminated)
 
@@ -12,6 +13,22 @@ export const eligibleVoters = (v: SeatView): SeatId[] => v.seatOrder.filter((s) 
 export function thresholdOf(v: SeatView, seat: SeatId, which: 'voteThreshold' | 'callThreshold' = 'voteThreshold'): number {
   const id = v.setup.seats.find((s) => s.id === seat)?.persona
   return (getPersona(id)?.scalars ?? DEFAULT_SCALARS)[which]
+}
+
+/**
+ * What a wrong exile costs, and so how sure a bot must be before it calls or backs one (10 R15; priced on sims): the seat leaves the crisis
+ * pile and the colony's chores, which costs about a tenth of the games' completions; exiling the real betrayer buys back about a thirtieth
+ * (the exiled betrayer still hoards, so its cards do not return) and takes away its chance to win. That puts break-even near 0.77 true
+ * odds, and the reader's posterior runs a little under the true odds (sims: 0.5 means about 0.8), so no persona goes below EXILE_FLOOR on
+ * the reader's scale. A second exile of a non-betrayer drops morale to 0 (R15.6): once somebody has been exiled, the floor rises by how
+ * likely it is that seat was NOT the betrayer.
+ */
+export const EXILE_FLOOR = 0.6
+export function exileFloor(v: SeatView, ledger: Suspects): number {
+  const gone = v.seatOrder.filter((s) => v.seats[s]!.seat.exiled)
+  if (gone.length === 0) return EXILE_FLOOR
+  const pBetrayerGone = Math.min(1, gone.reduce((a, s) => a + ledger.score(s), 0))
+  return Math.min(0.97, EXILE_FLOOR + 0.35 * (1 - pBetrayerGone))
 }
 
 /** 0..1: how far the main objective is (mean of its parts, each capped at 1). */
@@ -36,13 +53,13 @@ export function afford(v: SeatView, target: SeatId): boolean {
 }
 
 /** The yes votes a call on `target` is expected to get when this bot supports it: its own, plus every seat whose threshold the shared evidence clears. */
-export function estimateYes(v: SeatView, me: SeatId, target: SeatId, myScore: number, factor: number): { yes: number; needed: number } {
+export function estimateYes(v: SeatView, me: SeatId, target: SeatId, myScore: number, factor: number, floor = 0): { yes: number; needed: number } {
   let needed = Math.floor(eligibleVoters(v).length / 2) + 1
   try { needed = query.voteForecast(v, target).needed } catch { /* keep the plain majority */ }
   let yes = 1
   for (const s of eligibleVoters(v)) {
     if (s === me || s === target) continue
-    if (myScore * factor >= thresholdOf(v, s)) yes++
+    if (myScore * factor >= Math.max(thresholdOf(v, s) * (floor > 0 ? 1.05 : 1), floor - 0.1)) yes++
   }
   return { yes, needed }
 }

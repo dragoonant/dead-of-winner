@@ -8,8 +8,9 @@ import type { SeatView } from '../engine/view'
 import { crossroadsValue, effectVoteEdge, labelScore, optionOf } from './normal/options'
 import { betrayerPush, foodOf, isBetrayer, mainObjectiveNeeds, matchesCrisis, recOf, reservedCards, statsOf, symbolsOfCard, woundsOn } from './normal/info'
 import { PlanCache, TUNE, envTune, planTurn, useTune, type PlanEnv, type PlanMemory } from './normal/plan'
-import { Ledger, gameKeyOf, postClaim, registerLedger } from './normal/suspicion'
-import { afford, thresholdOf } from './normal/votes'
+import { Ledger, gameKeyOf, postClaim, registerLedger, type Suspects } from './normal/suspicion'
+import { Reader } from './normal/reader'
+import { afford, exileFloor, thresholdOf } from './normal/votes'
 import { DEFAULT_SCALARS, blendScalars, getPersona, type Persona, type PersonaScalars } from './personas'
 import { TIERS, type PlannerTier, type TierParams } from './tiers'
 
@@ -50,15 +51,17 @@ export function createTierDecider(tier: PlannerTier, seed: string, personaId?: s
   const scalars: PersonaScalars = blendScalars(persona?.scalars ?? DEFAULT_SCALARS, params.personaStrength)
   const gameKey = gameKeyOf(seed)
   const mem: PlanMemory = { requestTurn: -1, voteRound: -1, calledAt: -1, objRound: -1, fuelWho: null }
-  let ledger: Ledger | null = null
+  let ledger: Suspects | null = null
   let selfLedger: Ledger | null = null // the betrayer's view of how the table sees it
   const stats: DeciderStats = { decisions: 0, totalMs: 0, maxMs: 0, degraded: 0 }
   let lastSeat = ''
 
-  const ledgerFor = (v: SeatView): Ledger => {
+  const ledgerFor = (v: SeatView): Suspects => {
     const betrayer = isBetrayer(v)
     if (!ledger) {
-      ledger = new Ledger({ me: v.seat, paranoia: scalars.paranoia, trust: scalars.trust, selfCandidate: false, attacksOnly: params.ledger === 'attacks' }, gameKey)
+      ledger = params.ledger === 'attacks'
+        ? new Ledger({ me: v.seat, paranoia: scalars.paranoia, trust: scalars.trust, selfCandidate: false, attacksOnly: true }, gameKey)
+        : new Reader({ me: v.seat, paranoia: scalars.paranoia, trust: scalars.trust }, gameKey)
       registerLedger(gameKey, v.seat, ledger)
     }
     if (betrayer && !selfLedger) {
@@ -401,8 +404,9 @@ function castVote(env: PlanEnv, pending: PendingDecision, legal: Action[], selfL
     const edge = effectVoteEdge(v, (id) => recOf(v, id))
     yes = edge !== null && (env.betrayer ? edge < -0.3 : edge > 0)
   } else if (target !== me && !v.seats[target]?.seat.exiled) {
+    const floor = exileFloor(v, env.ledger)
     const exiled = v.seatOrder.filter((s) => v.seats[s]!.seat.exiled).length
-    const theta = Math.min(0.97, Math.max(0.05, scalars.voteThreshold + tier.voteShift)) * (exiled > 0 ? 1.15 : 1)
+    const theta = Math.min(0.97, Math.max(0.05, scalars.voteThreshold + tier.voteShift)) * (env.betrayer && exiled > 0 ? 1.15 : 1)
     if (env.betrayer) {
       // never against its own interest and never on itself: it joins a vote the table's own evidence already supports (looking like the table),
       // and the patient betrayer backs it only while it has cover to spare, so its yes does not become the story
@@ -410,7 +414,7 @@ function castVote(env: PlanEnv, pending: PendingDecision, legal: Action[], selfL
       yes = v.roundNumber >= 2 && s > theta * 0.8 && afford(v, target)
     } else {
       // the first vote of the game needs a second round of evidence; afterwards: suspicion over the persona's threshold, and the colony can afford it
-      yes = v.roundNumber >= 2 && env.ledger.score(target) >= Math.min(0.97, theta * 1.05) && afford(v, target) && tier.ledger === 'full'
+      yes = v.roundNumber >= 2 && env.ledger.score(target) >= Math.min(0.97, Math.max(theta * 1.05, floor - 0.1)) && afford(v, target) && tier.ledger === 'full'
       // Easy never votes without an attack as the evidence (40 §12)
       if (tier.ledger !== 'full') yes = v.roundNumber >= 2 && env.ledger.attackers.has(target)
     }

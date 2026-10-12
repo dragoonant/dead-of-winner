@@ -49,9 +49,23 @@ export function resetTalkBus(): void { talkBus.clear() }
 
 // ---- the suspicion log the recap reads (50 recap): per game, per observer seat, the score of every other seat after each crisis ----
 export interface SuspicionPoint { round: number; scores: Record<SeatId, number> }
-const registry = new Map<string, Map<SeatId, Ledger>>()
+/** What the planner and the recap need from a suspicion model: the old log-odds `Ledger` (Easy, and the betrayer's picture of itself) and the posterior `Reader` (Normal and Hard) both provide it. */
+export interface Suspects {
+  readonly rowsBySeat: Record<string, Record<string, number>>
+  readonly attackers: Set<string>
+  readonly history: SuspicionPoint[]
+  roundsSeen: number
+  noteOwnWrong(n?: number): void
+  syncView(v: SeatView): void
+  observe(events: readonly GameEvent[], v: SeatView): void
+  seatsKnown(): SeatId[]
+  logit(seat: SeatId): number
+  score(seat: SeatId): number
+  top(): { seat: SeatId; score: number } | null
+}
+const registry = new Map<string, Map<SeatId, Suspects>>()
 let lastGame = ''
-export function registerLedger(gameKey: string, seat: SeatId, ledger: Ledger): void {
+export function registerLedger(gameKey: string, seat: SeatId, ledger: Suspects): void {
   let game = registry.get(gameKey)
   if (!game) {
     game = new Map()
@@ -80,7 +94,7 @@ export const W_CLEARED = ov['wCleared'] ?? 0.5
 /** Rows that are weak evidence on their own (a refusal, an empty hand at a failed crisis, a swollen hand): their total against one seat is capped for the whole game. */
 export const ROW_CAP: Record<string, number> = { 'request.declined': 0.8, 'crisis.none': 0.6, hoard: 0.4, 'colony.hungry': 0.4 }
 
-export class Ledger {
+export class Ledger implements Suspects {
   private L: Record<string, number> = {}
   private net: Record<string, number> = {}
   private contributed: Record<string, number> = {}

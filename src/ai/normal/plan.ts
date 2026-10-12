@@ -19,16 +19,16 @@ import {
 } from './info'
 import { Goals } from './goals'
 import { fuelDuty, starvationShift, wasteSaved } from './forecast'
-import type { Ledger } from './suspicion'
+import type { Suspects } from './suspicion'
 
-import { afford, estimateYes } from './votes'
+import { afford, estimateYes, exileFloor } from './votes'
 
 export interface PlanMemory { requestTurn: number; voteRound: number; calledAt: number; objRound: number; fuelWho: SurvivorId | null }
 export interface PlanEnv {
   v: SeatView
   me: SeatId
   scalars: PersonaScalars
-  ledger: Ledger
+  ledger: Suspects
   betrayer: boolean
   /** a betrayer's estimate of how suspicious the table finds it (0..1); 0 for loyal seats */
   selfScore: () => number
@@ -473,7 +473,6 @@ function betrayalWants(v: SeatView, symbol: ItemSymbol | undefined): boolean {
   const k = nd.hand[symbol]
   return !!k && countableForBetrayal(v, symbol, nd).length < k
 }
-const exiledCount = (v: SeatView): number => v.seatOrder.filter((s) => v.seats[s]!.seat.exiled).length
 
 /** Calling a vote (40 §8.4): the target must be the seat this bot suspects most, above the call threshold, affordable, and the estimated yes votes must reach a majority. */
 function scoreCallVote(c: PlanCache, a: Extract<Action, { type: 'callVote' }>): number {
@@ -483,10 +482,13 @@ function scoreCallVote(c: PlanCache, a: Extract<Action, { type: 'callVote' }>): 
   if (tier.ledger !== 'full') return -1
   const top = c.env.ledger.top()
   if (!top || top.seat !== a.target) return -1
-  const thetaCall = Math.min(0.97, scalars.callThreshold + tier.callShift) * (exiledCount(v) > 0 ? 1.1 : 1)
-  if (top.score < Math.min(0.97, thetaCall)) return -1
+  const floor = exileFloor(v, c.env.ledger)
+  const thetaCall = c.env.betrayer
+    ? Math.min(0.97, (scalars.callThreshold + tier.callShift) * (v.seatOrder.some((s) => v.seats[s]!.seat.exiled) ? 1.1 : 1)) // the betrayer's own rule, as before
+    : Math.min(0.97, Math.max(scalars.callThreshold + tier.callShift, floor))
+  if (top.score < thetaCall) return -1
   if (!afford(v, a.target)) return -1
-  const { yes, needed } = estimateYes(v, me, a.target, top.score, tier.callEstimate)
+  const { yes, needed } = estimateYes(v, me, a.target, top.score, tier.callEstimate, c.env.betrayer ? 0 : floor)
   if (c.env.betrayer) {
     // only the patient betrayer deflects with a vote, and only while it has cover to spare (the table must be about to agree anyway)
     return tier.betrayer === 'patient' && yes >= needed && c.env.cover() > 1 ? 0.8 : -1
