@@ -36,6 +36,9 @@ export interface TierParams {
   horizon: number
 }
 
+/** The planner constants Normal and Hard share: benched on Normal, and Hard ran the untuned base values until it took these too (it played about 10% worse than Normal on loyal tables). */
+const BENCHED_TUNE = { sampleKill: 1.15, inP: 0.55, laterP: 0.35, woundW: 0.4 }
+
 export const TIERS: Record<PlannerTier, TierParams> = {
   easy: {
     tier: 'easy', tune: { inP: 0.85, laterP: 0.7, cExtra: -0.2, woundW: 0.12, boostMin: 99, medW: 0.05, medBase: 0.1, sampleKill: 0.9 },
@@ -43,12 +46,12 @@ export const TIERS: Record<PlannerTier, TierParams> = {
     personaStrength: 0.5, crisisTau: 0.5, handTracking: false, finishing: false, horizon: 1,
   },
   normal: {
-    tier: 'normal', tune: { sampleKill: 1.15, inP: 0.55, laterP: 0.35, woundW: 0.4 },
+    tier: 'normal', tune: { ...BENCHED_TUNE },
     noise: 0, ledger: 'full', voteShift: 0, callShift: 0, callEstimate: 0.85, betrayer: 'cover', coverMargin: 0.8, requests: true, foodBoostMax: 6,
     personaStrength: 1, crisisTau: 0.7, handTracking: false, finishing: false, horizon: 2,
   },
   hard: {
-    tier: 'hard', tune: {},
+    tier: 'hard', tune: { ...BENCHED_TUNE },
     noise: 0, ledger: 'full', voteShift: -0.05, callShift: -0.05, callEstimate: 0.9, betrayer: 'patient', coverMargin: 0.5, requests: true, foodBoostMax: 6,
     personaStrength: 1, crisisTau: 0.75, handTracking: true, finishing: true, horizon: 2,
   },

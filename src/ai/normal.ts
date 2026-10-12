@@ -95,7 +95,7 @@ export function createTierDecider(tier: PlannerTier, seed: string, personaId?: s
     async decide(v: SeatView, pending: PendingDecision, legal: Action[]): Promise<Action> {
       const t0 = now()
       const deadline = t0 + budgetMs()
-      useTune(params.tune)
+      useTune(params.tune, v.objective.id)
       const l = ledgerFor(v)
       l.syncView(v)
       selfLedger?.syncView(v)

@@ -3,8 +3,10 @@
 //   1. colony defence (kill the zombie / raise the barricade that prevents the most expected overruns)
 //   2. feed the colony (play food when the supply is short for this round's pay), clean waste near a multiple of ten
 //   3. search with the best qualifying die where the deck's symbols match the crisis and the seat's objective
-//   4. move only when the search gain beats the exposure roll, and never strip the colony while it is threatened
+//   4. move only when the search gain beats the exposure roll (a bite also spreads to everyone standing at the roller's location), at most one survivor
+//      per seat away from the colony (maxOut), and never strip the colony while it is threatened
 //   5. the main objective's unmet parts (goals.ts): every kill, wall, food token, search or weapon that moves one is priced, more as rounds run out
+// forecast.ts prices the colony phase's own bills (waste step, food pay, overruns, a failing crisis); OBJECTIVE_TUNE gives a few objectives their own constants.
 // Never attacks survivors, never spends dice on abilities it cannot value. Reads only the SeatView and query.*.
 import { query } from '../../engine/index'
 import type { Action, ExposureOdds, ItemSymbol, LocationId, SeatId, SurvivorId } from '../../engine/index'
@@ -16,6 +18,7 @@ import {
   reservedCards, statsOf, symbolsOfCard, woundsOn, type Ent, type ObjNeed, type Rec,
 } from './info'
 import { Goals } from './goals'
+import { fuelDuty, starvationShift, wasteSaved } from './forecast'
 import type { Ledger } from './suspicion'
 
 import { afford, estimateYes } from './votes'
@@ -42,7 +45,17 @@ export function envTune(): Record<string, number> {
   try { return JSON.parse(((globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.['AI_TUNE']) ?? '{}') as Record<string, number> } catch { return {} }
 }
 const BASE_TUNE = {
-  death: 2, moveNow: 1.0, moveLater: 1.4, moveCostMult: 1.3, searchScale: 1.0, barricadeBase: 0.07, homeDefend: 0.4, homeDanger: 0.8, killBase: 0.015, sampleKill: 1.3, barricadeOut: 0.25, needMatch: 0.65, frost: 1, maxOut: 9, objWeight: 0.5, foodKeep: 1, haveMatchW: 0.15, boostMin: 0.15, outsider: -5, thReq: 0.9, pickKill: 0.8, stayRounds: 1.5, fuelCost: 0.15, betLazy: 0.15, gunSample: 0.3, wpnSample: 0.4, medW: 0.12, medBase: 0.25, inP: 0.45, laterP: 0.25, cExtra: 0.7, foodTokenCost: 0.12, coverAt: 0.45, objBase: 1.5, pushScale: 1, betProtect: 1.4, sabBase: 0.2, hoard: 3, woundW: 1.0, pickInf: 25, pickAtk: 0.3, pickSea: 0.45, moraleFear: 0, riskModel: 0, pushGate: 0,
+  death: 2, moveNow: 1.0, moveLater: 1.4, moveCostMult: 1.3, searchScale: 1.0, barricadeBase: 0.07, homeDefend: 0.2, homeDanger: 0.5, killBase: 0.015, sampleKill: 1.3, barricadeOut: 0.25, needMatch: 0.65, frost: 1, maxOut: 1, objWeight: 0.5, foodKeep: 1, haveMatchW: 0.15, boostMin: 0.15, outsider: -5, thReq: 0.9, pickKill: 0.8, stayRounds: 1.5, fuelCost: 0.15, betLazy: 0.15, gunSample: 0.3, wpnSample: 0.4, medW: 0.12, medBase: 0.25, inP: 0.45, laterP: 0.25, cExtra: 0.7, foodTokenCost: 0.12, coverAt: 0.45, objBase: 1.5, pushScale: 1, betProtect: 1.4, sabBase: 0.2, hoard: 3, woundW: 1.0, pickInf: 25, pickAtk: 0.3, pickSea: 0.45, moraleFear: 0, riskModel: 0, pushGate: 0,
+  // exposure chain (a bite spreads to the others at the roller's location)
+  chainW: 2,
+  // waste: the colony-phase check costs floor(waste/10) every round; wasteAdd = expected cards the seats still to act put on the pile, wasteFuture = weight of the later rounds a cleaned card also spares
+  wasteW: 1, wasteAdd: 0.8, wasteFuture: 0.8,
+  // outings: at most maxOutAll survivors (all seats) away from the colony when a move leaves it, and a flat price per extra one
+  maxOutAll: 99, outPrice: 0, outStep: 1,
+  // food: weight of the starvation a move spares (or causes) by changing the colony's headcount (the pay is ceil(mouths / 2))
+  foodPar: 0.8,
+  // Winter Has Come: price of a fuel card for a seat with none in hand (the game ends at a colony phase no hand has fuel for)
+  winterFuel: 0, winterKeep: 1,
   // crisis reservation / targeting / colony defence
   sampleCS: 0.4, objClose: 2, objFinish: 5, crisisSearch: 1, pivot: 0.5, holdCap: 3, keepMult: 2.5, defBoost: 0, leaveCredit: 0, homeLoad: 0, failZ: 1,
   // objective-goal layer (goals.ts): goalV is the value of finishing the goal, spread over the units still missing (floored at goalRmin, capped at goalRmax)
@@ -50,9 +63,23 @@ const BASE_TUNE = {
 }
 /** The live constants of the decision being made (see `useTune`). */
 export const TUNE: typeof BASE_TUNE & Record<string, number> = { ...BASE_TUNE }
-/** Load a tier's constants (and the bench override) for the decision about to be made. decide() is synchronous, so one decider never sees another's. */
-export function useTune(over: Record<string, number> = {}): void {
-  Object.assign(TUNE, BASE_TUNE, over, envTune())
+/**
+ * Per-objective adjustments of the constants above, benched one objective at a time (200 games on two seeds each; `AI_TUNE` still has the last word).
+ * The objectives that need cards (the cure, the samples, a deck to empty) want more searching; the ones that are won on the colony board want the
+ * goal layer's prices up and the searching down. Anything not listed plays on the defaults.
+ */
+export const OBJECTIVE_TUNE: Record<string, Record<string, number>> = {
+  'obj.main.find-a-cure': { goalV: 24 },
+  'obj.main.we-need-more-samples': { searchScale: 1.4 },
+  'obj.main.home-sweet-home': { goalV: 40 },
+  'obj.main.leave-it-all-behind': { goalV: 40 },
+  'obj.main.stockpile': { maxOut: 2 },
+  'obj.main.winter-has-come': { winterKeep: 9 },
+  'obj.main.raiding-party': { barricadeOut: 1 },
+}
+/** Load a tier's constants, the objective's adjustments and the bench override for the decision about to be made. decide() is synchronous, so one decider never sees another's. */
+export function useTune(over: Record<string, number> = {}, objectiveId?: string): void {
+  Object.assign(TUNE, BASE_TUNE, over, (objectiveId && OBJECTIVE_TUNE[objectiveId]) || {}, envTune())
 }
 /** One exposure roll in morale points: a bite kills; a frostbite token adds a wound every turn until healed, so it is nearly as deadly (R p11). */
 const expCost = (o: ExposureOdds): number => (o.pDeath + TUNE.frost * o.frostbite + TUNE.woundW * o.wound) * TUNE.death
@@ -116,6 +143,7 @@ export class PlanCache {
   private _fin?: boolean
   /** A betrayer's wish to bring the colony down: 0 early, up to 1 when the game is nearly out of rounds or morale is already thin. */
   push(): number { return this.env.betrayer ? Math.min(1, betrayerPush(this.v, TUNE.pushGate) * TUNE.pushScale) : 0 }
+  hasSymbol(cardId: string, sym: ItemSymbol): boolean { return symbolsOfCard(this.v, cardId).includes(sym) }
   reserved(): Set<string> { return (this._reserved ??= reservedCards(this.v)) }
   exposure(id: SurvivorId, reason: 'zombieKill' | 'move' = 'zombieKill'): ExposureOdds {
     const k = `${id}|${reason}`
@@ -124,9 +152,9 @@ export class PlanCache {
     return e
   }
   /** Cost of one exposure roll in morale points: death (and the bite chain it may start), plus the wounds that make the next roll deadlier. */
-  exposureCost(id: SurvivorId, reason: 'zombieKill' | 'move' = 'zombieKill'): number {
+  exposureCost(id: SurvivorId, reason: 'zombieKill' | 'move' = 'zombieKill', at?: LocationId): number {
     const o = this.exposure(id, reason)
-    const raw = this.rawCost(id, o)
+    const raw = this.rawCost(id, o, at)
     return raw * (1 - 0.35 * this.env.scalars.risk) * this.protect() * (1 + TUNE.moraleFear * Math.max(0, 5 - this.v.morale))
   }
   /**
@@ -134,16 +162,26 @@ export class PlanCache {
    * THIS survivor: a frostbite token ticks a wound every turn until healed (deadly without a medicine card to hand), a wound is cheap on a
    * healthy survivor and expensive on one that already carries one, and the same face on a survivor at two wounds is already counted as a death.
    */
-  rawCost(id: SurvivorId, o: ExposureOdds): number {
-    if (!TUNE.riskModel) return expCost(o)
+  rawCost(id: SurvivorId, o: ExposureOdds, at?: LocationId): number {
+    const chain = o.bite * this.chainDeaths(id, at) * TUNE.death * TUNE.chainW
+    if (!TUNE.riskModel) return expCost(o) + chain
     const sv = this.v.survivors[id]
     const w = sv?.wounds ?? 0
     const f = sv?.frostbite ?? 0
-    if (w + f >= 2) return o.pDeath * TUNE.death
+    if (w + f >= 2) return o.pDeath * TUNE.death + chain
     const healer = this.v.me.hand.some((c) => symbolsOfCard(this.v, c).includes('medicine')) ? 1 : 0
     const dFrost = Math.min(1, (healer ? 0.35 : 0.8) + 0.15 * (w + f))
     const dWound = (w + f === 0 ? 0.1 : 0.45) * (healer ? 0.6 : 1)
-    return (o.pDeath + o.frostbite * dFrost + o.wound * dWound) * TUNE.death
+    return (o.pDeath + o.frostbite * dFrost + o.wound * dWound) * TUNE.death + chain
+  }
+  /** Expected extra deaths when a bite on `id` spreads at `at` (default: where it stands): each link kills with 1/2, so k others behind it give 1 - 2^-k. */
+  chainDeaths(id: SurvivorId, at?: LocationId): number {
+    const v = this.v
+    const loc = at ?? v.survivors[id]?.location
+    if (!loc) return 0
+    let k = 0
+    for (const s of Object.values(v.survivors)) if (s.status === 'alive' && s.id !== id && s.location === loc) k++
+    return 1 - 0.5 ** k
   }
   /** A betrayer keeps its own survivors out of harm: its cards need them standing when the colony falls (serial killers wants two). */
   protect(): number { return this.env.betrayer ? (betrayalKind(this.v) === 'serial-killers' ? TUNE.betProtect * 2 : TUNE.betProtect) : 1 }
@@ -280,6 +318,7 @@ export class PlanCache {
       }
       for (const n of this.objNeeds()) w[n.symbol] += 0.15 // hoard what the objective needs
     } else for (const n of this.objNeeds()) if (countableInHand(v, n).length < n.remaining) w[n.symbol] += TUNE.objWeight
+    w.fuel += fuelDuty(this)
     const wounds = (v.seats[this.env.me]?.survivors ?? []).reduce((n, id) => n + woundsOn(v, id), 0)
     w.medicine += TUNE.medW * Math.min(4, wounds) + TUNE.medBase
     if (crisis) this._weights = w
@@ -387,11 +426,8 @@ export function scoreTurnAction(c: PlanCache, a: Action): number {
       return gain * c.help() + base - 0.02 * (d?.value ?? 3)
     }
     case 'cleanWaste': {
-      const w = v.waste.length
       const d = dieOf(v, me, a.dieId)
-      const crosses = Math.floor(w / 10) - Math.floor(Math.max(0, w - 3) / 10)
-      const near = w % 10 >= 7 ? 0.35 : 0
-      return (crosses * 1.0 + near) * c.help() - 0.02 * (d?.value ?? 3) - 0.03
+      return wasteSaved(c, 3) * c.help() - 0.02 * (d?.value ?? 3) - 0.03
     }
     case 'search': {
       const sv = v.survivors[a.survivorId]
@@ -516,9 +552,8 @@ function scoreAbility(c: PlanCache, a: Extract<Action, { type: 'useAbility' }>):
       }
       case 'cleanWaste': {
         known = true
-        const w = v.waste.length
         const take = typeof n['count'] === 'number' ? (n['count'] as number) : 3
-        val += (Math.floor(w / 10) - Math.floor(Math.max(0, w - take) / 10)) * 1.0 + (w % 10 >= 7 ? 0.2 : 0) - 0.03
+        val += wasteSaved(c, take) - 0.03
         break
       }
       default: break
@@ -612,7 +647,7 @@ function scoreObjective(c: PlanCache, a: Extract<Action, { type: 'contributeObje
     return cover ? 0.6 : -2
   }
   if (c.reserved().has(a.cardId)) return -2 // the seat's own secret objective counts this card in hand
-  if (v.objective.id === 'obj.main.winter-has-come' && v.me.hand.filter((x) => symbolsOfCard(v, x).includes('fuel')).length <= 1) return -1 // the colony-phase fuel duty draws on this one
+  if (v.objective.id === 'obj.main.winter-has-come' && v.me.hand.filter((x) => symbolsOfCard(v, x).includes('fuel')).length <= (v.roundsLeft <= 2 ? 1 : TUNE.winterKeep)) return -1 // the colony-phase fuel duty draws on this one
   let val = TUNE.objBase
   if (matchesCrisis(v, a.cardId) && !v.crisis.result) {
     const mine = v.me.hand.filter((x) => matchesCrisis(v, x)).length
@@ -635,7 +670,7 @@ const crisisNeed = (v: SeatView): number => { try { return Math.max(1, Math.ceil
 function scoreFuel(c: PlanCache, cardId: string, haveMatch: number): number {
   const { v, me } = c.env
   if (c.reserved().has(cardId) || (matchesCrisis(v, cardId) && (haveMatch <= 1 || c.holdsForCrisis(cardId))) || c.env.betrayer) return -1
-  if (v.objective.id === 'obj.main.winter-has-come' && v.me.hand.filter((x) => symbolsOfCard(v, x).includes('fuel')).length <= 1) return -1
+  if (v.objective.id === 'obj.main.winter-has-come' && v.me.hand.filter((x) => symbolsOfCard(v, x).includes('fuel')).length <= (v.roundsLeft <= 2 ? 1 : TUNE.winterKeep)) return -1
   let best = 0
   let who: SurvivorId | null = null
   for (const sid of v.seats[me]!.survivors) {
@@ -717,7 +752,7 @@ function scorePlay(c: PlanCache, a: Extract<Action, { type: 'playCard' }>): numb
 /** The exposure price of a move, as scoreMove charges it (a fuel card played first wipes it out). */
 function moveExpo(c: PlanCache, survivorId: SurvivorId, to: LocationId): number {
   const o = c.moveTargets(survivorId).find((t) => t.location === to)?.exposure
-  return (o ? c.rawCost(survivorId, o) * (1 - 0.35 * c.env.scalars.risk) : 0.25) * c.protect()
+  return (o ? c.rawCost(survivorId, o, to) * (1 - 0.35 * c.env.scalars.risk) : 0.25) * c.protect()
 }
 /** What a survivor's colony-only kill ability is worth over the rounds left, lost the moment it leaves (Thomas Heart, Edward White). */
 export function stayValue(c: PlanCache, survivorId: SurvivorId): number {
@@ -742,6 +777,8 @@ function scoreMove(c: PlanCache, survivorId: SurvivorId, to: LocationId): number
   const outNow = mine.filter((s) => v.survivors[s]?.location !== 'colony').length
   if (to !== 'colony') {
     if (from === 'colony' && outNow >= TUNE.maxOut) return -1
+    const outAll = Object.values(v.survivors).filter((x) => x.status === 'alive' && x.location !== 'colony').length
+    if (from === 'colony' && outAll >= TUNE.maxOutAll) return -1
     const loc = v.locations[to]!
     const g = c.goals()
     const post = g.post(survivorId, to) - (from !== 'colony' ? g.post(survivorId, from) : 0)
@@ -761,11 +798,12 @@ function scoreMove(c: PlanCache, survivorId: SurvivorId, to: LocationId): number
     if (from === 'colony' && homeOthers === 0 && colonyCost > 0.25) cost += colonyCost * 0.7
     if (from === 'colony' && v.seats[me]!.survivors.length >= 1 && colonyCost > 0.8) cost += 0.3
     const foodCredit = from === 'colony' && c.food().shortfall > 0 ? 0.12 : 0
-    if (from === 'colony') cost += stayValue(c, survivorId)
+    const parity = from === 'colony' ? TUNE.foodPar * starvationShift(c, -1) : 0
+    if (from === 'colony') cost += stayValue(c, survivorId) + TUNE.outPrice * (1 + TUNE.outStep * outNow)
     // one body fewer at the colony: fewer zombies next colony phase (ceil(survivors / 2))
     const relief = from === 'colony' && homeOthers > 0 ? TUNE.leaveCredit * Math.max(0, colonyCost - c.cost('colony', undefined, -1)) : 0
     const homePull = from === 'colony' ? g.home() * (homeOthers === 0 ? 1 : 0.5) : 0
-    return now + later + foodCredit + relief + post - homePull - cost - 0.02
+    return now + later + foodCredit + parity + relief + post - homePull - cost - 0.02
   }
   // coming home
   const originCost = c.cost(from, undefined, 0) - c.cost(from, undefined, -1)
@@ -775,7 +813,7 @@ function scoreMove(c: PlanCache, survivorId: SurvivorId, to: LocationId): number
   const load = TUNE.homeLoad * Math.max(0, c.cost('colony', undefined, 1) - colonyCost)
   const g = c.goals()
   const pull = g.home() - g.post(survivorId, from)
-  return danger + defend + pull - load - expo * 1.1 - 0.1
+  return danger + defend + pull - load - expo * 1.1 - 0.1 + (to === 'colony' ? TUNE.foodPar * starvationShift(c, 1) : 0)
 }
 
 /** Pick the best-scoring legal turn action; ties and near-ties are broken by the seeded rand. */
