@@ -152,4 +152,19 @@ describe('objectives', () => {
     for (const p of own.parts) expect(p.have, p.label).toBeGreaterThanOrEqual(0)
     expect(own.complete).toBe(false)
   })
+
+  it('OBJ-022 a seat’s progress report counts emptied location decks from the public deck sizes (Raiding Party is not complete at setup)', () => {
+    let st = createGame({ seats: ['s1', 's2', 's3', 's4'].map((id) => ({ id, kind: 'bot' as const })), mainObjective: 'obj.main.raiding-party' }, 'obj22', loadDefaultBundle()).state
+    for (let k = 0; k < 40 && st.phase === 'setup'; k++) st = step(st, legalActions(st)[0]!).state
+    const atSetup = objectiveProgressFromView(view(st, 's1'))
+    expect(atSetup.parts[0]!.have).toBe(0)
+    expect(atSetup.complete).toBe(false)
+    // two decks run dry: the view agrees with the engine's own check
+    const dry = (s: GameState, loc: string): GameState => ({ ...s, removed: [...s.removed, ...s.locations[loc]!.deck], locations: { ...s.locations, [loc]: { ...s.locations[loc]!, deck: [] } } })
+    const s = dry(dry(st, 'loc.school'), 'loc.library')
+    const done = objectiveProgressFromView(view(s, 's2'))
+    expect(done.parts[0]!.have).toBe(2)
+    expect(done.complete).toBe(true)
+    expect(CODE_HOOKS.objectives['rule.location-deck.emptyAtLeast']!(s, 's2', { n: 2 }).complete).toBe(true)
+  })
 })

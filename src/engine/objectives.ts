@@ -217,7 +217,8 @@ export function stateFromView(v: SeatView): GameState {
       offered: [], dice: p.dice, survivors: p.survivors, leaderId: p.leaderId, abilityUses: p.abilityUses, ...(p.outcome ? { outcome: p.outcome } : {}),
     }
   }
-  const locations = Object.fromEntries(Object.entries(v.locations).map(([id, l]) => [id, { ...l, deck: [] as CardId[] }]))
+  // the deck's cards are hidden but its size is public: placeholders keep deck-count conditions true to the table (Raiding Party, OBJ-022)
+  const locations = Object.fromEntries(Object.entries(v.locations).map(([id, l]) => [id, { ...l, deck: Array.from({ length: l.deckCount }, (_, i) => `hidden:${id}:${i}`) as CardId[] }]))
   return { ...v, seats, locations, log: [], seed: '', rng: [0, 0, 0, 0], rollSeq: 0, decisionSeq: 0, cardSeq: 0, effectSeq: 0, survivorDeck: [], crisisDeck: [], exiledObjectiveDeck: [] } as unknown as GameState
 }
 
