@@ -23,11 +23,14 @@ sit behind a bot wall and could not be read (see "Not retrieved"). The target ba
 | Rounds per game | set by the main objective, 5 to 10 on the objective cards (normal side 5 to 8; the hardcore side can raise it) | 10 objectives | https://boardgamegeek.com/thread/2054328/main-objective-cards (our local copy: docs/sources/bgg/thread-2054328-main-objectives.md) | measured from card data, not play logs |
 | Play length | 60+ minutes | publisher listing | https://coopboardgames.com/cooperative-board-game-reviews/dead-winter-board-game-review/ | publisher data |
 | Win rate by player count / by objective / normal vs hardcore | not found | none | n/a | no evidence |
-| Designer statement on intended win rate | not found | none | n/a | no evidence |
+| Designer statement on intended win rate | **30% target**; playtesters landed close to it; the co-designer's own experienced group "closer to 50" | co-designer reply, 2015-03 (over 100 playtest groups, each 10+ games, per the same post) | https://www.reddit.com/r/deadofwinter/comments/30h0on/my_beef_with_dead_of_winter/ (user JonnyRotten, who signs as Jon and calls himself co-designer; read via the arctic-shift Reddit archive API, 2026-10-15) | designer statement |
 
 Designer material found is about tension, not odds. Gilmour said turning the tension up to eleven was always a goal, and
 named public hard choices (Crossroads) as a main source of it: https://www.goodreads.com/author_blog_posts/6819861-dead-of-winter-a-crossroads-game-preview
-(snippet). Nothing from Vega or Gilmour states a target win rate.
+(snippet). The one target found is the Reddit reply in the table: aimed at 30%, playtesters close, experienced tables
+nearer 50%, because players learn tricks with plays. The post does not say whether "win" means the colony objective or a
+seat win; we read it as the table (colony) result. Same thread: the designer suggests Pure Co-op, no betrayer, or an extra
+starting card or food as house-rule easy modes, and says failing one crisis early on purpose is a sound tactic.
 
 ## How games end (rules, for modelling)
 
@@ -65,7 +68,9 @@ the normal side by default. Values are in the main-objective thread linked above
 
 ## Recommended target band
 
-- Normal-side objectives, 3 to 5 competent seats, no human error: colony success **40% to 60%**, aim near 50%.
+- Designer intent (2015 Reddit reply above): about **30%** for typical tables, about **50%** for experienced ones.
+- Normal-side objectives, 3 to 5 competent seats: colony success **30% to 50%**. 30% matches design intent; 50% matches an
+  expert table. (This replaced an earlier 40-60% guess made before the designer statement was found.)
 - Per-seat win rate should then land around **25% to 40%**, matching the logged group data above (about 30%) once secret
   objectives and betrayers take their cut.
 - Hardcore side (if we simulate it): **20% to 40%**. This is a design inference only; no source reports hardcore results.
@@ -77,17 +82,17 @@ Reasoning:
 3. Common mistakes (items 1 to 3) all make the game easier, so true rules-correct play is probably a little harder than
    the reported rates. Bots that never forget rules, and that play objective-aware, can reasonably sit slightly above
    typical human colony success without being too easy.
-4. The product goal is tension plus believable table-mates, not a solved game. A band of 40-60% keeps losses common
+4. The product goal is tension plus believable table-mates, not a solved game. A band of 30-50% keeps losses common
    enough to matter and wins reachable.
 5. Do not tune the bots to a single scalar. Hold the colony-success band, then check that morale losses are the majority
    of losses and that the average game uses most of the round track (a game that routinely ends by round 3 of 6 is too
    punishing).
 
-Evidence strength: **weak**. Re-check if the owner can read the BGG threads below by hand.
+Evidence strength: **moderate** for the target (one designer statement), **weak** for measured rates. Re-check if the owner can read the BGG threads below by hand.
 
 ## Not retrieved (worth a manual look by the owner)
 
 - "Win Loss Ratio" thread, a group poll split by betrayer vs no betrayer: https://boardgamegeek.com/thread/1326097/win-loss-ratio
 - "Dead of Winter statistics!" thread: https://boardgamegeek.com/thread/1329386/dead-of-winter-statistics
 Both returned a bot-check or 403 to every fetch method tried. Reddit (old.reddit.com) and web.archive.org were refused
-by the fetch tool. A real signed-in browser session could read them; do not try to bypass the bot check.
+by the fetch tool (Reddit threads can be read through the arctic-shift archive API, arctic-shift.photon-reddit.com). A real signed-in browser session could read them; do not try to bypass the bot check.
