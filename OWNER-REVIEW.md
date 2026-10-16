@@ -41,7 +41,7 @@ genuine gaps in the rulebook. Skim those and correct any your copy or table expe
       before more than about 5k credits on music). Start after art, or alongside?
 - [x] **AI depth.** Done (M4 complete): Easy, Normal, Hard and Random tiers, 6 personas with 63-71 own-words lines each (text-only, no
       new recordings), a log-odds suspicion model and the vote rules. Open question for you: the balance targets are only partly met
-      (Normal ~26% against 35-50%, betrayer wins ~9% against 25-40%, bots almost never exile anyone; details in STATUS.md, AI). Do you
+      (Normal ~26% against 30-40%, retargeted 2026-10-15 to the designer's 30% aim; betrayer wins ~9% against 25-40%, bots almost never exile anyone; details in STATUS.md, AI). Do you
       want me to keep pushing play strength, or is the current table good enough to playtest as it is?
 - [ ] **Voice lines for the new personas.** Jojo Pruitt, Dr. Anand Rao and Silas Crane (and the 47 new lines of the first three) have no
       ElevenLabs recordings; the bubbles work without sound. About 330 short lines; confirm before spending credits.

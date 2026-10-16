@@ -104,12 +104,12 @@ knobs are `src/ai/tiers.ts`, the table talk is `src/ai/talk.ts` plus `src/client
 
   Seeds 91+92 (1600 games each, run through the same code): normal 25.9%, hard 28.1%. Seed-to-seed spread is about 3 points per 200 games, so the ladder
   random < easy < normal < hard holds but hard over normal is a 2 to 4 point edge (about 1.5 sigma).
-- Misses against the M4 targets (honest list): Normal completes 26-30%, target 35-50%. Hard 28-31%. Betrayer wins 8-11% of the games it is in, target 25-40%. Exiles are
+- Misses against the M4 targets (honest list): Normal completes 26-30%, target 30-40% (retargeted 2026-10-15 to the designer's stated 30% aim; was 35-50%), so Normal is about 4 points short and Hard 28-31% is at the edge. Betrayer wins 8-11% of the games it is in, target 25-40%. Exiles are
   almost never called (0 in 1600 bench games at spec weights): one wrong card in the pile cannot tell three contributors apart, so a rational ledger stays below every
   persona's threshold; scaling the weights up (8 per wrong card and a clamp of 5 a round) exiled 48 innocents for 2 correct exiles in 800 games. Hence "real betrayer exiled more often than an innocent"
   holds only vacuously (the ledger test AI-007 shows three wrong-card crises do lift the one seat that was always in the pile over the thresholds). Mean decision time and
   rejected / stalls / unknown-code targets are met.
-- What the sweeps showed (about 12 iterations of 400-1600 games): the engine's exposure die is the whole game. With no bite face the Normal bot completes 55%; with no
+- What the sweeps showed (about 12 iterations of 400-1600 games; the rule-off runs below are diagnostics only, the exposure die stays as printed): the engine's exposure die is the whole game. With no bite face the Normal bot completes 55%; with no
   frostbite 46%; with no exposure at all 82%; with no crisis fail effects 49%. Each morale point is worth about 8 points of completion, and a bot loses about 3.7
   morale a game to survivor deaths (18-20 exposure rolls: 12 kills, 5 moves, 2 cards) and 1.8 to failed crises (only 45% are prevented: the table rarely holds 4 matching
   cards). Parameter sweeps over 35 constants (kill value, death price, wound price, contributions, movement, search weights, survivor picks, outsiders, hoard size,
